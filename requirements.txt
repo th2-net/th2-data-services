@@ -1,0 +1,6 @@
+plotly==4.14.3
+sseclient-py==1.7
+requests==2.25.1
+jupyter==1.0.0
+pandas==1.2.4
+ipython~=7.25.0
