@@ -1,4 +1,4 @@
-This repository is a library for creating th2-check2-recon applications.
+This repository is a library for creating th2-data-services applications.
 
 ## Installation
 ```
