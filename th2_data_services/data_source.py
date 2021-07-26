@@ -61,11 +61,12 @@ class DataSource:
 
         yield from self.__sse_request(url)
 
-    def get_events_from_data_provider(self, **kwargs) -> Data:
+    def get_events_from_data_provider(self, cache=False, **kwargs) -> Data:
         """Sends SSE request for events. For help use this readme
         https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
         on route http://localhost:8080/search/sse/events.
 
+        :param cache: Flag if you what save to cache.
         :param kwargs: Query options.
         :return: Events.
         """
@@ -87,19 +88,23 @@ class DataSource:
         url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
 
-        filename = urlparse(self.__url).netloc + f"_events_{urlencode(kwargs)}"
-        filename = f"{filename}.pickle"
-        if self.__check_cache(filename):
+        filename = None
+        if cache:
+            filename = urlparse(self.__url).netloc + f"_events_{urlencode(kwargs)}"
+            filename = f"{filename}.pickle"
+
+        if filename and self.__check_cache(filename):
             data = self.__load_file(filename)
         else:
-            data = self.__load_from_provider(url, filename=filename)
+            data = self.__load_from_provider(url, filename=filename if cache else None)
         return Data(data)
 
-    def get_messages_from_data_provider(self, **kwargs) -> Data:
+    def get_messages_from_data_provider(self, cache: bool =False, **kwargs) -> Data:
         """Sends SSE request for messages. For help use this readme
         https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
         on route http://localhost:8080/search/sse/messages.
 
+        :param cache: Flag if you what save to cache.
         :param kwargs: Query options.
         :return: Messages.
         """
@@ -132,12 +137,15 @@ class DataSource:
         url = self.__url + "/search/sse/messages"
         url = f"{url}?{urlencode(kwargs) + streams}"
 
-        filename = urlparse(self.__url).netloc + f"_messages_{urlencode(kwargs)}"
-        filename = f"{filename}.pickle"
-        if self.__check_cache(filename):
+        filename = None
+        if cache:
+            filename = urlparse(self.__url).netloc + f"_messages_{urlencode(kwargs)}"
+            filename = f"{filename}.pickle"
+
+        if filename and self.__check_cache(filename):
             data = self.__load_file(filename)
         else:
-            data = self.__load_from_provider(url, filename=filename)
+            data = self.__load_from_provider(url, filename=filename if cache else None)
         return Data(data)
 
     def __check_cache(self, filename: str) -> bool:
