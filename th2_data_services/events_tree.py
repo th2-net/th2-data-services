@@ -135,13 +135,13 @@ class EventsTree:
         self,
         event: dict,
         super_type: str,
-        get_super_type: Callable[[dict, Dict[int, dict]], str],
+        super_type_get_func: Callable[[dict, Dict[int, dict]], str],
     ) -> Optional[dict]:
         """Gets event ancestor by super_type.
 
         :param event: Event.
         :param super_type: Super type.
-        :param get_super_type: Super type get function.
+        :param super_type_get_func: Super type get function.
         :return: Event.
         """
         parent_id = event.get("parentEventId")
@@ -154,7 +154,7 @@ class EventsTree:
 
         ancestor = self._events.get(parent_id)
         while ancestor:
-            if super_type == get_super_type(ancestor, self._events):
+            if super_type == super_type_get_func(ancestor, self._events):
                 return ancestor
             parent_id = ancestor.get("parentEventId")
             if parent_id and ":" in parent_id:

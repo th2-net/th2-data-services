@@ -214,7 +214,7 @@ class DataSource:
         response = requests.get(url, stream=True, headers=headers)
         client = SSEClient(response)
         for record in client.events():
-            if record.id:
+            if record.event not in ['close', 'error', 'keep_alive']:
                 record_data = json.loads(record.data)
                 yield record_data
 
