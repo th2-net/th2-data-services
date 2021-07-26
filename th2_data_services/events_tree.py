@@ -1,6 +1,6 @@
 from typing import Generator, Union, Iterator, Optional, Callable, Dict
 
-from data_sources import DataSources
+from th2_data_services.data_source import DataSource
 
 
 class EventsTree:
@@ -162,7 +162,7 @@ class EventsTree:
             ancestor = self._events.get(parent_id)
         return ancestor
 
-    def recover_unknown_events(self, data_source: DataSources) -> None:
+    def recover_unknown_events(self, data_source: DataSource) -> None:
         """Loads unknown events from data provider.
 
         :param data_source: DataSources.

@@ -12,7 +12,7 @@ from sseclient import SSEClient
 from th2_data_services.data import Data
 
 
-class DataSources:
+class DataSource:
     def __init__(self, url):
         self.url = url
 

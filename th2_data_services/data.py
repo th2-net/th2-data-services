@@ -9,10 +9,11 @@ DataSet = Union[Iterator, Generator[dict, None, None]]
 
 
 class Data:
-    def __init__(self, data: DataSet, workflow: List[Callable] = None, cache: bool = None):
+    def __init__(self, data: DataSet, workflow: List[Callable] = None, cache=False):
         self._data = data
         self._workflow = [] if workflow is None else workflow
-        self._cache_status = False if cache is None else cache
+        self._cache_status: bool = cache
+        self._len = None
 
     def __del__(self):
         filename = f"{str(id(self))}.pickle"
@@ -40,6 +41,15 @@ class Data:
 
             if file:
                 file.close()
+
+    def __len__(self):
+        if self._len is not None:
+            return self._len
+        else:
+            self._len = 0
+            for i in self:
+                self._len += 1
+            return self._len
 
     def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.
