@@ -1,30 +1,42 @@
-from datetime import datetime
-
+import pickle
 import requests
 import json
+from pathlib import Path
+from datetime import datetime
 from csv import DictReader
 from pprint import pformat
-from typing import Generator, List
-from urllib.parse import urlencode
+from typing import Generator, List, Iterable
+from urllib.parse import urlencode, urlparse
 from sseclient import SSEClient
+
+from th2_data_services.data import Data
 
 
 class DataSources:
-    def __init__(self, host):
-        self.host = host
+    def __init__(self, url):
+        self.url = url
+
+    def __del__(self):
+        filename = urlparse(self.__url).netloc
+        path = Path("./").joinpath("temp")
+        for file in path.iterdir():
+            current_file = str(file)
+            if filename in current_file:
+                file.unlink()
 
     @property
-    def host(self):
-        return self.__host
+    def url(self):
+        return self.__url
 
-    @host.setter
-    def host(self, host):
-        if host[-1] == "/":
-            host = host[:-1]
-        self.__host = host
+    @url.setter
+    def url(self, url):
+        if url[-1] == "/":
+            url = url[:-1]
+        self.__url = url
 
     def sse_request_to_data_provider(self, **kwargs) -> Generator[dict, None, None]:
-        """Sends SSE request.
+        """Sends SSE request. For create custom sse-request to data-provider
+        use this readme https://github.com/th2-net/th2-rpt-data-provider .
 
         :param kwargs: Query options.
         :return: SSE response data.
@@ -34,23 +46,25 @@ class DataSources:
             raise ValueError("Route is required field. Please fill it.")
 
         if kwargs.get("startTimestamp") and isinstance(
-            kwargs.get("startTimestamp"), datetime
+                kwargs.get("startTimestamp"), datetime
         ):
             kwargs["startTimestamp"] = int(
                 kwargs["startTimestamp"].timestamp() * 1000
             )  # unix timestamp in milliseconds
         if kwargs.get("endTimestamp") and isinstance(
-            kwargs.get("endTimestamp"), datetime
+                kwargs.get("endTimestamp"), datetime
         ):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
-        url = self.__host + route
+        url = self.__url + route
         url = f"{url}?{urlencode(kwargs)}"
 
         yield from self.__sse_request(url)
 
-    def get_events_from_data_provider(self, **kwargs):
-        """Sends SSE request for events.
+    def get_events_from_data_provider(self, **kwargs) -> Data:
+        """Sends SSE request for events. For help use this readme
+        https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
+        on route http://localhost:8080/search/sse/events.
 
         :param kwargs: Query options.
         :return: Events.
@@ -66,17 +80,25 @@ class DataSources:
             )  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(
-            kwargs.get("endTimestamp"), datetime
+                kwargs.get("endTimestamp"), datetime
         ):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
-        url = self.__host + "/search/sse/events"
+        url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
 
-        yield from self.__sse_request(url)
+        filename = urlparse(self.__url).netloc + f"_events_{urlencode(kwargs)}"
+        filename = f"{filename}.pickle"
+        if self.__check_cache(filename):
+            data = self.__load_file(filename)
+        else:
+            data = self.__load_from_provider(url, filename=filename)
+        return Data(data)
 
-    def get_messages_from_data_provider(self, **kwargs):
-        """Sends SSE request for messages.
+    def get_messages_from_data_provider(self, **kwargs) -> Data:
+        """Sends SSE request for messages. For help use this readme
+        https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
+        on route http://localhost:8080/search/sse/messages.
 
         :param kwargs: Query options.
         :return: Messages.
@@ -98,7 +120,7 @@ class DataSources:
             )  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(
-            kwargs.get("endTimestamp"), datetime
+                kwargs.get("endTimestamp"), datetime
         ):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
@@ -107,13 +129,71 @@ class DataSources:
             streams = f"&stream=".join(streams)
         streams = f"&stream={streams}"
 
-        url = self.__host + "/search/sse/messages"
+        url = self.__url + "/search/sse/messages"
         url = f"{url}?{urlencode(kwargs) + streams}"
 
-        yield from self.__sse_request(url)
+        filename = urlparse(self.__url).netloc + f"_messages_{urlencode(kwargs)}"
+        filename = f"{filename}.pickle"
+        if self.__check_cache(filename):
+            data = self.__load_file(filename)
+        else:
+            data = self.__load_from_provider(url, filename=filename)
+        return Data(data)
+
+    def __check_cache(self, filename: str) -> bool:
+        """Checks whether file exist.
+
+        :param filename: Filename.
+        :return: File exists or not.
+        """
+        path = Path("./temp")
+        path.mkdir(exist_ok=True)
+        path = path.joinpath(filename)
+        return path.is_file()
+
+    def __load_file(self, filename: str) -> Generator[dict, None, None]:
+        """Loads records from pickle file.
+
+        :param filename: Filename.
+        :return: Generator records.
+        """
+        path = Path("./").joinpath("temp").joinpath(filename)
+        if not path.is_file():
+            raise ValueError(f"{filename} isn't file.")
+
+        if path.suffix != ".pickle":
+            raise ValueError(f"File hasn't pickle extension.")
+
+        with open(path, "rb") as file:
+            while True:
+                try:
+                    decoded_data = pickle.load(file)
+                    yield decoded_data
+                except EOFError:
+                    break
+
+    def __load_from_provider(self, url: str, filename=None) -> Generator[dict, None, None]:
+        """Loads records from data provider.
+
+        :param url: Url.
+        :param filename: Filename if you what to create local storage.
+        :return: Generator records.
+        """
+        file = None
+        if filename is not None:
+            path = Path("./").joinpath("temp").joinpath(filename)
+            file = open(path, "wb")
+
+        for record in self.__sse_request(url):
+            if file is not None:
+                pickle.dump(record, file)
+            yield record
+
+        if file:
+            file.close()
 
     @staticmethod
-    def __sse_request(url):
+    def __sse_request(url: str):
         """Creates sse connection to server.
 
         :param url: Url.
@@ -129,7 +209,7 @@ class DataSources:
                 yield record_data
 
     def find_messages_by_id_from_data_provider(
-        self, messages_id: List[str]
+            self, messages_id: List[str]
     ) -> Generator[dict, None, None]:
         """Gets messages by ids.
 
@@ -137,10 +217,10 @@ class DataSources:
         :return: Messages.
         """
         for message_id in messages_id:
-            response = requests.get(f"{self.__host}/message/{message_id}")
+            response = requests.get(f"{self.__url}/message/{message_id}")
             yield response.json()
 
-    def find_events_by_id_from_data_provider(self, events_id: List[str]) -> dict:
+    def find_events_by_id_from_data_provider(self, events_id: Iterable) -> dict:
         """Gets events by ids.
 
         :param events_id: Events id.
@@ -148,7 +228,7 @@ class DataSources:
         """
         events = "&".join([f"ids={id_}" for id_ in events_id])
 
-        response = requests.get(f"{self.__host}/events/?{events}")
+        response = requests.get(f"{self.__url}/events/?{events}")
         answer = response.json()
         return answer
 
