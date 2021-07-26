@@ -46,13 +46,13 @@ class DataSource:
             raise ValueError("Route is required field. Please fill it.")
 
         if kwargs.get("startTimestamp") and isinstance(
-                kwargs.get("startTimestamp"), datetime
+            kwargs.get("startTimestamp"), datetime
         ):
             kwargs["startTimestamp"] = int(
                 kwargs["startTimestamp"].timestamp() * 1000
             )  # unix timestamp in milliseconds
         if kwargs.get("endTimestamp") and isinstance(
-                kwargs.get("endTimestamp"), datetime
+            kwargs.get("endTimestamp"), datetime
         ):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
@@ -81,7 +81,7 @@ class DataSource:
             )  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(
-                kwargs.get("endTimestamp"), datetime
+            kwargs.get("endTimestamp"), datetime
         ):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
@@ -99,7 +99,7 @@ class DataSource:
             data = self.__load_from_provider(url, filename=filename if cache else None)
         return Data(data)
 
-    def get_messages_from_data_provider(self, cache: bool =False, **kwargs) -> Data:
+    def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
         """Sends SSE request for messages. For help use this readme
         https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
         on route http://localhost:8080/search/sse/messages.
@@ -125,7 +125,7 @@ class DataSource:
             )  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(
-                kwargs.get("endTimestamp"), datetime
+            kwargs.get("endTimestamp"), datetime
         ):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
@@ -180,7 +180,9 @@ class DataSource:
                 except EOFError:
                     break
 
-    def __load_from_provider(self, url: str, filename=None) -> Generator[dict, None, None]:
+    def __load_from_provider(
+        self, url: str, filename=None
+    ) -> Generator[dict, None, None]:
         """Loads records from data provider.
 
         :param url: Url.
@@ -217,7 +219,7 @@ class DataSource:
                 yield record_data
 
     def find_messages_by_id_from_data_provider(
-            self, messages_id: List[str]
+        self, messages_id: List[str]
     ) -> Generator[dict, None, None]:
         """Gets messages by ids.
 
