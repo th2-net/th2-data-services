@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pickle
+import pprint
 from itertools import tee
 from pathlib import Path
 from typing import Generator, List, Union, Iterator, Callable
@@ -165,3 +166,9 @@ class Data:
             self._cache_status = True
         else:
             self._cache_status = False
+
+    def __str__(self):
+        s = '------------- Printed first 5 records -------------\n'
+        for i in self.sift(limit=5):
+            s += pprint.pformat(i) + '\n'
+        return s
