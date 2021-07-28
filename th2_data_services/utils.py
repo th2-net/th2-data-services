@@ -325,7 +325,7 @@ class Utils:
             for element, payload in data.items():
                 fig.add_trace(
                     go.Scatter(
-                        name="_".join(element),
+                        name=element,
                         x=list(payload.keys()),
                         y=list(payload.values),
                         mode="lines",
@@ -405,3 +405,80 @@ class Utils:
         :return: String with deleted pieces.
         """
         return sub(pattern, "", string)
+
+    @staticmethod
+    def aggregate_a_group2(data: Union[dict, DataFrame], field: str) -> DataFrame:
+        """Aggregate by a field.
+
+        :param data: Data.
+        :param field: Field for aggregation.
+        :return: Statistics
+        """
+        if isinstance(data, DataFrame):
+            if data.empty:
+                raise ValueError("Input data is empty.")
+        else:
+            if not data:
+                raise ValueError("Input data is empty.")
+
+        df = DataFrame(data)
+
+        if not df.get("status").any():
+            raise ValueError("'status' is required field. Please add it.")
+
+        df = (
+            df.filter([field, "status"])
+                .groupby([field, "status"])
+                .size()
+                .reset_index(name="count")
+        )
+        compute = DataFrame({field: df[field].unique()}).set_index(field)
+        compute = (
+            compute.join(
+                df.groupby(field)
+                    .sum()
+                    .reset_index()
+                    .set_index(field)
+                    .rename(columns={"count": "total"}),
+                on=field,
+                    )
+        )
+        compute.loc["Total"] = [compute["total"].sum()]
+        return compute
+
+    @staticmethod
+    def aggregate_several_group2(data: Union[DataFrame, dict], titles=cycle([""])):
+        """Aggregates all groups in dataframe.
+
+        :param data: Data.
+        :param titles: Groups titles.
+        :return: Show all groups in dataframe.
+        """
+        if not isinstance(data, DataFrame):
+            data = DataFrame(data=data)
+
+        if data.empty:
+            raise ValueError("Input data is empty.")
+
+        columns = list(data.columns)
+
+        try:
+            columns.index("status")
+        except ValueError:
+            raise ValueError("'status' is required field. Please add it.")
+
+        columns.remove("status")
+
+        results = []
+        for column in columns:
+            results.append(Utils.aggregate_a_group2(data, column))
+
+        html_str = ""
+        for output, title in zip(results, chain(titles, cycle(["</br>"]))):
+            html_str += '<th style="text-align: center"><td style="vertical-align:top">'
+            html_str += f"<h2>{title}<h2>"
+            html_str += output.to_html().replace(
+                "table", 'table style="display:inline"'
+            )
+            html_str += "</td><th>"
+        display_html(html_str, raw=True)
