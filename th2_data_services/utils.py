@@ -325,7 +325,7 @@ class Utils:
             for element, payload in data.items():
                 fig.add_trace(
                     go.Scatter(
-                        name=element,
+                        name="_".join(element) if not isinstance(element, str) else element,
                         x=list(payload.keys()),
                         y=list(payload.values),
                         mode="lines",
