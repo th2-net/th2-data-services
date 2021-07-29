@@ -1,0 +1,27 @@
+name: Build and publish Python distributions to PyPI
+
+on:
+  push:
+    branches-ignore:
+      - dev
+
+jobs:
+  build-n-publish:
+    name: Build and Python distributions to PyPI
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Build package
+        run: |
+          pip install -r requirements.txt
+          python setup.py sdist
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}
+          repository_url: https://upload.pypi.org/legacy/
