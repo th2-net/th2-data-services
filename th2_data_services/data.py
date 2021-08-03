@@ -157,7 +157,7 @@ class Data:
             yield record
             pushed += 1
 
-    def use_cache(self, status: bool) -> None:
+    def use_cache(self, status: bool) -> Data:
         """Change status cache.
 
         :param status: Status.
@@ -166,6 +166,8 @@ class Data:
             self._cache_status = True
         else:
             self._cache_status = False
+
+        return self
 
     def __str__(self):
         s = '------------- Printed first 5 records -------------\n'
