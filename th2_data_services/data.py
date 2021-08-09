@@ -169,6 +169,19 @@ class Data:
 
         return self
 
+    def find_by(self, record_field, field_values) -> Generator:
+        """Get the records whose field value is written in the field_values list."""
+        values_for_find = list(field_values)
+        for record in self:
+            if values_for_find:
+                if record[record_field] in values_for_find:
+                    values_for_find.remove(record[record_field])
+                    yield record
+                else:
+                    continue
+            else:
+                break
+
     def __str__(self):
         s = '------------- Printed first 5 records -------------\n'
         for i in self.sift(limit=5):
