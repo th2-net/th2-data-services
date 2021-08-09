@@ -30,7 +30,7 @@ class EventsTree:
         if data is None:
             data = []
 
-        self._events = {}  # {EventID: Event}
+        self._events = {}  # {EventID_str: Event_dict}
         self._unknown_events = defaultdict(lambda: 0)  # {parent_id: int(cnt}
         self.build_tree(data)
 
@@ -203,3 +203,6 @@ class EventsTree:
             if self._unknown_events == old_unknown_events:
                 break
             old_unknown_events = self._unknown_events.copy()
+
+    def get_children(self, parent_event_id) -> list:
+        return [e for e in self._events if e['parentEventId'] == parent_event_id]
