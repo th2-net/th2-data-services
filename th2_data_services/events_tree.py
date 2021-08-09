@@ -74,10 +74,6 @@ class EventsTree:
         except KeyError:
             pass
 
-        if ":" in event_id:
-            # parent_id always looks like  batchId:eventId
-            event_id = event_id.split(":")[1]
-
         self._events[event_id] = event
         if event_id in self._unknown_events:
             self._unknown_events.pop(event_id)
@@ -92,10 +88,6 @@ class EventsTree:
         for event in self.events.values():
             parent_id = event["parentEventId"]
             if parent_id is not None:
-                if ":" in parent_id:
-                    # parent_id always looks like  batchId:eventId
-                    parent_id = parent_id.split(":")[-1]
-
                 if parent_id not in self._events:
                     self._unknown_events[parent_id] += 1
 
@@ -176,16 +168,11 @@ class EventsTree:
         if parent_id is None:
             raise ValueError("event must have field 'parentEventId'")
 
-        if parent_id and ":" in parent_id:
-            parent_id = parent_id.split(":")[1]
-
         ancestor = self._events.get(parent_id)
         while ancestor:
             if super_type == super_type_get_func(ancestor, self._events):
                 return ancestor
             parent_id = ancestor.get("parentEventId")
-            if parent_id and ":" in parent_id:
-                parent_id = parent_id.split(":")[1]
             ancestor = self._events.get(parent_id)
         return ancestor
 
