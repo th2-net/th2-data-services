@@ -170,7 +170,7 @@ class Data:
         return self
 
     def __str__(self):
-        s = '------------- Printed first 5 records -------------\n'
+        s = "------------- Printed first 5 records -------------\n"
         for i in self.sift(limit=5):
-            s += pprint.pformat(i) + '\n'
+            s += pprint.pformat(i) + "\n"
         return s
