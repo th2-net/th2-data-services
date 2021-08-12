@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pickle
 import pprint
+import weakref
 from itertools import tee
 from pathlib import Path
 from typing import Generator, List, Union, Iterator, Callable
@@ -15,8 +16,9 @@ class Data:
         self._workflow = [] if workflow is None else workflow
         self._cache_status: bool = cache
         self._len = None
+        self._finalizer = weakref.finalize(self, self.remove)
 
-    def __del__(self):
+    def remove(self):
         filename = f"{str(id(self))}.pickle"
         if self.__check_cache(filename):
             path = Path("./").joinpath("temp").joinpath(filename)

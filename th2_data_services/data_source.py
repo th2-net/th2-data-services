@@ -1,4 +1,7 @@
 import pickle
+import sys
+import weakref
+
 import requests
 import json
 from pathlib import Path
@@ -15,8 +18,9 @@ from th2_data_services.data import Data
 class DataSource:
     def __init__(self, url):
         self.url = url
+        self._finalizer = weakref.finalize(self, self.remove)
 
-    def __del__(self):
+    def remove(self):
         filename = urlparse(self.__url).netloc
         path = Path("./").joinpath("temp")
         for file in path.iterdir():
@@ -46,13 +50,13 @@ class DataSource:
             raise ValueError("Route is required field. Please fill it.")
 
         if kwargs.get("startTimestamp") and isinstance(
-            kwargs.get("startTimestamp"), datetime
+                kwargs.get("startTimestamp"), datetime
         ):
             kwargs["startTimestamp"] = int(
                 kwargs["startTimestamp"].timestamp() * 1000
             )  # unix timestamp in milliseconds
         if kwargs.get("endTimestamp") and isinstance(
-            kwargs.get("endTimestamp"), datetime
+                kwargs.get("endTimestamp"), datetime
         ):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
@@ -81,7 +85,7 @@ class DataSource:
             )  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(
-            kwargs.get("endTimestamp"), datetime
+                kwargs.get("endTimestamp"), datetime
         ):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
@@ -125,7 +129,7 @@ class DataSource:
             )  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(
-            kwargs.get("endTimestamp"), datetime
+                kwargs.get("endTimestamp"), datetime
         ):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
@@ -181,7 +185,7 @@ class DataSource:
                     break
 
     def __load_from_provider(
-        self, url: str, filename=None
+            self, url: str, filename=None
     ) -> Generator[dict, None, None]:
         """Loads records from data provider.
 
@@ -219,7 +223,7 @@ class DataSource:
                 yield record_data
 
     def find_messages_by_id_from_data_provider(
-        self, messages_id: List[str]
+            self, messages_id: List[str]
     ) -> Generator[dict, None, None]:
         """Gets messages by ids.
 
