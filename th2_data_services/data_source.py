@@ -1,6 +1,7 @@
 import pickle
 import requests
 import json
+from weakref import finalize
 from pathlib import Path
 from datetime import datetime
 from csv import DictReader
@@ -8,15 +9,15 @@ from pprint import pformat
 from typing import Generator, List, Iterable
 from urllib.parse import urlencode, urlparse
 from sseclient import SSEClient
-
 from th2_data_services.data import Data
 
 
 class DataSource:
     def __init__(self, url):
         self.url = url
+        self._finalizer = finalize(self, self.remove)
 
-    def __del__(self):
+    def remove(self):
         filename = urlparse(self.__url).netloc
         path = Path("./").joinpath("temp")
         for file in path.iterdir():
