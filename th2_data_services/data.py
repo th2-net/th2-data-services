@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pickle
 import pprint
 from weakref import finalize
@@ -123,7 +121,7 @@ class Data:
             for record_ in record:
                 yield record_
 
-    def filter(self, callback: Callable) -> Data:
+    def filter(self, callback: Callable) -> 'Data':
         """Append filter to workflow.
 
         :param callback: Filter function.
@@ -132,7 +130,7 @@ class Data:
         working_data, self._data = tee(self._data)
         return Data(working_data, new_workflow, self._cache_status)
 
-    def map(self, callback: Callable) -> Data:
+    def map(self, callback: Callable) -> 'Data':
         """Append transform function to workflow.
 
         :param callback: Transform function.
@@ -160,7 +158,7 @@ class Data:
             yield record
             pushed += 1
 
-    def use_cache(self, status: bool) -> Data:
+    def use_cache(self, status: bool) -> 'Data':
         """Change status cache.
 
         :param status: Status.
