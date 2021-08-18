@@ -325,7 +325,9 @@ class Utils:
             for element, payload in data.items():
                 fig.add_trace(
                     go.Scatter(
-                        name="_".join(element) if not isinstance(element, str) else element,
+                        name="_".join(element)
+                        if not isinstance(element, str)
+                        else element,
                         x=list(payload.keys()),
                         y=list(payload.values),
                         mode="lines",
@@ -428,20 +430,18 @@ class Utils:
 
         df = (
             df.filter([field, "status"])
-                .groupby([field, "status"])
-                .size()
-                .reset_index(name="count")
+            .groupby([field, "status"])
+            .size()
+            .reset_index(name="count")
         )
         compute = DataFrame({field: df[field].unique()}).set_index(field)
-        compute = (
-            compute.join(
-                df.groupby(field)
-                    .sum()
-                    .reset_index()
-                    .set_index(field)
-                    .rename(columns={"count": "total"}),
-                on=field,
-                    )
+        compute = compute.join(
+            df.groupby(field)
+            .sum()
+            .reset_index()
+            .set_index(field)
+            .rename(columns={"count": "total"}),
+            on=field,
         )
         compute.loc["Total"] = [compute["total"].sum()]
         return compute

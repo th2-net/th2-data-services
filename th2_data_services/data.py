@@ -1,7 +1,6 @@
-from __future__ import annotations
-
 import pickle
 import pprint
+from weakref import finalize
 from itertools import tee
 from pathlib import Path
 from typing import Generator, List, Union, Iterator, Callable
@@ -15,12 +14,14 @@ class Data:
         self._workflow = [] if workflow is None else workflow
         self._cache_status: bool = cache
         self._len = None
+        self._finalizer = finalize(self, self.remove)
 
-    def __del__(self):
+    def remove(self):
         filename = f"{str(id(self))}.pickle"
         if self.__check_cache(filename):
             path = Path("./").joinpath("temp").joinpath(filename)
             path.unlink(missing_ok=True)
+        del self._data
 
     def __iter__(self) -> DataSet:
         filename = f"{str(id(self))}.pickle"
@@ -120,7 +121,7 @@ class Data:
             for record_ in record:
                 yield record_
 
-    def filter(self, callback: Callable) -> Data:
+    def filter(self, callback: Callable) -> 'Data':
         """Append filter to workflow.
 
         :param callback: Filter function.
@@ -129,7 +130,7 @@ class Data:
         working_data, self._data = tee(self._data)
         return Data(working_data, new_workflow, self._cache_status)
 
-    def map(self, callback: Callable) -> Data:
+    def map(self, callback: Callable) -> 'Data':
         """Append transform function to workflow.
 
         :param callback: Transform function.
@@ -157,7 +158,7 @@ class Data:
             yield record
             pushed += 1
 
-    def use_cache(self, status: bool) -> None:
+    def use_cache(self, status: bool) -> 'Data':
         """Change status cache.
 
         :param status: Status.
@@ -167,8 +168,10 @@ class Data:
         else:
             self._cache_status = False
 
+        return self
+
     def __str__(self):
-        s = '------------- Printed first 5 records -------------\n'
-        for i in self.sift(limit=5):
-            s += pprint.pformat(i) + '\n'
-        return s
+        output = "------------- Printed first 5 records -------------\n"
+        for record in self.sift(limit=5):
+            output += pprint.pformat(record) + "\n"
+        return output
