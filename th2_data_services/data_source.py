@@ -6,7 +6,7 @@ from pathlib import Path
 from datetime import datetime
 from csv import DictReader
 from pprint import pformat
-from typing import Generator, List, Iterable
+from typing import Generator, List, Iterable, Union
 from urllib.parse import urlencode, urlparse
 from sseclient import SSEClient
 from th2_data_services.data import Data
@@ -219,29 +219,41 @@ class DataSource:
                 record_data = json.loads(record.data)
                 yield record_data
 
-    def find_messages_by_id_from_data_provider(
-        self, messages_id: List[str]
-    ) -> Generator[dict, None, None]:
-        """Gets messages by ids.
+    def find_messages_by_id_from_data_provider(self,
+                                               messages_id: Union[Iterable, str]) -> List[dict]:
+        """Gets messages by ids using URL request.
 
         :param messages_id: Messages id.
-        :return: Messages.
+        :return: List[Message_dict] if you request a list or Message_dict.
         """
+
+        is_str = False
+        if isinstance(messages_id, str):
+            is_str = True
+            messages_id = [messages_id]
+        rl = []
         for message_id in messages_id:
             response = requests.get(f"{self.__url}/message/{message_id}")
-            yield response.json()
+            rl.append(response.json())
+        return rl[0] if is_str else rl
 
-    def find_events_by_id_from_data_provider(self, events_id: Iterable) -> dict:
-        """Gets events by ids.
+    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> List[dict]:
+        """Gets events by ids using URL request.
 
         :param events_id: Events id.
-        :return: Events.
+        :return: List[Event_dict] if you request a list or Event_dict.
         """
+
+        is_str = False
+        if isinstance(events_id, str):
+            is_str = True
+            events_id = [events_id]
+
         events = "&".join([f"ids={id_}" for id_ in events_id])
 
         response = requests.get(f"{self.__url}/events/?{events}")
         answer = response.json()
-        return answer
+        return answer[0] if is_str else answer
 
     @staticmethod
     def read_csv_file(*sources: str) -> Generator[str, None, None]:
