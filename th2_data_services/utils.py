@@ -1,484 +1,297 @@
-from itertools import cycle, chain
-from re import search, sub
-from typing import Union, Dict, List, Optional
-from IPython.display import display_html
-from pandas import DataFrame, Grouper, concat
 import plotly.graph_objects as go
+import vaex
 
-FailedTags = List[Dict[str, Union[str, int]]]
+from collections import defaultdict
+from functools import reduce
+from itertools import cycle, chain
+from re import sub, search
+from typing import Iterable, Union, List, Any, DefaultDict, Dict, Optional, Tuple
+from IPython.core.display import display_html
+from pandas import DataFrame, concat, Grouper, Series
+from pandas.core.groupby import DataFrameGroupBy
 
 
-class Utils:
-    @staticmethod
-    def aggregate_a_group(data: Union[dict, DataFrame], field: str) -> DataFrame:
-        """Aggregate by a field.
+def aggregate_by_groups(
+    data: Union[Iterable[dict], DataFrame],
+    *fields: str,
+    total_row: bool = False,
+    pivot: Union[Iterable[str], str] = None,
+) -> Union[DataFrame, DataFrameGroupBy]:
+    """Aggregates by fields.
 
-        :param data: Data.
-        :param field: Field for aggregation.
-        :return: Statistics
-        """
-        if isinstance(data, DataFrame):
-            if data.empty:
-                raise ValueError("Input data is empty.")
-        else:
-            if not data:
-                raise ValueError("Input data is empty.")
+    :param data: Data.
+    :param fields: Fields for aggregate.
+    :param total_row: Adding a total row.
+    :param pivot: Which columns must is pivoted.
+    :return: Statistics.
+    """
+    df = DataFrame(data)
+    if df.empty:
+        raise ValueError("Input data is empty.")
+    if not fields:
+        raise ValueError("Fields is empty.")
 
-        df = DataFrame(data)
+    df: DataFrame = (
+        vaex.from_pandas(df)
+        .groupby(by=fields, agg="count", sort=True)
+        .to_pandas_df()
+        .set_index([*fields])
+    )
 
-        if not df.get("status").any():
-            raise ValueError("'status' is required field. Please add it.")
+    if pivot:
+        if isinstance(pivot, str):
+            pivot = (pivot,)
+        index = (field for field in fields if field not in pivot)
+        df = df.reset_index().pivot(index=index, columns=pivot, values="count")
+    if total_row:
+        index_length = len(df.index.names)
+        name = ("Total",) * index_length if index_length > 1 else "Total"
+        df.loc[name, :] = [
+            column.sum() if str(column.dtype) != "object" else "Total"
+            for _, column in df.items()
+        ]
+    return df
 
-        df = (
-            df.filter([field, "status"])
-            .groupby([field, "status"])
-            .size()
-            .reset_index(name="count")
-        )
-        compute = DataFrame({field: df[field].unique()}).set_index(field)
-        compute = (
-            compute.join(
-                df.groupby(field)
-                .sum()
-                .reset_index()
-                .set_index(field)
-                .rename(columns={"count": "total"}),
-                on=field,
-            )
-            .join(
-                df[df.status == "FAILED"]
-                .groupby(field)
-                .sum()
-                .reset_index()
-                .set_index(field)
-                .rename(columns={"count": "fail"}),
-                on=field,
-            )
-            .fillna(0)
-        )
-        compute.loc["Total"] = [compute["total"].sum(), compute["fail"].sum()]
-        return compute
 
-    @staticmethod
-    def aggregate_groups(data: dict, *fields) -> DataFrame:
-        """Aggregates by several fields.
+def aggregate_by_intervals(
+    data: Iterable[dict],
+    time_field: str,
+    agg: str = "count",
+    resolution: str = "D",
+    every: int = 1,
+) -> DataFrame:
+    """Aggregates by time. Lazy method.
 
-        :param data: Data.
-        :param fields: Fiealds for aggreagte.
-        :return: Statistics.
-        """
-        if not data:
-            raise ValueError("Input data is empty.")
+    :param data: Data.
+    :param time_field: Time field.
+    :param agg: Aggregate function name.
+    :param resolution: Datetime suffix for intervals.
+    :param every: Frequently of intervals.
+    :return: Show all groups in dataframe.
+    """
+    if not data:
+        raise ValueError("Input data is empty.")
 
-        df = DataFrame(data)
+    dfv = vaex.from_pandas(DataFrame(data))
+    compute = dfv.groupby(
+        by=vaex.BinnerTime(
+            expression=time_field, df=dfv, resolution=resolution, every=every
+        ),
+        agg=agg,
+    ).to_pandas_df()
 
-        if not df.get("status").any():
-            raise ValueError("'status' is required field. Please add it.")
+    return compute
 
-        df = (
-            df.filter([*fields, "status"])
-            .groupby([*fields, "status"])
-            .size()
-            .reset_index(name="count")
-        )
-        compute = (
-            DataFrame(data=df.groupby([*fields]).groups.keys())
-            .rename(columns={index: field for index, field in enumerate(fields)})
-            .set_index([*fields])
-        )
-        compute = (
-            compute.join(
-                df.groupby([*fields])
-                .sum()
-                .reset_index()
-                .set_index([*fields])
-                .rename(columns={"count": "total"}),
-            )
-            .join(
-                df[df.status == "SUCCESSFUL"]
-                .groupby([*fields])
-                .sum()
-                .reset_index()
-                .set_index([*fields])
-                .rename(columns={"count": "success"})
-            )
-            .join(
-                df[df.status == "FAILED"]
-                .groupby([*fields])
-                .sum()
-                .reset_index()
-                .set_index([*fields])
-                .rename(columns={"count": "fail"})
-            )
-            .fillna(0)
-        )
-        return compute
 
-    @staticmethod
-    def execute_aggregation(data: dict, filters: dict) -> dict:
-        compute = {"all": 0}
-        for entry in data:
-            compute["all"] += 1
-            for name, func in filters.items():
-                if func(entry):
-                    if compute.get(name):
-                        compute[name] = 0
-                    compute[name] += 1
-        return compute
+def aggregate_several_group(
+    data: Iterable[dict], display_html_df: bool = True, receive_df: bool = False
+) -> Optional[DataFrame]:
+    """Aggregates all groups in dataframe.
 
-    @staticmethod
-    def get_checked_tags(fields: dict, tags_set: set = None) -> set:
-        if tags_set is None:
-            tags_set = {"checked": set(), "presence_checked": set(), "ignored": set()}
+    :param data: Data.
+    :param display_html_df: Whether display to html.
+    :param receive_df: Whether to create dataframe.
+    :return: Show all groups in dataframe.
+    """
 
-        for tag, check in fields.items():
-            type_ = check.get("type")
-            if type_ == "field":
-                if check.get("expected") == "null":
-                    tags_set["ignored"].add(tag)
-                elif check.get("operation") == "NOT_EMPTY":
-                    tags_set["presence_checked"].add(tag)
-                else:
-                    tags_set["checked"].add(tag)
-            elif type_ == "collection":
-                Utils.get_checked_tags(check.get("fields"), tags_set)
+    if not data:
+        raise ValueError("Input data is empty.")
 
-        return tags_set
+    data = DataFrame(data)
 
-    @staticmethod
-    def get_failed_tags(content: dict, tags: FailedTags = None) -> FailedTags:
-        """Gets failed tags.
+    results = []
+    for column in data.columns:
+        results.append(aggregate_by_groups(data, column, total_row=True).reset_index())
 
-        :param content: Event content.
-        :param tags: Failed tags.
-        :return: Failed tags.
-        """
-        if tags is None:
-            tags = []
-
-        for field, payload in content.items():
-            if isinstance(payload, dict):
-                actual = payload.get("actual")
-                expected = payload.get("expected")
-                status = payload.get("status")
-                operation = payload.get("operation")
-                if actual and status == "FAILED":
-                    tag = {
-                        "failed_tag": field,
-                        "failed_actual": actual,
-                        f"failed_expected": expected,
-                        f"failed_operation": operation,
-                        "status": status,
-                    }
-                    if tag not in tags:
-                        tags.append(tag)
-
-                for value in payload.values():
-                    if isinstance(value, dict):
-                        Utils.get_failed_tags(payload, tags)
-
-        return tags
-
-    @staticmethod
-    def find_tag(data: dict, search_tag: str) -> Optional[str]:
-        """Finds first occurrence of a tag.
-
-        :param data: Data.
-        :param search_tag: Tag for search.
-        :return: Tag value.
-        """
-        for field, payload in data.items():
-            if field == search_tag:
-                return payload
-
-            if isinstance(payload, list):
-                for info in payload:
-                    if isinstance(info, dict):
-                        tag = Utils.find_tag(info, search_tag)
-                        if tag:
-                            return tag
-        return None
-
-    @staticmethod
-    def find_tag_everywhere(data: dict, search_tag: str, found_tags=None) -> List[str]:
-        """Finds all occurrence of tag.
-
-        :param data: Data.
-        :param search_tag: Tag for search.
-        :param found_tags: Found tags.
-        :return: Found tags.
-        """
-        if found_tags is None:
-            found_tags = []
-
-        for field, payload in data.items():
-            if field == search_tag:
-                found_tags.append(payload)
-                break
-
-            if isinstance(payload, list):
-                for info in payload:
-                    if isinstance(info, dict):
-                        Utils.find_tag_everywhere(info, search_tag, found_tags)
-        return found_tags
-
-    @staticmethod
-    def find_tag_in_string(data: str, search_tag: str) -> str:
-        """Find tag value in string.
-
-        :param data: String.
-        :param search_tag: Tag for search.
-        :return: Tag value.
-        """
-        pattern = r"[\"']\S*[\"']"
-        position = data.find(search_tag)
-        if position != -1:
-            position += len(search_tag)
-            return search(pattern, data[position:]).group(0)[1:-1]
-
-    @staticmethod
-    def aggregate_a_group_by_intervals(
-        data: dict, field: str, interval: str, **options: dict
-    ) -> DataFrame:
-        """Aggregates by a field with specified interval.
-
-        :param data: Data.
-        :param field: Field for aggregation.
-        :param interval: Interval.
-        :param options: Options.
-        :return: Statistics.
-        """
-        if not data:
-            raise ValueError("Input data is empty.")
-
-        df = DataFrame(data=data)
-
-        if not df.get("time").any():
-            raise ValueError("'time' is required field. Please add it.")
-
-        if options.get("status_off"):
-            df = (
-                df.filter(items=["time", field])
-                .set_index("time")
-                .sort_index()
-                .groupby([Grouper(freq=interval), field])
-                .size()
-                .reset_index(name="count")
-            )
-        else:
-            if not df.get("status").any():
-                raise ValueError(
-                    "'status' is required field. If you didn't need, you can use 'status_off=True'."
-                )
-            df = (
-                df.filter(items=["time", "status", field])
-                .set_index("time")
-                .sort_index()
-                .groupby([Grouper(freq=interval), field, "status"])
-                .size()
-                .reset_index(name="count")
-            )
-
-        filters = options.get("filter")
-
-        compute = DataFrame(data={"time": df["time"].unique()}).merge(
-            DataFrame(data={field: df[field].unique() if not filters else filters}),
-            how="cross",
-        )
-        if options.get("status_off"):
-            compute = compute.merge(df, on=["time", field], how="left")
-            compute = compute.pivot(
-                index=["time"], columns=[field], values="count"
-            ).fillna(0)
-        else:
-            compute = compute.merge(
-                DataFrame(data={"status": df["status"].unique()}), how="cross"
-            ).merge(df, on=["time", field, "status"], how="left")
-            compute = compute.pivot(
-                index=["time"], columns=[field, "status"], values="count"
-            ).fillna(0)
-
-        return compute
-
-    @staticmethod
-    def create_tick_diagram(data: DataFrame, **options) -> Optional[DataFrame]:
-        """Create ticks diagram.
-
-        :param data: Data.
-        :param options: options
-        """
-        fig = go.Figure()
-
-        table = []
-        if options.get("legend_to_table"):
-            for index, (element, payload) in enumerate(data.items()):
-                fig.add_trace(
-                    go.Scatter(
-                        name=index,
-                        x=list(payload.keys()),
-                        y=list(payload.values),
-                        mode="lines",
-                    )
-                )
-                table.append({"index": index, "name": element})
-        else:
-            for element, payload in data.items():
-                fig.add_trace(
-                    go.Scatter(
-                        name="_".join(element)
-                        if not isinstance(element, str)
-                        else element,
-                        x=list(payload.keys()),
-                        y=list(payload.values),
-                        mode="lines",
-                    )
-                )
-
-        fig.show()
-
-        if options.get("legend_to_table"):
-            return DataFrame(table)
-
-    @staticmethod
-    def aggregate_several_group(data: Union[DataFrame, dict], titles=cycle([""])):
-        """Aggregates all groups in dataframe.
-
-        :param data: Data.
-        :param titles: Groups titles.
-        :return: Show all groups in dataframe.
-        """
-        if not isinstance(data, DataFrame):
-            data = DataFrame(data=data)
-
-        if data.empty:
-            raise ValueError("Input data is empty.")
-
-        columns = list(data.columns)
-
-        try:
-            columns.index("status")
-        except ValueError:
-            raise ValueError("'status' is required field. Please add it.")
-
-        columns.remove("status")
-
-        results = []
-        for column in columns:
-            results.append(Utils.aggregate_a_group(data, column))
-
+    if display_html_df:
         html_str = ""
-        for output, title in zip(results, chain(titles, cycle(["</br>"]))):
+        for output, title in zip(results, chain(cycle([""]), cycle(["</br>"]))):
             html_str += '<th style="text-align: center"><td style="vertical-align:top">'
             html_str += f"<h2>{title}<h2>"
-            html_str += output.to_html().replace(
-                "table", 'table style="display:inline"'
-            )
+            html_str += output.to_html().replace("table", 'table style="display:inline"')
             html_str += "</td><th>"
         display_html(html_str, raw=True)
 
-    @staticmethod
-    def append_total_rows(data: DataFrame, fields_options: Dict[str, str]) -> DataFrame:
-        """Append total rows in data.
-
-        :param data: Data.
-        :param fields_options: Aggregate function for total rows.
-        :return: DataFrame with total rows.
-        """
-        if fields_options:
-            computes = []
-            for field, option in fields_options.items():
-                computes.append(
-                    data[field]
-                    .unstack()
-                    .assign(total=data[field].unstack().agg(option, axis=1))
-                    .stack()
-                    .to_frame(field)
-                )
-            return concat(computes, axis=1)
-        else:
-            return data
-
-    @staticmethod
-    def delete_string_by_pattern(string, pattern):
-        """Deletes string by pattern.
-
-        :param string: String for delete.
-        :param pattern: Pattern.
-        :return: String with deleted pieces.
-        """
-        return sub(pattern, "", string)
-
-    @staticmethod
-    def aggregate_a_group2(data: Union[dict, DataFrame], field: str) -> DataFrame:
-        """Aggregate by a field.
-
-        :param data: Data.
-        :param field: Field for aggregation.
-        :return: Statistics
-        """
-        if isinstance(data, DataFrame):
-            if data.empty:
-                raise ValueError("Input data is empty.")
-        else:
-            if not data:
-                raise ValueError("Input data is empty.")
-
-        df = DataFrame(data)
-
-        if not df.get("status").any():
-            raise ValueError("'status' is required field. Please add it.")
-
-        df = (
-            df.filter([field, "status"])
-            .groupby([field, "status"])
-            .size()
-            .reset_index(name="count")
+    if receive_df:
+        result = reduce(
+            lambda df, another_df: concat([df, another_df], axis=1)
+            if len(df.index) > len(another_df.index)
+            else concat([another_df, df], axis=1),
+            results,
         )
-        compute = DataFrame({field: df[field].unique()}).set_index(field)
-        compute = compute.join(
-            df.groupby(field)
-            .sum()
-            .reset_index()
-            .set_index(field)
-            .rename(columns={"count": "total"}),
-            on=field,
-        )
-        compute.loc["Total"] = [compute["total"].sum()]
-        return compute
+        return result
 
-    @staticmethod
-    def aggregate_several_group2(data: Union[DataFrame, dict], titles=cycle([""])):
-        """Aggregates all groups in dataframe.
 
-        :param data: Data.
-        :param titles: Groups titles.
-        :return: Show all groups in dataframe.
-        """
-        if not isinstance(data, DataFrame):
-            data = DataFrame(data=data)
+def search_fields(
+    data: Union[List[dict], dict], *fields: str
+) -> DefaultDict[str, List[Any]]:
+    """Search for fields.
 
-        if data.empty:
-            raise ValueError("Input data is empty.")
+    :param data: Data.
+    :param fields: Fields for search
+    :return: Dictionary with a list of found tags.
+    """
+    if not data:
+        raise ValueError("Input data is empty.")
+    if not fields:
+        raise ValueError("Fields is empty.")
 
-        columns = list(data.columns)
+    found_fields = defaultdict(list)
 
-        try:
-            columns.index("status")
-        except ValueError:
-            raise ValueError("'status' is required field. Please add it.")
+    def __find_fields(piece_data: dict):
+        for label, payload in piece_data.items():
+            if label in fields:
+                found_fields[label].append(payload)
+            else:
+                if isinstance(payload, dict):
+                    __find_fields(payload)
+                elif isinstance(payload, list):
+                    for piece_payload in payload:
+                        __find_fields(piece_payload)
 
-        columns.remove("status")
+    if isinstance(data, dict):
+        data = [data]
+    for piece in data:
+        __find_fields(piece)
 
-        results = []
-        for column in columns:
-            results.append(Utils.aggregate_a_group2(data, column))
+    return found_fields
 
-        html_str = ""
-        for output, title in zip(results, chain(titles, cycle(["</br>"]))):
-            html_str += '<th style="text-align: center"><td style="vertical-align:top">'
-            html_str += f"<h2>{title}<h2>"
-            html_str += output.to_html().replace(
-                "table", 'table style="display:inline"'
+
+def append_total_rows(data: DataFrameGroupBy, fields_options: Dict[str, str]) -> Union[DataFrame, DataFrameGroupBy]:
+    """Append total rows in data.
+
+    :param data: Data.
+    :param fields_options: Aggregate function for total rows.
+    :return: DataFrame with total rows.
+    """
+    if fields_options:
+        computes = []
+        for field, option in fields_options.items():
+            computes.append(
+                data[field]
+                .unstack()
+                .assign(total=data[field].unstack().agg(option, axis=1))
+                .stack()
+                .to_frame(field)
             )
-            html_str += "</td><th>"
-        display_html(html_str, raw=True)
+        return concat(computes, axis=1)
+    else:
+        return data
+
+
+def delete_string_by_pattern(string: str, pattern: str) -> str:
+    """Deletes string by pattern.
+
+    :param string: String for delete.
+    :param pattern: Pattern.
+    :return: String with deleted pieces.
+    """
+    return sub(pattern, "", string)
+
+
+def find_tag_in_string(data: str, search_tag: str) -> str:
+    """Find tag value in record as string.
+
+    :param data: Record as string.
+    :param search_tag: Tag for search.
+    :return: Tag value.
+    """
+    pattern = r"[\"']\S*[\"']"
+    position = data.find(search_tag)
+    if position != -1:
+        position += len(search_tag)
+        return search(pattern, data[position:]).group(0)[1:-1]
+
+
+def aggregate_groups_by_intervals(
+    data: Iterable[dict],
+    time_field: str,
+    *fields: str,
+    intervals: str = "Q",
+    total_row: bool = False,
+    pivot: Union[Iterable[str], str] = None,
+) -> DataFrame:
+    """Aggregates by a field with specified interval.
+
+    :param data: Data.
+    :param time_field: Time field.
+    :param fields: Fields for aggregate.
+    :param intervals: Intervals.
+    :param total_row: Adding a total row.
+    :param pivot: Which columns must is pivoted.
+    :return: Statistics.
+    """
+    if not data:
+        raise ValueError("Input data is empty.")
+    if not fields:
+        raise ValueError("Fields is empty")
+
+    df = DataFrame(data=data)
+
+    time: Series = df.get(time_field)
+    if time.empty:
+        raise ValueError(f"{time_field} is empty.")
+    elif time.dtype != "datetime64[ns]":
+        raise ValueError(f"{time_field} isn't of type datetime64[ns]")
+
+    df = (
+        df.filter(items=[time_field, *fields])
+        .set_index(time_field)
+        .groupby([Grouper(freq=intervals), *fields], sort=True)
+        .size()
+        .reset_index(name="count")
+        .set_index([time_field, *fields])
+    )
+
+    if pivot:
+        if isinstance(pivot, str):
+            pivot = (pivot,)
+        index = [time_field] + [field for field in fields if field not in pivot]
+        df = df.reset_index().pivot(index=index, columns=pivot, values="count")
+    if total_row:
+        index_length = len(df.index.names)
+        name = ("Total",) * index_length if index_length > 1 else "Total"
+        df.loc[name, :] = [
+            column.sum() if str(column.dtype) != "object" else "Total"
+            for _, column in df.items()
+        ]
+    return df
+
+
+def create_tick_diagram(
+    data: DataFrame, legend_to_table: bool = False
+) -> Optional[DataFrame]:
+    """Create ticks diagram.
+
+    :param data: Data.
+    :param legend_to_table: Whether to create legend in Dataframe.
+    """
+    fig = go.Figure()
+
+    table = []
+    if legend_to_table:
+        for index, (element, payload) in enumerate(data.items()):
+            fig.add_trace(
+                go.Scatter(
+                    name=index,
+                    x=list(payload.keys()),
+                    y=list(payload.values),
+                    mode="lines",
+                )
+            )
+            table.append({"index": index, "name": element})
+    else:
+        for element, payload in data.items():
+            fig.add_trace(
+                go.Scatter(
+                    name="_".join(element) if not isinstance(element, str) else element,
+                    x=list(payload.keys()),
+                    y=list(payload.values),
+                    mode="lines",
+                )
+            )
+
+    fig.show()
+
+    if legend_to_table:
+        return DataFrame(table)
