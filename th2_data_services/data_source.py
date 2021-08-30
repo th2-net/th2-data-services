@@ -221,40 +221,32 @@ class DataSource:
                 yield record_data
 
     def find_messages_by_id_from_data_provider(self,
-                                               messages_id: Union[Iterable, str]) -> List[dict]:
+                                               messages_id: Union[Iterable, str]) -> Union[List[dict], dict]:
         """Gets messages by ids using URL request.
 
         :param messages_id: Messages id.
         :return: List[Message_dict] if you request a list or Message_dict.
         """
-
-        is_str = False
         if isinstance(messages_id, str):
-            is_str = True
             messages_id = [messages_id]
-        rl = []
-        for message_id in messages_id:
-            response = requests.get(f"{self.__url}/message/{message_id}")
-            rl.append(response.json())
-        return rl[0] if is_str else rl
+        result = []
+        for msg_id in messages_id:
+            response = requests.get(f"{self.__url}/message/{msg_id}")
+            result.append(response.json())
+        return result if len(result) > 1 else result[0]
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> List[dict]:
+    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Union[List[dict], dict]:
         """Gets events by ids using URL request.
 
         :param events_id: Events id.
         :return: List[Event_dict] if you request a list or Event_dict.
         """
-
-        is_str = False
         if isinstance(events_id, str):
-            is_str = True
             events_id = [events_id]
-
         events = "&".join([f"ids={id_}" for id_ in events_id])
-
         response = requests.get(f"{self.__url}/events/?{events}")
         answer = response.json()
-        return answer[0] if is_str else answer
+        return answer if len(answer) > 1 else answer[0]
 
     @staticmethod
     def read_csv_file(*sources: str) -> Generator[str, None, None]:
