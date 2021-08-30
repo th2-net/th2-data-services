@@ -49,7 +49,7 @@ class Data:
             return self._len
         else:
             self._len = 0
-            for i in self:
+            for _ in self:
                 self._len += 1
             return self._len
 
@@ -188,3 +188,8 @@ class Data:
         for record in self.sift(limit=5):
             output += pprint.pformat(record) + "\n"
         return output
+
+    def __bool__(self):
+        for _ in self:
+            return True
+        return False
