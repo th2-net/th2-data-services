@@ -101,24 +101,23 @@ class Data:
                 else:
                     record = step["callback"](record)
                     if record is None:
+                        record = None
                         break
 
-            if isinstance(record, list):
-                for r in record:
-                    yield r
-            else:
-                yield record
+            if record is not None:
+                if isinstance(record, (list, tuple)):
+                    for r in record:
+                        yield r
+                else:
+                    yield record
 
     def filter(self, callback: Callable) -> "Data":
         """Append filter to workflow.
 
         :param callback: Filter function.
         """
-        def callback_(r):
-            if callback(r):
-                return r
-
-        new_workflow = [*self._workflow.copy(), {"filter": True, "callback": callback_}]
+        new_workflow = [*self._workflow.copy(),
+                        {"filter": True, "callback": lambda record: record if callback(record) else None}]
         working_data, self._data = tee(self._data)
         return Data(working_data, new_workflow, self._cache_status)
 
