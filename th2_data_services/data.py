@@ -116,8 +116,7 @@ class Data:
 
         :param callback: Filter function.
         """
-        new_workflow = [*self._workflow.copy(),
-                        {"filter": True, "callback": lambda record: record if callback(record) else None}]
+        new_workflow = [*self._workflow.copy(), {"filter": True, "callback": lambda record: record if callback(record) else None}]
         working_data, self._data = tee(self._data)
         return Data(working_data, new_workflow, self._cache_status)
 
