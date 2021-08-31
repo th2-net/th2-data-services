@@ -220,8 +220,9 @@ class DataSource:
                 record_data = json.loads(record.data)
                 yield record_data
 
-    def find_messages_by_id_from_data_provider(self,
-                                               messages_id: Union[Iterable, str]) -> Union[List[dict], dict]:
+    def find_messages_by_id_from_data_provider(
+        self, messages_id: Union[Iterable, str]
+    ) -> Union[List[dict], dict]:
         """Gets messages by ids using URL request.
 
         :param messages_id: Messages id.
@@ -235,7 +236,9 @@ class DataSource:
             result.append(response.json())
         return result if len(result) > 1 else result[0]
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Union[List[dict], dict]:
+    def find_events_by_id_from_data_provider(
+        self, events_id: Union[Iterable, str]
+    ) -> Union[List[dict], dict]:
         """Gets events by ids using URL request.
 
         :param events_id: Events id.

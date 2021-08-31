@@ -98,7 +98,7 @@ def test_aggregate_by_groups_computing_with_pivot(data_for_analyzing: List[dict]
 
 
 def test_aggregate_by_groups_computing_with_pivot_and_total_row(
-        data_for_analyzing: List[dict],
+    data_for_analyzing: List[dict],
 ):
     output = aggregate_by_groups(
         data_for_analyzing, "type", "successful", pivot="successful", total_row=True
@@ -468,7 +468,9 @@ def test_aggregate_group_by_intervals_time_series_empty():
 
 def test_aggregate_group_by_intervals_time_has_not_time_type():
     with pytest.raises(ValueError) as exc_info:
-        aggregate_groups_by_intervals([{"time": ["test1", "test2", "test3"]}], "time", "field")
+        aggregate_groups_by_intervals(
+            [{"time": ["test1", "test2", "test3"]}], "time", "field"
+        )
     assert exc_info.value
 
 

@@ -202,10 +202,12 @@ class EventsTree:
             new_events = data_source.find_events_by_id_from_data_provider(
                 self._unknown_events.keys()
             )
+            if isinstance(new_events, dict):
+                new_events = [new_events]
             self.build_tree(new_events)
             if self._unknown_events == old_unknown_events:
                 break
             old_unknown_events = self._unknown_events.copy()
 
     def get_children(self, parent_event_id) -> list:
-        return [e for e in self._events if e['parentEventId'] == parent_event_id]
+        return [e for e in self._events if e["parentEventId"] == parent_event_id]
