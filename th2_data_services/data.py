@@ -90,43 +90,35 @@ class Data:
 
         :return: Generator records.
         """
-        working_data, self._data = tee(self._data)
+        working_data, _ = tee(self._data)
         for record in working_data:
             for step in self._workflow:
                 if isinstance(record, (list, tuple)):
-                    pending_records = record.copy()
-                    record.clear()
-                    for record_ in pending_records:
-                        if step["filter"]:
-                            skip_record = not step["callback"](record_)
-                            if skip_record:
-                                continue
-                        else:
-                            record_ = step["callback"](record_)
-                            if record_ is None:
-                                continue
-                        record.append(record_)
+                    record = [r for r in record if step["callback"](r) is not None]
+                    if not record:
+                        record = None
+                        break
                 else:
-                    if step["filter"]:
-                        skip_record = not step["callback"](record)
-                        if skip_record:
-                            record = None
-                            break
-                    else:
-                        record = step["callback"](record)
-                        if record is None:
-                            break
-            if not isinstance(record, (list, tuple)):
-                record = [record] if record is not None else []
-            for record_ in record:
-                yield record_
+                    record = step["callback"](record)
+                    if record is None:
+                        break
+
+            if isinstance(record, list):
+                for r in record:
+                    yield r
+            else:
+                yield record
 
     def filter(self, callback: Callable) -> "Data":
         """Append filter to workflow.
 
         :param callback: Filter function.
         """
-        new_workflow = [*self._workflow.copy(), {"filter": True, "callback": callback}]
+        def callback_(r):
+            if callback(r):
+                return r
+
+        new_workflow = [*self._workflow.copy(), {"filter": True, "callback": callback_}]
         working_data, self._data = tee(self._data)
         return Data(working_data, new_workflow, self._cache_status)
 
