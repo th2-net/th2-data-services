@@ -11,8 +11,9 @@ from th2_data_services.data_source import DataSource
 def demo_data_source():
     DEMO_HOST = "10.64.66.66"
     DEMO_PORT = "30999"
-    data_source = DataSource(F"http://{DEMO_HOST}:{DEMO_PORT}")
+    data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
     return data_source
+
 
 @pytest.fixture
 def general_data() -> List[dict]:

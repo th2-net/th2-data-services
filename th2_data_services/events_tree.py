@@ -162,10 +162,10 @@ class EventsTree:
         return ancestor
 
     def get_ancestor_by_super_type(
-            self,
-            event: dict,
-            super_type: str,
-            super_type_get_func: Callable[[dict, Dict[int, dict]], str],
+        self,
+        event: dict,
+        super_type: str,
+        super_type_get_func: Callable[[dict, Dict[int, dict]], str],
     ) -> Optional[dict]:
         """Gets event ancestor by super_type.
 
@@ -210,4 +210,4 @@ class EventsTree:
             old_unknown_events = self._unknown_events.copy()
 
     def get_children(self, parent_event_id) -> list:
-        return [e for e in self._events if e['parentEventId'] == parent_event_id]
+        return [e for e in self._events if e["parentEventId"] == parent_event_id]

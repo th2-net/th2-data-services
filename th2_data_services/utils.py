@@ -108,7 +108,9 @@ def aggregate_several_group(
         for output, title in zip(results, chain(cycle([""]), cycle(["</br>"]))):
             html_str += '<th style="text-align: center"><td style="vertical-align:top">'
             html_str += f"<h2>{title}<h2>"
-            html_str += output.to_html().replace("table", 'table style="display:inline"')
+            html_str += output.to_html().replace(
+                "table", 'table style="display:inline"'
+            )
             html_str += "</td><th>"
         display_html(html_str, raw=True)
 
@@ -157,7 +159,9 @@ def search_fields(
     return found_fields
 
 
-def append_total_rows(data: DataFrameGroupBy, fields_options: Dict[str, str]) -> Union[DataFrame, DataFrameGroupBy]:
+def append_total_rows(
+    data: DataFrameGroupBy, fields_options: Dict[str, str]
+) -> Union[DataFrame, DataFrameGroupBy]:
     """Append total rows in data.
 
     :param data: Data.
