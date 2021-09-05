@@ -17,11 +17,11 @@ repos:
   - repo: https://github.com/myint/autoflake
     rev: v1.4
     hooks:
-    - id: autoflake
-      name: autoflake
-      entry: autoflake
-      language: system
-      types: [ python ]
-      args: [ --in-place, --remove-all-unused-imports ]
+      - id: autoflake
+        name: autoflake
+        entry: autoflake
+        language: system
+        types: [ python ]
+        args: [ --in-place, --remove-all-unused-imports ]
 
-default_stages: [commit, push]
+default_stages: [ commit, push ]
