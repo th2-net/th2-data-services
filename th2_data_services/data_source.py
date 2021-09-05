@@ -1,6 +1,7 @@
 import pickle
 import requests
 import json
+import urllib3
 from weakref import finalize
 from pathlib import Path
 from datetime import datetime
@@ -24,7 +25,7 @@ class DataSource:
             for file in path.iterdir():
                 current_file = str(file)
                 if filename in current_file:
-                    file.unlink(missing_ok=True)
+                    file.unlink()
 
     @property
     def url(self):
@@ -47,21 +48,15 @@ class DataSource:
         if not route:
             raise ValueError("Route is required field. Please fill it.")
 
-        if kwargs.get("startTimestamp") and isinstance(
-            kwargs.get("startTimestamp"), datetime
-        ):
-            kwargs["startTimestamp"] = int(
-                kwargs["startTimestamp"].timestamp() * 1000
-            )  # unix timestamp in milliseconds
-        if kwargs.get("endTimestamp") and isinstance(
-            kwargs.get("endTimestamp"), datetime
-        ):
+        if kwargs.get("startTimestamp") and isinstance(kwargs.get("startTimestamp"), datetime):
+            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+        if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
         url = self.__url + route
         url = f"{url}?{urlencode(kwargs)}"
 
-        yield from self.__sse_request(url)
+        yield from self.__execute_sse_request(url)
 
     def get_events_from_data_provider(self, cache=False, **kwargs) -> Data:
         """Sends SSE request for events. For help use this readme
@@ -78,13 +73,9 @@ class DataSource:
                 "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
             )
         if isinstance(kwargs["startTimestamp"], datetime):
-            kwargs["startTimestamp"] = int(
-                kwargs["startTimestamp"].timestamp() * 1000
-            )  # unix timestamp in milliseconds
+            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
 
-        if kwargs.get("endTimestamp") and isinstance(
-            kwargs.get("endTimestamp"), datetime
-        ):
+        if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
         url = self.__url + "/search/sse/events"
@@ -116,19 +107,12 @@ class DataSource:
                 "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
             )
         if not kwargs.get("stream"):
-            raise ValueError(
-                "'stream' is required field. Please note it."
-                "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
-            )
+            raise ValueError("'stream' is required field. Please note it." "More information on request here: https://github.com/th2-net/th2-rpt-data-provider")
 
         if isinstance(kwargs["startTimestamp"], datetime):
-            kwargs["startTimestamp"] = int(
-                kwargs["startTimestamp"].timestamp() * 1000
-            )  # unix timestamp in milliseconds
+            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
 
-        if kwargs.get("endTimestamp") and isinstance(
-            kwargs.get("endTimestamp"), datetime
-        ):
+        if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
             kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
 
         streams = kwargs.pop("stream")
@@ -182,9 +166,7 @@ class DataSource:
                 except EOFError:
                     break
 
-    def __load_from_provider(
-        self, url: str, filename=None
-    ) -> Generator[dict, None, None]:
+    def __load_from_provider(self, url: str, filename=None) -> Generator[dict, None, None]:
         """Loads records from data provider.
 
         :param url: Url.
@@ -196,7 +178,7 @@ class DataSource:
             path = Path("./").joinpath("temp").joinpath(filename)
             file = open(path, "wb")
 
-        for record in self.__sse_request(url):
+        for record in self.__execute_sse_request(url):
             if file is not None:
                 pickle.dump(record, file)
             yield record
@@ -204,25 +186,36 @@ class DataSource:
         if file:
             file.close()
 
-    @staticmethod
-    def __sse_request(url: str):
-        """Creates sse connection to server.
+    def __execute_sse_request(self, url: str):
+        """Creates SSE connection to server.
 
         :param url: Url.
         :return: Response data.
         """
-        headers = {"Accept": "text/event-stream"}
-
-        response = requests.get(url, stream=True, headers=headers)
+        response = self.__create_stream_connection(url)
         client = SSEClient(response)
         for record in client.events():
             if record.event not in ["close", "error", "keep_alive"]:
                 record_data = json.loads(record.data)
                 yield record_data
 
-    def find_messages_by_id_from_data_provider(
-        self, messages_id: Union[Iterable, str]
-    ) -> Union[List[dict], dict]:
+    @staticmethod
+    def __create_stream_connection(url: str):
+        """Create stream connection.
+
+        :param url: Url.
+        :return: Response stream data.
+        """
+        headers = {"Accept": "text/event-stream"}
+        http = urllib3.PoolManager()
+        response = http.request(method="GET", url=url, headers=headers, preload_content=False)
+
+        for chunk in response.stream(128):
+            yield chunk
+
+        response.release_conn()
+
+    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Union[List[dict], dict]:
         """Gets messages by ids using URL request.
 
         :param messages_id: Messages id.
@@ -236,9 +229,7 @@ class DataSource:
             result.append(response.json())
         return result if len(result) > 1 else result[0]
 
-    def find_events_by_id_from_data_provider(
-        self, events_id: Union[Iterable, str]
-    ) -> Union[List[dict], dict]:
+    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Union[List[dict], dict]:
         """Gets events by ids using URL request.
 
         :param events_id: Events id.
