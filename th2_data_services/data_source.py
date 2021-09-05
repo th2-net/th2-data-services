@@ -14,9 +14,10 @@ from th2_data_services.data import Data
 
 
 class DataSource:
-    def __init__(self, url):
+    def __init__(self, url, chunk_length: int = 128):
         self.url = url
         self._finalizer = finalize(self, self.remove)
+        self.__chunk_length = chunk_length
 
     def remove(self):
         filename = urlparse(self.__url).netloc
@@ -199,8 +200,7 @@ class DataSource:
                 record_data = json.loads(record.data)
                 yield record_data
 
-    @staticmethod
-    def __create_stream_connection(url: str):
+    def __create_stream_connection(self, url: str):
         """Create stream connection.
 
         :param url: Url.
@@ -210,7 +210,7 @@ class DataSource:
         http = urllib3.PoolManager()
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
 
-        for chunk in response.stream(128):
+        for chunk in response.stream(self.__chunk_length):
             yield chunk
 
         response.release_conn()
