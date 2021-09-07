@@ -5,7 +5,7 @@ from itertools import tee
 from pathlib import Path
 from typing import Generator, List, Union, Iterator, Callable
 
-DataSet = Union[Iterator, Generator[dict, None, None]]
+DataSet = Union[Iterator, Callable[..., Generator[dict, None, None]]]
 
 
 class Data:
@@ -35,7 +35,6 @@ class Data:
             if self._cache_status:
                 filepath = f"./temp/{filename}"
                 file = open(filepath, "wb")
-
             for record in self.__apply_workflow():
                 if file is not None:
                     pickle.dump(record, file)
@@ -90,7 +89,7 @@ class Data:
 
         :return: Generator records.
         """
-        working_data, _ = tee(self._data)
+        working_data = self._data() if callable(self._data) else self._data
         for record in working_data:
             for step in self._workflow:
                 if isinstance(record, (list, tuple)):

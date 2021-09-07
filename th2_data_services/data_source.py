@@ -7,7 +7,7 @@ from pathlib import Path
 from datetime import datetime
 from csv import DictReader
 from pprint import pformat
-from typing import Generator, List, Iterable, Union
+from typing import Generator, Iterable, List, Union
 from urllib.parse import urlencode, urlparse
 from sseclient import SSEClient
 from th2_data_services.data import Data
@@ -132,7 +132,7 @@ class DataSource:
         if filename and self.__check_cache(filename):
             data = self.__load_file(filename)
         else:
-            data = self.__load_from_provider(url, filename=filename if cache else None)
+            data = self.__load_data_stream(url, filename)
         return Data(data)
 
     def __check_cache(self, filename: str) -> bool:
@@ -167,7 +167,10 @@ class DataSource:
                 except EOFError:
                     break
 
-    def __load_from_provider(self, url: str, filename=None) -> Generator[dict, None, None]:
+    def __load_data_stream(self, url: str, filename: str = None) -> Generator[dict, None, None]:
+        return self.__load_from_provider(url, filename)
+
+    def __load_from_provider(self, url: str, filename: str = None) -> Generator[dict, None, None]:
         """Loads records from data provider.
 
         :param url: Url.
