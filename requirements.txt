@@ -8,3 +8,4 @@ setuptools==57.0.0
 vaex==4.3.0
 ipython==7.16.1
 urllib3==1.26.6
+dask[dataframe]==2021.3.0
