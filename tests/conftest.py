@@ -1,10 +1,22 @@
 from collections import namedtuple
+from datetime import datetime
+from typing import List, NamedTuple
 
 import pytest
 
+from th2_data_services.data_source import DataSource
+
 
 @pytest.fixture
-def general_data():
+def demo_data_source():
+    DEMO_HOST = "10.64.66.66"
+    DEMO_PORT = "30999"
+    data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+    return data_source
+
+
+@pytest.fixture
+def general_data() -> List[dict]:
     data = [
         {
             "batchId": None,
@@ -196,7 +208,7 @@ def general_data():
 
 
 @pytest.fixture
-def test_events_tree():
+def test_events_tree() -> NamedTuple:
     TestEventTree = namedtuple("TestEventTree", ["events", "unknown_events"])
     test_events_tree = TestEventTree(
         events=[
@@ -239,3 +251,662 @@ def get_super_type(record: dict, *args):
             event_type = "Test Case"
 
     return event_type
+
+
+@pytest.fixture
+def data_for_analyzing() -> List[dict]:
+    data = [
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=1, second=1),
+            "type": "Test Run",
+            "eventName": "test run 1",
+            "successful": True,
+            "attachedMessageIds": False,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=10, second=2),
+            "type": "Heartbeat",
+            "eventName": "heartbeat",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=2, second=12),
+            "type": "Test Run",
+            "eventName": "test run 2",
+            "successful": False,
+            "attachedMessageIds": False,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=4, second=30),
+            "type": "Test Case",
+            "eventName": "test case 1",
+            "successful": True,
+            "attachedMessageIds": False,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=13, second=40),
+            "type": "Receive message",
+            "eventName": "message123",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=2, minute=12, second=11),
+            "type": "Heartbeat",
+            "eventName": "heartbeat",
+            "successful": False,
+            "attachedMessageIds": False,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=2, minute=10, second=1),
+            "type": "Test Case",
+            "eventName": "test case 2",
+            "successful": True,
+            "attachedMessageIds": False,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=32, second=42),
+            "type": "Test Case",
+            "eventName": "test run 3",
+            "successful": True,
+            "attachedMessageIds": False,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=41, second=19),
+            "type": "Receive message",
+            "eventName": "message122",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=45, second=22),
+            "type": "Verification",
+            "eventName": "verification32",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=33, second=12),
+            "type": "Heartbeat",
+            "eventName": "heartbeat",
+            "successful": False,
+            "attachedMessageIds": False,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=1, second=59),
+            "type": "Test Case",
+            "eventName": "test case 3",
+            "successful": False,
+            "attachedMessageIds": False,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=3, second=54),
+            "type": "Send message",
+            "eventName": "message",
+            "successful": False,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=54, second=52),
+            "type": "Verification",
+            "eventName": "verification33",
+            "successful": False,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=2, minute=12, second=32),
+            "type": "Send message",
+            "eventName": "message123",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=2, minute=33, second=1),
+            "type": "Verification",
+            "eventName": "verification",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=33, second=33),
+            "type": "Test Run",
+            "eventName": "test run 4",
+            "successful": False,
+            "attachedMessageIds": False,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=44, second=44),
+            "type": "Send message",
+            "eventName": "message122",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=23, second=23),
+            "type": "Receive message",
+            "eventName": "message 333",
+            "successful": False,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=55, second=55),
+            "type": "Send message",
+            "eventName": "message 333",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=11, second=11),
+            "type": "Receive message",
+            "eventName": "message 444",
+            "successful": False,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=43, second=43),
+            "type": "Send message",
+            "eventName": "message 444",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=56, second=32),
+            "type": "Receive message",
+            "eventName": "message 444",
+            "successful": True,
+            "attachedMessageIds": True,
+        },
+        {
+            "time": datetime(year=2021, month=1, day=1, hour=1, minute=40, second=10),
+            "type": "Test Case",
+            "eventName": "test case 4",
+            "successful": True,
+            "attachedMessageIds": False,
+        },
+    ]
+    return data
+
+
+@pytest.fixture
+def general_body():
+    data = {
+        "rows": {
+            "AccountType": {"columns": {"fieldValue": "1"}, "type": "row"},
+            "ClOrdID": {"columns": {"fieldValue": "9601585"}, "type": "row"},
+            "OrdType": {"columns": {"fieldValue": "2"}, "type": "row"},
+            "OrderCapacity": {"columns": {"fieldValue": "A"}, "type": "row"},
+            "OrderQty": {"columns": {"fieldValue": "30"}, "type": "row"},
+            "Price": {"columns": {"fieldValue": "55"}, "type": "row"},
+            "SecondaryClOrdID": {"columns": {"fieldValue": "11111"}, "type": "row"},
+            "SecurityID": {"columns": {"fieldValue": "INSTR1"}, "type": "row"},
+            "SecurityIDSource": {"columns": {"fieldValue": "8"}, "type": "row"},
+            "Side": {"columns": {"fieldValue": "1"}, "type": "row"},
+            "TradingParty": {
+                "rows": {
+                    "NoPartyIDs": {
+                        "rows": {
+                            "0": {
+                                "rows": {
+                                    "PartyID": {
+                                        "columns": {"fieldValue": "DEMO-CONN1"},
+                                        "type": "row",
+                                    },
+                                    "PartyIDSource": {
+                                        "columns": {"fieldValue": "D"},
+                                        "type": "row",
+                                    },
+                                    "PartyRole": {
+                                        "columns": {"fieldValue": "76"},
+                                        "type": "row",
+                                    },
+                                },
+                                "type": "collection",
+                            },
+                            "1": {
+                                "rows": {
+                                    "PartyID": {
+                                        "columns": {"fieldValue": "0"},
+                                        "type": "row",
+                                    },
+                                    "PartyIDSource": {
+                                        "columns": {"fieldValue": "P"},
+                                        "type": "row",
+                                    },
+                                    "PartyRole": {
+                                        "columns": {"fieldValue": "3"},
+                                        "type": "row",
+                                    },
+                                },
+                                "type": "collection",
+                            },
+                            "2": {
+                                "rows": {
+                                    "PartyID": {
+                                        "columns": {"fieldValue": "0"},
+                                        "type": "row",
+                                    },
+                                    "PartyIDSource": {
+                                        "columns": {"fieldValue": "P"},
+                                        "type": "row",
+                                    },
+                                    "PartyRole": {
+                                        "columns": {"fieldValue": "122"},
+                                        "type": "row",
+                                    },
+                                },
+                                "type": "collection",
+                            },
+                            "3": {
+                                "rows": {
+                                    "PartyID": {
+                                        "columns": {"fieldValue": "3"},
+                                        "type": "row",
+                                    },
+                                    "PartyIDSource": {
+                                        "columns": {"fieldValue": "P"},
+                                        "type": "row",
+                                    },
+                                    "PartyRole": {
+                                        "columns": {"fieldValue": "12"},
+                                        "type": "row",
+                                    },
+                                },
+                                "type": "collection",
+                            },
+                        },
+                        "type": "collection",
+                    }
+                },
+                "type": "collection",
+            },
+            "TransactTime": {
+                "columns": {"fieldValue": "2021-06-20T13:44:48.170589"},
+                "type": "row",
+            },
+        },
+        "type": "treeTable",
+    }
+    return data
+
+
+@pytest.fixture
+def complex_body():
+    data = [
+        {
+            "fields": {
+                "AccountType": {
+                    "actual": "1",
+                    "expected": "1",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "ClOrdID": {
+                    "actual": "9601585",
+                    "expected": "9601585",
+                    "key": True,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "CumQty": {
+                    "actual": "0",
+                    "expected": "0",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "ExecID": {
+                    "actual": "2346",
+                    "expected": "*",
+                    "key": False,
+                    "operation": "NOT_EMPTY",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "ExecType": {
+                    "actual": "0",
+                    "expected": "0",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "LeavesQty": {
+                    "actual": "30",
+                    "expected": "30",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "OrdStatus": {
+                    "actual": "0",
+                    "expected": "0",
+                    "key": True,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "OrdType": {
+                    "actual": "2",
+                    "expected": "2",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "OrderCapacity": {
+                    "actual": "A",
+                    "expected": "A",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "OrderID": {
+                    "actual": "867",
+                    "expected": "*",
+                    "key": False,
+                    "operation": "NOT_EMPTY",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "OrderQty": {
+                    "actual": "30",
+                    "expected": "30",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "Price": {
+                    "actual": "55",
+                    "expected": "55",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "SecurityID": {
+                    "actual": "INSTR1",
+                    "expected": "INSTR1",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "SecurityIDSource": {
+                    "actual": "8",
+                    "expected": "8",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "Side": {
+                    "actual": "1",
+                    "expected": "1",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "Text": {
+                    "actual": "Simulated New Order Buy is placed",
+                    "expected": "*",
+                    "key": False,
+                    "operation": "NOT_EMPTY",
+                    "status": "PASSED",
+                    "type": "field",
+                },
+                "TradingParty": {
+                    "actual": "1",
+                    "expected": "1",
+                    "fields": {
+                        "NoPartyIDs": {
+                            "actual": "4",
+                            "expected": "4",
+                            "fields": {
+                                "0": {
+                                    "actual": "3",
+                                    "expected": "3",
+                                    "fields": {
+                                        "PartyID": {
+                                            "actual": "DEMO-CONN1",
+                                            "expected": "DEMO-CONN1",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                        "PartyIDSource": {
+                                            "actual": "D",
+                                            "expected": "D",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                        "PartyRole": {
+                                            "actual": "76",
+                                            "expected": "76",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                    },
+                                    "key": False,
+                                    "operation": "EQUAL",
+                                    "type": "collection",
+                                },
+                                "1": {
+                                    "actual": "3",
+                                    "expected": "3",
+                                    "fields": {
+                                        "PartyID": {
+                                            "actual": "0",
+                                            "expected": "0",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                        "PartyIDSource": {
+                                            "actual": "P",
+                                            "expected": "P",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                        "PartyRole": {
+                                            "actual": "3",
+                                            "expected": "3",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                    },
+                                    "key": False,
+                                    "operation": "EQUAL",
+                                    "type": "collection",
+                                },
+                                "2": {
+                                    "actual": "3",
+                                    "expected": "3",
+                                    "fields": {
+                                        "PartyID": {
+                                            "actual": "0",
+                                            "expected": "0",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                        "PartyIDSource": {
+                                            "actual": "P",
+                                            "expected": "P",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                        "PartyRole": {
+                                            "actual": "122",
+                                            "expected": "122",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                    },
+                                    "key": False,
+                                    "operation": "EQUAL",
+                                    "type": "collection",
+                                },
+                                "3": {
+                                    "actual": "3",
+                                    "expected": "3",
+                                    "fields": {
+                                        "PartyID": {
+                                            "actual": "3",
+                                            "expected": "3",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                        "PartyIDSource": {
+                                            "actual": "P",
+                                            "expected": "P",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                        "PartyRole": {
+                                            "actual": "12",
+                                            "expected": "12",
+                                            "key": False,
+                                            "operation": "EQUAL",
+                                            "status": "PASSED",
+                                            "type": "field",
+                                        },
+                                    },
+                                    "key": False,
+                                    "operation": "EQUAL",
+                                    "type": "collection",
+                                },
+                            },
+                            "key": False,
+                            "operation": "EQUAL",
+                            "type": "collection",
+                        }
+                    },
+                    "key": False,
+                    "operation": "EQUAL",
+                    "type": "collection",
+                },
+                "TransactTime": {
+                    "actual": "2021-06-20T10:44:55",
+                    "expected": "null",
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "NA",
+                    "type": "field",
+                },
+                "header": {
+                    "actual": "7",
+                    "expected": "7",
+                    "fields": {
+                        "BeginString": {
+                            "actual": "FIXT.1.1",
+                            "expected": "FIXT.1.1",
+                            "key": False,
+                            "operation": "EQUAL",
+                            "status": "PASSED",
+                            "type": "field",
+                        },
+                        "BodyLength": {
+                            "actual": "310",
+                            "expected": "*",
+                            "key": False,
+                            "operation": "NOT_EMPTY",
+                            "status": "PASSED",
+                            "type": "field",
+                        },
+                        "MsgSeqNum": {
+                            "actual": "1291",
+                            "expected": "*",
+                            "key": False,
+                            "operation": "NOT_EMPTY",
+                            "status": "PASSED",
+                            "type": "field",
+                        },
+                        "MsgType": {
+                            "actual": "8",
+                            "expected": "8",
+                            "key": False,
+                            "operation": "EQUAL",
+                            "status": "PASSED",
+                            "type": "field",
+                        },
+                        "SenderCompID": {
+                            "actual": "FGW",
+                            "expected": "*",
+                            "key": False,
+                            "operation": "NOT_EMPTY",
+                            "status": "PASSED",
+                            "type": "field",
+                        },
+                        "SendingTime": {
+                            "actual": "2021-06-20T10:44:55.346",
+                            "expected": "*",
+                            "key": False,
+                            "operation": "NOT_EMPTY",
+                            "status": "PASSED",
+                            "type": "field",
+                        },
+                        "TargetCompID": {
+                            "actual": "DEMO-CONN1",
+                            "expected": "DEMO-CONN1",
+                            "key": False,
+                            "operation": "EQUAL",
+                            "status": "PASSED",
+                            "type": "field",
+                        },
+                    },
+                    "key": False,
+                    "operation": "EQUAL",
+                    "type": "collection",
+                },
+                "trailer": {
+                    "actual": "1",
+                    "expected": "null",
+                    "fields": {
+                        "CheckSum": {
+                            "actual": "056",
+                            "expected": "null",
+                            "key": False,
+                            "operation": "EQUAL",
+                            "status": "NA",
+                            "type": "field",
+                        }
+                    },
+                    "key": False,
+                    "operation": "EQUAL",
+                    "status": "NA",
+                    "type": "collection",
+                },
+            },
+            "type": "verification",
+        }
+    ]
+
+    return data

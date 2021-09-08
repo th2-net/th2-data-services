@@ -5,7 +5,7 @@ from itertools import tee
 from pathlib import Path
 from typing import Generator, List, Union, Iterator, Callable
 
-DataSet = Union[Iterator, Generator[dict, None, None]]
+DataSet = Union[Iterator, Callable[..., Generator[dict, None, None]]]
 
 
 class Data:
@@ -35,7 +35,6 @@ class Data:
             if self._cache_status:
                 filepath = f"./temp/{filename}"
                 file = open(filepath, "wb")
-
             for record in self.__apply_workflow():
                 if file is not None:
                     pickle.dump(record, file)
@@ -49,7 +48,7 @@ class Data:
             return self._len
         else:
             self._len = 0
-            for i in self:
+            for _ in self:
                 self._len += 1
             return self._len
 
@@ -90,47 +89,37 @@ class Data:
 
         :return: Generator records.
         """
-        working_data, self._data = tee(self._data)
+        working_data = self._data() if callable(self._data) else self._data
         for record in working_data:
             for step in self._workflow:
                 if isinstance(record, (list, tuple)):
-                    pending_records = record.copy()
-                    record.clear()
-                    for record_ in pending_records:
-                        if step["filter"]:
-                            skip_record = not step["callback"](record_)
-                            if skip_record:
-                                continue
-                        else:
-                            record_ = step["callback"](record_)
-                            if record_ is None:
-                                continue
-                        record.append(record_)
+                    record = [r for r in record if step["callback"](r) is not None]
+                    if not record:
+                        record = None
+                        break
                 else:
-                    if step["filter"]:
-                        skip_record = not step["callback"](record)
-                        if skip_record:
-                            record = None
-                            break
-                    else:
-                        record = step["callback"](record)
-                        if record is None:
-                            break
-            if not isinstance(record, (list, tuple)):
-                record = [record] if record is not None else []
-            for record_ in record:
-                yield record_
+                    record = step["callback"](record)
+                    if record is None:
+                        record = None
+                        break
 
-    def filter(self, callback: Callable) -> 'Data':
+            if record is not None:
+                if isinstance(record, (list, tuple)):
+                    for r in record:
+                        yield r
+                else:
+                    yield record
+
+    def filter(self, callback: Callable) -> "Data":
         """Append filter to workflow.
 
         :param callback: Filter function.
         """
-        new_workflow = [*self._workflow.copy(), {"filter": True, "callback": callback}]
+        new_workflow = [*self._workflow.copy(), {"filter": True, "callback": lambda record: record if callback(record) else None}]
         working_data, self._data = tee(self._data)
         return Data(working_data, new_workflow, self._cache_status)
 
-    def map(self, callback: Callable) -> 'Data':
+    def map(self, callback: Callable) -> "Data":
         """Append transform function to workflow.
 
         :param callback: Transform function.
@@ -158,7 +147,7 @@ class Data:
             yield record
             pushed += 1
 
-    def use_cache(self, status: bool) -> 'Data':
+    def use_cache(self, status: bool) -> "Data":
         """Change status cache.
 
         :param status: Status.
@@ -170,8 +159,26 @@ class Data:
 
         return self
 
+    def find_by(self, record_field, field_values) -> Generator:
+        """Get the records whose field value is written in the field_values list."""
+        values_for_find = list(field_values)
+        for record in self:
+            if values_for_find:
+                if record[record_field] in values_for_find:
+                    values_for_find.remove(record[record_field])
+                    yield record
+                else:
+                    continue
+            else:
+                break
+
     def __str__(self):
         output = "------------- Printed first 5 records -------------\n"
         for record in self.sift(limit=5):
             output += pprint.pformat(record) + "\n"
         return output
+
+    def __bool__(self):
+        for _ in self:
+            return True
+        return False
