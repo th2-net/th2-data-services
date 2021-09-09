@@ -3,7 +3,7 @@ from typing import Generator, Union, Iterator, Optional, Callable, Dict, List
 
 from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
-from anytree import Node, RenderTree
+from anytree import Node, RenderTree, findall
 
 
 class EventsTree:
@@ -164,10 +164,10 @@ class EventsTree:
         return ancestor
 
     def get_ancestor_by_super_type(
-            self,
-            event: dict,
-            super_type: str,
-            super_type_get_func: Callable[[dict, Dict[int, dict]], str],
+        self,
+        event: dict,
+        super_type: str,
+        super_type_get_func: Callable[[dict, Dict[int, dict]], str],
     ) -> Optional[dict]:
         """Gets event ancestor by super_type.
 
@@ -201,9 +201,7 @@ class EventsTree:
         """
         old_unknown_events = self._unknown_events.keys()
         while self._unknown_events:
-            new_events = data_source.find_events_by_id_from_data_provider(
-                self._unknown_events.keys()
-            )
+            new_events = data_source.find_events_by_id_from_data_provider(self._unknown_events.keys())
             if isinstance(new_events, dict):
                 new_events = [new_events]
             self.build_tree(new_events)
@@ -219,10 +217,37 @@ class TreeNode(Node):
     separator = " | "
 
     def __str__(self):
-        s = ''
+        s = ""
         for pre, fill, node in RenderTree(self):
-            s += "%s%s\n" % (pre, node.name)
+            status = "P" if node.data["successful"] else "F"
+            s += "[%s] %s%s\n" % (status, pre, node.name)
         return s
+
+    def show(self, fmt: Callable = None, failed_only=False, show_status=True):
+        if fmt is None:
+
+            def fmt(pre, fill, node):
+                if show_status:
+                    status = "P" if node.data["successful"] else "F"
+                    return "[%s] %s%s\n" % (status, pre, node.name)
+                else:
+                    return "%s%s\n" % (pre, node.name)
+
+        s = ""
+        if not failed_only:
+            for pre, fill, node in RenderTree(self):
+                s += fmt(pre, fill, node)
+        else:
+            for pre, fill, node in RenderTree(self):
+                if not node.data["successful"]:
+                    s += fmt(pre, fill, node)
+        return s
+
+    def get_by_status(self, status: bool):
+        return findall(self, lambda node: node.data["successful"] is status)
+
+    def get_by_leaves_status(self, status: bool):
+        return [n for n in self.leaves if n.data["successful"] is status]
 
 
 class EventsTree2:
@@ -234,15 +259,15 @@ class EventsTree2:
         if data is None:
             data = []
 
-        self.data_source = ds
+        self._data_source = ds
         self._nodes = []
         self.roots: List[TreeNode] = []
         self.events_ids = []
         self.parent_events_ids = set()
 
-        self.build_tree(data)
+        self._build_tree(data)
 
-    def build_tree(self, data: Union[Iterator, Generator[dict, None, None]]) -> None:
+    def _build_tree(self, data: Union[Iterator, Generator[dict, None, None]]) -> None:
         """Build or append new events to family tree.
 
         :param data: Events.
@@ -256,7 +281,7 @@ class EventsTree2:
             except KeyError:
                 pass
 
-            self._nodes.append(TreeNode(name=event['eventName'], data=event))
+            self._nodes.append(TreeNode(name=event["eventName"], data=event))
             self.events_ids.append(event_id)
             self.parent_events_ids.add(event["parentEventId"])
 
@@ -273,13 +298,12 @@ class EventsTree2:
             except KeyError:
                 pass
 
-            self._nodes.append(TreeNode(name=event['eventName'], data=event))
+            self._nodes.append(TreeNode(name=event["eventName"], data=event))
 
         # search roots
         node: Node
         for node in self._nodes.copy():
-            if node.data['parentEventId'] is None:
-                print(node.data['parentEventId'])
+            if node.data["parentEventId"] is None:
                 self.roots.append(node)
                 self._nodes.remove(node)
 
@@ -288,7 +312,7 @@ class EventsTree2:
                 new_roots = []
                 for node in self._nodes.copy():
                     for root_node in roots:
-                        if node.data['parentEventId'] == root_node.data['eventId']:
+                        if node.data["parentEventId"] == root_node.data["eventId"]:
                             node.parent = root_node
                             self._nodes.remove(node)
                             new_roots.append(node)
@@ -300,13 +324,12 @@ class EventsTree2:
 
     def _get_unknown_events(self, unknown_parents):
         if unknown_parents:
-            new_events: list = self.data_source.find_events_by_id_from_data_provider(
-                unknown_parents
-            )
-            print(new_events)
+            new_events: list = self._data_source.find_events_by_id_from_data_provider(unknown_parents)
+
             unknown_parents2 = set()
+            new_events = [new_events] if not isinstance(new_events, list) else new_events
             for e in new_events:
-                parent_event_id = e['parentEventId']
+                parent_event_id = e["parentEventId"]
                 if parent_event_id is not None:
                     unknown_parents2.add(parent_event_id)
 

@@ -24,12 +24,12 @@ message or event it returns Dict.
 
 2. An experimental EventsTree2 class has been added with a real tree inside.
 
-## Bugs
+## BugFixes
 1. [TH2-2323] Memory leak when we use Data object.
 
 
 # v0.3.1
 
-## Bugs
+## BugFixes
 1. [TH2-2330] Data iterator have been broken in v0.3.0
 
