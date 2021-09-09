@@ -8,6 +8,7 @@
 1. [TH2-2232] Lib raises "TypeError" during Data.__del__ execution
 2. [TH2-2213] [DataServices]: Intermediate error in th2-rpt-data-provider when unloading events from th2-rpt-data-provider.
 
+
 # v0.3.0
 
 ## Improvement
@@ -25,3 +26,10 @@ message or event it returns Dict.
 
 ## Bugs
 1. [TH2-2323] Memory leak when we use Data object.
+
+
+# v0.3.1
+
+## Bugs
+1. [TH2-2330] Data iterator have been broken in v0.3.0
+

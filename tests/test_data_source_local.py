@@ -1,6 +1,3 @@
-from pprint import pprint
-from typing import List
-
 from th2_data_services.data_source import DataSource
 
 
@@ -13,8 +10,7 @@ def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
         "body": {},
         "endTimestamp": {"epochSecond": 1624185888, "nano": 169710000},
         "eventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
-        "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for "
-        "instrument INSTR1",
+        "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for " "instrument INSTR1",
         "eventType": "",
         "isBatched": False,
         "parentEventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
@@ -58,9 +54,7 @@ def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
         }
     )
 
-    event = data_source.find_events_by_id_from_data_provider(
-        "88a3ee80-d1b4-11eb-b0fb-199708acc7bc"
-    )
+    event = data_source.find_events_by_id_from_data_provider("88a3ee80-d1b4-11eb-b0fb-199708acc7bc")
     events = data_source.find_events_by_id_from_data_provider(
         [
             "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
@@ -109,9 +103,7 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
                 "messageType": "Heartbeat",
             },
             "fields": {
-                "trailer": {
-                    "messageValue": {"fields": {"CheckSum": {"simpleValue": "073"}}}
-                },
+                "trailer": {"messageValue": {"fields": {"CheckSum": {"simpleValue": "073"}}}},
                 "header": {
                     "messageValue": {
                         "fields": {
@@ -290,9 +282,7 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
                     "TransactTime": {"simpleValue": "2020-11-24T13:58:26.270"},
                     "SecondaryClOrdID": {"simpleValue": "33333"},
                     "AccountType": {"simpleValue": "1"},
-                    "trailer": {
-                        "messageValue": {"fields": {"CheckSum": {"simpleValue": "209"}}}
-                    },
+                    "trailer": {"messageValue": {"fields": {"CheckSum": {"simpleValue": "209"}}}},
                     "Side": {"simpleValue": "2"},
                     "Price": {"simpleValue": "34"},
                     "TimeInForce": {"simpleValue": "3"},
@@ -305,54 +295,36 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
                                             {
                                                 "messageValue": {
                                                     "fields": {
-                                                        "PartyRole": {
-                                                            "simpleValue": "76"
-                                                        },
-                                                        "PartyID": {
-                                                            "simpleValue": "DEMO-CONN2"
-                                                        },
-                                                        "PartyIDSource": {
-                                                            "simpleValue": "D"
-                                                        },
+                                                        "PartyRole": {"simpleValue": "76"},
+                                                        "PartyID": {"simpleValue": "DEMO-CONN2"},
+                                                        "PartyIDSource": {"simpleValue": "D"},
                                                     }
                                                 }
                                             },
                                             {
                                                 "messageValue": {
                                                     "fields": {
-                                                        "PartyRole": {
-                                                            "simpleValue": "3"
-                                                        },
+                                                        "PartyRole": {"simpleValue": "3"},
                                                         "PartyID": {"simpleValue": "0"},
-                                                        "PartyIDSource": {
-                                                            "simpleValue": "P"
-                                                        },
+                                                        "PartyIDSource": {"simpleValue": "P"},
                                                     }
                                                 }
                                             },
                                             {
                                                 "messageValue": {
                                                     "fields": {
-                                                        "PartyRole": {
-                                                            "simpleValue": "122"
-                                                        },
+                                                        "PartyRole": {"simpleValue": "122"},
                                                         "PartyID": {"simpleValue": "0"},
-                                                        "PartyIDSource": {
-                                                            "simpleValue": "P"
-                                                        },
+                                                        "PartyIDSource": {"simpleValue": "P"},
                                                     }
                                                 }
                                             },
                                             {
                                                 "messageValue": {
                                                     "fields": {
-                                                        "PartyRole": {
-                                                            "simpleValue": "12"
-                                                        },
+                                                        "PartyRole": {"simpleValue": "12"},
                                                         "PartyID": {"simpleValue": "3"},
-                                                        "PartyIDSource": {
-                                                            "simpleValue": "P"
-                                                        },
+                                                        "PartyIDSource": {"simpleValue": "P"},
                                                     }
                                                 }
                                             },
@@ -368,9 +340,7 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
                             "fields": {
                                 "BeginString": {"simpleValue": "FIXT.1.1"},
                                 "SenderCompID": {"simpleValue": "DEMO-CONN2"},
-                                "SendingTime": {
-                                    "simpleValue": "2020-11-24T10:58:26.317"
-                                },
+                                "SendingTime": {"simpleValue": "2020-11-24T10:58:26.317"},
                                 "TargetCompID": {"simpleValue": "FGW"},
                                 "MsgType": {"simpleValue": "D"},
                                 "MsgSeqNum": {"simpleValue": "443"},
@@ -385,12 +355,8 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
         }
     )
 
-    message = data_source.find_messages_by_id_from_data_provider(
-        "demo-conn2:first:1624005448022245399"
-    )
-    messages = data_source.find_messages_by_id_from_data_provider(
-        ["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"]
-    )
+    message = data_source.find_messages_by_id_from_data_provider("demo-conn2:first:1624005448022245399")
+    messages = data_source.find_messages_by_id_from_data_provider(["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"])
 
     # Check types
     assert isinstance(message, dict)

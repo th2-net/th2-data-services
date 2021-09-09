@@ -1,4 +1,6 @@
 import pickle
+from functools import partial
+
 import requests
 import json
 import urllib3
@@ -90,7 +92,7 @@ class DataSource:
         if filename and self.__check_cache(filename):
             data = self.__load_file(filename)
         else:
-            data = self.__load_from_provider(url, filename=filename if cache else None)
+            data = partial(self.__load_from_provider, url, filename if cache else None)
         return Data(data)
 
     def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
@@ -132,7 +134,7 @@ class DataSource:
         if filename and self.__check_cache(filename):
             data = self.__load_file(filename)
         else:
-            data = self.__load_data_stream(url, filename)
+            data = partial(self.__load_from_provider, url, filename)
         return Data(data)
 
     def __check_cache(self, filename: str) -> bool:
@@ -166,9 +168,6 @@ class DataSource:
                     yield decoded_data
                 except EOFError:
                     break
-
-    def __load_data_stream(self, url: str, filename: str = None) -> Generator[dict, None, None]:
-        return self.__load_from_provider(url, filename)
 
     def __load_from_provider(self, url: str, filename: str = None) -> Generator[dict, None, None]:
         """Loads records from data provider.

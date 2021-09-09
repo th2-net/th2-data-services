@@ -1,7 +1,6 @@
 import pickle
 import pprint
 from weakref import finalize
-from itertools import tee
 from pathlib import Path
 from typing import Generator, List, Union, Iterator, Callable
 
@@ -116,8 +115,7 @@ class Data:
         :param callback: Filter function.
         """
         new_workflow = [*self._workflow.copy(), {"filter": True, "callback": lambda record: record if callback(record) else None}]
-        working_data, self._data = tee(self._data)
-        return Data(working_data, new_workflow, self._cache_status)
+        return Data(self._data, new_workflow, self._cache_status)
 
     def map(self, callback: Callable) -> "Data":
         """Append transform function to workflow.
@@ -125,8 +123,7 @@ class Data:
         :param callback: Transform function.
         """
         new_workflow = [*self._workflow.copy(), {"filter": False, "callback": callback}]
-        working_data, self._data = tee(self._data)
-        return Data(working_data, new_workflow, self._cache_status)
+        return Data(self._data, new_workflow, self._cache_status)
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
         """Skips and limits records.

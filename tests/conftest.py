@@ -4,15 +4,32 @@ from typing import List, NamedTuple
 
 import pytest
 
+from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
 
 
 @pytest.fixture
 def demo_data_source():
-    DEMO_HOST = "10.64.66.66"
-    DEMO_PORT = "30999"
+    DEMO_HOST = "10.64.66.66"  # th2-kube-demo
+    DEMO_PORT = "30999"  # Data-provider Node port
     data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
     return data_source
+
+
+START_TIME = datetime(year=2021, month=6, day=15, hour=12, minute=44, second=41, microsecond=692724)
+END_TIME = datetime(year=2021, month=6, day=15, hour=15, minute=45, second=49, microsecond=28579)
+
+
+@pytest.fixture
+def demo_events_from_data_source(demo_data_source: DataSource) -> Data:
+    events = demo_data_source.get_events_from_data_provider(
+        startTimestamp=START_TIME,
+        endTimestamp=END_TIME,
+        metadataOnly=False,
+    )
+    # Returns 49 events
+    # Failed = 6
+    return events
 
 
 @pytest.fixture
@@ -21,8 +38,7 @@ def general_data() -> List[dict]:
         {
             "batchId": None,
             "eventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
-            "eventName": "[TS_1]Aggressive IOC vs two orders: second order's price is "
-            "lower than first",
+            "eventName": "[TS_1]Aggressive IOC vs two orders: second order's price is " "lower than first",
             "eventType": "",
             "isBatched": False,
             "parentEventId": None,
@@ -30,8 +46,7 @@ def general_data() -> List[dict]:
         {
             "batchId": None,
             "eventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
-            "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for "
-            "instrument INSTR1",
+            "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for " "instrument INSTR1",
             "eventType": "",
             "isBatched": False,
             "parentEventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
@@ -39,8 +54,7 @@ def general_data() -> List[dict]:
         {
             "batchId": None,
             "eventId": "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
-            "eventName": 'placeOrderFIX demo-conn1 - STEP1: Trader "DEMO-CONN1" sends '
-            "request to create passive Order.",
+            "eventName": 'placeOrderFIX demo-conn1 - STEP1: Trader "DEMO-CONN1" sends ' "request to create passive Order.",
             "eventType": "placeOrderFIX",
             "isBatched": False,
             "parentEventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
@@ -56,8 +70,7 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a4-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'th2-hand-demo' direction 'FIRST' "
-            "sequence '1623852603564709030'",
+            "eventName": "Checkpoint for session alias 'th2-hand-demo' direction 'FIRST' " "sequence '1623852603564709030'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -65,16 +78,14 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a5-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'SECOND' "
-            "sequence '1624005455622140289'",
+            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'SECOND' " "sequence '1624005455622140289'",
             "eventType": "Checkpoint for session",
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
         },
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a6-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'SECOND' "
-            "sequence '1624005475721015014'",
+            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'SECOND' " "sequence '1624005475721015014'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -82,8 +93,7 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a7-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'FIRST' "
-            "sequence '1624005475720919499'",
+            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'FIRST' " "sequence '1624005475720919499'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -91,8 +101,7 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a8-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'FIRST' "
-            "sequence '1624005448022245399'",
+            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'FIRST' " "sequence '1624005448022245399'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -100,8 +109,7 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a9-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'SECOND' "
-            "sequence '1624005448022426113'",
+            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'SECOND' " "sequence '1624005448022426113'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -109,8 +117,7 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114aa-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'SECOND' "
-            "sequence '1624005466840347015'",
+            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'SECOND' " "sequence '1624005466840347015'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -118,8 +125,7 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ab-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'FIRST' "
-            "sequence '1624005466840263372'",
+            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'FIRST' " "sequence '1624005466840263372'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -127,8 +133,7 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ac-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'FIRST' "
-            "sequence '1624005455622011522'",
+            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'FIRST' " "sequence '1624005455622011522'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -136,8 +141,7 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ad-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-log' direction 'FIRST' "
-            "sequence '1624029363623063053'",
+            "eventName": "Checkpoint for session alias 'demo-log' direction 'FIRST' " "sequence '1624029363623063053'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
