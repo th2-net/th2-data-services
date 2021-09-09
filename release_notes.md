@@ -33,3 +33,9 @@ message or event it returns Dict.
 ## BugFixes
 1. [TH2-2330] Data iterator have been broken in v0.3.0
 
+# v0.4.0 dev
+
+1. TH2-2322 Separate the lib to 2 parts
+New lib with ds_utils ...
+
+
