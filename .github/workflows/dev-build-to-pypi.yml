@@ -19,7 +19,7 @@ jobs:
         id: name_branch
         run: |
           branch = $(echo ${{ github.ref }} | sed 's/\/refs\/heads\///')
-          echo "::set-output name=value::"$branch"
+          echo ::set-output name=value::"$branch"
       - name: Build custom package version
         id: release_ver
         run: echo ::set-output name=value::"${{ steps.pack_ver.outputs.prop }}.${{ steps.name_branch.outputs.value }}${{ github.run_id }}"
