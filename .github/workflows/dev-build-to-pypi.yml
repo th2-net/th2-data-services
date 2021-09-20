@@ -1,9 +1,6 @@
 name: Dev build and publish Python distributions to PyPI
 
-on:
-  push:
-    branches:
-      - dev
+on: push
 
 jobs:
   build-n-publish:
@@ -18,9 +15,12 @@ jobs:
         with:
           path: package_info.json
           prop_path: package_version
+      - name: Get name branch
+        id: name_branch
+        run: echo ::set-output name=value::"echo { ${{ github.ref }}:11 }"
       - name: Build custom package version
         id: release_ver
-        run: echo ::set-output name=value::"${{ steps.pack_ver.outputs.prop }}.dev${{ github.run_id }}"
+        run: echo ::set-output name=value::"${{ steps.pack_ver.outputs.prop }}.${{  steps.name_branch.outputs.value  }}${{ github.run_id }}"
       - name: Show package version
         run: echo ${{ steps.release_ver.outputs.value }}
       - name: Set version for current build in package_info.json
