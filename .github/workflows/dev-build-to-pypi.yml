@@ -17,7 +17,7 @@ jobs:
           prop_path: package_version
       - name: Build custom package version
         id: release_ver
-        run: echo ::set-output name=value::"${{ steps.pack_ver.outputs.prop }}.$( ${{ github.ref }} | sed 's/refs\/heads\///')${{ github.run_id }}"
+        run: echo ::set-output name=value::"${{ steps.pack_ver.outputs.prop }}.dev_$( echo ${{ github.ref }} | sed 's/refs\/heads\///')${{ github.run_id }}"
       - name: Show package version
         run: echo ${{ steps.release_ver.outputs.value }}
       - name: Set version for current build in package_info.json
