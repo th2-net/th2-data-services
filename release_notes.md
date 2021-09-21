@@ -35,7 +35,10 @@ message or event it returns Dict.
 
 # v0.4.0 dev
 
-1. TH2-2322 Separate the lib to 2 parts
-New lib with ds_utils ...
+## Improvement
+1. [TH2-2322] The lib was separated to 2 parts.
+New lib with ds_utils posted in [here](https://github.com/th2-net/th2-data-services-utils)
+2. [TH2-2335] A pipeline was created that sends a packet to PyPi for the branch with the pypi_ prefix.
 
-
+## BugFixes
+1. [TH2-2299] Error and keep_alive status were handled.

@@ -1,27 +1,38 @@
 import pickle
-from functools import partial
-
 import requests
 import json
-import urllib3
+from requests.exceptions import ConnectionError
+from urllib3 import PoolManager
+from urllib3.exceptions import HTTPError
+from functools import partial
 from weakref import finalize
 from pathlib import Path
 from datetime import datetime
 from csv import DictReader
 from pprint import pformat
-from typing import Generator, Iterable, List, Union
+from typing import Generator, Iterable, List, Union, Optional
 from urllib.parse import urlencode, urlparse
 from sseclient import SSEClient
 from th2_data_services.data import Data
 
 
 class DataSource:
-    def __init__(self, url, chunk_length: int = 128):
+    def __init__(self, url, chunk_length: int = 65536):
         self.url = url
         self._finalizer = finalize(self, self.remove)
         self.__chunk_length = chunk_length
 
+        self.__check_connect()
+
+    def __check_connect(self) -> None:
+        """Checks whether url is working."""
+        try:
+            requests.get(self.__url)
+        except ConnectionError as error:
+            raise HTTPError("We can't create a connection at this URL. Please check the URL.")
+
     def remove(self):
+        """Deconstructor of class."""
         filename = urlparse(self.__url).netloc
         path = Path("./").joinpath("temp")
         if path.exists():
@@ -198,7 +209,9 @@ class DataSource:
         response = self.__create_stream_connection(url)
         client = SSEClient(response)
         for record in client.events():
-            if record.event not in ["close", "error", "keep_alive"]:
+            if record.event == "error":
+                raise HTTPError(record.data)
+            if record.event not in ["close", "keep_alive"]:
                 record_data = json.loads(record.data)
                 yield record_data
 
@@ -209,7 +222,7 @@ class DataSource:
         :return: Response stream data.
         """
         headers = {"Accept": "text/event-stream"}
-        http = urllib3.PoolManager()
+        http = PoolManager()
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
 
         for chunk in response.stream(self.__chunk_length):
@@ -217,7 +230,7 @@ class DataSource:
 
         response.release_conn()
 
-    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Union[List[dict], dict]:
+    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
         """Gets messages by ids using URL request.
 
         :param messages_id: Messages id.
@@ -228,10 +241,13 @@ class DataSource:
         result = []
         for msg_id in messages_id:
             response = requests.get(f"{self.__url}/message/{msg_id}")
-            result.append(response.json())
-        return result if len(result) > 1 else result[0]
+            try:
+                result.append(response.json())
+            except json.JSONDecodeError:
+                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+        return result if len(result) > 1 else result[0] if result else None
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Union[List[dict], dict]:
+    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
         """Gets events by ids using URL request.
 
         :param events_id: Events id.
@@ -241,8 +257,11 @@ class DataSource:
             events_id = [events_id]
         events = "&".join([f"ids={id_}" for id_ in events_id])
         response = requests.get(f"{self.__url}/events/?{events}")
-        answer = response.json()
-        return answer if len(answer) > 1 else answer[0]
+        try:
+            answer = response.json()
+        except json.JSONDecodeError:
+            raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+        return answer if len(answer) > 1 else answer[0] if answer else None
 
     @staticmethod
     def read_csv_file(*sources: str) -> Generator[str, None, None]:
