@@ -1,3 +1,6 @@
+import pytest
+from urllib3.exceptions import HTTPError
+
 from th2_data_services.data_source import DataSource
 
 
@@ -366,3 +369,36 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
     assert message == expected_message
     assert messages == expected_messages
     assert len(messages) == 2
+
+
+def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
+    data_source = demo_data_source
+
+    with pytest.raises(ValueError) as exc_info:
+        data_source.find_messages_by_id_from_data_provider("demo-conn_not_exist:first:1624005448022245399")
+
+    assert "Sorry, but the answer rpt-data-provider doesn't match the json format." in str(exc_info)
+
+
+def test_get_events_from_data_provider_with_error(demo_data_source: DataSource):
+    data_source = demo_data_source
+
+    events = data_source.get_events_from_data_provider(startTimestamp="test", endTimestamp="test")
+    with pytest.raises(HTTPError) as exc_info:
+        len(events)
+    assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
+
+
+def test_get_messages_from_data_provider_with_error(demo_data_source: DataSource):
+    data_source = demo_data_source
+
+    events = data_source.get_messages_from_data_provider(startTimestamp="test", endTimestamp="test", stream="test")
+    with pytest.raises(HTTPError) as exc_info:
+        len(events)
+    assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
+
+
+def test_check_url_for_data_source():
+    with pytest.raises(HTTPError) as exc_info:
+        data_source = DataSource("http://test_test:8080/")
+    assert "We can't create a connection at this URL. Please check the URL." in str(exc_info)
