@@ -396,3 +396,9 @@ def test_get_messages_from_data_provider_with_error(demo_data_source: DataSource
     with pytest.raises(HTTPError) as exc_info:
         len(events)
     assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
+
+
+def test_check_url_for_data_source():
+    with pytest.raises(HTTPError) as exc_info:
+        data_source = DataSource("http://test_test:8080/")
+    assert "We can't create a connection at this URL. Please check the URL." in str(exc_info)
