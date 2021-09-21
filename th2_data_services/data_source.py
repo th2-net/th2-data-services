@@ -17,7 +17,7 @@ from th2_data_services.data import Data
 
 
 class DataSource:
-    def __init__(self, url, chunk_length: int = 128):
+    def __init__(self, url, chunk_length: int = 65536):
         self.url = url
         self._finalizer = finalize(self, self.remove)
         self.__chunk_length = chunk_length
@@ -25,12 +25,14 @@ class DataSource:
         self.__check_connect()
 
     def __check_connect(self) -> None:
+        """Checks whether url is working."""
         try:
             requests.get(self.__url)
         except ConnectionError as error:
             raise HTTPError("We can't create a connection at this URL. Please check the URL.")
 
     def remove(self):
+        """Deconstructor of class."""
         filename = urlparse(self.__url).netloc
         path = Path("./").joinpath("temp")
         if path.exists():
@@ -242,7 +244,7 @@ class DataSource:
             try:
                 result.append(response.json())
             except json.JSONDecodeError:
-                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\nAnswer:{response.text}")
+                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
         return result if len(result) > 1 else result[0] if result else None
 
     def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
@@ -258,7 +260,7 @@ class DataSource:
         try:
             answer = response.json()
         except json.JSONDecodeError:
-            raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\nAnswer:{response.text}")
+            raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
         return answer if len(answer) > 1 else answer[0] if answer else None
 
     @staticmethod
