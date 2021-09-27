@@ -39,7 +39,7 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L302"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L304"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_events_by_id_from_data_provider`
 
@@ -89,18 +89,20 @@ Gets message/messages by ids.
 
 
 
-**Examples:**
- ``` data_source.find_messages_by_id_from_data_provider('demo-conn1:first:1619506157132265837')```
-    # Returns 1 message (dict).
+**Example:**
+ ``` How to use.```
+
+    >>> data_source.find_messages_by_id_from_data_provider('demo-conn1:first:1619506157132265837')
+    Returns 1 message (dict).
 
     >>> data_source.find_messages_by_id_from_data_provider(['demo-conn1:first:1619506157132265836'])
-    # Returns list(dict) with 1 message.
+    Returns list(dict) with 1 message.
 
     >>> data_source.find_messages_by_id_from_data_provider([
          'demo-conn1:first:1619506157132265836',
          'demo-conn1:first:1619506157132265833',
     ])
-    # Returns list(dict) with 2 messages.
+    Returns list(dict) with 2 messages.
 
 
 ---
@@ -159,7 +161,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L322"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L324"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `read_csv_file`
 
@@ -209,7 +211,7 @@ It used for create custom sse-request to data-provider use this readme https://g
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L338"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L340"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `write_to_txt`
 

@@ -274,18 +274,20 @@ class DataSource:
         Returns:
             List[Message_dict] if you request a list or Message_dict.
 
-        Examples:
+        Example:
+            >>> How to use.
+
             >>> data_source.find_messages_by_id_from_data_provider('demo-conn1:first:1619506157132265837')
-            # Returns 1 message (dict).
+            Returns 1 message (dict).
 
             >>> data_source.find_messages_by_id_from_data_provider(['demo-conn1:first:1619506157132265836'])
-            # Returns list(dict) with 1 message.
+            Returns list(dict) with 1 message.
 
             >>> data_source.find_messages_by_id_from_data_provider([
                 'demo-conn1:first:1619506157132265836',
                 'demo-conn1:first:1619506157132265833',
             ])
-            # Returns list(dict) with 2 messages.
+            Returns list(dict) with 2 messages.
 
         """
         if isinstance(messages_id, str):
