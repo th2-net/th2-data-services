@@ -158,7 +158,7 @@ This allows operations to be chained to form a larger pipeline.
 stream operations do the iteration behind the scenes for you. Note, it doesn’t mean you cannot iterate 
 the _Data object_.
 
-![Data stream pipeline](/home/connect/th2/source/th2-data-services/documentation/img/data_stream_pipeline.png)
+![Data stream pipeline](documentation/img/data_stream_pipeline.png)
 
 
 
