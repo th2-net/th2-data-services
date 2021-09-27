@@ -24,4 +24,12 @@ repos:
         types: [ python ]
         args: [ --in-place, --remove-all-unused-imports ]
 
+  - repo: local
+    hooks:
+      - id: docgen
+        name: docgen
+        language: script
+        entry: doc_gen.sh
+
+
 default_stages: [ commit, push ]
