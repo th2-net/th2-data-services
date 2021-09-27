@@ -154,18 +154,18 @@ from collection operations:
 
 - **Pipelining**: Many stream operations return a stream themselves. 
 This allows operations to be chained to form a larger pipeline.
+
+![Data stream pipeline](documentation/img/data_stream_pipeline.png)
+
 - **Internal iteration**: In contrast to collections, which are iterated explicitly (external iteration), 
 stream operations do the iteration behind the scenes for you. Note, it doesn’t mean you cannot iterate 
 the _Data object_.
 
-![Data stream pipeline](documentation/img/data_stream_pipeline.png)
-
-
-
+  
 ## 2.4. Links
 
 - [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)
-- [Th2 DS Utils](https://github.com/th2-net/th2-data-services-utils)
+- [Th2 Data Services Utils](https://github.com/th2-net/th2-data-services-utils)
 
 
 
