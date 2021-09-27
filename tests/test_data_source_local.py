@@ -1,6 +1,7 @@
 import pytest
 from urllib3.exceptions import HTTPError
 
+from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
 
 
@@ -402,3 +403,20 @@ def test_check_url_for_data_source():
     with pytest.raises(HTTPError) as exc_info:
         data_source = DataSource("http://test_test:8080/")
     assert "We can't create a connection at this URL. Please check the URL." in str(exc_info)
+
+
+def test_data_cache(demo_events_from_data_source: Data):
+    data = demo_events_from_data_source
+    data.use_cache(True)
+    output1 = list(data)
+
+    data.use_cache(False)
+    data._data = []
+    output2 = list(data)
+
+    data.use_cache(True)
+    output3 = list(data)
+
+    output4 = list(data)
+
+    assert output1 == output3 == output4 and output2 == []

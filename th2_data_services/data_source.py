@@ -95,15 +95,7 @@ class DataSource:
         url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
 
-        filename = None
-        if cache:
-            filename = urlparse(self.__url).netloc + f"_events_{urlencode(kwargs)}"
-            filename = f"{filename}.pickle"
-
-        if filename and self.__check_cache(filename):
-            data = self.__load_file(filename)
-        else:
-            data = partial(self.__load_from_provider, url, filename if cache else None)
+        data = partial(self.__load_data, url, cache)
         return Data(data)
 
     def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
@@ -137,16 +129,26 @@ class DataSource:
         url = self.__url + "/search/sse/messages"
         url = f"{url}?{urlencode(kwargs) + streams}"
 
+        data = partial(self.__load_data, url, cache)
+        return Data(data)
+
+    def __load_data(self, url: str, cache: bool = False):
+        """Loads data from cache or provider.
+
+        :param url: Url.
+        :param cache: Flag if you what save to cache.
+        :return: Data
+        """
         filename = None
         if cache:
-            filename = urlparse(self.__url).netloc + f"_messages_{urlencode(kwargs)}"
+            filename = "__".join(url.split("/")[2:])
             filename = f"{filename}.pickle"
 
         if filename and self.__check_cache(filename):
             data = self.__load_file(filename)
         else:
-            data = partial(self.__load_from_provider, url, filename)
-        return Data(data)
+            data = self.__load_from_provider(url, filename)
+        return data
 
     def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.

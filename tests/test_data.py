@@ -38,22 +38,13 @@ def test_map_data_transform(general_data: List[dict]):
 
 
 def test_map_data_increase(general_data: List[dict]):
-    data = (
-        Data(general_data)
-        .filter(lambda record: record.get("batchId") is None)
-        .map(lambda record: (record.get("eventType"), record.get("eventType")))
-    )
+    data = Data(general_data).filter(lambda record: record.get("batchId") is None).map(lambda record: (record.get("eventType"), record.get("eventType")))
 
     assert len(data) == 18
 
 
 def test_shuffle_data(general_data: List[dict]):
-    data = (
-        Data(general_data)
-        .filter(lambda record: record.get("batchId") is not None)
-        .map(lambda record: record.get("eventId"))
-        .filter(lambda record: "b" in record)
-    )
+    data = Data(general_data).filter(lambda record: record.get("batchId") is not None).map(lambda record: record.get("eventId")).filter(lambda record: "b" in record)
 
     assert len(data) == 12
 
@@ -71,3 +62,18 @@ def test_sift_skip_data(general_data: List[dict]):
     output2 = [record for record in data.sift(limit=2, skip=2)]
 
     assert output1 != output2
+
+
+def test_data_cache(general_data: List[dict]):
+    data = Data(general_data, cache=True)
+
+    output1 = list(data)
+
+    data.use_cache(False)
+    data._data = []
+    output2 = list(data)
+
+    data.use_cache(True)
+    output3 = list(data)
+
+    assert output1 == output3 and output2 == []
