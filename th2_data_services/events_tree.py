@@ -7,8 +7,7 @@ from anytree import Node, RenderTree, findall
 
 
 class EventsTree:
-    """
-    EventsTree - is a useful wrapper for your retrieved data.
+    """EventsTree - is a useful wrapper for your retrieved data.
 
     EventsTree - is not a tree in the literal sense.
     It is an object with a dict 'events' inside which contains
@@ -17,8 +16,7 @@ class EventsTree:
     EventTree contains all events inside, so it takes
     ~2.5Gb for 1 million events.
 
-    Note:
-        Take a look at the following HTML tree to understand some important terms.
+    Take a look at the following HTML tree to understand some important terms.
 
         <body> <!-- ancestor (grandparent), but not parent -->
             <div> <!-- parent & ancestor -->
@@ -69,7 +67,8 @@ class EventsTree:
         Will update the event if event_id matches.
         Will remove the event from unknown_events if it in unknown_events dict.
 
-        :param event: Event
+        Args:
+            event: Event
         """
         event_id = event["eventId"]
         try:
@@ -89,7 +88,8 @@ class EventsTree:
     def search_unknown_parents(self) -> dict:
         """Searches unknown events.
 
-        :return: Unknown events.
+        Returns:
+             dict: Unknown events.
         """
         self.clear_unknown_events()
         event: dict
@@ -251,9 +251,7 @@ class TreeNode(Node):
 
 
 class EventsTree2:
-    """
-    EventsTree2 - experimental tree.
-    """
+    """EventsTree2 - experimental tree."""
 
     def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, ds=None):
         if data is None:

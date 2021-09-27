@@ -8,14 +8,21 @@ DataSet = Union[Iterator, Callable[..., Generator[dict, None, None]]]
 
 
 class Data:
+    """A wrapper for data/data_stream.
+
+    The class provides methods for working with data as a stream.
+
+    Such approach to data analisys called........................................................
+    """
+
     def __init__(self, data: DataSet, workflow: List[Callable] = None, cache=False):
         self._data = data
         self._workflow = [] if workflow is None else workflow
         self._cache_status: bool = cache
         self._len = None
-        self._finalizer = finalize(self, self.remove)
+        self._finalizer = finalize(self, self.__remove)
 
-    def remove(self):
+    def __remove(self):
         filename = f"{str(id(self))}.pickle"
         if self.__check_cache(filename):
             path = Path("./").joinpath("temp").joinpath(filename)
@@ -54,8 +61,12 @@ class Data:
     def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.
 
-        :param filename: Filename.
-        :return: File exists or not.
+        Args:
+            filename: Filename.
+
+        Returns:
+            File exists or not.
+
         """
         path = Path("./").joinpath("temp")
         path.mkdir(exist_ok=True)
@@ -65,8 +76,12 @@ class Data:
     def __load_file(self, filename: str) -> Generator[dict, None, None]:
         """Loads records from pickle file.
 
-        :param filename: Filepath.
-        :return: Generator records.
+        Args:
+            filename: Filepath.
+
+        Yields:
+            dict: Generator records.
+
         """
         path = Path("./").joinpath("temp").joinpath(filename)
         if not path.is_file():
@@ -86,7 +101,9 @@ class Data:
     def __apply_workflow(self) -> Generator[dict, None, None]:
         """Creates generator records with apply workflow.
 
-        :return: Generator records.
+        Yields:
+            dict: Generator records.
+
         """
         working_data = self._data() if callable(self._data) else self._data
         for record in working_data:
@@ -110,17 +127,29 @@ class Data:
                     yield record
 
     def filter(self, callback: Callable) -> "Data":
-        """Append filter to workflow.
+        """Append `filter` to workflow.
 
-        :param callback: Filter function.
+        Args:
+            callback: Filter function.
+                This function should return True or False.
+                If function returns False, the record will be removed from the dataflow.
+
+        Returns:
+            Data: Data object.
+
         """
         new_workflow = [*self._workflow.copy(), {"filter": True, "callback": lambda record: record if callback(record) else None}]
         return Data(self._data, new_workflow, self._cache_status)
 
     def map(self, callback: Callable) -> "Data":
-        """Append transform function to workflow.
+        """Append `transform` function to workflow.
 
-        :param callback: Transform function.
+        Args:
+            callback: Transform function.
+
+        Returns:
+            Data: Data object.
+
         """
         new_workflow = [*self._workflow.copy(), {"filter": False, "callback": callback}]
         return Data(self._data, new_workflow, self._cache_status)
@@ -128,9 +157,13 @@ class Data:
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
         """Skips and limits records.
 
-        :param limit: Limited records.
-        :param skip: Skipped records.
-        :return: Generator records.
+        Args:
+            limit: Limited records.
+            skip: Skipped records.
+
+        Yields:
+            Generator records.
+
         """
         skipped = 0
         pushed = 0
@@ -147,7 +180,12 @@ class Data:
     def use_cache(self, status: bool) -> "Data":
         """Change status cache.
 
-        :param status: Status.
+        Args:
+            status: Status.
+
+        Returns:
+            Data: Data object.
+
         """
         if status:
             self._cache_status = True
@@ -157,7 +195,20 @@ class Data:
         return self
 
     def find_by(self, record_field, field_values) -> Generator:
-        """Get the records whose field value is written in the field_values list."""
+        """Get the records whose field value is written in the field_values list.
+
+        When to use:
+            You have IDs of some messages and you want get them in the stream and stop searching
+            when you find all elements.
+
+        Args:
+            record_field: The record field to be searched for in the field_values list.
+            field_values: List of elements among which will be searched record[record_field].
+
+        Yields:
+            dict: Generator records.
+
+        """
         values_for_find = list(field_values)
         for record in self:
             if values_for_find:
