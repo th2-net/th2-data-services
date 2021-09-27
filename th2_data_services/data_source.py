@@ -17,11 +17,12 @@ from th2_data_services.data import Data
 
 
 class DataSource:
-    def __init__(self, url, chunk_length: int = 65536):
-        self.url = url
-        self._finalizer = finalize(self, self.remove)
-        self.__chunk_length = chunk_length
+    """The class that provides methods for getting messages and events from rpt-data-provider."""
 
+    def __init__(self, url: str, chunk_length: int = 65536):
+        self.url = url
+        self._finalizer = finalize(self, self.__remove)
+        self.__chunk_length = chunk_length
         self.__check_connect()
 
     def __check_connect(self) -> None:
@@ -31,7 +32,7 @@ class DataSource:
         except ConnectionError as error:
             raise HTTPError("We can't create a connection at this URL. Please check the URL.")
 
-    def remove(self):
+    def __remove(self):
         """Deconstructor of class."""
         filename = urlparse(self.__url).netloc
         path = Path("./").joinpath("temp")
@@ -42,7 +43,8 @@ class DataSource:
                     file.unlink()
 
     @property
-    def url(self):
+    def url(self) -> str:
+        """str: URL of rpt-data-provider."""
         return self.__url
 
     @url.setter
@@ -52,11 +54,17 @@ class DataSource:
         self.__url = url
 
     def sse_request_to_data_provider(self, **kwargs) -> Generator[dict, None, None]:
-        """Sends SSE request. For create custom sse-request to data-provider
-        use this readme https://github.com/th2-net/th2-rpt-data-provider .
+        """Sends SSE request to rpt-data-provider.
 
-        :param kwargs: Query options.
-        :return: SSE response data.
+        It used for create custom sse-request to data-provider
+        use this readme https://github.com/th2-net/th2-rpt-data-provider#readme.
+
+        Args:
+            kwargs: Query options.
+
+        Yields:
+            dict: SSE response data.
+
         """
         route = kwargs.get("route")
         if not route:
@@ -72,14 +80,21 @@ class DataSource:
 
         yield from self.__execute_sse_request(url)
 
-    def get_events_from_data_provider(self, cache=False, **kwargs) -> Data:
-        """Sends SSE request for events. For help use this readme
+    def get_events_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
+        """Sends SSE request for getting events.
+
+        For help use this readme
         https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
         on route http://localhost:8080/search/sse/events.
 
-        :param cache: Flag if you what save to cache.
-        :param kwargs: Query options.
-        :return: Events.
+        Args:
+            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
+                (See `use_cache` method in `Data` class).
+            kwargs: th2-rpt-data-provider API query options.
+
+        Returns:
+            Data: Data object with Events.
+
         """
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
             raise ValueError(
@@ -99,13 +114,20 @@ class DataSource:
         return Data(data)
 
     def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
-        """Sends SSE request for messages. For help use this readme
+        """Sends SSE request for getting messages.
+
+        For help use this readme
         https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
         on route http://localhost:8080/search/sse/messages.
 
-        :param cache: Flag if you what save to cache.
-        :param kwargs: Query options.
-        :return: Messages.
+        Args:
+            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
+                (See `use_cache` method in `Data` class).
+            kwargs: th2-rpt-data-provider API query options.
+
+        Returns:
+            Data: Data object with Messages.
+
         """
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
             raise ValueError(
@@ -135,9 +157,12 @@ class DataSource:
     def __load_data(self, url: str, cache: bool = False):
         """Loads data from cache or provider.
 
-        :param url: Url.
-        :param cache: Flag if you what save to cache.
-        :return: Data
+        Args:
+            url: Url.
+            cache: Flag if you what save to cache.
+
+        Returns:
+             obj: Generator
         """
         filename = None
         if cache:
@@ -153,8 +178,12 @@ class DataSource:
     def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.
 
-        :param filename: Filename.
-        :return: File exists or not.
+        Args:
+            filename: Name of the cache file.
+
+        Returns:
+            bool: File exists or not.
+
         """
         path = Path("./temp")
         path.mkdir(exist_ok=True)
@@ -164,8 +193,12 @@ class DataSource:
     def __load_file(self, filename: str) -> Generator[dict, None, None]:
         """Loads records from pickle file.
 
-        :param filename: Filename.
-        :return: Generator records.
+        Args:
+            filename: Name of the cache file.
+
+        Yields:
+            dict: Generator records.
+
         """
         path = Path("./").joinpath("temp").joinpath(filename)
         if not path.is_file():
@@ -185,9 +218,13 @@ class DataSource:
     def __load_from_provider(self, url: str, filename: str = None) -> Generator[dict, None, None]:
         """Loads records from data provider.
 
-        :param url: Url.
-        :param filename: Filename if you what to create local storage.
-        :return: Generator records.
+        Args:
+            url: Url.
+            filename: Filename if you what to create local storage.
+
+        Yields:
+            dict: Generator records.
+
         """
         file = None
         if filename is not None:
@@ -205,8 +242,12 @@ class DataSource:
     def __execute_sse_request(self, url: str):
         """Creates SSE connection to server.
 
-        :param url: Url.
-        :return: Response data.
+        Args:
+            url: Url.
+
+        Returns:
+            dict: Response data.
+
         """
         response = self.__create_stream_connection(url)
         client = SSEClient(response)
@@ -220,8 +261,12 @@ class DataSource:
     def __create_stream_connection(self, url: str):
         """Create stream connection.
 
-        :param url: Url.
-        :return: Response stream data.
+        Args:
+            url: Url.
+
+        Yields:
+            str: Response stream data.
+
         """
         headers = {"Accept": "text/event-stream"}
         http = PoolManager()
@@ -233,10 +278,29 @@ class DataSource:
         response.release_conn()
 
     def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
-        """Gets messages by ids using URL request.
+        """Gets message/messages by ids.
 
-        :param messages_id: Messages id.
-        :return: List[Message_dict] if you request a list or Message_dict.
+        Args:
+            messages_id: One str with MessageID or list of MessagesIDs.
+
+        Returns:
+            List[Message_dict] if you request a list or Message_dict.
+
+        Example:
+            >>> How to use.
+
+            >>> data_source.find_messages_by_id_from_data_provider('demo-conn1:first:1619506157132265837')
+            Returns 1 message (dict).
+
+            >>> data_source.find_messages_by_id_from_data_provider(['demo-conn1:first:1619506157132265836'])
+            Returns list(dict) with 1 message.
+
+            >>> data_source.find_messages_by_id_from_data_provider([
+                'demo-conn1:first:1619506157132265836',
+                'demo-conn1:first:1619506157132265833',
+            ])
+            Returns list(dict) with 2 messages.
+
         """
         if isinstance(messages_id, str):
             messages_id = [messages_id]
@@ -250,10 +314,14 @@ class DataSource:
         return result if len(result) > 1 else result[0] if result else None
 
     def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
-        """Gets events by ids using URL request.
+        """Gets event/events by ids.
 
-        :param events_id: Events id.
-        :return: List[Event_dict] if you request a list or Event_dict.
+        Args:
+            messages_id: One str with EventID or list of EventsIDs.
+
+        Returns:
+            List[Event_dict] if you request a list or Event_dict.
+
         """
         if isinstance(events_id, str):
             events_id = [events_id]
@@ -267,10 +335,14 @@ class DataSource:
 
     @staticmethod
     def read_csv_file(*sources: str) -> Generator[str, None, None]:
-        """Gets data from csv files.
+        """Gets data in a stream way from csv files.
 
-        :param sources: Path to files.
-        :return: Csv files payload.
+        Args:
+            sources: Path to files.
+
+        Yields:
+            dict: Csv files payload.
+
         """
         for source in sources:
             with open(source) as data:
@@ -281,8 +353,10 @@ class DataSource:
     def write_to_txt(data: Generator[str, None, None], source: str) -> None:
         """Writes to txt files.
 
-        :param data: Data.
-        :param source: Path to file.
+        Args:
+            data: Data.
+            source: Path to file.
+
         """
         with open(source, "w") as txt_file:
             for record in data:
