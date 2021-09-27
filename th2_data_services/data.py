@@ -19,7 +19,7 @@ class Data:
         filename = f"{str(id(self))}.pickle"
         if self.__check_cache(filename):
             path = Path("./").joinpath("temp").joinpath(filename)
-            path.unlink(missing_ok=True)
+            path.unlink()
         del self._data
 
     def __iter__(self) -> DataSet:
