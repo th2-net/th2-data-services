@@ -180,8 +180,11 @@ class Data:
     def use_cache(self, status: bool) -> "Data":
         """Change status cache.
 
+        If True all requested data from rpt-data-provider will be saved to cache file.
+        Further actions with Data object will be consume data from the cache file.
+
         Args:
-            status: Status.
+            status(bool): Status.
 
         Returns:
             Data: Data object.

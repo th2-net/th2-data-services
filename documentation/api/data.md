@@ -65,7 +65,7 @@ Append `filter` to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L197"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L200"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_by`
 
@@ -150,11 +150,13 @@ use_cache(status: bool) → Data
 
 Change status cache. 
 
+If True all requested data from rpt-data-provider will be saved to cache file. Further actions with Data object will be consume data from the cache file. 
+
 
 
 **Args:**
  
- - <b>`status`</b>:  Status. 
+ - <b>`status`</b> (bool):  Status. 
 
 
 

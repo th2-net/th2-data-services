@@ -1,19 +1,3 @@
-This repository is a library for creating th2-data-services applications.
-
-🛠 An open source tool for analyzing stream data.
-
-Data Services is a tool for analyzing stream data
-from ["Report Data Provider"](https://github.com/th2-net/th2-rpt-data-provider)
-via filtering, transformation and parsing. The tool allows the user to manipulate the workflow to analyze the required
-data.
-
-Current capabilities:
-
-- Filtering stream data
-- Transforming stream data
-
-
-
 Table of Contents
 =================
 
@@ -23,24 +7,28 @@ Table of Contents
 * [2. Getting started](#2-getting-started)
    * [2.1. Installation](#21-installation)
    * [2.2. Example](#22-example)
-   * [2.3. Links](#23-links)
-* [3. Idea](#3-idea)
-* [4. API](#4-api)
-   * [4.1. DataSource](#41-datasource)
-   * [4.2. Data](#42-data)
-      * [4.2.1. Data pipelines](#421-data-pipelines)
-      * [4.2.2. Cache](#422-cache)
-   * [4.3. Events Trees](#43-events-trees)
-      * [4.3.1. EventsTree](#431-eventstree)
-      * [4.3.2. EventsTree2](#432-eventstree2)
-* [5. Examples](#5-examples)
-   * [5.1. Notebooks](#51-notebooks)
-   * [5.2. *.py](#52-py)
+   * [2.3. Theory](#23-theory)
+   * [2.4. Links](#24-links)
+* [3. API](#3-api)
+* [4. Examples](#4-examples)
+   * [4.1. Notebooks](#41-notebooks)
+   * [4.2. *.py](#42-py)
 <!--te-->
 
 # 1. Introduction
 
-What is what.
+This repository is a library for creating th2-data-services applications.
+
+Data Services is a tool for analyzing stream data
+from ["Report Data Provider"](https://github.com/th2-net/th2-rpt-data-provider)
+via aggregate operations. The tool allows the user to manipulate the workflow to analyze the required
+data.
+
+Current capabilities:
+
+- Filtering stream data
+- Transforming stream data
+
 
 # 2. Getting started
 
@@ -53,7 +41,10 @@ What is what.
     ```
 
 - From Source   
-  TBU
+    ```
+    git clone https://github.com/th2-net/th2-data-services
+    pip install th2-data-services/
+    ```
 
 ## 2.2. Example
 
@@ -139,196 +130,55 @@ This example works with **Events**, but you also can do the same actions with **
     data_source.find_messages_by_id_from_data_provider(desired_message)  # Returns 1 message (dict).
     data_source.find_messages_by_id_from_data_provider(desired_messages)  # Returns 2 messages list(dict).
 
-## 2.3. Links
+
+## 2.3. Theory
+
+The library provides stream data and some tools for data manipulation.
+
+What’s the definition of a stream?   
+A short definition is "a sequence of elements from a source that supports aggregate operations."
+
+- **Data object**: An object of `Data` class which is wrapper under stream. 
+- **Sequence of elements**:
+  A _Data object_ provides an interface to a sequenced set of values of a specific element type. 
+  Stream inside the _Data object_ **don’t actually store** elements; they are computed on demand.
+- **DataSource**: 
+  Streams consume from a data-providing source ([Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)) 
+  but it also can be collections, arrays, or I/O resources. 
+  _DataSource object_ provides connection to _th2-rpt-provider_ or read csv files from cradle-viewer.
+- **Aggregate operations**: 
+  Common operations such as filter, map, find and so on. 
+
+Furthermore, stream operations have two fundamental characteristics that make them very different 
+from collection operations:
+
+- **Pipelining**: Many stream operations return a stream themselves. 
+This allows operations to be chained to form a larger pipeline.
+- **Internal iteration**: In contrast to collections, which are iterated explicitly (external iteration), 
+stream operations do the iteration behind the scenes for you. Note, it doesn’t mean you cannot iterate 
+the _Data object_.
+
+![Data stream pipeline](/home/connect/th2/source/th2-data-services/documentation/img/data_stream_pipeline.png)
+
+
+
+## 2.4. Links
 
 - [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)
 - [Th2 DS Utils](https://github.com/th2-net/th2-data-services-utils)
 
-# 3. Idea
 
-Ключевые идеи, такие как Пайплайны обработки данных.
 
-Что из себя представляет Дата объект
-
-# 4. API
+# 3. API
 [Documentation](documentation/api/index.md)
 
-## 4.1. DataSource
 
-The **data_source** module provides the `DataSource` class which can connect to **th2-rpt-provider**
-or read csv files from cradle-viewer.
+# 4. Examples
 
-An example of connecting to Report Data Provider for getting events:
-
-```
-data_source = DataSources("http://localhost:8000")
-
-# You can change anything in sse_request_to_data_provider. 
-# Arguments gets based on route for th2-rpt-data-provider.
-# This example shows pull the events.
-events = data_source.get_events_from_data_provider(
-    startTimestamp=datetime(year=2021, month=1, day=1, hour=1, minute=0),
-    endTimestamp=datetime(year=2021, month=1, day=1, hour=1, minute=10),
-    metadataOnly=False
-)
-```
-
-The example shows basic query options:
-
-- startTimestamp specifies the start time
-- endTimestamp specifies the end time
-- metaDataOnly specifies whether we need a body in events.
-
-An example request for messages:
-
-```
-messages = data_source.get_messages_from_data_provider(
-    startTimestamp=datetime(year=2021, month=1, day=1, hour=1, minute=0),
-    endTimestamp=datetime(year=2021, month=1, day=1, hour=1, minute=10),
-    stream=["myStream", "myStream2"]
-)
-```
-
-The example shows basic query options:
-
-- startTimestamp specifies the start time
-- endTimestamp specifies the end time
-- stream specifies the messages stream
-
-In both examples, messages and events return as the Data class.
-
-```
-events = events.filter(...).map(...)
-messages = messages.map(...).filter(...)
-```
-
-DataSource can take any connecting settings which are described
-in [th2-rpt-data-provider](https://github.com/th2-net/th2-rpt-data-provider)
-
-An example of loading data from csv files pulled from cradle-viewer:
-
-```
-data = DataSource.read_csv_file("file1.csv", "file2.csv")
-```
-
-If you want, you can enable cache with the help of a flag, you can do the following:
-
-```
-messages = data_source.get_messages_from_data_provider(
-    cache=True,
-    . . . . .
-)
-events = data_source.get_events_from_data_provider(
-    cache=True,
-    . . . . .
-)
-```
-
-## 4.2. Data
-
-The data module provides the Data class which builds the data stream workflow.
-
-Data has two functions for the workflow:
-
-- Filter
-- Map
-
-A simple example:
-
-```
-def transform(record):
-    return {
-        "eventName": record.get("eventName"),
-        "eventId": record.get("eventId")
-    }
-    
-def is_verification(record) -> bool:
-    return record.get("eventType) == "Verification"
-
-output_data = Data(working_data) \
-    .map(transform) \
-    .filter(is_verification)
-    
-for record in output_data:
-    print(record)
-```
-
-The example shows the use of filtering and transforming data:
-
-- transform shows how we can change data.
-- is_verification shows how we can filter data.
-
-You can receive or skip part of the data.
-
-```
-for record in output_data.sift(limit=10, skip=5):
-    print(record)
-```
-
-Cache can be enabled with the help of the flag:
-
-```
-data.use_cache(True)
-# or
-data = Data(data, cache=True)
-```
-
-### 4.2.1. Data pipelines
-
-        (Картинка из презентации кводу про дата флоу)
-        - map
-        - filter
-        - sift
-
-### 4.2.2. Cache
-
-        Как использовать и как работает. 
-
-## 4.3. Events Trees
-
-### 4.3.1. EventsTree
-
-The events_tree module provides the EventsTree class which helps with events and their parent events.
-
-EventsTree has two objects:
-
-- events
-- unknown_events
-
-'events' is a dictionary with "event id -> event body" pairs.
-
-'unknown_events' is a dictionary which has events that don't exist in the given stream and builds "unknown event id ->
-the count of events that have this event" pairs.
-
-EventsTree also has several functions for checking the event ancestor or returning it.
-
-A simple example:
-
-```
-events_tree = EventsTree(data)
-
-event_ancestor = events_tree.get_ancestor_by_name(record, "Test Case")
-status = events_tree.is_in_ancestor_name(record, "Test Case")
-```
-
-If EventsTree has unknown events, then you can get the missing events:
-
-```
-events_tree.recover_unknown_events(data_source)
-```
-
-        Нет смысла передавать сюда генератор ивентов с бади, т.к. они будут удаляться
-
-### 4.3.2. EventsTree2
-
-TBU
-
-# 5. Examples
-
-## 5.1. Notebooks
+## 4.1. Notebooks
 
 - [notebook_0.ipynb](examples/notebooks/notebook_0.ipynb)
 
-## 5.2. *.py
+## 4.2. *.py
 
 - [get_started_example.py](examples/get_started_example.py)
