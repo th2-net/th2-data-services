@@ -18,7 +18,7 @@ A wrapper for data/data_stream.
 
 The class provides methods for working with data as a stream. 
 
-Such approach to data analisys called........................................................ 
+Such approach to data analysis called........................................................ 
 
 <a href="../../th2_data_services/data.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
@@ -26,8 +26,8 @@ Such approach to data analisys called...........................................
 
 ```python
 __init__(
-    data: Optional[Iterator, Callable[, Generator[dict, NoneType]]],
-    workflow: List[Callable] = None,
+    data:Optional[Iterator, Callable[, Generator[dict, NoneType]]],
+    workflow:List[Callable]=None,
     cache=False
 )
 ```
@@ -46,7 +46,7 @@ __init__(
 ### <kbd>method</kbd> `filter`
 
 ```python
-filter(callback: Callable) → Data
+filter(callback:Callable) → Data
 ```
 
 Append `filter` to workflow. 
@@ -97,7 +97,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 ### <kbd>method</kbd> `map`
 
 ```python
-map(callback: Callable) → Data
+map(callback:Callable) → Data
 ```
 
 Append `transform` function to workflow. 
@@ -121,7 +121,7 @@ Append `transform` function to workflow.
 ### <kbd>method</kbd> `sift`
 
 ```python
-sift(limit: int = None, skip: int = None) → Generator[dict, NoneType, NoneType]
+sift(limit:int=None, skip:int=None) → Generator[dict, NoneType, NoneType]
 ```
 
 Skips and limits records. 
@@ -145,7 +145,7 @@ Skips and limits records.
 ### <kbd>method</kbd> `use_cache`
 
 ```python
-use_cache(status: bool) → Data
+use_cache(status:bool) → Data
 ```
 
 Change status cache. 

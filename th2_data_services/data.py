@@ -12,7 +12,7 @@ class Data:
 
     The class provides methods for working with data as a stream.
 
-    Such approach to data analisys called........................................................
+    Such approach to data analysis called........................................................
     """
 
     def __init__(self, data: DataSet, workflow: List[Callable] = None, cache=False):

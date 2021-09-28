@@ -44,3 +44,6 @@ New lib with ds_utils posted in [here](https://github.com/th2-net/th2-data-servi
 1. [TH2-2299] Error and keep_alive status were handled.
 
 # v0.5.0
+
+## BugFixes 
+1. [TH2-2424] Cache function was fixed.
