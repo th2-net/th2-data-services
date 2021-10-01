@@ -317,21 +317,37 @@ class DataSource:
         """Gets event/events by ids.
 
         Args:
-            messages_id: One str with EventID or list of EventsIDs.
+            events_id: One str with EventID or list of EventsIDs.
 
         Returns:
             List[Event_dict] if you request a list or Event_dict.
 
+        Example:
+            >>> How to use.
+
+            >>> data_source.find_events_by_id_from_data_provider('8bc787fe-d1b4-11eb-bae5-57b0c4472880')
+            Returns 1 message (dict).
+
+            >>> data_source.find_events_by_id_from_data_provider(['8bc787fe-d1b4-11eb-bae5-57b0c4472880'])
+            Returns list(dict) with 1 event.
+
+            >>> data_source.find_events_by_id_from_data_provider([
+                '8bc787fe-d1b4-11eb-bae5-57b0c4472880',
+                '6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e',
+            ])
+            Returns list(dict) with 2 events.
+
         """
         if isinstance(events_id, str):
             events_id = [events_id]
-        events = "&".join([f"ids={id_}" for id_ in events_id])
-        response = requests.get(f"{self.__url}/events/?{events}")
-        try:
-            answer = response.json()
-        except json.JSONDecodeError:
-            raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
-        return answer if len(answer) > 1 else answer[0] if answer else None
+        result = []
+        for event_id in events_id:
+            response = requests.get(f"{self.__url}/event/{event_id}")
+            try:
+                result.append(response.json())
+            except json.JSONDecodeError:
+                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+        return result if len(result) > 1 else result[0] if result else None
 
     @staticmethod
     def read_csv_file(*sources: str) -> Generator[str, None, None]:

@@ -138,7 +138,13 @@ class Data:
             Data: Data object.
 
         """
-        new_workflow = [*self._workflow.copy(), {"filter": True, "callback": lambda record: record if callback(record) else None}]
+        new_workflow = [
+            *self._workflow.copy(),
+            {
+                "filter": True,
+                "callback": lambda record: record if callback(record) else None,
+            },
+        ]
         return Data(self._data, new_workflow, self._cache_status)
 
     def map(self, callback: Callable) -> "Data":

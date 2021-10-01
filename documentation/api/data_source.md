@@ -55,12 +55,30 @@ Gets event/events by ids.
 
 **Args:**
  
- - <b>`messages_id`</b>:  One str with EventID or list of EventsIDs. 
+ - <b>`events_id`</b>:  One str with EventID or list of EventsIDs. 
 
 
 
 **Returns:**
  List[Event_dict] if you request a list or Event_dict. 
+
+
+
+**Example:**
+ ``` How to use.```
+
+    >>> data_source.find_events_by_id_from_data_provider('8bc787fe-d1b4-11eb-bae5-57b0c4472880')
+    Returns 1 message (dict).
+
+    >>> data_source.find_events_by_id_from_data_provider(['8bc787fe-d1b4-11eb-bae5-57b0c4472880'])
+    Returns list(dict) with 1 event.
+
+    >>> data_source.find_events_by_id_from_data_provider([
+         '8bc787fe-d1b4-11eb-bae5-57b0c4472880',
+         '6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e',
+    ])
+    Returns list(dict) with 2 events.
+
 
 ---
 
@@ -161,7 +179,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L336"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L352"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `read_csv_file`
 
@@ -211,7 +229,7 @@ It used for create custom sse-request to data-provider use this readme https://g
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L352"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L368"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `write_to_txt`
 
