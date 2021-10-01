@@ -41,7 +41,7 @@ __init__(
 
 ---
 
-<a href="../../th2_data_services/data.py#L129"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L130"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `filter`
 
@@ -65,7 +65,7 @@ Append `filter` to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L206"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L227"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_by`
 
@@ -92,7 +92,31 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L150"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L158"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `limit`
+
+```python
+limit(num:int) → Data
+```
+
+Limits the stream to `num` entries. 
+
+
+
+**Args:**
+ 
+ - <b>`num`</b>:  How many records will be provided. 
+
+
+
+**Returns:**
+ 
+ - <b>`Data`</b>:  Data object. 
+
+---
+
+<a href="../../th2_data_services/data.py#L145"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -116,7 +140,7 @@ Append `transform` function to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L163"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L184"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sift`
 
@@ -140,7 +164,7 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L186"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L207"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `use_cache`
 
@@ -163,6 +187,24 @@ If True all requested data from rpt-data-provider will be saved to cache file. F
 **Returns:**
  
  - <b>`Data`</b>:  Data object. 
+
+---
+
+<a href="../../th2_data_services/data.py#L253"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `write_to_file`
+
+```python
+write_to_file(file:str) → None
+```
+
+Writes the stream data to txt file. 
+
+
+
+**Args:**
+ 
+ - <b>`file`</b>:  Path to file. 
 
 
 
