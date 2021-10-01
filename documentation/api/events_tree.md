@@ -29,7 +29,7 @@ Take a look at the following HTML tree to understand some important terms.
 ### <kbd>method</kbd> `__init__`
 
 ```python
-__init__(data: Optional[Iterator, Generator[dict, NoneType], Data] = None)
+__init__(data:Union[Iterator, Data]=None)
 ```
 
 
@@ -62,7 +62,7 @@ __init__(data: Optional[Iterator, Generator[dict, NoneType], Data] = None)
 ### <kbd>method</kbd> `append_element`
 
 ```python
-append_element(event: dict) → None
+append_element(event:dict) → None
 ```
 
 Append new event to events tree. 
@@ -82,7 +82,7 @@ Will update the event if event_id matches. Will remove the event from unknown_ev
 ### <kbd>method</kbd> `build_tree`
 
 ```python
-build_tree(data: Optional[Iterator, Generator[dict, NoneType]]) → None
+build_tree(data:Iterator) → None
 ```
 
 Build or append new events to family tree. 
@@ -120,7 +120,7 @@ Clear unknown events.
 ### <kbd>method</kbd> `get_ancestor_by_name`
 
 ```python
-get_ancestor_by_name(event: dict, event_name: str) → Union[dict, NoneType]
+get_ancestor_by_name(event:dict, event_name:str) → Union[dict, NoneType]
 ```
 
 Gets event ancestor by event_name. 
@@ -135,9 +135,9 @@ Gets event ancestor by event_name.
 
 ```python
 get_ancestor_by_super_type(
-    event: dict,
-    super_type: str,
-    super_type_get_func: Callable[[dict, Dict[int, dict]], str]
+    event:dict,
+    super_type:str,
+    super_type_get_func:Callable[[dict, Dict[int, dict]], str]
 ) → Union[dict, NoneType]
 ```
 
@@ -166,7 +166,7 @@ get_children(parent_event_id) → list
 ### <kbd>method</kbd> `is_in_ancestor_name`
 
 ```python
-is_in_ancestor_name(event: dict, event_name: str)
+is_in_ancestor_name(event:dict, event_name:str)
 ```
 
 Verify event has ancestor with specified event name. 
@@ -180,7 +180,7 @@ Verify event has ancestor with specified event name.
 ### <kbd>method</kbd> `is_in_ancestor_type`
 
 ```python
-is_in_ancestor_type(event: dict, event_type: str) → bool
+is_in_ancestor_type(event:dict, event_type:str) → bool
 ```
 
 Verify event has ancestor with specified event type. 
@@ -194,7 +194,7 @@ Verify event has ancestor with specified event type.
 ### <kbd>method</kbd> `recover_unknown_events`
 
 ```python
-recover_unknown_events(data_source: DataSource) → None
+recover_unknown_events(data_source:DataSource) → None
 ```
 
 Loads unknown events from data provider and recover EventsTree. 
@@ -460,7 +460,7 @@ Tuple of nodes with the same parent.
 ### <kbd>method</kbd> `get_by_leaves_status`
 
 ```python
-get_by_leaves_status(status: bool)
+get_by_leaves_status(status:bool)
 ```
 
 
@@ -474,7 +474,7 @@ get_by_leaves_status(status: bool)
 ### <kbd>method</kbd> `get_by_status`
 
 ```python
-get_by_status(status: bool)
+get_by_status(status:bool)
 ```
 
 
@@ -488,7 +488,7 @@ get_by_status(status: bool)
 ### <kbd>method</kbd> `show`
 
 ```python
-show(fmt: Callable = None, failed_only=False, show_status=True)
+show(fmt:Callable=None, failed_only=False, show_status=True)
 ```
 
 
@@ -508,10 +508,7 @@ EventsTree2 - experimental tree.
 ### <kbd>method</kbd> `__init__`
 
 ```python
-__init__(
-    data: Optional[Iterator, Generator[dict, NoneType], Data] = None,
-    ds=None
-)
+__init__(data:Union[Iterator, Data]=None, ds=None)
 ```
 
 

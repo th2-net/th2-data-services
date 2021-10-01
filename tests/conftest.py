@@ -33,7 +33,9 @@ def demo_events_from_data_source(demo_data_source: DataSource) -> Data:
 
 
 @pytest.fixture
-def demo_events_from_data_source_with_cache_status(demo_data_source: DataSource) -> Data:
+def demo_events_from_data_source_with_cache_status(
+    demo_data_source: DataSource,
+) -> Data:
     events = demo_data_source.get_events_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME, metadataOnly=False, cache=True)
     # Returns 49 events
     # Failed = 6

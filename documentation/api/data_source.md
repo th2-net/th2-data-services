@@ -21,7 +21,7 @@ The class that provides methods for getting messages and events from rpt-data-pr
 ### <kbd>method</kbd> `__init__`
 
 ```python
-__init__(url: str, chunk_length: int = 65536)
+__init__(url:str, chunk_length:int=65536)
 ```
 
 
@@ -45,7 +45,7 @@ str: URL of rpt-data-provider.
 
 ```python
 find_events_by_id_from_data_provider(
-    events_id: Union[Iterable, str]
+    events_id:Iterable
 ) → Union[List[dict], dict, NoneType]
 ```
 
@@ -55,12 +55,30 @@ Gets event/events by ids.
 
 **Args:**
  
- - <b>`messages_id`</b>:  One str with EventID or list of EventsIDs. 
+ - <b>`events_id`</b>:  One str with EventID or list of EventsIDs. 
 
 
 
 **Returns:**
  List[Event_dict] if you request a list or Event_dict. 
+
+
+
+**Example:**
+ ``` How to use.```
+
+    >>> data_source.find_events_by_id_from_data_provider('8bc787fe-d1b4-11eb-bae5-57b0c4472880')
+    Returns 1 message (dict).
+
+    >>> data_source.find_events_by_id_from_data_provider(['8bc787fe-d1b4-11eb-bae5-57b0c4472880'])
+    Returns list(dict) with 1 event.
+
+    >>> data_source.find_events_by_id_from_data_provider([
+         '8bc787fe-d1b4-11eb-bae5-57b0c4472880',
+         '6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e',
+    ])
+    Returns list(dict) with 2 events.
+
 
 ---
 
@@ -70,7 +88,7 @@ Gets event/events by ids.
 
 ```python
 find_messages_by_id_from_data_provider(
-    messages_id: Union[Iterable, str]
+    messages_id:Iterable
 ) → Union[List[dict], dict, NoneType]
 ```
 
@@ -112,7 +130,7 @@ Gets message/messages by ids.
 ### <kbd>method</kbd> `get_events_from_data_provider`
 
 ```python
-get_events_from_data_provider(cache: bool = False, **kwargs) → Data
+get_events_from_data_provider(cache:bool=False, **kwargs) → Data
 ```
 
 Sends SSE request for getting events. 
@@ -139,7 +157,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 ### <kbd>method</kbd> `get_messages_from_data_provider`
 
 ```python
-get_messages_from_data_provider(cache: bool = False, **kwargs) → Data
+get_messages_from_data_provider(cache:bool=False, **kwargs) → Data
 ```
 
 Sends SSE request for getting messages. 
@@ -161,12 +179,12 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L335"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L351"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `read_csv_file`
 
 ```python
-read_csv_file(*sources: str) → Generator[str, NoneType, NoneType]
+read_csv_file(*sources:str) → Generator[str, NoneType, NoneType]
 ```
 
 Gets data in a stream way from csv files. 
