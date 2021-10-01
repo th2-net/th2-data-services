@@ -11,12 +11,12 @@
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `DataSource`
 The class that provides methods for getting messages and events from rpt-data-provider. 
 
-<a href="../../th2_data_services/data_source.py#L22"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L21"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -39,7 +39,7 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L316"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L315"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_events_by_id_from_data_provider`
 
@@ -82,7 +82,7 @@ Gets event/events by ids.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L280"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L279"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_messages_by_id_from_data_provider`
 
@@ -125,7 +125,7 @@ Gets message/messages by ids.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L83"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L82"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_events_from_data_provider`
 
@@ -152,7 +152,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L116"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L115"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_messages_from_data_provider`
 
@@ -179,7 +179,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L352"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L351"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `read_csv_file`
 
@@ -203,7 +203,7 @@ Gets data in a stream way from csv files.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L56"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sse_request_to_data_provider`
 
@@ -226,25 +226,6 @@ It used for create custom sse-request to data-provider use this readme https://g
 **Yields:**
  
  - <b>`dict`</b>:  SSE response data. 
-
----
-
-<a href="../../th2_data_services/data_source.py#L368"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `write_to_txt`
-
-```python
-write_to_txt(data:Generator[str, NoneType, NoneType], source:str) → None
-```
-
-Writes to txt files. 
-
-
-
-**Args:**
- 
- - <b>`data`</b>:  Data. 
- - <b>`source`</b>:  Path to file. 
 
 
 

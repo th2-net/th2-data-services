@@ -386,7 +386,7 @@ def test_get_events_from_data_provider_with_error(demo_data_source: DataSource):
 
     events = data_source.get_events_from_data_provider(startTimestamp="test", endTimestamp="test")
     with pytest.raises(HTTPError) as exc_info:
-        len(events)
+        list(events)
     assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
 
 
@@ -395,14 +395,14 @@ def test_get_messages_from_data_provider_with_error(demo_data_source: DataSource
 
     events = data_source.get_messages_from_data_provider(startTimestamp="test", endTimestamp="test", stream="test")
     with pytest.raises(HTTPError) as exc_info:
-        len(events)
+        list(events)
     assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
 
 
 def test_check_url_for_data_source():
     with pytest.raises(HTTPError) as exc_info:
         data_source = DataSource("http://test_test:8080/")
-    assert "We can't create a connection at this URL. Please check the URL." in str(exc_info)
+    assert "Unable to connect to host 'http://test_test:8080'." in str(exc_info)
 
 
 def test_data_cache(demo_events_from_data_source: Data):
