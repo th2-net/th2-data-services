@@ -62,5 +62,5 @@ and too expensive to use.
 
 ## BugFixes 
 1. [TH2-2424] Cache function was fixed.
-
+2. [TS-766] Fixed case when Data Services cannot recover more than 64 unknown events.
 
