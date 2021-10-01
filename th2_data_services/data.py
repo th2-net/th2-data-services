@@ -16,6 +16,7 @@ class Data:
     """
 
     def __init__(self, data: DataSet, workflow: List[Callable] = None, cache=False):
+        self._cache_filename = f"{str(id(self))}.pickle"
         self._data = data
         self._workflow = [] if workflow is None else workflow
         self._cache_status: bool = cache
@@ -23,40 +24,38 @@ class Data:
         self._finalizer = finalize(self, self.__remove)
 
     def __remove(self):
-        filename = f"{str(id(self))}.pickle"
-        if self.__check_cache(filename):
-            path = Path("./").joinpath("temp").joinpath(filename)
+        if self.__check_cache(self._cache_filename):
+            path = Path("./").joinpath("temp").joinpath(self._cache_filename)
             path.unlink()
         del self._data
 
     def __iter__(self) -> DataSet:
-        filename = f"{str(id(self))}.pickle"
+        self._len = 0
 
-        if self._cache_status and self.__check_cache(filename):
-            working_data = self.__load_file(filename)
+        if self._cache_status and self.__check_cache(self._cache_filename):
+            working_data = self.__load_file(self._cache_filename)
             for record in working_data:
+                self._len += 1
                 yield record
         else:
             file = None
             if self._cache_status:
-                filepath = f"./temp/{filename}"
+                filepath = f"./temp/{self._cache_filename}"
                 file = open(filepath, "wb")
-            for record in self.__apply_workflow():
-                if file is not None:
-                    pickle.dump(record, file)
-                yield record
+            try:
+                for record in self.__apply_workflow():
+                    self._len += 1
+                    if file is not None:
+                        pickle.dump(record, file)
+                    yield record
+            except StopIteration:
+                return
+            finally:
+                if file:
+                    file.close()
 
-            if file:
-                file.close()
-
-    def __len__(self):
-        if self._len is not None:
-            return self._len
-        else:
-            self._len = 0
-            for _ in self:
-                self._len += 1
-            return self._len
+    def __length_hint__(self):
+        return self._len if self._len is not None else 8  # 8 - is a default value in CPython.
 
     def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.
@@ -114,9 +113,11 @@ class Data:
                         record = None
                         break
                 else:
-                    record = step["callback"](record)
+                    try:
+                        record = step["callback"](record)
+                    except StopIteration as e:
+                        return
                     if record is None:
-                        record = None
                         break
 
             if record is not None:
@@ -138,7 +139,7 @@ class Data:
             Data: Data object.
 
         """
-        new_workflow = [*self._workflow.copy(), {"filter": True, "callback": lambda record: record if callback(record) else None}]
+        new_workflow = [*self._workflow.copy(), {"type": "filter", "callback": lambda record: record if callback(record) else None}]
         return Data(self._data, new_workflow, self._cache_status)
 
     def map(self, callback: Callable) -> "Data":
@@ -151,8 +152,34 @@ class Data:
             Data: Data object.
 
         """
-        new_workflow = [*self._workflow.copy(), {"filter": False, "callback": callback}]
+        new_workflow = [*self._workflow.copy(), {"type": "map", "callback": callback}]
         return Data(self._data, new_workflow, self._cache_status)
+
+    def limit(self, num: int) -> "Data":
+        """Limits the stream to `num` entries.
+
+        Args:
+            num: How many records will be provided.
+
+        Returns:
+            Data: Data object.
+
+        """
+
+        def callback(r):
+            if callback.pushed < num:
+                callback.pushed += 1
+                return r
+            else:
+                callback.pushed = 0
+                raise StopIteration
+
+        callback.pushed = 0
+
+        new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": callback}]
+        data_obj = Data(self._data, new_workflow, self._cache_status)
+        data_obj._len = num
+        return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
         """Skips and limits records.
@@ -222,6 +249,17 @@ class Data:
                     continue
             else:
                 break
+
+    def write_to_file(self, file: str) -> None:
+        """Writes the stream data to txt file.
+
+        Args:
+            file: Path to file.
+
+        """
+        with open(file, "w") as txt_file:
+            for record in self:
+                txt_file.write(f"{pprint.pformat(record)}\n" + ("-" * 50) + "\n")
 
     def __str__(self):
         output = "------------- Printed first 5 records -------------\n"

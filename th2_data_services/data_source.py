@@ -9,7 +9,6 @@ from weakref import finalize
 from pathlib import Path
 from datetime import datetime
 from csv import DictReader
-from pprint import pformat
 from typing import Generator, Iterable, List, Union, Optional
 from urllib.parse import urlencode, urlparse
 from sseclient import SSEClient
@@ -28,9 +27,9 @@ class DataSource:
     def __check_connect(self) -> None:
         """Checks whether url is working."""
         try:
-            requests.get(self.__url)
+            requests.get(self.__url, timeout=3.0)
         except ConnectionError as error:
-            raise HTTPError("We can't create a connection at this URL. Please check the URL.")
+            raise HTTPError(f"Unable to connect to host '{self.__url}'.")
 
     def __remove(self):
         """Deconstructor of class."""
@@ -254,7 +253,7 @@ class DataSource:
         for record in client.events():
             if record.event == "error":
                 raise HTTPError(record.data)
-            if record.event not in ["close", "keep_alive"]:
+            if record.event not in ["close", "keep_alive", "messageIds"]:
                 record_data = json.loads(record.data)
                 yield record_data
 
@@ -348,16 +347,3 @@ class DataSource:
             with open(source) as data:
                 for message in DictReader(data):
                     yield dict(message)
-
-    @staticmethod
-    def write_to_txt(data: Generator[str, None, None], source: str) -> None:
-        """Writes to txt files.
-
-        Args:
-            data: Data.
-            source: Path to file.
-
-        """
-        with open(source, "w") as txt_file:
-            for record in data:
-                txt_file.write(f"{pformat(record)}\n" + ("-" * 50) + "\n")

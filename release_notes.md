@@ -33,6 +33,7 @@ message or event it returns Dict.
 ## BugFixes
 1. [TH2-2330] Data iterator have been broken in v0.3.0
 
+
 # v0.4.1
 
 ## Improvements
@@ -43,7 +44,23 @@ New lib with ds_utils posted in [here](https://github.com/th2-net/th2-data-servi
 ## BugFixes
 1. [TH2-2299] Error and keep_alive status were handled.
 
+
 # v0.5.0
+
+## Improvements
+1. [TH2-2427] Refactoring
+    - Reduced waiting time of connection check.
+    - The last "messageIds" message in the message stream will be ignored. Lib user will not get it.
+    - DataSource.write_to_txt was moved to Data. The name has been changed to write_to_file.
+    - Up requirement libs versions.
+2. len(Data) functionality was removed because it has side effects when we use list(Data) 
+and too expensive to use.
+
+## Features
+1. Added Data.limit(num) method to use in the pipeline.
+2. Add Data.write_to_file(filename) due to TH2-2427.
 
 ## BugFixes 
 1. [TH2-2424] Cache function was fixed.
+
+
