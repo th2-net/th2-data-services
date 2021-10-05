@@ -84,6 +84,26 @@ def test_data_cache(general_data: List[dict]):
     assert output1 == output3 and output2 == []
 
 
+def test_data_cache_magic_function(general_data: List[dict]):
+    data = Data(general_data, cache=True)
+    output1 = len(list(data))
+
+    data = Data(general_data, cache=True)
+    bool(data)
+    output2 = len(list(data))
+
+    data = Data(general_data, cache=True)
+    str(data)
+    output3 = len(list(data))
+
+    data = Data(general_data, cache=True)
+    work_data = data.filter(lambda record: record.get("batchId") is None)
+    output4 = len(list(work_data))
+    output5 = len(list(work_data))
+
+    assert output1 == output2 == output3 and output4 == output5 and output1 != output4
+
+
 def test_write_to_file(
     general_data,
 ):

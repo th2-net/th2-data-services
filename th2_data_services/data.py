@@ -29,33 +29,43 @@ class Data:
             path.unlink()
         del self._data
 
+    def __length_hint__(self):
+        return self._len if self._len is not None else 8  # 8 - is a default value in CPython.
+
     def __iter__(self) -> DataSet:
         self._len = 0
-
-        if self._cache_status and self.__check_cache(self._cache_filename):
-            working_data = self.__load_file(self._cache_filename)
-            for record in working_data:
-                self._len += 1
+        try:
+            for record in self.__load_data(self._cache_status):
                 yield record
+                self._len += 1
+        except StopIteration:
+            return None
+
+    def __load_data(self, cache: bool) -> Generator[dict, None, None]:
+        """Loads data from cache or data.
+
+        Args:
+            cache: Flag if you what write and read from cache.
+
+        Returns:
+            obj: Generator
+        """
+        if cache and self.__check_cache(self._cache_filename):
+            working_data = self.__load_file(self._cache_filename)
+            yield from working_data
         else:
             file = None
-            if self._cache_status:
+            if cache:
                 filepath = f"./temp/{self._cache_filename}"
                 file = open(filepath, "wb")
             try:
                 for record in self.__apply_workflow():
-                    self._len += 1
                     if file is not None:
                         pickle.dump(record, file)
                     yield record
-            except StopIteration:
-                return
             finally:
                 if file:
                     file.close()
-
-    def __length_hint__(self):
-        return self._len if self._len is not None else 8  # 8 - is a default value in CPython.
 
     def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.
@@ -263,11 +273,13 @@ class Data:
 
     def __str__(self):
         output = "------------- Printed first 5 records -------------\n"
-        for record in self.sift(limit=5):
+        for index, record in enumerate(self.__load_data(cache=False)):
+            if index == 5:
+                break
             output += pprint.pformat(record) + "\n"
         return output
 
     def __bool__(self):
-        for _ in self:
+        for _ in self.__load_data(cache=False):
             return True
         return False

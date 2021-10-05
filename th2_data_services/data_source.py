@@ -153,7 +153,7 @@ class DataSource:
         data = partial(self.__load_data, url, cache)
         return Data(data)
 
-    def __load_data(self, url: str, cache: bool = False):
+    def __load_data(self, url: str, cache: bool = False) -> Generator[dict, None, None]:
         """Loads data from cache or provider.
 
         Args:
@@ -238,7 +238,7 @@ class DataSource:
         if file:
             file.close()
 
-    def __execute_sse_request(self, url: str):
+    def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
 
         Args:
@@ -257,7 +257,7 @@ class DataSource:
                 record_data = json.loads(record.data)
                 yield record_data
 
-    def __create_stream_connection(self, url: str):
+    def __create_stream_connection(self, url: str) -> Generator[bytes, None, None]:
         """Create stream connection.
 
         Args:
