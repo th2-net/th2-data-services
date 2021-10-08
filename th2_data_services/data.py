@@ -16,12 +16,36 @@ class Data:
     """
 
     def __init__(self, data: DataSet, workflow: List[Callable] = None, cache=False):
-        self._cache_filename = f"{str(id(self))}.pickle"
+        self._cache_filename = f"{id(self)}.pickle"
         self._data = data
         self._workflow = [] if workflow is None else workflow
         self._cache_status: bool = cache
         self._len = None
+        self._length_hint = None  # The value is populated when we use limit method.
         self._finalizer = finalize(self, self.__remove)
+
+    @property
+    def len(self) -> int:
+        """int: How many records in the Data stream.
+
+        Notes:
+            1. It is a wasteful operation if you are performing it on the Data object that has never been iterated before.
+            2. If you want just to check emptiness, use is_empty property instead.
+        """
+        return self._len if self._len is not None else self.__calc_len()
+
+    @property
+    def is_empty(self) -> bool:
+        """bool: Indicates that the Data object doesn't contain data."""
+        for _ in self.__load_data(cache=self._cache_status, save_to_cache_during_iter=False):
+            return False
+        return True
+
+    def __calc_len(self) -> int:
+        # TODO - request rpt-data-provide provide "select count"
+        for _ in self:
+            pass
+        return self._len
 
     def __remove(self):
         if self.__check_cache(self._cache_filename):
@@ -30,7 +54,14 @@ class Data:
         del self._data
 
     def __length_hint__(self):
-        return self._len if self._len is not None else 8  # 8 - is a default value in CPython.
+        if self._len is not None:
+            return self._len
+        elif self._length_hint != None:
+            return self._length_hint
+        else:
+            # 2**13, though 8 - is a default value in CPython.
+            # We usually have large number of data.
+            return 8192
 
     def __iter__(self) -> DataSet:
         self._len = 0
@@ -41,7 +72,7 @@ class Data:
         except StopIteration:
             return None
 
-    def __load_data(self, cache: bool) -> Generator[dict, None, None]:
+    def __load_data(self, cache: bool, save_to_cache_during_iter: bool = True) -> Generator[dict, None, None]:
         """Loads data from cache or data.
 
         Args:
@@ -55,17 +86,18 @@ class Data:
             yield from working_data
         else:
             file = None
-            if cache:
+            if cache and save_to_cache_during_iter:
                 filepath = f"./temp/{self._cache_filename}"
                 file = open(filepath, "wb")
-            try:
-                for record in self.__apply_workflow():
-                    if file is not None:
+                try:
+                    for record in self.__apply_workflow():
                         pickle.dump(record, file)
-                    yield record
-            finally:
-                if file:
-                    file.close()
+                        yield record
+                finally:
+                    if file:
+                        file.close()
+            else:
+                yield from self.__apply_workflow()
 
     def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.
@@ -188,7 +220,7 @@ class Data:
 
         new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": callback}]
         data_obj = Data(self._data, new_workflow, self._cache_status)
-        data_obj._len = num
+        data_obj._length_hint = num
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
@@ -205,7 +237,7 @@ class Data:
         skipped = 0
         pushed = 0
 
-        for record in self:
+        for record in self.__load_data(cache=self._cache_status, save_to_cache_during_iter=False):
             if skip is not None and skipped < skip:
                 skipped += 1
                 continue
@@ -273,13 +305,13 @@ class Data:
 
     def __str__(self):
         output = "------------- Printed first 5 records -------------\n"
-        for index, record in enumerate(self.__load_data(cache=False)):
+        for index, record in enumerate(self.__load_data(cache=self._cache_status, save_to_cache_during_iter=False)):
             if index == 5:
                 break
             output += pprint.pformat(record) + "\n"
         return output
 
     def __bool__(self):
-        for _ in self.__load_data(cache=False):
+        for _ in self.__load_data(cache=self._cache_status, save_to_cache_during_iter=False):
             return True
         return False

@@ -21,7 +21,7 @@ The class that provides methods for getting messages and events from rpt-data-pr
 ### <kbd>method</kbd> `__init__`
 
 ```python
-__init__(url:str, chunk_length:int=65536)
+__init__(url: str, chunk_length: int = 65536)
 ```
 
 
@@ -45,7 +45,7 @@ str: URL of rpt-data-provider.
 
 ```python
 find_events_by_id_from_data_provider(
-    events_id:Iterable
+    events_id: Union[Iterable, str]
 ) → Union[List[dict], dict, NoneType]
 ```
 
@@ -88,7 +88,7 @@ Gets event/events by ids.
 
 ```python
 find_messages_by_id_from_data_provider(
-    messages_id:Iterable
+    messages_id: Union[Iterable, str]
 ) → Union[List[dict], dict, NoneType]
 ```
 
@@ -130,7 +130,7 @@ Gets message/messages by ids.
 ### <kbd>method</kbd> `get_events_from_data_provider`
 
 ```python
-get_events_from_data_provider(cache:bool=False, **kwargs) → Data
+get_events_from_data_provider(cache: bool = False, **kwargs) → Data
 ```
 
 Sends SSE request for getting events. 
@@ -157,7 +157,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 ### <kbd>method</kbd> `get_messages_from_data_provider`
 
 ```python
-get_messages_from_data_provider(cache:bool=False, **kwargs) → Data
+get_messages_from_data_provider(cache: bool = False, **kwargs) → Data
 ```
 
 Sends SSE request for getting messages. 
@@ -184,7 +184,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 ### <kbd>method</kbd> `read_csv_file`
 
 ```python
-read_csv_file(*sources:str) → Generator[str, NoneType, NoneType]
+read_csv_file(*sources: str) → Generator[str, NoneType, NoneType]
 ```
 
 Gets data in a stream way from csv files. 

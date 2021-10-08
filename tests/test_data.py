@@ -1,5 +1,8 @@
 import os
+from pathlib import Path
 from typing import List
+
+import pytest
 
 from th2_data_services.data import Data
 
@@ -124,3 +127,47 @@ def test_write_to_file(
         assert f.read() == expected
 
     os.remove(file_to_test)
+
+
+@pytest.mark.parametrize("cache", [True, False])
+def test_len(general_data: List[dict], cache):
+
+    # From empty list
+    data = Data(general_data, cache=cache)
+    assert data.len == len(list(data))
+    assert data.limit(10).len == 10
+    elements_num = len(list(data))
+
+    # After print
+    data = Data(general_data, cache=cache)
+    str(data)  # The same as print.
+    assert data.len == elements_num, f"After print, cache: {cache}"
+
+    # After is_empty
+    data = Data(general_data, cache=cache)
+    r = data.is_empty
+    assert data.len == elements_num, f"After is_empty, cache: {cache}"
+
+    # After sift
+    data = Data(general_data, cache=cache)
+    r = list(data.sift(limit=5))
+    assert data.len == elements_num, f"After sift, cache: {cache}"
+
+    # The cache was dumped after using len
+    data = Data(general_data, cache=cache)
+    r = data.len
+    if cache:
+        assert Path(f"./temp/{data._cache_filename}").is_file() is True, f"The cache was dumped after using len: {cache}"
+    else:
+        assert Path(f"./temp/{data._cache_filename}").is_file() is False, f"The cache was dumped after using len: {cache}"
+
+    # Check that we do not calc len, after already calculated len or after iter
+    # TODO - append when we add logging
+
+
+def test_is_empty(general_data: List[dict]):
+    empty_data = Data([])
+    data = Data(general_data)
+
+    assert empty_data.is_empty is True
+    assert data.is_empty is False
