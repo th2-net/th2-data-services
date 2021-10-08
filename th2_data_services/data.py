@@ -29,8 +29,9 @@ class Data:
         """int: How many records in the Data stream.
 
         Notes:
-            1. It is a wasteful operation if you are performing it on the Data object that has never been iterated before.
-            2. If you want just to check emptiness, use is_empty property instead.
+        1. It is a wasteful operation if you are performing it on the Data object that has never been iterated before.
+
+        2. If you want just to check emptiness, use is_empty property instead.
         """
         return self._len if self._len is not None else self.__calc_len()
 
