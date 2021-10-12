@@ -2,6 +2,17 @@ Table of Contents
 =================
 
 <!--ts-->
+* [Table of Contents](#table-of-contents)
+* [1. Introduction](#1-introduction)
+* [2. Getting started](#2-getting-started)
+   * [2.1. Installation](#21-installation)
+   * [2.2. Example](#22-example)
+   * [2.3. Theory](#23-theory)
+   * [2.4. Links](#24-links)
+* [3. API](#3-api)
+* [4. Examples](#4-examples)
+   * [4.1. Notebooks](#41-notebooks)
+   * [4.2. *.py](#42-py)
 <!--te-->
 
 # 1. Introduction
@@ -149,6 +160,12 @@ This allows operations to be chained to form a larger pipeline.
 - **Internal iteration**: In contrast to collections, which are iterated explicitly (external iteration), 
 stream operations do the iteration behind the scenes for you. Note, it doesn’t mean you cannot iterate 
 the _Data object_.
+
+- **Cache of Data**: You can use the _stream_cache_ or _instance_cache_ flag. Use _stream_cache_ if you want to save 
+the source data after the first iteration and use it thereafter. 
+Use _instance_cache_ if you want to save each Data with the applied workflow after iteration. Each Data instance remembers 
+the parents and uses their cache if the cache of the instance itself does not already exist.
+The cache saves on hard disk in folder "temp". Note that cache doesn't delete after work. 
 
   
 ## 2.4. Links

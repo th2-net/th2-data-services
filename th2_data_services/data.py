@@ -14,10 +14,29 @@ class Data:
 
     The class provides methods for working with data as a stream.
 
-    Such approach to data analysis called........................................................
+    Such approach to data analysis called streaming transformation.
+
+    Attributes:
+        data: Data source which you will transform.
+        instance_cache: Flag for save cache in pickle-file for each Data instance.
+                        It saves on hard disk in folder "temp".
+                        Note that cache DOESN'T DELETE after work.
+                        Can change its status with the use_cache function.
+        stream_cache: Flag for save cache in pickle-file for only Data source.
+                        It saves on hard disk in folder "temp".
+                        Note that cache DOESN'T DELETE after work.
+                        It does not change its status after the class is created.
     """
 
-    def __init__(self, data: DataSet, workflow: WorkFlow = None, parents_cache: List[str] = None, instance_cache: bool = False, stream_cache: bool = False):
+    def __init__(self, data: DataSet, instance_cache: bool = False, stream_cache: bool = False, workflow: WorkFlow = None, parents_cache: List[str] = None):
+        """
+        Args:
+            data: Data source.
+            workflow: Workflow.
+            parents_cache: Caches sequence. Works as a stack.
+            instance_cache: Flag if you want write and read from cache of Data instance.
+            stream_cache: Flag if you want write and read from cache of source.
+        """
         self._cache_filename = f"{str(id(self))}:{time()}.pickle"
         self._len = None
         self._data = data
