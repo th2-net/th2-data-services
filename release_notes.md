@@ -54,11 +54,14 @@ New lib with ds_utils posted in [here](https://github.com/th2-net/th2-data-servi
     - DataSource.write_to_txt was moved to Data. The name has been changed to write_to_file.
     - Up requirement libs versions.
 2. len(Data) functionality was removed because it has side effects when we use list(Data) 
-and too expensive to use.
+and too expensive to use. **Please use Data.len property instead.**
+3. [TH2-2474] Use of cache was revised.
 
 ## Features
 1. Added Data.limit(num) method to use in the pipeline.
-2. Add Data.write_to_file(filename) due to TH2-2427.
+2. Added Data.write_to_file(filename) due to TH2-2427.
+3. Added Data.len property to use instead of len(Data)
+4. Added Data.is_empty property
 
 ## BugFixes 
 1. [TH2-2424] Cache function was fixed.

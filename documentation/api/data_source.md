@@ -39,7 +39,7 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L216"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L214"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_events_by_id_from_data_provider`
 
@@ -82,7 +82,7 @@ Gets event/events by ids.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L180"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L178"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_messages_by_id_from_data_provider`
 
@@ -141,7 +141,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 **Args:**
  
- - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to instance_cache.  (See `use_cache` method in `Data` class). 
+ - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache. 
  - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. 
 
 
@@ -152,7 +152,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L101"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L100"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_messages_from_data_provider`
 
@@ -168,7 +168,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 **Args:**
  
- - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to instance_cache.  (See `use_cache` method in `Data` class). 
+ - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache. 
  - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. 
 
 
@@ -179,7 +179,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L252"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L250"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `read_csv_file`
 

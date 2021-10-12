@@ -6,6 +6,7 @@ from typing import Callable, Dict, Generator, Iterator, List, Optional, Union
 
 DataSet = Union[Iterator, Callable[..., Generator[dict, None, None]]]
 WorkFlow = List[Dict[str, Union[Callable, str]]]
+DataGenerator = Generator[dict, None, None]
 
 
 class Data:
@@ -21,12 +22,45 @@ class Data:
         self._len = None
         self._data = data
         self._workflow = [] if workflow is None else workflow
+        self._len = None
+        self._length_hint = None  # The value is populated when we use limit method.
         self._instance_cache = instance_cache
         self._stream_cache = stream_cache
         self._parents_cache = [] if parents_cache is None else parents_cache
 
+    @property
+    def len(self) -> int:
+        """int: How many records in the Data stream.
+
+        Notes:
+        1. It is a wasteful operation if you are performing it on the Data object that has never been iterated before.
+
+        2. If you want just to check emptiness, use is_empty property instead.
+        """
+        return self._len if self._len is not None else self.__calc_len()
+
+    @property
+    def is_empty(self) -> bool:
+        """bool: Indicates that the Data object doesn't contain data."""
+        for _ in self.__load_data():
+            return False
+        return True
+
+    def __calc_len(self) -> int:
+        # TODO - request rpt-data-provide provide "select count"
+        for _ in self:
+            pass
+        return self._len
+
     def __length_hint__(self):
-        return self._len if self._len is not None else 8  # 8 - is a default value in CPython.
+        if self._len is not None:
+            return self._len
+        elif self._length_hint is not None:
+            return self._length_hint
+        else:
+            # 2**13, though 8 - is a default value in CPython.
+            # We usually have large number of data.
+            return 8192
 
     def __iter__(self) -> DataSet:
         self._len = 0
@@ -37,14 +71,15 @@ class Data:
         except StopIteration:
             return None
 
-    def __load_data(self, instance_cache: bool = False, stream_cache: bool = False) -> Generator[dict, None, None]:
-        """Loads data from instance_cache or data.
+    def __load_data(self, instance_cache: bool = False, stream_cache: bool = False) -> DataGenerator:
+        """Loads data from instance cache, stream cache or data.
 
         Args:
-            instance_cache: Flag if you what write and read from instance_cache.
+            instance_cache: Flag if you what write and read from cache of Data instance.
+            stream_cache: Flag if you what write and read from cache of source.
 
         Returns:
-            obj: Generator
+            dict: Generator
         """
         if (instance_cache or stream_cache) and self.__check_cache(self._cache_filename):
             working_data = self.__load_file(self._cache_filename)
@@ -64,17 +99,39 @@ class Data:
             yield from self.__change_data(working_data=working_data, workflow=workflow, instance_cache=instance_cache, stream_cache=stream_cache)
 
     def get_last_cache(self) -> Optional[str]:
+        """Returns last existing cache.
+
+        Returns: Cache filename
+        """
         for cache_filename in self._parents_cache[::-1]:  # parents_cache works as a stack
             if self.__check_cache(cache_filename):
                 return cache_filename
         return None
 
     def __get_unapplied_workflow(self, cache_filename) -> WorkFlow:
+        """Returns list functions which haven't applied.
+
+        Args:
+            cache_filename: Cache filename in caches list of instance.
+
+        Returns: Workflow which haven't applied.
+        """
         cache_index = self._parents_cache[::-1].index(cache_filename)  # parents_cache works as a stack
         start_workflow = len(self._workflow) - 1 - cache_index  # each child has one more element then parent
         return self._workflow[start_workflow:]
 
-    def __change_data(self, working_data: DataSet, workflow: WorkFlow, instance_cache: bool = False, stream_cache: bool = False):
+    def __change_data(self, working_data: DataSet, workflow: WorkFlow, instance_cache: bool = False, stream_cache: bool = False) -> DataGenerator:
+        """Applies workflow for data.
+
+        Args:
+            working_data: Data for apply workflow.
+            workflow: Workflow.
+            instance_cache: Flag if you use cache for each instance of class.
+            stream_cache: Flag if you use cache only for source data.
+
+        Returns:
+            dict: Generator
+        """
         stream_file, instance_file = None, None
         if instance_cache:
             filepath = f"./temp/{self._cache_filename}"
@@ -118,7 +175,7 @@ class Data:
         path = path.joinpath(filename)
         return path.is_file()
 
-    def __load_file(self, filename: str) -> Generator[dict, None, None]:
+    def __load_file(self, filename: str) -> DataGenerator:
         """Loads records from pickle file.
 
         Args:
@@ -231,7 +288,7 @@ class Data:
         if self._stream_cache and not self._parents_cache:
             new_parents_cache = [self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, instance_cache=self._instance_cache, stream_cache=self._stream_cache, parents_cache=new_parents_cache)
-        data_obj._len = num
+        data_obj._length_hint = num
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
@@ -248,7 +305,7 @@ class Data:
         skipped = 0
         pushed = 0
 
-        for record in self:
+        for record in self.__load_data():
             if skip is not None and skipped < skip:
                 skipped += 1
                 continue
@@ -312,13 +369,13 @@ class Data:
 
     def __str__(self):
         output = "------------- Printed first 5 records -------------\n"
-        for index, record in enumerate(self.__load_data(instance_cache=False)):
+        for index, record in enumerate(self.__load_data()):
             if index == 5:
                 break
             output += pprint.pformat(record) + "\n"
         return output
 
     def __bool__(self):
-        for _ in self.__load_data(instance_cache=False):
+        for _ in self.__load_data():
             return True
         return False

@@ -73,8 +73,7 @@ class DataSource:
         on route http://localhost:8080/search/sse/events.
 
         Args:
-            cache (bool): If True all requested data from rpt-data-provider will be saved to instance_cache.
-                (See `use_cache` method in `Data` class).
+            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
@@ -106,8 +105,7 @@ class DataSource:
         on route http://localhost:8080/search/sse/messages.
 
         Args:
-            cache (bool): If True all requested data from rpt-data-provider will be saved to instance_cache.
-                (See `use_cache` method in `Data` class).
+            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
