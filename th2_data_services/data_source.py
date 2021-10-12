@@ -301,6 +301,7 @@ class DataSource:
             Returns list(dict) with 2 messages.
 
         """
+        msg_id_type_is_str = isinstance(messages_id, str)
         if isinstance(messages_id, str):
             messages_id = [messages_id]
         result = []
@@ -310,7 +311,7 @@ class DataSource:
                 result.append(response.json())
             except json.JSONDecodeError:
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
-        return result if len(result) > 1 else result[0] if result else None
+        return result[0] if msg_id_type_is_str else result if result else None
 
     def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
         """Gets event/events by ids.
@@ -337,6 +338,7 @@ class DataSource:
             Returns list(dict) with 2 events.
 
         """
+        event_id_type_is_str = isinstance(events_id, str)
         if isinstance(events_id, str):
             events_id = [events_id]
         result = []
@@ -346,7 +348,7 @@ class DataSource:
                 result.append(response.json())
             except json.JSONDecodeError:
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
-        return result if len(result) > 1 else result[0] if result else None
+        return result[0] if event_id_type_is_str else result if result else None
 
     @staticmethod
     def read_csv_file(*sources: str) -> Generator[str, None, None]:
