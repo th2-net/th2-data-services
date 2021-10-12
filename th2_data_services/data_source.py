@@ -14,6 +14,10 @@ from urllib.parse import urlencode, urlparse
 from sseclient import SSEClient
 from th2_data_services.data import Data
 
+import logging
+
+logger = logging.getLogger('th2_data_services')
+logger.setLevel(logging.DEBUG)
 
 class DataSource:
     """The class that provides methods for getting messages and events from rpt-data-provider."""
@@ -23,6 +27,7 @@ class DataSource:
         self._finalizer = finalize(self, self.__remove)
         self.__chunk_length = chunk_length
         self.__check_connect()
+        logger.info(url)
 
     def __check_connect(self) -> None:
         """Checks whether url is working."""
@@ -96,10 +101,14 @@ class DataSource:
 
         """
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            raise ValueError(
+            try:
+                raise ValueError(
                 "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please note it. "
                 "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
-            )
+                )
+            except Exception as e:
+                logger.error(e)
+
         if isinstance(kwargs["startTimestamp"], datetime):
             kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
 
@@ -108,7 +117,7 @@ class DataSource:
 
         url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
-
+        logger.info(url)
         data = partial(self.__load_data, url, cache)
         return Data(data)
 
@@ -129,12 +138,19 @@ class DataSource:
 
         """
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            raise ValueError(
+            try:
+                raise ValueError(
                 "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. Please note it. "
                 "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
-            )
+                )
+            except Exception as e:
+                logger.error(e)
+
         if not kwargs.get("stream"):
-            raise ValueError("'stream' is required field. Please note it." "More information on request here: https://github.com/th2-net/th2-rpt-data-provider")
+            try:
+                raise ValueError("'stream' is required field. Please note it." "More information on request here: https://github.com/th2-net/th2-rpt-data-provider")
+            except Exception as e:
+                logger.error(e)
 
         if isinstance(kwargs["startTimestamp"], datetime):
             kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
@@ -149,6 +165,7 @@ class DataSource:
 
         url = self.__url + "/search/sse/messages"
         url = f"{url}?{urlencode(kwargs) + streams}"
+        logger.info(url)
 
         data = partial(self.__load_data, url, cache)
         return Data(data)
@@ -164,6 +181,8 @@ class DataSource:
              obj: Generator
         """
         filename = None
+        logger.info(f"Cache status {cache}")
+
         if cache:
             filename = "__".join(url.split("/")[2:])
             filename = f"{filename}.pickle"
@@ -308,7 +327,8 @@ class DataSource:
             response = requests.get(f"{self.__url}/message/{msg_id}")
             try:
                 result.append(response.json())
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
+                logger.error(e)
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
         return result if len(result) > 1 else result[0] if result else None
 
@@ -344,7 +364,8 @@ class DataSource:
             response = requests.get(f"{self.__url}/event/{event_id}")
             try:
                 result.append(response.json())
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
+                logger.error(e)
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
         return result if len(result) > 1 else result[0] if result else None
 
