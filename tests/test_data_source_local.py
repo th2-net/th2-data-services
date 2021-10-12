@@ -420,13 +420,3 @@ def test_data_cache(demo_events_from_data_source: Data):
     output4 = list(data)
 
     assert output1 == output3 == output4 and output2 == []
-
-
-def test_data_source_cache(demo_events_from_data_source_with_cache_status: Data):
-    data = demo_events_from_data_source_with_cache_status
-
-    function_load = data._data()
-    output1 = list(data)
-    function_read = data._data()
-
-    assert "DataSource.__load_from_provider" in function_load.__str__() and "DataSource.__load_file" in function_read.__str__()

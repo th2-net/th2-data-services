@@ -11,12 +11,12 @@
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L15"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `DataSource`
 The class that provides methods for getting messages and events from rpt-data-provider. 
 
-<a href="../../th2_data_services/data_source.py#L21"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -39,14 +39,14 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L315"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L216"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_events_by_id_from_data_provider`
 
 ```python
 find_events_by_id_from_data_provider(
     events_id:Iterable
-) → Union[List[dict], dict, NoneType]
+) → Union[dict, List[dict], NoneType]
 ```
 
 Gets event/events by ids. 
@@ -82,14 +82,14 @@ Gets event/events by ids.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L279"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L180"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_messages_by_id_from_data_provider`
 
 ```python
 find_messages_by_id_from_data_provider(
     messages_id:Iterable
-) → Union[List[dict], dict, NoneType]
+) → Union[dict, List[dict], NoneType]
 ```
 
 Gets message/messages by ids. 
@@ -125,7 +125,7 @@ Gets message/messages by ids.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L82"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L68"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_events_from_data_provider`
 
@@ -152,7 +152,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L115"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L101"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_messages_from_data_provider`
 
@@ -179,7 +179,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L351"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L252"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `read_csv_file`
 
@@ -203,7 +203,7 @@ Gets data in a stream way from csv files.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sse_request_to_data_provider`
 
