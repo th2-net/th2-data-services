@@ -69,8 +69,8 @@ def test_sift_skip_data(general_data: List[dict]):
     assert output1 != output2
 
 
-def test_data_cache(general_data: List[dict]):
-    data = Data(general_data, cache=True)
+def test_instance_cache(general_data: List[dict]):
+    data = Data(general_data, instance_cache=True)
 
     output1 = list(data)
 
@@ -84,24 +84,99 @@ def test_data_cache(general_data: List[dict]):
     assert output1 == output3 and output2 == []
 
 
-def test_data_cache_magic_function(general_data: List[dict]):
-    data = Data(general_data, cache=True)
+def test_instance_cache_magic_function(general_data: List[dict]):
+    data = Data(general_data, instance_cache=True)
     output1 = len(list(data))
 
-    data = Data(general_data, cache=True)
+    data = Data(general_data, instance_cache=True)
     bool(data)
     output2 = len(list(data))
 
-    data = Data(general_data, cache=True)
+    data = Data(general_data, instance_cache=True)
     str(data)
     output3 = len(list(data))
 
-    data = Data(general_data, cache=True)
+    data = Data(general_data, instance_cache=True)
     work_data = data.filter(lambda record: record.get("batchId") is None)
     output4 = len(list(work_data))
     output5 = len(list(work_data))
 
     assert output1 == output2 == output3 and output4 == output5 and output1 != output4
+
+
+def test_stream_cache_inheritance(general_data: List[dict]):
+    data = Data(general_data, stream_cache=True)
+    data1 = data.filter(lambda record: record.get("isBatched"))
+    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data3 = data2.filter(lambda record: record.get("eventType"))
+    data4 = data1.map(lambda record: (record, record))
+
+    output1 = len(list(data))
+    output2 = len(list(data2))
+    output3 = len(list(data3))
+    output4 = len(list(data4))
+    output5 = len(list(data4))
+
+    assert output1 == 21 and output2 == 11 and output3 == 10 and output4 == output5 == 22
+
+
+def test_instance_cache_inheritance(general_data: List[dict]):
+    data = Data(general_data, instance_cache=True)
+    data1 = data.filter(lambda record: record.get("isBatched"))
+    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data3 = data2.filter(lambda record: record.get("eventType"))
+    data4 = data1.map(lambda record: (record, record))
+
+    output1 = len(list(data))
+    output2 = len(list(data2))
+    output3 = len(list(data3))
+    output4 = len(list(data4))
+    output5 = len(list(data4))
+
+    assert output1 == 21 and output2 == 11 and output3 == 10 and output4 == output5 == 22
+
+
+def test_instance_and_stream_cache_inheritance(general_data: List[dict]):
+    data = Data(general_data, stream_cache=True, instance_cache=True)
+    data1 = data.filter(lambda record: record.get("isBatched"))
+    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data3 = data2.filter(lambda record: record.get("eventType"))
+    data4 = data1.map(lambda record: (record, record))
+
+    output1 = len(list(data))
+    output2 = len(list(data2))
+    output3 = len(list(data3))
+    output4 = len(list(data4))
+    output5 = len(list(data4))
+
+    assert output1 == 21 and output2 == 11 and output3 == 10 and output4 == output5 == 22
+
+
+def test_source_for_stream_cache(general_data: List[dict]):
+    data = Data(general_data, stream_cache=True)
+    data1 = data.filter(lambda record: record.get("isBatched"))
+    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data3 = data1.map(lambda record: (record, record))
+
+    list(data)
+    list(data2)
+    list(data3)
+
+    assert data1.get_last_cache() == data2.get_last_cache() == data3.get_last_cache()
+
+
+def test_source_for_instance_cache(general_data: List[dict]):
+    data = Data(general_data, instance_cache=True)
+    data1 = data.filter(lambda record: record.get("isBatched"))
+    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data3 = data1.map(lambda record: (record, record))
+    data4 = data1.map(lambda record: (record, record))
+
+    list(data)
+    list(data1)
+    list(data4)
+
+    assert data1.get_last_cache() != data4.get_last_cache() and data2.get_last_cache() == data3.get_last_cache()
 
 
 def test_write_to_file(

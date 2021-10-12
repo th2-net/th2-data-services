@@ -73,7 +73,7 @@ class DataSource:
         on route http://localhost:8080/search/sse/events.
 
         Args:
-            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
+            cache (bool): If True all requested data from rpt-data-provider will be saved to instance_cache.
                 (See `use_cache` method in `Data` class).
             kwargs: th2-rpt-data-provider API query options.
 
@@ -96,7 +96,7 @@ class DataSource:
         url = f"{url}?{urlencode(kwargs)}"
 
         data = partial(self.__execute_sse_request, url)
-        return Data(data, cache=cache)
+        return Data(data, stream_cache=cache)
 
     def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
         """Sends SSE request for getting messages.
@@ -106,7 +106,7 @@ class DataSource:
         on route http://localhost:8080/search/sse/messages.
 
         Args:
-            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
+            cache (bool): If True all requested data from rpt-data-provider will be saved to instance_cache.
                 (See `use_cache` method in `Data` class).
             kwargs: th2-rpt-data-provider API query options.
 
@@ -137,7 +137,7 @@ class DataSource:
         url = f"{url}?{urlencode(kwargs) + streams}"
 
         data = partial(self.__execute_sse_request, url)
-        return Data(data, cache=cache)
+        return Data(data, stream_cache=cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.

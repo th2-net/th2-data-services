@@ -141,7 +141,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 **Args:**
  
- - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache.  (See `use_cache` method in `Data` class). 
+ - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to instance_cache.  (See `use_cache` method in `Data` class). 
  - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. 
 
 
@@ -168,7 +168,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 **Args:**
  
- - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache.  (See `use_cache` method in `Data` class). 
+ - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to instance_cache.  (See `use_cache` method in `Data` class). 
  - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. 
 
 

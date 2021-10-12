@@ -2,7 +2,7 @@ import pickle
 import pprint
 from pathlib import Path
 from time import time
-from typing import Generator, List, Union, Iterator, Callable, Dict, Optional
+from typing import Callable, Dict, Generator, Iterator, List, Optional, Union
 
 DataSet = Union[Iterator, Callable[..., Generator[dict, None, None]]]
 WorkFlow = List[Dict[str, Union[Callable, str]]]
@@ -16,12 +16,13 @@ class Data:
     Such approach to data analysis called........................................................
     """
 
-    def __init__(self, data: DataSet, workflow: WorkFlow = None, cache: bool = False, parents_cache: List[str] = None):
+    def __init__(self, data: DataSet, workflow: WorkFlow = None, parents_cache: List[str] = None, instance_cache: bool = False, stream_cache: bool = False):
         self._cache_filename = f"{str(id(self))}:{time()}.pickle"
         self._len = None
         self._data = data
         self._workflow = [] if workflow is None else workflow
-        self._cache_status = cache
+        self._instance_cache = instance_cache
+        self._stream_cache = stream_cache
         self._parents_cache = [] if parents_cache is None else parents_cache
 
     def __length_hint__(self):
@@ -30,66 +31,77 @@ class Data:
     def __iter__(self) -> DataSet:
         self._len = 0
         try:
-            for record in self.__load_data(self._cache_status):
+            for record in self.__load_data(self._instance_cache, self._stream_cache):
                 yield record
                 self._len += 1
         except StopIteration:
             return None
 
-    def __load_data(self, cache: bool) -> Generator[dict, None, None]:
-        """Loads data from cache or data.
+    def __load_data(self, instance_cache: bool = False, stream_cache: bool = False) -> Generator[dict, None, None]:
+        """Loads data from instance_cache or data.
 
         Args:
-            cache: Flag if you what write and read from cache.
+            instance_cache: Flag if you what write and read from instance_cache.
 
         Returns:
             obj: Generator
         """
-        if cache and self.__check_cache(self._cache_filename):
+        if (instance_cache or stream_cache) and self.__check_cache(self._cache_filename):
             working_data = self.__load_file(self._cache_filename)
             yield from working_data
         else:
-            yield from self.__change_data(cache)
-
-    def __change_data(self, cache: bool):
-        origin_cache = None
-        working_data, workflow = None, None
-
-        if cache:
-            for index_cache, cache_filename in enumerate(self._parents_cache[::-1]):  # parents_cache works as a stack
-                if self.__check_cache(cache_filename):
-                    working_data = self.__load_file(cache_filename)
-                    workflow = self._workflow[index_cache:]  # each child has one more element then parent
-        if working_data is None:
             working_data = self._data() if callable(self._data) else self._data
             workflow = self._workflow
-            if cache and self._parents_cache:
-                origin_cache = self._parents_cache[0]
 
-        origin_cache_file, file = None, None
-        if cache:
+            cache_filename = self.get_last_cache()
+            if cache_filename:
+                working_data = self.__load_file(cache_filename)
+                workflow = self.__get_unapplied_workflow(cache_filename)
+                if stream_cache:
+                    workflow = self._workflow
+                    stream_cache = False
+
+            yield from self.__change_data(working_data=working_data, workflow=workflow, instance_cache=instance_cache, stream_cache=stream_cache)
+
+    def get_last_cache(self) -> Optional[str]:
+        for cache_filename in self._parents_cache[::-1]:  # parents_cache works as a stack
+            if self.__check_cache(cache_filename):
+                return cache_filename
+        return None
+
+    def __get_unapplied_workflow(self, cache_filename) -> WorkFlow:
+        cache_index = self._parents_cache[::-1].index(cache_filename)  # parents_cache works as a stack
+        start_workflow = len(self._workflow) - 1 - cache_index  # each child has one more element then parent
+        return self._workflow[start_workflow:]
+
+    def __change_data(self, working_data: DataSet, workflow: WorkFlow, instance_cache: bool = False, stream_cache: bool = False):
+        stream_file, instance_file = None, None
+        if instance_cache:
             filepath = f"./temp/{self._cache_filename}"
-            file = open(filepath, "wb")
-        if origin_cache:
-            filepath = f"./temp/{origin_cache}"
-            origin_cache_file = open(filepath, "wb")
+            instance_file = open(filepath, "wb")
+        if stream_cache:
+            stream_cache_name = self._parents_cache[0] if self._parents_cache else self._cache_filename
+            filepath = f"./temp/{stream_cache_name}"
+            stream_file = open(filepath, "wb")
 
         try:
             for record in working_data:
-                if origin_cache_file is not None:
-                    pickle.dump(record, origin_cache_file)
+                if stream_file is not None:
+                    pickle.dump(record, stream_file)
                 modified_records = self.__apply_workflow(record, workflow)
                 if modified_records is None:
                     break
                 if not isinstance(modified_records, (list, tuple)):
                     modified_records = [modified_records]
                 for modified_record in modified_records:
-                    if file is not None:
-                        pickle.dump(modified_record, file)
+                    if instance_file is not None:
+                        pickle.dump(modified_record, instance_file)
                     yield modified_record
         finally:
-            if file:
-                file.close()
+            if instance_file:
+                instance_file.close()
+            if stream_file:
+                stream_file.close()
 
     def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.
@@ -172,7 +184,10 @@ class Data:
 
         """
         new_workflow = [*self._workflow.copy(), {"type": "filter", "callback": lambda record: record if callback(record) else None}]
-        return Data(self._data, new_workflow, self._cache_status, parents_cache=[*self._parents_cache, self._cache_filename])
+        new_parents_cache = [*self._parents_cache, self._cache_filename] if self._instance_cache else self._parents_cache
+        if self._stream_cache and not self._parents_cache:
+            new_parents_cache = [self._cache_filename]
+        return Data(data=self._data, workflow=new_workflow, instance_cache=self._instance_cache, stream_cache=self._stream_cache, parents_cache=new_parents_cache)
 
     def map(self, callback: Callable) -> "Data":
         """Append `transform` function to workflow.
@@ -185,7 +200,10 @@ class Data:
 
         """
         new_workflow = [*self._workflow.copy(), {"type": "map", "callback": callback}]
-        return Data(self._data, new_workflow, self._cache_status, parents_cache=[*self._parents_cache, self._cache_filename])
+        new_parents_cache = [*self._parents_cache, self._cache_filename] if self._instance_cache else self._parents_cache
+        if self._stream_cache and not self._parents_cache:
+            new_parents_cache = [self._cache_filename]
+        return Data(data=self._data, workflow=new_workflow, instance_cache=self._instance_cache, stream_cache=self._stream_cache, parents_cache=new_parents_cache)
 
     def limit(self, num: int) -> "Data":
         """Limits the stream to `num` entries.
@@ -209,7 +227,10 @@ class Data:
         callback.pushed = 0
 
         new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": callback}]
-        data_obj = Data(self._data, new_workflow, self._cache_status, parents_cache=[*self._parents_cache, self._cache_filename])
+        new_parents_cache = [*self._parents_cache, self._cache_filename] if self._instance_cache else self._parents_cache
+        if self._stream_cache and not self._parents_cache:
+            new_parents_cache = [self._cache_filename]
+        data_obj = Data(data=self._data, workflow=new_workflow, instance_cache=self._instance_cache, stream_cache=self._stream_cache, parents_cache=new_parents_cache)
         data_obj._len = num
         return data_obj
 
@@ -237,10 +258,10 @@ class Data:
             pushed += 1
 
     def use_cache(self, status: bool) -> "Data":
-        """Change status cache.
+        """Change status instance_cache.
 
-        If True all requested data from rpt-data-provider will be saved to cache file.
-        Further actions with Data object will be consume data from the cache file.
+        If True all requested data from rpt-data-provider will be saved to instance_cache file.
+        Further actions with Data object will be consume data from the instance_cache file.
 
         Args:
             status(bool): Status.
@@ -249,11 +270,7 @@ class Data:
             Data: Data object.
 
         """
-        if status:
-            self._cache_status = True
-        else:
-            self._cache_status = False
-
+        self._instance_cache = status
         return self
 
     def find_by(self, record_field, field_values) -> Generator:
@@ -295,13 +312,13 @@ class Data:
 
     def __str__(self):
         output = "------------- Printed first 5 records -------------\n"
-        for index, record in enumerate(self.__load_data(cache=False)):
+        for index, record in enumerate(self.__load_data(instance_cache=False)):
             if index == 5:
                 break
             output += pprint.pformat(record) + "\n"
         return output
 
     def __bool__(self):
-        for _ in self.__load_data(cache=False):
+        for _ in self.__load_data(instance_cache=False):
             return True
         return False
