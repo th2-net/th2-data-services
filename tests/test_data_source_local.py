@@ -65,18 +65,23 @@ def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
             "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
         ]
     )
-
+    events_with_one_element = data_source.find_events_by_id_from_data_provider(
+        [
+            "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
+        ]
+    )
     for event_ in events:
         event_["attachedMessageIds"].sort()
 
     # Check types
     assert isinstance(event, dict)
     assert isinstance(events, list)
-
+    assert isinstance(events_with_one_element, list)
     # Check content.
     assert event == expected_event
     assert events == expected_events
     assert len(events) == 2
+    assert len(events_with_one_element) == 1
 
 
 def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
@@ -361,15 +366,16 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
 
     message = data_source.find_messages_by_id_from_data_provider("demo-conn2:first:1624005448022245399")
     messages = data_source.find_messages_by_id_from_data_provider(["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"])
-
+    messages_with_one_element = data_source.find_messages_by_id_from_data_provider(["demo-conn2:first:1624005448022245399"])
     # Check types
     assert isinstance(message, dict)
     assert isinstance(messages, list)
-
+    assert isinstance(messages_with_one_element, list)
     # Check content.
     assert message == expected_message
     assert messages == expected_messages
     assert len(messages) == 2
+    assert len(messages_with_one_element) == 1
 
 
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
