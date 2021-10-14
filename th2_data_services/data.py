@@ -136,7 +136,7 @@ class Data:
         Args:
             working_data: Data for apply workflow.
             workflow: Workflow.
-            cache: Flag if you what write and read from cache.
+            cache: Set True if you are going to write and read from the cache.
 
         Returns:
             obj: Generator

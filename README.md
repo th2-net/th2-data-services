@@ -146,7 +146,6 @@ This example works with **Events**, but you also can do the same actions with **
     
     events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
     events_without_types_with_batch.use_cache(True)
-    # It will be use cache from events_with_batch and apply 2 last function from the workflow.
 
 
 ## 2.3. Theory
@@ -177,9 +176,9 @@ A short definition is "a sequence of elements from a source that supports aggreg
   * The parent cache: 
   If the "Data Object" has a parent cache. 
   It doesn't matter what position the parent cache has in inheritance. 
-  "Data Object" understands whose cache it is and applies the part of the workflow that was not applied.
+  "Data Object" understands whose cache it is and executes the part of the workflow that was not executed.
   * The own cache: 
-  If it is not the first iteration.
+  If it is not the first iteration of this Data object.
   
   Note that the cache state of the Data object is not inherited.
   

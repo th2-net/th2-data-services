@@ -94,4 +94,3 @@ events_types_with_batch = events_with_batch.map(lambda record: {"eventType": rec
 
 events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
 events_without_types_with_batch.use_cache(True)
-# It will be use cache from events_with_batch and apply 2 last function from the workflow.
