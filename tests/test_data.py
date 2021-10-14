@@ -72,8 +72,8 @@ def test_sift_skip_data(general_data: List[dict]):
     assert output1 != output2
 
 
-def test_instance_cache(general_data: List[dict]):
-    data = Data(general_data, instance_cache=True)
+def test_cache_common(general_data: List[dict]):
+    data = Data(general_data, cache=True)
 
     output1 = list(data)
 
@@ -87,19 +87,19 @@ def test_instance_cache(general_data: List[dict]):
     assert output1 == output3 and output2 == []
 
 
-def test_instance_cache_magic_function(general_data: List[dict]):
-    data = Data(general_data, instance_cache=True)
+def test_cache_magic_function(general_data: List[dict]):
+    data = Data(general_data, cache=True)
     output1 = len(list(data))
 
-    data = Data(general_data, instance_cache=True)
+    data = Data(general_data, cache=True)
     bool(data)
     output2 = len(list(data))
 
-    data = Data(general_data, instance_cache=True)
+    data = Data(general_data, cache=True)
     str(data)
     output3 = len(list(data))
 
-    data = Data(general_data, instance_cache=True)
+    data = Data(general_data, cache=True)
     work_data = data.filter(lambda record: record.get("batchId") is None)
     output4 = len(list(work_data))
     output5 = len(list(work_data))
@@ -107,14 +107,17 @@ def test_instance_cache_magic_function(general_data: List[dict]):
     assert output1 == output2 == output3 and output4 == output5 and output1 != output4
 
 
-def test_stream_cache_inheritance(general_data: List[dict]):
-    data = Data(general_data, stream_cache=True)
+def test_cache_inheritance(general_data: List[dict]):
+    data = Data(general_data, cache=True)
     data1 = data.filter(lambda record: record.get("isBatched"))
     data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data2.use_cache(True)
     data3 = data2.filter(lambda record: record.get("eventType"))
     data4 = data1.map(lambda record: (record, record))
+    data4.use_cache(True)
 
     output1 = len(list(data))
+    data._data = []
     output2 = len(list(data2))
     output3 = len(list(data3))
     output4 = len(list(data4))
@@ -123,40 +126,8 @@ def test_stream_cache_inheritance(general_data: List[dict]):
     assert output1 == 21 and output2 == 11 and output3 == 10 and output4 == output5 == 22
 
 
-def test_instance_cache_inheritance(general_data: List[dict]):
-    data = Data(general_data, instance_cache=True)
-    data1 = data.filter(lambda record: record.get("isBatched"))
-    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
-    data3 = data2.filter(lambda record: record.get("eventType"))
-    data4 = data1.map(lambda record: (record, record))
-
-    output1 = len(list(data))
-    output2 = len(list(data2))
-    output3 = len(list(data3))
-    output4 = len(list(data4))
-    output5 = len(list(data4))
-
-    assert output1 == 21 and output2 == 11 and output3 == 10 and output4 == output5 == 22
-
-
-def test_instance_and_stream_cache_inheritance(general_data: List[dict]):
-    data = Data(general_data, stream_cache=True, instance_cache=True)
-    data1 = data.filter(lambda record: record.get("isBatched"))
-    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
-    data3 = data2.filter(lambda record: record.get("eventType"))
-    data4 = data1.map(lambda record: (record, record))
-
-    output1 = len(list(data))
-    output2 = len(list(data2))
-    output3 = len(list(data3))
-    output4 = len(list(data4))
-    output5 = len(list(data4))
-
-    assert output1 == 21 and output2 == 11 and output3 == 10 and output4 == output5 == 22
-
-
-def test_source_for_stream_cache(general_data: List[dict]):
-    data = Data(general_data, stream_cache=True)
+def test_cache_for_source(general_data: List[dict]):
+    data = Data(general_data, cache=True)
     data1 = data.filter(lambda record: record.get("isBatched"))
     data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
     data3 = data1.map(lambda record: (record, record))
@@ -168,12 +139,16 @@ def test_source_for_stream_cache(general_data: List[dict]):
     assert data1.get_last_cache() == data2.get_last_cache() == data3.get_last_cache()
 
 
-def test_source_for_instance_cache(general_data: List[dict]):
-    data = Data(general_data, instance_cache=True)
+def test_cache_for_instance(general_data: List[dict]):
+    data = Data(general_data, cache=True)
     data1 = data.filter(lambda record: record.get("isBatched"))
+    data1.use_cache(True)
     data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data2.use_cache(True)
     data3 = data1.map(lambda record: (record, record))
+    data3.use_cache(True)
     data4 = data1.map(lambda record: (record, record))
+    data4.use_cache(True)
 
     list(data)
     list(data1)
@@ -204,37 +179,36 @@ def test_write_to_file(
     os.remove(file_to_test)
 
 
-@pytest.mark.parametrize("stream_cache", [True, False])
-def test_len_with_stream_cache(general_data: List[dict], stream_cache):
-
+@pytest.mark.parametrize("cache ", [True, False])
+def test_len_with_stream_cache(general_data: List[dict], cache):
     # From empty list
-    data = Data(general_data, stream_cache=stream_cache)
+    data = Data(general_data, cache=cache)
     assert data.len == len(list(data))
     assert data.limit(10).len == 10
     elements_num = len(list(data))
 
     # After print
-    data = Data(general_data, stream_cache=stream_cache)
+    data = Data(general_data, cache=cache)
     str(data)  # The same as print.
-    assert data.len == elements_num, f"After print, cache: {stream_cache}"
+    assert data.len == elements_num, f"After print, cache: {cache}"
 
     # After is_empty
-    data = Data(general_data, stream_cache=stream_cache)
+    data = Data(general_data, cache=cache)
     r = data.is_empty
-    assert data.len == elements_num, f"After is_empty, cache: {stream_cache}"
+    assert data.len == elements_num, f"After is_empty, cache: {cache}"
 
     # After sift
-    data = Data(general_data, stream_cache=stream_cache)
+    data = Data(general_data, cache=cache)
     r = list(data.sift(limit=5))
-    assert data.len == elements_num, f"After sift, cache: {stream_cache}"
+    assert data.len == elements_num, f"After sift, cache: {cache}"
 
     # The cache was dumped after using len
-    data = Data(general_data, stream_cache=stream_cache)
+    data = Data(general_data, cache=cache)
     r = data.len
-    if stream_cache:
-        assert Path(f"./temp/{data._cache_filename}").is_file() is True, f"The cache was dumped after using len: {stream_cache}"
+    if cache:
+        assert Path(f"./temp/{data._cache_filename}").is_file() is True, f"The cache was dumped after using len: {cache}"
     else:
-        assert Path(f"./temp/{data._cache_filename}").is_file() is False, f"The cache was dumped after using len: {stream_cache}"
+        assert Path(f"./temp/{data._cache_filename}").is_file() is False, f"The cache was dumped after using len: {cache}"
 
     # Check that we do not calc len, after already calculated len or after iter
     # TODO - append when we add logging

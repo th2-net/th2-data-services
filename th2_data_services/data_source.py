@@ -95,7 +95,7 @@ class DataSource:
         url = f"{url}?{urlencode(kwargs)}"
 
         data = partial(self.__execute_sse_request, url)
-        return Data(data, stream_cache=cache)
+        return Data(data, cache=cache)
 
     def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
         """Sends SSE request for getting messages.
@@ -135,7 +135,7 @@ class DataSource:
         url = f"{url}?{urlencode(kwargs) + streams}"
 
         data = partial(self.__execute_sse_request, url)
-        return Data(data, stream_cache=cache)
+        return Data(data, cache=cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.

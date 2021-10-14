@@ -8,7 +8,7 @@ Table of Contents
    * [2.1. Installation](#21-installation)
    * [2.2. Example](#22-example)
    * [2.3. Theory](#23-theory)
-   * [2.4. Links](#24-links)
+   * [2.5. Links](#25-links)
 * [3. API](#3-api)
 * [4. Examples](#4-examples)
    * [4.1. Notebooks](#41-notebooks)
@@ -148,6 +148,23 @@ A short definition is "a sequence of elements from a source that supports aggreg
   _DataSource object_ provides connection to _th2-rpt-provider_ or read csv files from cradle-viewer.
 - **Aggregate operations**: 
   Common operations such as filter, map, find and so on. 
+- **Data caching**:
+  The _Data object_ provides the ability to use the cache. 
+  The cache works for each _Data object_, that is, you choose which _Data object_ you want to save. 
+  The _Data object_ cache is saved after the first iteration, but the iteration source may be different.
+  If you don't use the cache, your source will be the data source you have in the _Data Object_. 
+  But if you use the cache, your source can be the data source, the parent cache, or own cache:
+  * The data source: 
+  If the "Data Object" doesn't have a parent cache and its cache.
+  * The parent cache: 
+  If the "Data Object" has a parent cache. 
+  It doesn't matter what position the parent cache has in inheritance. 
+  "Data Object" understands whose cache it is and applies the part of the workflow that was not applied.
+  * The own cache: 
+  If it is not the first iteration.
+  
+  Note that the cache state of the Data object is not inherited.
+  
 
 Furthermore, stream operations have two fundamental characteristics that make them very different 
 from collection operations:
@@ -161,14 +178,8 @@ This allows operations to be chained to form a larger pipeline.
 stream operations do the iteration behind the scenes for you. Note, it doesn’t mean you cannot iterate 
 the _Data object_.
 
-- **Cache of Data**: You can use the _stream_cache_ or _instance_cache_ flag. Use _stream_cache_ if you want to save 
-the source data after the first iteration and use it thereafter. 
-Use _instance_cache_ if you want to save each Data with the applied workflow after iteration. Each Data instance remembers 
-the parents and uses their cache if the cache of the instance itself does not already exist.
-The cache saves on hard disk in folder "temp". Note that cache doesn't delete after work. 
-
   
-## 2.4. Links
+## 2.5. Links
 
 - [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)
 - [Th2 Data Services Utils](https://github.com/th2-net/th2-data-services-utils)
