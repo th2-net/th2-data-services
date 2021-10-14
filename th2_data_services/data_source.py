@@ -1,16 +1,13 @@
-import pickle
 import requests
 import json
 from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError
 from functools import partial
-from weakref import finalize
-from pathlib import Path
 from datetime import datetime
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlencode
 from sseclient import SSEClient
 from th2_data_services.data import Data
 
@@ -20,7 +17,6 @@ class DataSource:
 
     def __init__(self, url: str, chunk_length: int = 65536):
         self.url = url
-        self._finalizer = finalize(self, self.__remove)
         self.__chunk_length = chunk_length
         self.__check_connect()
 
@@ -30,16 +26,6 @@ class DataSource:
             requests.get(self.__url, timeout=3.0)
         except ConnectionError as error:
             raise HTTPError(f"Unable to connect to host '{self.__url}'.")
-
-    def __remove(self):
-        """Deconstructor of class."""
-        filename = urlparse(self.__url).netloc
-        path = Path("./").joinpath("temp")
-        if path.exists():
-            for file in path.iterdir():
-                current_file = str(file)
-                if filename in current_file:
-                    file.unlink()
 
     @property
     def url(self) -> str:
@@ -88,7 +74,6 @@ class DataSource:
 
         Args:
             cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
-                (See `use_cache` method in `Data` class).
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
@@ -109,8 +94,8 @@ class DataSource:
         url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
 
-        data = partial(self.__load_data, url, cache)
-        return Data(data)
+        data = partial(self.__execute_sse_request, url)
+        return Data(data, cache=cache)
 
     def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
         """Sends SSE request for getting messages.
@@ -121,7 +106,6 @@ class DataSource:
 
         Args:
             cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
-                (See `use_cache` method in `Data` class).
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
@@ -150,93 +134,8 @@ class DataSource:
         url = self.__url + "/search/sse/messages"
         url = f"{url}?{urlencode(kwargs) + streams}"
 
-        data = partial(self.__load_data, url, cache)
-        return Data(data)
-
-    def __load_data(self, url: str, cache: bool = False) -> Generator[dict, None, None]:
-        """Loads data from cache or provider.
-
-        Args:
-            url: Url.
-            cache: Flag if you what save to cache.
-
-        Returns:
-             obj: Generator
-        """
-        filename = None
-        if cache:
-            filename = "__".join(url.split("/")[2:])
-            filename = f"{filename}.pickle"
-
-        if filename and self.__check_cache(filename):
-            data = self.__load_file(filename)
-        else:
-            data = self.__load_from_provider(url, filename)
-        return data
-
-    def __check_cache(self, filename: str) -> bool:
-        """Checks whether file exist.
-
-        Args:
-            filename: Name of the cache file.
-
-        Returns:
-            bool: File exists or not.
-
-        """
-        path = Path("./temp")
-        path.mkdir(exist_ok=True)
-        path = path.joinpath(filename)
-        return path.is_file()
-
-    def __load_file(self, filename: str) -> Generator[dict, None, None]:
-        """Loads records from pickle file.
-
-        Args:
-            filename: Name of the cache file.
-
-        Yields:
-            dict: Generator records.
-
-        """
-        path = Path("./").joinpath("temp").joinpath(filename)
-        if not path.is_file():
-            raise ValueError(f"{filename} isn't file.")
-
-        if path.suffix != ".pickle":
-            raise ValueError(f"File hasn't pickle extension.")
-
-        with open(path, "rb") as file:
-            while True:
-                try:
-                    decoded_data = pickle.load(file)
-                    yield decoded_data
-                except EOFError:
-                    break
-
-    def __load_from_provider(self, url: str, filename: str = None) -> Generator[dict, None, None]:
-        """Loads records from data provider.
-
-        Args:
-            url: Url.
-            filename: Filename if you what to create local storage.
-
-        Yields:
-            dict: Generator records.
-
-        """
-        file = None
-        if filename is not None:
-            path = Path("./").joinpath("temp").joinpath(filename)
-            file = open(path, "wb")
-
-        for record in self.__execute_sse_request(url):
-            if file is not None:
-                pickle.dump(record, file)
-            yield record
-
-        if file:
-            file.close()
+        data = partial(self.__execute_sse_request, url)
+        return Data(data, cache=cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.

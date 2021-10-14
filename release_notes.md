@@ -55,6 +55,7 @@ New lib with ds_utils posted in [here](https://github.com/th2-net/th2-data-servi
     - Up requirement libs versions.
 2. len(Data) functionality was removed because it has side effects when we use list(Data) 
 and too expensive to use. **Please use Data.len property instead.**
+3. [TH2-2474] Use of cache was revised.
 
 ## Features
 1. Added Data.limit(num) method to use in the pipeline.

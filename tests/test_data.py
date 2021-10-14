@@ -72,7 +72,7 @@ def test_sift_skip_data(general_data: List[dict]):
     assert output1 != output2
 
 
-def test_data_cache(general_data: List[dict]):
+def test_cache_common(general_data: List[dict]):
     data = Data(general_data, cache=True)
 
     output1 = list(data)
@@ -87,7 +87,7 @@ def test_data_cache(general_data: List[dict]):
     assert output1 == output3 and output2 == []
 
 
-def test_data_cache_magic_function(general_data: List[dict]):
+def test_cache_magic_function(general_data: List[dict]):
     data = Data(general_data, cache=True)
     output1 = len(list(data))
 
@@ -105,6 +105,56 @@ def test_data_cache_magic_function(general_data: List[dict]):
     output5 = len(list(work_data))
 
     assert output1 == output2 == output3 and output4 == output5 and output1 != output4
+
+
+def test_cache_inheritance(general_data: List[dict]):
+    data = Data(general_data, cache=True)
+    data1 = data.filter(lambda record: record.get("isBatched"))
+    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data2.use_cache(True)
+    data3 = data2.filter(lambda record: record.get("eventType"))
+    data4 = data1.map(lambda record: (record, record))
+    data4.use_cache(True)
+
+    output1 = len(list(data))
+    data._data = []
+    output2 = len(list(data2))
+    output3 = len(list(data3))
+    output4 = len(list(data4))
+    output5 = len(list(data4))
+
+    assert output1 == 21 and output2 == 11 and output3 == 10 and output4 == output5 == 22
+
+
+def test_cache_for_source(general_data: List[dict]):
+    data = Data(general_data, cache=True)
+    data1 = data.filter(lambda record: record.get("isBatched"))
+    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data3 = data1.map(lambda record: (record, record))
+
+    list(data)
+    list(data2)
+    list(data3)
+
+    assert data1.get_last_cache() == data2.get_last_cache() == data3.get_last_cache()
+
+
+def test_cache_for_instance(general_data: List[dict]):
+    data = Data(general_data, cache=True)
+    data1 = data.filter(lambda record: record.get("isBatched"))
+    data1.use_cache(True)
+    data2 = data1.map(lambda record: {**record, "batch_status": record.get("isBatched")})
+    data2.use_cache(True)
+    data3 = data1.map(lambda record: (record, record))
+    data3.use_cache(True)
+    data4 = data1.map(lambda record: (record, record))
+    data4.use_cache(True)
+
+    list(data)
+    list(data1)
+    list(data4)
+
+    assert data1.get_last_cache() != data4.get_last_cache() and data2.get_last_cache() == data3.get_last_cache()
 
 
 def test_write_to_file(
@@ -129,9 +179,8 @@ def test_write_to_file(
     os.remove(file_to_test)
 
 
-@pytest.mark.parametrize("cache", [True, False])
-def test_len(general_data: List[dict], cache):
-
+@pytest.mark.parametrize("cache ", [True, False])
+def test_len_with_stream_cache(general_data: List[dict], cache):
     # From empty list
     data = Data(general_data, cache=cache)
     assert data.len == len(list(data))
