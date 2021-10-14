@@ -81,8 +81,12 @@ data_source.find_messages_by_id_from_data_provider(desired_message)  # Returns 1
 data_source.find_messages_by_id_from_data_provider(desired_messages)  # Returns 2 messages list(dict).
 
 # [3.11] The cache inheritance.
-events_with_batch = events.filter(lambda record: record.get("batchId"))  # Use cache from the events.
-events_with_batch.use_cache(True)  # Specify what we want to save in the cache.
+# Creates a new Data object that will use cache from the events Data object.
+events_with_batch = events.filter(lambda record: record.get("batchId"))
+
+# New Data objects don't use their own cache by default but use the cache of the parent Data object.
+# Use use_cache method to activate caching. After that, the Data object will create its own cache file.
+events_with_batch.use_cache(True)
 
 list(events_with_batch)
 
