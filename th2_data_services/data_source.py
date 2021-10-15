@@ -107,7 +107,8 @@ class DataSource:
                 "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
                 )
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
+                raise
 
         if isinstance(kwargs["startTimestamp"], datetime):
             kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
@@ -144,13 +145,15 @@ class DataSource:
                 "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
                 )
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
+                raise
 
         if not kwargs.get("stream"):
             try:
                 raise ValueError("'stream' is required field. Please note it." "More information on request here: https://github.com/th2-net/th2-rpt-data-provider")
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
+                raise
 
         if isinstance(kwargs["startTimestamp"], datetime):
             kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
@@ -328,7 +331,7 @@ class DataSource:
             try:
                 result.append(response.json())
             except json.JSONDecodeError as e:
-                logger.error(e)
+                logger.exception(e)
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
         return result if len(result) > 1 else result[0] if result else None
 
@@ -365,7 +368,7 @@ class DataSource:
             try:
                 result.append(response.json())
             except json.JSONDecodeError as e:
-                logger.error(e)
+                logger.exception(e)
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
         return result if len(result) > 1 else result[0] if result else None
 
