@@ -152,7 +152,7 @@ class DataSource:
         for record in client.events():
             if record.event == "error":
                 raise HTTPError(record.data)
-            if record.event not in ["close", "keep_alive", "messageIds"]:
+            if record.event not in ["close", "keep_alive", "message_ids"]:
                 record_data = json.loads(record.data)
                 yield record_data
 
