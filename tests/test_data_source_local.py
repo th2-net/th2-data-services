@@ -420,3 +420,10 @@ def test_data_cache(demo_events_from_data_source: Data):
     output4 = list(data)
 
     assert output1 == output3 == output4 and output2 == []
+
+
+def test_messageIds_not_in_last_msg(demo_messages_from_data_source: Data):
+    data = demo_messages_from_data_source
+    data_lst = list(data)
+    last_msg = data_lst[-1]
+    assert "messageIds" not in last_msg
