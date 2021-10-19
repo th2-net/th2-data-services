@@ -101,14 +101,12 @@ class DataSource:
 
         """
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            try:
-                raise ValueError(
-                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please note it. "
-                "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
-                )
-            except Exception as e:
-                logger.exception(e)
-                raise
+            exception_msg = "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please "\
+                            "note it. More information on request here: " \
+                            "https://github.com/th2-net/th2-rpt-data-provider "
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
+
 
         if isinstance(kwargs["startTimestamp"], datetime):
             kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
@@ -139,21 +137,18 @@ class DataSource:
 
         """
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            try:
-                raise ValueError(
-                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. Please note it. "
-                "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
-                )
-            except Exception as e:
-                logger.exception(e)
-                raise
+            exception_msg = "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. " \
+                            "Please note it. More information on request here: " \
+                            "https://github.com/th2-net/th2-rpt-data-provider "
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
 
         if not kwargs.get("stream"):
-            try:
-                raise ValueError("'stream' is required field. Please note it." "More information on request here: https://github.com/th2-net/th2-rpt-data-provider")
-            except Exception as e:
-                logger.exception(e)
-                raise
+            exception_msg = "'stream' is required field. Please note it." "More information on request here: " \
+                            "https://github.com/th2-net/th2-rpt-data-provider "
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
+
 
         if isinstance(kwargs["startTimestamp"], datetime):
             kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
@@ -330,9 +325,10 @@ class DataSource:
             response = requests.get(f"{self.__url}/message/{msg_id}")
             try:
                 result.append(response.json())
-            except json.JSONDecodeError as e:
-                logger.exception(e)
-                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+            except json.JSONDecodeError:
+                exception_msg = f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text} "
+                logger.error(exception_msg)
+                raise ValueError(exception_msg)
         return result if len(result) > 1 else result[0] if result else None
 
     def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
@@ -367,9 +363,10 @@ class DataSource:
             response = requests.get(f"{self.__url}/event/{event_id}")
             try:
                 result.append(response.json())
-            except json.JSONDecodeError as e:
-                logger.exception(e)
-                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+            except json.JSONDecodeError:
+                exception_msg = f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}"
+                logger.error(exception_msg)
+                raise ValueError(exception_msg)
         return result if len(result) > 1 else result[0] if result else None
 
     @staticmethod
