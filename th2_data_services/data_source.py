@@ -276,14 +276,14 @@ class DataSource:
 
         response.release_conn()
 
-    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
+    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict, None]]:
         """Gets message/messages by ids.
 
         Args:
             messages_id: One str with MessageID or list of MessagesIDs.
 
         Returns:
-            List[Message_dict] if you request a list or Message_dict.
+            List[Message_dict] if you request a list or Message_dict or None if no massages found.
 
         Example:
             >>> How to use.
@@ -313,14 +313,14 @@ class DataSource:
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
         return result[0] if msg_id_type_is_str else result if result else None
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
+    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict, None]]:
         """Gets event/events by ids.
 
         Args:
             events_id: One str with EventID or list of EventsIDs.
 
         Returns:
-            List[Event_dict] if you request a list or Event_dict.
+            List[Event_dict] if you request a list or Event_dict or None if no events found.
 
         Example:
             >>> How to use.
