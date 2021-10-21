@@ -33,6 +33,13 @@ def demo_events_from_data_source(demo_data_source: DataSource) -> Data:
 
 
 @pytest.fixture
+def demo_messages_from_data_source(demo_data_source: DataSource) -> Data:
+    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"])
+    # Returns 36 messages
+    return messages
+
+
+@pytest.fixture
 def demo_events_from_data_source_with_cache_status(
     demo_data_source: DataSource,
 ) -> Data:
