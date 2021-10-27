@@ -99,7 +99,7 @@ class DataSource:
         data = partial(self.__execute_sse_request, url)
         return Data(data, cache=cache)
 
-    def get_messages_from_data_provider(self, cache: bool = False, pipeline_adapter: bool = False, **kwargs) -> Data:
+    def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
         """Sends SSE request for getting messages.
 
         For help use this readme
@@ -108,7 +108,6 @@ class DataSource:
 
         Args:
             cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
-            pipeline_adapter: If True messages that use codecs pipeline is changed to sub-messages.
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
@@ -138,9 +137,8 @@ class DataSource:
         url = f"{url}?{urlencode(kwargs) + streams}"
 
         data = partial(self.__execute_sse_request, url)
-        if pipeline_adapter:
-            return Data(data, cache=cache).map(change_pipeline_messages)
-        return Data(data, cache=cache)
+
+        return Data(data, cache=cache).map(change_pipeline_messages).use_cache(True)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
