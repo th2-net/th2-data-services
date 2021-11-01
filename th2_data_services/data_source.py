@@ -138,7 +138,7 @@ class DataSource:
 
         data = partial(self.__execute_sse_request, url)
 
-        return Data(data, cache=cache).map(change_pipeline_messages).use_cache(cache)
+        return Data(data).map(change_pipeline_messages).use_cache(cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
