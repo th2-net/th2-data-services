@@ -4,7 +4,7 @@ from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError
 from functools import partial
-from datetime import datetime
+from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional
 from urllib.parse import urlencode
@@ -56,9 +56,11 @@ class DataSource:
             raise ValueError("Route is required field. Please fill it.")
 
         if kwargs.get("startTimestamp") and isinstance(kwargs.get("startTimestamp"), datetime):
-            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+            timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
         if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
-            kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
+            timestamp = kwargs["endTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + route
         url = f"{url}?{urlencode(kwargs)}"
@@ -86,10 +88,12 @@ class DataSource:
                 "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
             )
         if isinstance(kwargs["startTimestamp"], datetime):
-            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+            timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
-            kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
+            timestamp = kwargs["endTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
@@ -121,10 +125,12 @@ class DataSource:
             raise ValueError("'stream' is required field. Please note it." "More information on request here: https://github.com/th2-net/th2-rpt-data-provider")
 
         if isinstance(kwargs["startTimestamp"], datetime):
-            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+            timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
-            kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
+            timestamp = kwargs["endTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["endTimestamp"] = int(timestamp * 1000)
 
         streams = kwargs.pop("stream")
         if isinstance(streams, (list, tuple)):

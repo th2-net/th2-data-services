@@ -5,8 +5,8 @@ from th2_data_services.events_tree import EventsTree
 
 
 def test_recover_events_tree(demo_data_source: DataSource):
-    start_time = datetime(year=2021, month=6, day=15, hour=12, minute=45, second=20, microsecond=692724)
-    end_time = datetime(year=2021, month=6, day=15, hour=15, minute=45, second=49, microsecond=28579)
+    start_time = datetime(year=2021, month=6, day=15, hour=9, minute=45, second=20, microsecond=692724)
+    end_time = datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579)
 
     events = demo_data_source.get_events_from_data_provider(
         startTimestamp=start_time,
