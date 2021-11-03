@@ -1,15 +1,24 @@
-def change_pipeline_messages(record):
+from typing import Union, List
+
+
+def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
     if "/" not in record.get("messageType"):
         return record
 
     sub_messages = []
-    fields = record.get("body").get("fields")
+    fields = record["body"]["fields"]
     for sub_msg in fields:
-        msg_type = sub_msg.split("-")[0]
+        split_msg_name = sub_msg.split("-")
+        msg_type, index = "".join(split_msg_name[:-1]), split_msg_name[-1]
+
         new_record = record.copy()
         metadata = new_record["body"]["metadata"].copy()
+        id_field = metadata["id"].copy()
 
-        body = {**fields.get(sub_msg), "metadata": metadata}
+        id_field["subsequence"] = [int(index)]
+        metadata["id"] = id_field
+
+        body = {**fields.get(sub_msg).get("messageValue"), "metadata": metadata}
         new_record["body"] = body
         new_record["body"]["metadata"]["messageType"] = msg_type
         new_record["messageType"] = msg_type

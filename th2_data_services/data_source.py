@@ -10,7 +10,7 @@ from typing import Generator, Iterable, List, Union, Optional
 from urllib.parse import urlencode
 from sseclient import SSEClient
 
-from th2_data_services.adapter import change_pipeline_messages
+from th2_data_services.adapter import change_pipeline_message
 from th2_data_services.data import Data
 
 
@@ -138,7 +138,7 @@ class DataSource:
 
         data = partial(self.__execute_sse_request, url)
 
-        return Data(data).map(change_pipeline_messages).use_cache(cache)
+        return Data(data).map(change_pipeline_message).use_cache(cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
@@ -210,9 +210,22 @@ class DataSource:
         for msg_id in messages_id:
             response = requests.get(f"{self.__url}/message/{msg_id}")
             try:
-                result.append(response.json())
+                answer = response.json()
             except json.JSONDecodeError:
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+
+            answer = change_pipeline_message(answer)
+            if isinstance(answer, list):
+                if msg_id.find("."):
+                    index = int(msg_id.split(".")[-1])
+                    for message in answer:
+                        if message["body"]["metadata"]["id"]["subsequence"][0] == index:
+                            result.append(message)
+                else:
+                    result += answer
+            else:
+                result.append(answer)
+
         return result[0] if msg_id_type_is_str else result if result else None
 
     def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict, None]]:
