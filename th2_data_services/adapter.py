@@ -2,7 +2,11 @@ from typing import Union, List
 
 
 def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
-    if "/" not in record.get("messageType"):
+    msg_type = record.get("messageType")
+    if not msg_type:
+        raise ValueError("Sorry, message doesn't have a messageType field.")
+
+    if "/" not in msg_type:
         return record
 
     sub_messages = []
