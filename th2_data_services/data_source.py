@@ -211,7 +211,7 @@ class DataSource:
         for msg_id in messages_id:
             index = None
             if msg_id.find(".") != -1:
-                msg_id, index = msg_id.split(".")[:-1], int(msg_id[-1])
+                msg_id, index = "".join(msg_id.split(".")[:-1]), int(msg_id[-1])
 
             response = requests.get(f"{self.__url}/message/{msg_id}")
             try:
@@ -230,6 +230,9 @@ class DataSource:
                     result += answer
             else:
                 result.append(answer)
+
+            if len(result) > 1:
+                msg_id_type_is_str = False
 
         return result[0] if msg_id_type_is_str else result if result else None
 
