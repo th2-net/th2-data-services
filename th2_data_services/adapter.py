@@ -11,15 +11,18 @@ def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
 
     sub_messages = []
     fields = record["body"]["fields"]
-    for sub_msg in fields:
+    for index, sub_msg in enumerate(fields, start=1):
         split_msg_name = sub_msg.split("-")
-        msg_type, index = "".join(split_msg_name[:-1]), split_msg_name[-1]
+        if len(split_msg_name) > 1:
+            msg_type, index = "".join(split_msg_name[:-1]), int(split_msg_name[-1])
+        else:
+            msg_type = sub_msg
 
         new_record = record.copy()
         metadata = new_record["body"]["metadata"].copy()
         id_field = metadata["id"].copy()
 
-        id_field["subsequence"] = [int(index)]
+        id_field["subsequence"] = [index]
         metadata["id"] = id_field
 
         body = {**fields.get(sub_msg).get("messageValue"), "metadata": metadata}
