@@ -206,8 +206,13 @@ class DataSource:
         msg_id_type_is_str = isinstance(messages_id, str)
         if isinstance(messages_id, str):
             messages_id = [messages_id]
+
         result = []
         for msg_id in messages_id:
+            index = None
+            if msg_id.find(".") != -1:
+                msg_id, index = msg_id.split(".")[:-1], int(msg_id[-1])
+
             response = requests.get(f"{self.__url}/message/{msg_id}")
             try:
                 answer = response.json()
@@ -216,11 +221,11 @@ class DataSource:
 
             answer = change_pipeline_message(answer)
             if isinstance(answer, list):
-                if msg_id.find("."):
-                    index = int(msg_id.split(".")[-1])
+                if index:
                     for message in answer:
                         if message["body"]["metadata"]["id"]["subsequence"][0] == index:
                             result.append(message)
+                            break
                 else:
                     result += answer
             else:

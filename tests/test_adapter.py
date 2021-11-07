@@ -14,17 +14,21 @@ def test_adapter(messages_before_pipeline_adapter: List[dict], messages_after_pi
     assert len(output) == 8 and output == messages_after_pipeline_adapter
 
 
-def test_find_message_with_adapter(message_from_pipeline: dict):
+def test_find_sub_message_with_adapter(message_from_pipeline: dict):
     msg_id = message_from_pipeline.get("messageId") + ".5"
     message_from_pipeline = change_pipeline_message(message_from_pipeline)
 
+    index = None
+    if msg_id.find(".") != -1:
+        msg_id, index = msg_id.split(".")[:-1], int(msg_id[-1])
+
     result = []
     if isinstance(message_from_pipeline, list):
-        if msg_id.find("."):
-            index = int(msg_id.split(".")[-1])
+        if index:
             for message in message_from_pipeline:
                 if message["body"]["metadata"]["id"]["subsequence"][0] == index:
                     result.append(message)
+                    break
         else:
             result += message_from_pipeline
     else:
@@ -65,3 +69,26 @@ def test_find_message_with_adapter(message_from_pipeline: dict):
             "type": "message",
         }
     ]
+
+
+def test_find_messages_with_adapter(message_from_pipeline: dict):
+    msg_id = message_from_pipeline.get("messageId")
+    message_from_pipeline = change_pipeline_message(message_from_pipeline)
+
+    index = None
+    if msg_id.find(".") != -1:
+        msg_id, index = msg_id.split(".")[:-1], int(msg_id[-1])
+
+    result = []
+    if isinstance(message_from_pipeline, list):
+        if index:
+            for message in message_from_pipeline:
+                if message["body"]["metadata"]["id"]["subsequence"][0] == index:
+                    result.append(message)
+                    break
+        else:
+            result += message_from_pipeline
+    else:
+        result.append(message_from_pipeline)
+
+    assert len(result) == 5
