@@ -18,4 +18,4 @@ jobs:
       - name: Test with pytest
         run: |
           pip install pytest
-          pytest
+          pytest -k "not test_data_source_local and not test_data_local and not test_events_tree_local"
