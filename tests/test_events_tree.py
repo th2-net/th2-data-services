@@ -1,7 +1,7 @@
 from typing import List, NamedTuple
 
 from tests.conftest import get_super_type
-from th2_data_services.events_tree import EventsTree
+from th2_data_services.events_tree import EventsTree, ParentEventsTree
 
 
 def test_build_tree(general_data: List[dict], test_events_tree: NamedTuple):
@@ -13,6 +13,12 @@ def test_build_tree(general_data: List[dict], test_events_tree: NamedTuple):
             list(tree.unknown_events.keys()) == test_events_tree.unknown_events,
         ]
     )
+
+def test_build_parent_tree(general_data: List[dict], test_parent_events_tree: list):
+    tree = ParentEventsTree(general_data)
+
+    assert list(tree.parent_events.keys()) == test_parent_events_tree
+
 
 
 def test_append_element(general_data: List[dict], test_events_tree: NamedTuple):

@@ -350,3 +350,49 @@ class EventsTree2:
                     unknown_parents_ids.append(parent_id)
 
         return unknown_parents_ids
+
+
+class ParentEventsTree:
+    """
+    ParentEventsTree is a class (like an EventsTree).
+
+    ParentEventsTree contains all parent events inside.
+    """
+    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None):
+        if data is None:
+            data = []
+        self._parent_events = {}
+        self.build_parent_tree(data)
+
+    @property
+    def parent_events(self) -> dict:
+        return self._parent_events
+
+    def clear_events(self) -> None:
+        """Clear exist events."""
+        self._parent_events.clear()
+
+    def build_parent_tree(self, data: Union[Iterator, Generator[dict, None, None]]) -> None:
+        """Build parent events tree.
+
+        :param data: Events.
+        """
+
+        for event in data:
+            event = event.copy()
+            parent_id = event["parentEventId"]
+            if parent_id is not None:
+                if ":" in parent_id:
+                    # parent_id sometimes looks like batchId:eventId
+                    parent_id = parent_id.split(":")[-1]
+                for element in data:
+                    element = element.copy()
+                    element_id = element["eventId"]
+                    if ":" in element_id:
+                        element_id = element_id.split(":")[-1]
+                    if element_id == parent_id:
+                        try:
+                            element.pop("body")
+                        except KeyError:
+                            pass
+                        self._parent_events[parent_id] = element

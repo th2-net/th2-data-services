@@ -262,6 +262,18 @@ def test_events_tree() -> NamedTuple:
     )
     return test_events_tree
 
+@pytest.fixture
+def test_parent_events_tree() -> list:
+
+    test_parent_events_tree = [
+            "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
+            "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
+            "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
+            "8c035903-d1b4-11eb-9278-591e568ad66e"
+               ]
+
+    return test_parent_events_tree
+
 
 def get_super_type(record: dict, *args):
     event_type = record.get("eventType")
