@@ -62,6 +62,7 @@ and too expensive to use. **Please use Data.len property instead.**
 2. Added Data.write_to_file(filename) due to TH2-2427.
 3. Added Data.len property to use instead of len(Data)
 4. Added Data.is_empty property
+5. [TH-2420] Added adapter for codecs pipeline.
 
 ## BugFixes 
 1. [TH2-2424] Cache function was fixed.
