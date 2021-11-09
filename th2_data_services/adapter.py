@@ -30,5 +30,6 @@ def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
         new_record["body"] = body
         new_record["body"]["metadata"]["messageType"] = sub_msg_type
         new_record["messageType"] = sub_msg_type
+        new_record["messageId"] = f"{record.get('messageId')}.{index}"
         sub_messages.append(new_record)
     return sub_messages

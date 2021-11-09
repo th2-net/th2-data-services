@@ -62,7 +62,7 @@ def test_find_sub_message_with_adapter(message_from_pipeline: dict):
                 },
             },
             "direction": "IN",
-            "messageId": "test-42:first:1632216515838617066",
+            "messageId": "test-42:first:1632216515838617066.5",
             "messageType": "AddOrder",
             "sessionId": "test-42",
             "timestamp": {"epochSecond": 1632400658, "nano": 4000000},
