@@ -958,6 +958,39 @@ def messages_before_pipeline_adapter():
             "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
             "body": {
                 "fields": {
+                    "TestMessageHeader": {"messageValue": {"fields": {"Length": {"simpleValue": "4"}}}},
+                    "PacketHeader": {"messageValue": {"fields": {"PHCount": {"simpleValue": "3"}, "PHSequence": {"simpleValue": "15487"}, "PHSession": {"simpleValue": "M127204538"}}}},
+                    "SecondsMessage": {
+                        "messageValue": {
+                            "fields": {
+                                "MessageSequenceNumber": {"simpleValue": "15487"},
+                                "MessageType": {"simpleValue": "T"},
+                                "PHCount": {"simpleValue": "3"},
+                                "PHSequence": {"simpleValue": "15487"},
+                                "PHSession": {"simpleValue": "M127204538"},
+                                "Second": {"simpleValue": "1632375458"},
+                            }
+                        }
+                    },
+                },
+                "metadata": {
+                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216519834417326", "subsequence": [1, 2, 3]},
+                    "messageType": "PacketHeader/TestMessageHeader/SecondsMessage",
+                    "protocol": "SOUP",
+                    "timestamp": "2021-09-23T12:37:38.004Z",
+                },
+            },
+            "direction": "IN",
+            "messageId": "test-42:first:1632216519834417326",
+            "messageType": "PacketHeader/TestMessageHeader/SecondsMessage/TestMessageHeader/AddOrder",
+            "sessionId": "test-42",
+            "timestamp": {"epochSecond": 1632400658, "nano": 4000000},
+            "type": "message",
+        },
+        {
+            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "body": {
+                "fields": {
                     "AddOrder-5": {
                         "messageValue": {
                             "fields": {
@@ -1089,6 +1122,67 @@ def messages_after_pipeline_adapter():
             "messageId": "test-42:first:1632216515838617064",
             "messageType": "PacketHeader",
             "sessionId": "test-42",
+            "type": "message",
+        },
+        {
+            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "body": {
+                "fields": {"Length": {"simpleValue": "4"}},
+                "metadata": {
+                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216519834417326", "subsequence": [2]},
+                    "messageType": "TestMessageHeader",
+                    "protocol": "SOUP",
+                    "timestamp": "2021-09-23T12:37:38.004Z",
+                },
+            },
+            "direction": "IN",
+            "messageId": "test-42:first:1632216519834417326",
+            "messageType": "TestMessageHeader",
+            "sessionId": "test-42",
+            "timestamp": {"epochSecond": 1632400658, "nano": 4000000},
+            "type": "message",
+        },
+        {
+            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "body": {
+                "fields": {"PHCount": {"simpleValue": "3"}, "PHSequence": {"simpleValue": "15487"}, "PHSession": {"simpleValue": "M127204538"}},
+                "metadata": {
+                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216519834417326", "subsequence": [1]},
+                    "messageType": "PacketHeader",
+                    "protocol": "SOUP",
+                    "timestamp": "2021-09-23T12:37:38.004Z",
+                },
+            },
+            "direction": "IN",
+            "messageId": "test-42:first:1632216519834417326",
+            "messageType": "PacketHeader",
+            "sessionId": "test-42",
+            "timestamp": {"epochSecond": 1632400658, "nano": 4000000},
+            "type": "message",
+        },
+        {
+            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "body": {
+                "fields": {
+                    "MessageSequenceNumber": {"simpleValue": "15487"},
+                    "MessageType": {"simpleValue": "T"},
+                    "PHCount": {"simpleValue": "3"},
+                    "PHSequence": {"simpleValue": "15487"},
+                    "PHSession": {"simpleValue": "M127204538"},
+                    "Second": {"simpleValue": "1632375458"},
+                },
+                "metadata": {
+                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216519834417326", "subsequence": [3]},
+                    "messageType": "SecondsMessage",
+                    "protocol": "SOUP",
+                    "timestamp": "2021-09-23T12:37:38.004Z",
+                },
+            },
+            "direction": "IN",
+            "messageId": "test-42:first:1632216519834417326",
+            "messageType": "SecondsMessage",
+            "sessionId": "test-42",
+            "timestamp": {"epochSecond": 1632400658, "nano": 4000000},
             "type": "message",
         },
         {

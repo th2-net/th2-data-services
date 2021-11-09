@@ -3,7 +3,7 @@ from typing import List
 from th2_data_services.adapter import change_pipeline_message
 
 
-def test_adapter(messages_before_pipeline_adapter: List[dict], messages_after_pipeline_adapter: List[dict]):
+def test_adapter_with_id(messages_before_pipeline_adapter: List[dict], messages_after_pipeline_adapter: List[dict]):
     output = []
     for message in messages_before_pipeline_adapter:
         messages = change_pipeline_message(message)
@@ -11,7 +11,7 @@ def test_adapter(messages_before_pipeline_adapter: List[dict], messages_after_pi
             messages = [messages]
         output.extend(messages)
 
-    assert len(output) == 8 and output == messages_after_pipeline_adapter
+    assert len(output) == 11 and output == messages_after_pipeline_adapter
 
 
 def test_find_sub_message_with_adapter(message_from_pipeline: dict):
