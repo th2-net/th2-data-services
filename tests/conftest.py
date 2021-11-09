@@ -16,8 +16,8 @@ def demo_data_source():
     return data_source
 
 
-START_TIME = datetime(year=2021, month=6, day=15, hour=12, minute=44, second=41, microsecond=692724)
-END_TIME = datetime(year=2021, month=6, day=15, hour=15, minute=45, second=49, microsecond=28579)
+START_TIME = datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724)
+END_TIME = datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579)
 
 
 @pytest.fixture
