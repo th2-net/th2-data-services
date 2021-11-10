@@ -143,6 +143,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
  
  - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache. 
  - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. 
+[Note: parameters startTimestamp, endTimestamp, query object are expected in utc format]
 
 
 
@@ -169,7 +170,7 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 **Args:**
  
  - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache. 
- - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. 
+ - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. [Note: parameters startTimestamp, endTimestamp, query object are expected in utc format] 
 
 
 
@@ -219,7 +220,7 @@ It used for create custom sse-request to data-provider use this readme https://g
 
 **Args:**
  
- - <b>`kwargs`</b>:  Query options. 
+ - <b>`kwargs`</b>:  Query options. [Note: parameters startTimestamp, endTimestamp, query object are expected in utc format]
 
 
 

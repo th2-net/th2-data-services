@@ -56,12 +56,14 @@ New lib with ds_utils posted in [here](https://github.com/th2-net/th2-data-servi
 2. len(Data) functionality was removed because it has side effects when we use list(Data) 
 and too expensive to use. **Please use Data.len property instead.**
 3. [TH2-2474] Use of cache was revised.
+4. [TH2-2553] The time that have given in some method of data_source module now will expect in utc format.
 
 ## Features
 1. Added Data.limit(num) method to use in the pipeline.
 2. Added Data.write_to_file(filename) due to TH2-2427.
 3. Added Data.len property to use instead of len(Data)
 4. Added Data.is_empty property
+5. [TH-2420] Added adapter for codecs pipeline.
 
 ## BugFixes 
 1. [TH2-2424] Cache function was fixed.
