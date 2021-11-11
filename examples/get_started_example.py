@@ -7,8 +7,8 @@ DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
 data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
-START_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=44, second=41, microsecond=692724)
-END_TIME = datetime(year=2021, month=6, day=17, hour=15, minute=45, second=49, microsecond=28579)
+START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724)  # object given in utc format
+END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
 
 # [2] Get events from START_TIME to END_TIME.
 events: Data = data_source.get_events_from_data_provider(
