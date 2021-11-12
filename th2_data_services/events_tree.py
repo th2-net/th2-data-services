@@ -422,6 +422,7 @@ class ParentEventsTree(EventsTree):
         self.search_unknown_parents()
 
     def search_unknown_parents(self) -> dict:
+        self.clear_unknown_events()
         for event in self.events.values():
             parent_id = event["parentEventId"]
             if parent_id is not None:
