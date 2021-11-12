@@ -64,6 +64,7 @@ and too expensive to use. **Please use Data.len property instead.**
 3. Added Data.len property to use instead of len(Data)
 4. Added Data.is_empty property
 5. [TH-2420] Added adapter for codecs pipeline.
+6. [TH2-2575] Added ParentEventsTree class in events tree module.
 
 ## BugFixes 
 1. [TH2-2424] Cache function was fixed.

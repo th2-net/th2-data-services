@@ -14,7 +14,7 @@ def test_build_tree(general_data: List[dict], test_events_tree: NamedTuple):
         ]
     )
 
-def test_build_parent_tree(general_data: List[dict], test_parent_events_tree: list):
+def test_PET_build_tree(general_data: List[dict], test_parent_events_tree: list):
     tree = ParentEventsTree(general_data)
 
     assert list(tree.events.keys()) == test_parent_events_tree

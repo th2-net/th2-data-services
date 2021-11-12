@@ -383,7 +383,7 @@ class ParentEventsTree(EventsTree):
         self._unknown_events.clear()
 
     def append_element(self, event: dict) -> None:
-        """Append new parent event to events tree if is aren't unknowns.
+        """Append new parent event to events tree.
 
         Args:
             event: Event
