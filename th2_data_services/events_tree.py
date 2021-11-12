@@ -361,7 +361,8 @@ class ParentEventsTree(EventsTree):
     def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None):
         if data is None:
             data = []
-        self._parents_ids = []
+        self._parents_ids = set()
+        self._unknown_events = defaultdict(lambda: 0)
         self._events = {}
         self.build_tree(data)
 
@@ -372,6 +373,14 @@ class ParentEventsTree(EventsTree):
     def clear_events(self) -> None:
         """Clear exist events."""
         self._events.clear()
+
+    @property
+    def unknown_events(self):
+        return self._unknown_events
+
+    def clear_unknown_events(self) -> None:
+        """Clear unknown events."""
+        self._unknown_events.clear()
 
     def append_element(self, event: dict) -> None:
         """Append new parent event to events tree if is aren't unknowns.
@@ -392,6 +401,9 @@ class ParentEventsTree(EventsTree):
         if event_id in self._parents_ids:
             self._events[event_id] = event
 
+        if event_id in self._unknown_events:
+            self._unknown_events.pop(event_id)
+
     def build_tree(self, data: Union[Iterator, Generator[dict, None, None]]) -> None:
         """Build parent events tree.
 
@@ -399,10 +411,23 @@ class ParentEventsTree(EventsTree):
         """
         for event in data:
             parent_id = event["parentEventId"]
-            if parent_id is not None and ":" in parent_id:
-                # event_id sometimes looks like batchId:eventId
-                parent_id = parent_id.split(":")[-1]
-            self._parents_ids.append(parent_id)
+            if parent_id is not None:
+                if ":" in parent_id:
+                    # event_id sometimes looks like batchId:eventId
+                    parent_id = parent_id.split(":")[-1]
+                self._parents_ids.add(parent_id)
 
         for event in data:
             self.append_element(event)
+        self.search_unknown_parents()
+
+    def search_unknown_parents(self) -> dict:
+        for event in self.events.values():
+            parent_id = event["parentEventId"]
+            if parent_id is not None:
+                if ":" in parent_id:
+                    # parent_id sometimes looks like batchId:eventId
+                    parent_id = parent_id.split(":")[-1]
+                if parent_id not in self._parents_ids:
+                    self._unknown_events[parent_id] += 1
+        return self._unknown_events
