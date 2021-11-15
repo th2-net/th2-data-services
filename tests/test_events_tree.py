@@ -14,11 +14,15 @@ def test_build_tree(general_data: List[dict], test_events_tree: NamedTuple):
         ]
     )
 
-def test_PET_build_tree(general_data: List[dict], test_parent_events_tree: list):
+def test_PET_build_tree(general_data: List[dict], test_parent_events_tree: NamedTuple):
     tree = ParentEventsTree(general_data)
-
-    assert list(tree.events.keys()) == test_parent_events_tree
-
+    print(list(tree.unknown_events.keys()))
+    assert all(
+        [
+            list(tree.events.keys()) == test_parent_events_tree.events,
+            list(tree.unknown_events.keys()) == test_parent_events_tree.unknown_events,
+        ]
+    )
 
 
 def test_append_element(general_data: List[dict], test_events_tree: NamedTuple):

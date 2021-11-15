@@ -263,15 +263,20 @@ def test_events_tree() -> NamedTuple:
     return test_events_tree
 
 @pytest.fixture
-def test_parent_events_tree() -> list:
-
-    test_parent_events_tree = [
+def test_parent_events_tree() -> NamedTuple:
+    TestEventTree = namedtuple("TestEventTree", ["events", "unknown_events"])
+    test_parent_events_tree = TestEventTree(
+        events=[
             "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
             "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
             "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
             "8c035903-d1b4-11eb-9278-591e568ad66e"
-               ]
-
+               ],
+        unknown_events=[
+            "a3779b94-d051-11eb-986f-1e8d42132387",
+            "845d70d2-9c68-11eb-8598-691ebd7f413d"
+        ],
+    )
     return test_parent_events_tree
 
 
