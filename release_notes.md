@@ -47,6 +47,23 @@ New lib with ds_utils posted in [here](https://github.com/th2-net/th2-data-servi
 
 # v0.5.0
 
+## User impact
+- It is now not required to calculate utc data manually. 
+  The time that have given in some method of data_source module now will expect in utc format.
+- The last "messageIds" message in the message stream will be ignored.
+- _DataSource.write_to_txt_ was moved to Data. The name has been changed to _write_to_file_.
+- _len(Data)_ functionality was removed. The _Data.len_ property is now used.
+- The wrapper-messages are now split into sub-messages.
+
+## Migration instructions
+1. Change your time on utc.
+2. If you use verifications for a last message then you can delete them.
+3. If you use _write_to_file_ function, change the DataSource class to the Data class.
+4. Change _len(Data)_ on _Data.len_ for your functions.
+5. If you use wrapper-messages for your statistics then 
+   adapt functions for sub-messages (now they look like a usual message)
+
+
 ## Improvements
 1. [TH2-2427] Refactoring
     - Reduced waiting time of connection check.
