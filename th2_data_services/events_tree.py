@@ -194,14 +194,14 @@ class EventsTree:
             ancestor = self._events.get(parent_id)
         return ancestor
 
-    def recover_unknown_events(self, data_source: DataSource) -> None:
+    def recover_unknown_events(self, data_source: DataSource, stub_if_broken_event: Optional[bool] = False) -> None:
         """Loads unknown events from data provider and recover EventsTree.
 
         :param data_source: DataSources.
         """
         old_unknown_events = self._unknown_events.keys()
         while self._unknown_events:
-            new_events = data_source.find_events_by_id_from_data_provider(self._unknown_events.keys())
+            new_events = data_source.find_events_by_id_from_data_provider(self._unknown_events.keys(), stub_if_broken_event)
             if isinstance(new_events, dict):
                 new_events = [new_events]
             self.build_tree(new_events)
@@ -320,9 +320,9 @@ class EventsTree2:
 
         x(self.roots)
 
-    def _get_unknown_events(self, unknown_parents):
+    def _get_unknown_events(self, unknown_parents, stub_if_broken_event: Optional[bool] = False):
         if unknown_parents:
-            new_events: list = self._data_source.find_events_by_id_from_data_provider(unknown_parents)
+            new_events: list = self._data_source.find_events_by_id_from_data_provider(unknown_parents, stub_if_broken_event)
 
             unknown_parents2 = set()
             new_events = [new_events] if not isinstance(new_events, list) else new_events

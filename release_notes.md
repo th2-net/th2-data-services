@@ -65,6 +65,7 @@ and too expensive to use. **Please use Data.len property instead.**
 4. Added Data.is_empty property
 5. [TH-2420] Added adapter for codecs pipeline.
 6. [TH2-2575] Added ParentEventsTree class in events tree module.
+7. [TH2-2577] Added optional arguments (stub_if_broken_event: bool) in find_events_by_id_from_data_provider  method of data_source module. If stub_if_broken_event is True and some ids is not available on data provider: method return stub inside.   
 
 ## BugFixes 
 1. [TH2-2424] Cache function was fixed.

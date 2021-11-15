@@ -242,7 +242,7 @@ class DataSource:
 
         return result[0] if msg_id_type_is_str else result if result else None
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict, None]]:
+    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str], stub_if_broken_event: Optional[bool] = False) -> Optional[Union[List[dict], dict, None]]:
         """Gets event/events by ids.
 
         Args:
@@ -267,16 +267,44 @@ class DataSource:
             Returns list(dict) with 2 events.
 
         """
+
+        def get_plug(broken_event_id):
+            ev_plug = {
+            "attachedMessageIds": {},
+            "bathcId": 'Broken_Event',
+            "endTimestamp": {"nanao": 0, "epochSecond": 0},
+            "startTimestamp": {"nanao": 0, "epochSecond": 0},
+            "type": 'event',
+            'eventID': f'{broken_event_id}',
+            "eventName":'Broken_Event',
+            "eventType":'Broken_Event',
+            "parentEventId": 'Broken_Event',
+            "successful": None,
+            "isBatched": None
+            }
+            return ev_plug
+
+        def get_event(event_id):
+            response = requests.get(f"{self.__url}/event/{event_id}")
+            if stub_if_broken_event:
+                try:
+                    return response.json()
+                except json.JSONDecodeError:
+                    return get_plug(event_id)
+            else:
+                try:
+                    return response.json()
+                except json.JSONDecodeError:
+                    raise ValueError(
+                        f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+
         event_id_type_is_str = isinstance(events_id, str)
         if isinstance(events_id, str):
             events_id = [events_id]
         result = []
         for event_id in events_id:
-            response = requests.get(f"{self.__url}/event/{event_id}")
-            try:
-                result.append(response.json())
-            except json.JSONDecodeError:
-                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+            result.append(get_event(event_id))
+
         return result[0] if event_id_type_is_str else result if result else None
 
     @staticmethod
