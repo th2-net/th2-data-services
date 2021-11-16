@@ -76,9 +76,6 @@ class EventsTree:
         except KeyError:
             pass
 
-        if ":" in event_id:
-            # event_id sometimes looks like batchId:eventId
-            event_id = event_id.split(":")[-1]
         self._events[event_id] = event
 
         event_id = event["eventId"]
@@ -96,10 +93,6 @@ class EventsTree:
         for event in self.events.values():
             parent_id = event["parentEventId"]
             if parent_id is not None:
-                if ":" in parent_id:
-                    # parent_id sometimes looks like batchId:eventId
-                    parent_id = parent_id.split(":")[-1]
-
                 if parent_id not in self._events:
                     parent_id = event["parentEventId"]
                     self._unknown_events[parent_id] += 1
@@ -181,27 +174,23 @@ class EventsTree:
         if parent_id is None:
             raise ValueError("event must have field 'parentEventId'")
 
-        if parent_id and ":" in parent_id:
-            parent_id = parent_id.split(":")[-1]
-
         ancestor = self._events.get(parent_id)
         while ancestor:
             if super_type == super_type_get_func(ancestor, self._events):
                 return ancestor
             parent_id = ancestor.get("parentEventId")
-            if parent_id and ":" in parent_id:
-                parent_id = parent_id.split(":")[-1]
             ancestor = self._events.get(parent_id)
         return ancestor
 
-    def recover_unknown_events(self, data_source: DataSource, stub_if_broken_event: Optional[bool] = False) -> None:
+    def recover_unknown_events(self, data_source: DataSource, broken_events: Optional[bool] = False) -> None:
         """Loads unknown events from data provider and recover EventsTree.
 
         :param data_source: DataSources.
+        :param broken_events: If True broken events is replaced on event stub.
         """
         old_unknown_events = self._unknown_events.keys()
         while self._unknown_events:
-            new_events = data_source.find_events_by_id_from_data_provider(self._unknown_events.keys(), stub_if_broken_event)
+            new_events = data_source.find_events_by_id_from_data_provider(self._unknown_events.keys(), broken_events)
             if isinstance(new_events, dict):
                 new_events = [new_events]
             self.build_tree(new_events)
@@ -320,9 +309,9 @@ class EventsTree2:
 
         x(self.roots)
 
-    def _get_unknown_events(self, unknown_parents, stub_if_broken_event: Optional[bool] = False):
+    def _get_unknown_events(self, unknown_parents, broken_events: Optional[bool] = False):
         if unknown_parents:
-            new_events: list = self._data_source.find_events_by_id_from_data_provider(unknown_parents, stub_if_broken_event)
+            new_events: list = self._data_source.find_events_by_id_from_data_provider(unknown_parents, broken_events)
 
             unknown_parents2 = set()
             new_events = [new_events] if not isinstance(new_events, list) else new_events
@@ -350,80 +339,3 @@ class EventsTree2:
                     unknown_parents_ids.append(parent_id)
 
         return unknown_parents_ids
-
-
-class ParentEventsTree(EventsTree):
-    """
-    ParentEventsTree is a class (like an EventsTree).
-
-    ParentEventsTree contains all parent events inside.
-    """
-    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None):
-        if data is None:
-            data = []
-        self._parents_ids = set()
-        self._unknown_events = defaultdict(lambda: 0)
-        self._events = {}
-        self.build_tree(data)
-
-    @property
-    def events(self) -> dict:
-        return self._events
-
-    def clear_events(self) -> None:
-        """Clear exist events."""
-        self._events.clear()
-
-    @property
-    def unknown_events(self):
-        return self._unknown_events
-
-    def clear_unknown_events(self) -> None:
-        """Clear unknown events."""
-        self._unknown_events.clear()
-
-    def append_element(self, event: dict) -> None:
-        """Append new parent event to events tree.
-
-        Args:
-            event: Event
-        """
-        event_id = event["eventId"]
-
-        try:
-            event.pop("body")
-        except KeyError:
-            pass
-
-        if ":" in event_id:
-            # event_id sometimes looks like batchId:eventId
-            event_id = event_id.split(":")[-1]
-        if event_id in self._parents_ids:
-            self._events[event_id] = event
-
-        if event_id in self._unknown_events:
-            self._unknown_events.pop(event_id)
-
-    def build_tree(self, data: Union[Iterator, Generator[dict, None, None]]) -> None:
-        """Build parent events tree.
-
-        :param data: Events.
-        """
-        for event in data:
-            parent_id = event["parentEventId"]
-            if parent_id is not None:
-                if ":" in parent_id:
-                    # event_id sometimes looks like batchId:eventId
-                    parent_id = parent_id.split(":")[-1]
-                self._parents_ids.add(parent_id)
-
-        for event in data:
-            self.append_element(event)
-        self.search_unknown_parents()
-
-    def search_unknown_parents(self) -> dict:
-        self.clear_unknown_events()
-        for parent_id in self._parents_ids:
-            if parent_id not in self.events.keys():
-                self._unknown_events[parent_id] += 1
-        return self._unknown_events

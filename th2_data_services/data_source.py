@@ -242,11 +242,12 @@ class DataSource:
 
         return result[0] if msg_id_type_is_str else result if result else None
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str], stub_if_broken_event: Optional[bool] = False) -> Optional[Union[List[dict], dict, None]]:
+    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str], broken_events: Optional[bool] = False) -> Optional[Union[List[dict], dict, None]]:
         """Gets event/events by ids.
 
         Args:
             events_id: One str with EventID or list of EventsIDs.
+            broken_events: If True broken events is replaced by a event stub.
 
         Returns:
             List[Event_dict] if you request a list or Event_dict or None if no events found.
@@ -268,42 +269,51 @@ class DataSource:
 
         """
 
-        def get_plug(broken_event_id):
-            ev_plug = {
-            "attachedMessageIds": {},
-            "bathcId": 'Broken_Event',
-            "endTimestamp": {"nanao": 0, "epochSecond": 0},
-            "startTimestamp": {"nanao": 0, "epochSecond": 0},
-            "type": 'event',
-            'eventID': f'{broken_event_id}',
-            "eventName":'Broken_Event',
-            "eventType":'Broken_Event',
-            "parentEventId": 'Broken_Event',
-            "successful": None,
-            "isBatched": None
-            }
-            return ev_plug
+        def __create_event_stub(broken_event_id):
+            """Creates a event stub.
 
-        def get_event(event_id):
+            Args:
+                broken_event_id: Broken event id.
+
+            Returns:
+                Event Stub.
+            """
+            event_stub = {
+                "attachedMessageIds": [],
+                "batchId": "Broken_Event",
+                "endTimestamp": {"nano": 0, "epochSecond": 0},
+                "startTimestamp": {"nano": 0, "epochSecond": 0},
+                "type": "event",
+                "eventId": f"{broken_event_id}",
+                "eventName": "Broken_Event",
+                "eventType": "Broken_Event",
+                "parentEventId": "Broken_Event",
+                "successful": None,
+                "isBatched": None,
+            }
+            return event_stub
+
+        def __get_event(event_id: str, stub: bool):
+            """Gets event from rpt-data-provider or replace on event stub.
+
+            Args:
+                event_id: Event id.
+                stub: If True a broken event is replaced by a event stub.
+            """
             response = requests.get(f"{self.__url}/event/{event_id}")
-            if stub_if_broken_event:
-                try:
-                    return response.json()
-                except json.JSONDecodeError:
-                    return get_plug(event_id)
-            else:
-                try:
-                    return response.json()
-                except json.JSONDecodeError:
-                    raise ValueError(
-                        f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+            try:
+                return response.json()
+            except json.JSONDecodeError:
+                if stub:
+                    return __create_event_stub(event_id)
+                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
 
         event_id_type_is_str = isinstance(events_id, str)
         if isinstance(events_id, str):
             events_id = [events_id]
         result = []
-        for event_id in events_id:
-            result.append(get_event(event_id))
+        for id_ in events_id:
+            result.append(__get_event(id_, broken_events))
 
         return result[0] if event_id_type_is_str else result if result else None
 
