@@ -31,6 +31,20 @@ def demo_events_from_data_source(demo_data_source: DataSource) -> Data:
     # Failed = 6
     return events
 
+@pytest.fixture
+def demo_events_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
+    events = demo_data_source.get_events_from_data_provider(
+        startTimestamp=START_TIME,
+        endTimestamp=END_TIME,
+        metadataOnly=True,
+    )
+    return events
+
+@pytest.fixture
+def demo_messages_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
+    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME,
+                                                                stream=["th2-hand-demo"], metadataOnly=True)
+    return messages
 
 @pytest.fixture
 def demo_messages_from_data_source(demo_data_source: DataSource) -> Data:

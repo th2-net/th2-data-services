@@ -84,6 +84,9 @@ class DataSource:
             Data: Data object with Events.
 
         """
+
+        kwargs["metadataOnly"] = False
+
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
             raise ValueError(
                 "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please note it. "
@@ -118,6 +121,9 @@ class DataSource:
             Data: Data object with Messages.
 
         """
+
+        # kwargs["metadataOnly"] = False
+
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
             raise ValueError(
                 "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. Please note it. "

@@ -462,3 +462,13 @@ def test_messageIds_not_in_last_msg(demo_messages_from_data_source: Data):
     data_lst = list(data)
     last_msg = data_lst[-1]
     assert "messageIds" not in last_msg
+
+def test_get_events_from_data_provider_with_metadata_true(demo_events_with_metadataOnly_true: Data):
+    events = list(demo_events_with_metadataOnly_true)
+    assert events[-1]["parentEventId"] == 'a20bc1c2-a638-40b1-acb0-ae152f2c3569'
+
+def test_get_messages_from_data_provider_with_metadata_true(demo_messages_with_metadataOnly_true: Data,
+                                                            demo_messages_from_data_source: Data):
+    messages = list(demo_messages_with_metadataOnly_true)
+    messages0 = list(demo_messages_from_data_source)
+    assert messages == messages0
