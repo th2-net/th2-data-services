@@ -73,15 +73,44 @@ def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
     for event_ in events:
         event_["attachedMessageIds"].sort()
 
+    broken_event: dict = data_source.find_events_by_id_from_data_provider("id", True)
+    broken_events: list = data_source.find_events_by_id_from_data_provider(["id", "ids"], True)
+    plug_for_broken_event: dict = {
+        "attachedMessageIds": [],
+        "batchId": "Broken_Event",
+        "endTimestamp": {"nano": 0, "epochSecond": 0},
+        "startTimestamp": {"nano": 0, "epochSecond": 0},
+        "type": "event",
+        "eventId": "id",
+        "eventName": "Broken_Event",
+        "eventType": "Broken_Event",
+        "parentEventId": "Broken_Event",
+        "successful": None,
+        "isBatched": None,
+    }
+
+    plug_for_broken_events: list = [plug_for_broken_event.copy(), plug_for_broken_event.copy()]
+    plug_for_broken_events[1]["eventId"] = "ids"
+
     # Check types
     assert isinstance(event, dict)
     assert isinstance(events, list)
     assert isinstance(events_with_one_element, list)
+    assert isinstance(broken_event, dict)
+    assert isinstance(broken_events, list)
     # Check content.
     assert event == expected_event
     assert events == expected_events
     assert len(events) == 2
     assert len(events_with_one_element) == 1
+    # Check Broken_Events
+    assert broken_event == plug_for_broken_event
+    assert broken_events == plug_for_broken_events
+    assert [event, broken_event] == data_source.find_events_by_id_from_data_provider(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"], True)
+    with pytest.raises(ValueError):
+        data_source.find_events_by_id_from_data_provider(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"])
+    with pytest.raises(ValueError):
+        data_source.find_events_by_id_from_data_provider("id")
 
 
 def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
