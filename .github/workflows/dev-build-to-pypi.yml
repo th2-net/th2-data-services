@@ -41,7 +41,7 @@ jobs:
       - name: Test with pytest
         run: |
           pip install pytest
-          pytest -k "not test_data_source_local and not test_data_local"
+          pytest -k "not test_data_source_local and not test_data_local and not test_events_tree_local and not test_parent_events_tree_local"
       - name: Build package
         run: |
           python setup.py sdist

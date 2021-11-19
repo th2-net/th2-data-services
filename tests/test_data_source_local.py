@@ -1,6 +1,7 @@
 import pytest
 from urllib3.exceptions import HTTPError
 
+from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
 
 
@@ -64,18 +65,52 @@ def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
             "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
         ]
     )
-
+    events_with_one_element = data_source.find_events_by_id_from_data_provider(
+        [
+            "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
+        ]
+    )
     for event_ in events:
         event_["attachedMessageIds"].sort()
+
+    broken_event: dict = data_source.find_events_by_id_from_data_provider("id", True)
+    broken_events: list = data_source.find_events_by_id_from_data_provider(["id", "ids"], True)
+    plug_for_broken_event: dict = {
+        "attachedMessageIds": [],
+        "batchId": "Broken_Event",
+        "endTimestamp": {"nano": 0, "epochSecond": 0},
+        "startTimestamp": {"nano": 0, "epochSecond": 0},
+        "type": "event",
+        "eventId": "id",
+        "eventName": "Broken_Event",
+        "eventType": "Broken_Event",
+        "parentEventId": "Broken_Event",
+        "successful": None,
+        "isBatched": None,
+    }
+
+    plug_for_broken_events: list = [plug_for_broken_event.copy(), plug_for_broken_event.copy()]
+    plug_for_broken_events[1]["eventId"] = "ids"
 
     # Check types
     assert isinstance(event, dict)
     assert isinstance(events, list)
-
+    assert isinstance(events_with_one_element, list)
+    assert isinstance(broken_event, dict)
+    assert isinstance(broken_events, list)
     # Check content.
     assert event == expected_event
     assert events == expected_events
     assert len(events) == 2
+    assert len(events_with_one_element) == 1
+    # Check Broken_Events
+    assert broken_event == plug_for_broken_event
+    assert broken_events == plug_for_broken_events
+    assert [event, broken_event] == data_source.find_events_by_id_from_data_provider(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"], True)
+    with pytest.raises(ValueError):
+        data_source.find_events_by_id_from_data_provider(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"])
+    with pytest.raises(ValueError):
+        data_source.find_events_by_id_from_data_provider("id")
 
 
 def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
@@ -360,15 +395,16 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
 
     message = data_source.find_messages_by_id_from_data_provider("demo-conn2:first:1624005448022245399")
     messages = data_source.find_messages_by_id_from_data_provider(["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"])
-
+    messages_with_one_element = data_source.find_messages_by_id_from_data_provider(["demo-conn2:first:1624005448022245399"])
     # Check types
     assert isinstance(message, dict)
     assert isinstance(messages, list)
-
+    assert isinstance(messages_with_one_element, list)
     # Check content.
     assert message == expected_message
     assert messages == expected_messages
     assert len(messages) == 2
+    assert len(messages_with_one_element) == 1
 
 
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
@@ -385,7 +421,7 @@ def test_get_events_from_data_provider_with_error(demo_data_source: DataSource):
 
     events = data_source.get_events_from_data_provider(startTimestamp="test", endTimestamp="test")
     with pytest.raises(HTTPError) as exc_info:
-        len(events)
+        list(events)
     assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
 
 
@@ -394,11 +430,35 @@ def test_get_messages_from_data_provider_with_error(demo_data_source: DataSource
 
     events = data_source.get_messages_from_data_provider(startTimestamp="test", endTimestamp="test", stream="test")
     with pytest.raises(HTTPError) as exc_info:
-        len(events)
+        list(events)
     assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
 
 
 def test_check_url_for_data_source():
     with pytest.raises(HTTPError) as exc_info:
         data_source = DataSource("http://test_test:8080/")
-    assert "We can't create a connection at this URL. Please check the URL." in str(exc_info)
+    assert "Unable to connect to host 'http://test_test:8080'." in str(exc_info)
+
+
+def test_data_cache(demo_events_from_data_source: Data):
+    data = demo_events_from_data_source
+    data.use_cache(True)
+    output1 = list(data)
+
+    data.use_cache(False)
+    data._data = []
+    output2 = list(data)
+
+    data.use_cache(True)
+    output3 = list(data)
+
+    output4 = list(data)
+
+    assert output1 == output3 == output4 and output2 == []
+
+
+def test_messageIds_not_in_last_msg(demo_messages_from_data_source: Data):
+    data = demo_messages_from_data_source
+    data_lst = list(data)
+    last_msg = data_lst[-1]
+    assert "messageIds" not in last_msg

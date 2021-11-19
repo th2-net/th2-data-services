@@ -12,14 +12,8 @@ def test_iter_data(demo_events_from_data_source: Data):
     assert list(events)
 
 
-def test_len_data(demo_events_from_data_source: Data):
-    events = demo_events_from_data_source
-
-    assert len(events) == 49
-
-
 def test_filter_data(demo_events_from_data_source: Data):
     events = demo_events_from_data_source
     data = events.filter(lambda r: r["successful"] is False)
 
-    assert len(data) == 6
+    assert len(list(data)) == 6

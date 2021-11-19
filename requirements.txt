@@ -1,6 +1,6 @@
-sseclient-py==1.7
+sseclient-py==1.7.2
 requests==2.26.0
-jupyter==1.0.0
 anytree==2.8.0
-setuptools==57.0.0
-urllib3==1.26.6
+setuptools==58.1.0
+urllib3==1.26.7
+simplejson>=3.17.6

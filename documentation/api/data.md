@@ -11,24 +11,26 @@
 
 ---
 
-<a href="../../th2_data_services/data.py#L10"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L12"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Data`
 A wrapper for data/data_stream. 
 
 The class provides methods for working with data as a stream. 
 
-Such approach to data analisys called........................................................ 
+Such approach to data analysis called........................................................ 
 
-<a href="../../th2_data_services/data.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
 __init__(
-    data: Optional[Iterator, Callable[, Generator[dict, NoneType]]],
-    workflow: List[Callable] = None,
-    cache=False
+    data:Optional[Iterator, Callable[, Generator[dict, NoneType]]],
+    workflow:List[Dict[str, Union[Callable, str]]]=None,
+    parents_cache:List[str]=None,
+    instance_cache:bool=False,
+    stream_cache:bool=False
 )
 ```
 
@@ -37,16 +39,35 @@ __init__(
 
 
 
+---
+
+#### <kbd>property</kbd> is_empty
+
+bool: Indicates that the Data object doesn't contain data. 
+
+---
+
+#### <kbd>property</kbd> len
+
+int: How many records in the Data stream. 
+
+
+
+**Notes:**
+
+> 1. It is a wasteful operation if you are performing it on the Data object that has never been iterated before. 
+>2. If you want just to check emptiness, use is_empty property instead. 
+
 
 
 ---
 
-<a href="../../th2_data_services/data.py#L129"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L231"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `filter`
 
 ```python
-filter(callback: Callable) → Data
+filter(callback:Callable) → Data
 ```
 
 Append `filter` to workflow. 
@@ -65,7 +86,7 @@ Append `filter` to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L200"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L333"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_by`
 
@@ -92,12 +113,50 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L144"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L101"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_last_cache`
+
+```python
+get_last_cache() → Union[str, NoneType]
+```
+
+Returns last existing cache. 
+
+Returns: Cache filename 
+
+---
+
+<a href="../../th2_data_services/data.py#L265"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `limit`
+
+```python
+limit(num:int) → Data
+```
+
+Limits the stream to `num` entries. 
+
+
+
+**Args:**
+ 
+ - <b>`num`</b>:  How many records will be provided. 
+
+
+
+**Returns:**
+ 
+ - <b>`Data`</b>:  Data object. 
+
+---
+
+<a href="../../th2_data_services/data.py#L249"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
 ```python
-map(callback: Callable) → Data
+map(callback:Callable) → Data
 ```
 
 Append `transform` function to workflow. 
@@ -116,12 +175,12 @@ Append `transform` function to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L157"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L294"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sift`
 
 ```python
-sift(limit: int = None, skip: int = None) → Generator[dict, NoneType, NoneType]
+sift(limit:int=None, skip:int=None) → Generator[dict, NoneType, NoneType]
 ```
 
 Skips and limits records. 
@@ -140,17 +199,17 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L180"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L317"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `use_cache`
 
 ```python
-use_cache(status: bool) → Data
+use_cache(status:bool) → Data
 ```
 
-Change status cache. 
+Change status instance_cache. 
 
-If True all requested data from rpt-data-provider will be saved to cache file. Further actions with Data object will be consume data from the cache file. 
+If True all requested data from rpt-data-provider will be saved to instance_cache file. Further actions with Data object will be consume data from the instance_cache file. 
 
 
 
@@ -163,6 +222,24 @@ If True all requested data from rpt-data-provider will be saved to cache file. F
 **Returns:**
  
  - <b>`Data`</b>:  Data object. 
+
+---
+
+<a href="../../th2_data_services/data.py#L359"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `write_to_file`
+
+```python
+write_to_file(file:str) → None
+```
+
+Writes the stream data to txt file. 
+
+
+
+**Args:**
+ 
+ - <b>`file`</b>:  Path to file. 
 
 
 
