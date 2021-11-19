@@ -123,7 +123,7 @@ class DataSource:
 
         """
 
-        # kwargs["metadataOnly"] = False
+        kwargs["metadataOnly"] = False
 
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
             raise ValueError(

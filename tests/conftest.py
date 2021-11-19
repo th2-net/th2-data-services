@@ -41,9 +41,23 @@ def demo_events_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
     return events
 
 @pytest.fixture
+def demo_events_with_metadataOnly_metadata_not_set(demo_data_source: DataSource) -> Data:
+    events = demo_data_source.get_events_from_data_provider(
+        startTimestamp=START_TIME,
+        endTimestamp=END_TIME,
+    )
+    return events
+
+@pytest.fixture
 def demo_messages_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
     messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME,
                                                                 stream=["th2-hand-demo"], metadataOnly=True)
+    return messages
+
+@pytest.fixture
+def demo_messages_with_metadataOnly_false(demo_data_source: DataSource) -> Data:
+    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME,
+                                                                stream=["th2-hand-demo"], metadataOnly=False)
     return messages
 
 @pytest.fixture
