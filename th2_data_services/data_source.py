@@ -1,5 +1,6 @@
 import requests
 import json
+import simplejson
 from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError
@@ -228,7 +229,7 @@ class DataSource:
             response = requests.get(f"{self.__url}/message/{msg_id}")
             try:
                 answer = response.json()
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
 
             answer = change_pipeline_message(answer)
@@ -309,7 +310,7 @@ class DataSource:
             response = requests.get(f"{self.__url}/event/{event_id}")
             try:
                 return response.json()
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 if stub:
                     return __create_event_stub(event_id)
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
