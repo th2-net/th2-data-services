@@ -14,6 +14,10 @@ from sseclient import SSEClient
 from th2_data_services.adapter import change_pipeline_message
 from th2_data_services.data import Data
 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class DataSource:
     """The class that provides methods for getting messages and events from rpt-data-provider."""
@@ -86,6 +90,8 @@ class DataSource:
 
         """
 
+        if kwargs["metadataOnly"] is True:
+            logger.warning(f"Meta data status is {kwargs['metadataOnly']}")
         kwargs["metadataOnly"] = False
 
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
@@ -123,6 +129,8 @@ class DataSource:
 
         """
 
+        if kwargs["metadataOnly"] is True:
+            logger.warning(f"Meta data status is {kwargs['metadataOnly']}")
         kwargs["metadataOnly"] = False
 
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
