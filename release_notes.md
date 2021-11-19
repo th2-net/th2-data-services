@@ -47,6 +47,19 @@ New lib with ds_utils posted in [here](https://github.com/th2-net/th2-data-servi
 
 # v0.5.0
 
+## User impact and migration instructions
+1. [I] You no longer need to enter UTC time corrected for local time. DataSource methods now expect UTC time.  
+   [M] Change the time to UTC in all your scripts.
+2. [I] The last "messageIds" message in the messages stream will be ignored.  
+   [M] If you do checks for the last message, you can delete them.
+3. [I] _DataSource.write_to_txt_ was moved to Data. The name has been changed to _write_to_file_.  
+   [M] If you use _write_to_file_ function, change the corresponding class and method.
+4. [I] _len(Data)_ functionality was removed. The _Data.len_ property is now used.  
+   [M] Change _len(Data)_ to _Data.len_ for your functions.
+5. [I] The codec-pipeline wrapper-messages are now split into sub-messages.  
+   [M] If you use wrapper-messages for your statistics then 
+   adapt functions for sub-messages (now they look like a usual message)
+
 ## Improvements
 1. [TH2-2427] Refactoring
     - Reduced waiting time of connection check.
@@ -56,14 +69,19 @@ New lib with ds_utils posted in [here](https://github.com/th2-net/th2-data-servi
 2. len(Data) functionality was removed because it has side effects when we use list(Data) 
 and too expensive to use. **Please use Data.len property instead.**
 3. [TH2-2474] Use of cache was revised.
+4. [TH2-2553] The time that have given in some method of data_source module now will expect in utc format.
+5. [TH2-2601] Unit tests were added in CI.
 
 ## Features
 1. Added Data.limit(num) method to use in the pipeline.
 2. Added Data.write_to_file(filename) due to TH2-2427.
 3. Added Data.len property to use instead of len(Data)
 4. Added Data.is_empty property
+5. [TH-2420] Added adapter for codecs pipeline.
+6. [TH2-2575] Added ParentEventsTree class in events tree module.
+7. [TH2-2577] Added optional arguments (stub_if_broken_event: bool) in find_events_by_id_from_data_provider  method of data_source module. If stub_if_broken_event is True and some ids is not available on data provider: method return stub inside.   
 
 ## BugFixes 
 1. [TH2-2424] Cache function was fixed.
 2. [TS-766] Fixed case when Data Services cannot recover more than 64 unknown events.
-
+3. [TH2-2419] find_X_by_id_from_data_provider functions return expected objects

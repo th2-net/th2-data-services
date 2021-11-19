@@ -1,14 +1,17 @@
 import requests
 import json
+import simplejson
 from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError
 from functools import partial
-from datetime import datetime
+from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional
 from urllib.parse import urlencode
 from sseclient import SSEClient
+
+from th2_data_services.adapter import change_pipeline_message
 from th2_data_services.data import Data
 
 
@@ -56,9 +59,11 @@ class DataSource:
             raise ValueError("Route is required field. Please fill it.")
 
         if kwargs.get("startTimestamp") and isinstance(kwargs.get("startTimestamp"), datetime):
-            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+            timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
         if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
-            kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
+            timestamp = kwargs["endTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + route
         url = f"{url}?{urlencode(kwargs)}"
@@ -86,10 +91,12 @@ class DataSource:
                 "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
             )
         if isinstance(kwargs["startTimestamp"], datetime):
-            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+            timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
-            kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
+            timestamp = kwargs["endTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
@@ -121,10 +128,12 @@ class DataSource:
             raise ValueError("'stream' is required field. Please note it." "More information on request here: https://github.com/th2-net/th2-rpt-data-provider")
 
         if isinstance(kwargs["startTimestamp"], datetime):
-            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+            timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
-            kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
+            timestamp = kwargs["endTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["endTimestamp"] = int(timestamp * 1000)
 
         streams = kwargs.pop("stream")
         if isinstance(streams, (list, tuple)):
@@ -135,7 +144,8 @@ class DataSource:
         url = f"{url}?{urlencode(kwargs) + streams}"
 
         data = partial(self.__execute_sse_request, url)
-        return Data(data, cache=cache)
+
+        return Data(data).map(change_pipeline_message).use_cache(cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
@@ -175,14 +185,14 @@ class DataSource:
 
         response.release_conn()
 
-    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
+    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict, None]]:
         """Gets message/messages by ids.
 
         Args:
             messages_id: One str with MessageID or list of MessagesIDs.
 
         Returns:
-            List[Message_dict] if you request a list or Message_dict.
+            List[Message_dict] if you request a list or Message_dict or None if no massages found.
 
         Example:
             >>> How to use.
@@ -200,25 +210,48 @@ class DataSource:
             Returns list(dict) with 2 messages.
 
         """
+        msg_id_type_is_str = isinstance(messages_id, str)
         if isinstance(messages_id, str):
             messages_id = [messages_id]
+
         result = []
         for msg_id in messages_id:
+            index = None
+            if msg_id.find(".") != -1:
+                msg_id, index = "".join(msg_id.split(".")[:-1]), int(msg_id[-1])
+
             response = requests.get(f"{self.__url}/message/{msg_id}")
             try:
-                result.append(response.json())
-            except json.JSONDecodeError:
+                answer = response.json()
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
-        return result if len(result) > 1 else result[0] if result else None
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
+            answer = change_pipeline_message(answer)
+            if isinstance(answer, list):
+                if index:
+                    for message in answer:
+                        if message["body"]["metadata"]["id"]["subsequence"][0] == index:
+                            result.append(message)
+                            break
+                else:
+                    result += answer
+            else:
+                result.append(answer)
+
+            if len(result) > 1:
+                msg_id_type_is_str = False
+
+        return result[0] if msg_id_type_is_str else result if result else None
+
+    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str], broken_events: Optional[bool] = False) -> Optional[Union[List[dict], dict, None]]:
         """Gets event/events by ids.
 
         Args:
             events_id: One str with EventID or list of EventsIDs.
+            broken_events: If True broken events is replaced by a event stub.
 
         Returns:
-            List[Event_dict] if you request a list or Event_dict.
+            List[Event_dict] if you request a list or Event_dict or None if no events found.
 
         Example:
             >>> How to use.
@@ -236,16 +269,54 @@ class DataSource:
             Returns list(dict) with 2 events.
 
         """
+
+        def __create_event_stub(broken_event_id):
+            """Creates a event stub.
+
+            Args:
+                broken_event_id: Broken event id.
+
+            Returns:
+                Event Stub.
+            """
+            event_stub = {
+                "attachedMessageIds": [],
+                "batchId": "Broken_Event",
+                "endTimestamp": {"nano": 0, "epochSecond": 0},
+                "startTimestamp": {"nano": 0, "epochSecond": 0},
+                "type": "event",
+                "eventId": f"{broken_event_id}",
+                "eventName": "Broken_Event",
+                "eventType": "Broken_Event",
+                "parentEventId": "Broken_Event",
+                "successful": None,
+                "isBatched": None,
+            }
+            return event_stub
+
+        def __get_event(event_id: str, stub: bool):
+            """Gets event from rpt-data-provider or replace on event stub.
+
+            Args:
+                event_id: Event id.
+                stub: If True a broken event is replaced by a event stub.
+            """
+            response = requests.get(f"{self.__url}/event/{event_id}")
+            try:
+                return response.json()
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
+                if stub:
+                    return __create_event_stub(event_id)
+                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+
+        event_id_type_is_str = isinstance(events_id, str)
         if isinstance(events_id, str):
             events_id = [events_id]
         result = []
-        for event_id in events_id:
-            response = requests.get(f"{self.__url}/event/{event_id}")
-            try:
-                result.append(response.json())
-            except json.JSONDecodeError:
-                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
-        return result if len(result) > 1 else result[0] if result else None
+        for id_ in events_id:
+            result.append(__get_event(id_, broken_events))
+
+        return result[0] if event_id_type_is_str else result if result else None
 
     @staticmethod
     def read_csv_file(*sources: str) -> Generator[str, None, None]:
