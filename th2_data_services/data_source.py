@@ -16,7 +16,7 @@ from th2_data_services.data import Data
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('th2_data_services')
 logger.setLevel(logging.DEBUG)
 
 class DataSource:
@@ -26,6 +26,7 @@ class DataSource:
         self.url = url
         self.__chunk_length = chunk_length
         self.__check_connect()
+        logger.info(url)
 
     def __check_connect(self) -> None:
         """Checks whether url is working."""
@@ -60,7 +61,9 @@ class DataSource:
         """
         route = kwargs.get("route")
         if not route:
-            raise ValueError("Route is required field. Please fill it.")
+            exception_msg = "Route is required field. Please fill it."
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
 
         if kwargs.get("startTimestamp") and isinstance(kwargs.get("startTimestamp"), datetime):
             timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
@@ -71,7 +74,7 @@ class DataSource:
 
         url = self.__url + route
         url = f"{url}?{urlencode(kwargs)}"
-
+        logger.info(url)
         yield from self.__execute_sse_request(url)
 
     def get_events_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
@@ -95,10 +98,13 @@ class DataSource:
         kwargs["metadataOnly"] = False
 
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            raise ValueError(
-                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please note it. "
-                "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
-            )
+            exception_msg = "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please "\
+                            "note it. More information on request here: " \
+                            "https://github.com/th2-net/th2-rpt-data-provider "
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
+
+
         if isinstance(kwargs["startTimestamp"], datetime):
             timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
             kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
@@ -109,7 +115,7 @@ class DataSource:
 
         url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
-
+        logger.info(url)
         data = partial(self.__execute_sse_request, url)
         return Data(data, cache=cache)
 
@@ -133,12 +139,18 @@ class DataSource:
         kwargs["metadataOnly"] = False
 
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            raise ValueError(
-                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. Please note it. "
-                "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
-            )
+            exception_msg = "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. " \
+                            "Please note it. More information on request here: " \
+                            "https://github.com/th2-net/th2-rpt-data-provider "
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
+
         if not kwargs.get("stream"):
-            raise ValueError("'stream' is required field. Please note it." "More information on request here: https://github.com/th2-net/th2-rpt-data-provider")
+            exception_msg = "'stream' is required field. Please note it." "More information on request here: " \
+                            "https://github.com/th2-net/th2-rpt-data-provider "
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
+
 
         if isinstance(kwargs["startTimestamp"], datetime):
             timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
@@ -155,6 +167,7 @@ class DataSource:
 
         url = self.__url + "/search/sse/messages"
         url = f"{url}?{urlencode(kwargs) + streams}"
+        logger.info(url)
 
         data = partial(self.__execute_sse_request, url)
 
@@ -237,7 +250,9 @@ class DataSource:
             try:
                 answer = response.json()
             except (json.JSONDecodeError, simplejson.JSONDecodeError):
-                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+                exception_msg = f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}"
+                logger.exception(exception_msg)
+                raise ValueError(exception_msg)
 
             answer = change_pipeline_message(answer)
             if isinstance(answer, list):
@@ -320,7 +335,9 @@ class DataSource:
             except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 if stub:
                     return __create_event_stub(event_id)
-                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+                exception_msg = f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}"
+                logger.error(exception_msg)
+                raise ValueError(exception_msg)
 
         event_id_type_is_str = isinstance(events_id, str)
         if isinstance(events_id, str):
