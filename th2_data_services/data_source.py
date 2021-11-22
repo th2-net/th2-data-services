@@ -90,7 +90,7 @@ class DataSource:
 
         """
 
-        if kwargs["metadataOnly"] is True:
+        if kwargs.get("metadataOnly") and kwargs["metadataOnly"] is True:
             logger.warning(f"Meta data status is {kwargs['metadataOnly']}")
         kwargs["metadataOnly"] = False
 
@@ -128,8 +128,7 @@ class DataSource:
             Data: Data object with Messages.
 
         """
-
-        if kwargs["metadataOnly"] is True:
+        if kwargs.get("metadataOnly") and kwargs["metadataOnly"] is True:
             logger.warning(f"Meta data status is {kwargs['metadataOnly']}")
         kwargs["metadataOnly"] = False
 
