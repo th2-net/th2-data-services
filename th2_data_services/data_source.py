@@ -1,17 +1,17 @@
-import pickle
 import requests
 import json
+import simplejson
 from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
 from urllib3.exceptions import HTTPError
 from functools import partial
-from weakref import finalize
-from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlencode
 from sseclient import SSEClient
+
+from th2_data_services.adapter import change_pipeline_message
 from th2_data_services.data import Data
 
 import logging
@@ -24,7 +24,6 @@ class DataSource:
 
     def __init__(self, url: str, chunk_length: int = 65536):
         self.url = url
-        self._finalizer = finalize(self, self.__remove)
         self.__chunk_length = chunk_length
         self.__check_connect()
         logger.info(url)
@@ -35,16 +34,6 @@ class DataSource:
             requests.get(self.__url, timeout=3.0)
         except ConnectionError as error:
             raise HTTPError(f"Unable to connect to host '{self.__url}'.")
-
-    def __remove(self):
-        """Deconstructor of class."""
-        filename = urlparse(self.__url).netloc
-        path = Path("./").joinpath("temp")
-        if path.exists():
-            for file in path.iterdir():
-                current_file = str(file)
-                if filename in current_file:
-                    file.unlink()
 
     @property
     def url(self) -> str:
@@ -72,16 +61,20 @@ class DataSource:
         """
         route = kwargs.get("route")
         if not route:
-            raise ValueError("Route is required field. Please fill it.")
+            exception_msg = "Route is required field. Please fill it."
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
 
         if kwargs.get("startTimestamp") and isinstance(kwargs.get("startTimestamp"), datetime):
-            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+            timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
         if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
-            kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
+            timestamp = kwargs["endTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + route
         url = f"{url}?{urlencode(kwargs)}"
-
+        logger.info(url)
         yield from self.__execute_sse_request(url)
 
     def get_events_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
@@ -93,7 +86,6 @@ class DataSource:
 
         Args:
             cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
-                (See `use_cache` method in `Data` class).
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
@@ -109,16 +101,18 @@ class DataSource:
 
 
         if isinstance(kwargs["startTimestamp"], datetime):
-            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+            timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
-            kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
+            timestamp = kwargs["endTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
         logger.info(url)
-        data = partial(self.__load_data, url, cache)
-        return Data(data)
+        data = partial(self.__execute_sse_request, url)
+        return Data(data, cache=cache)
 
     def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
         """Sends SSE request for getting messages.
@@ -129,7 +123,6 @@ class DataSource:
 
         Args:
             cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
-                (See `use_cache` method in `Data` class).
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
@@ -151,10 +144,12 @@ class DataSource:
 
 
         if isinstance(kwargs["startTimestamp"], datetime):
-            kwargs["startTimestamp"] = int(kwargs["startTimestamp"].timestamp() * 1000)  # unix timestamp in milliseconds
+            timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
 
         if kwargs.get("endTimestamp") and isinstance(kwargs.get("endTimestamp"), datetime):
-            kwargs["endTimestamp"] = int(kwargs["endTimestamp"].timestamp() * 1000)
+            timestamp = kwargs["endTimestamp"].replace(tzinfo=timezone.utc).timestamp()
+            kwargs["endTimestamp"] = int(timestamp * 1000)
 
         streams = kwargs.pop("stream")
         if isinstance(streams, (list, tuple)):
@@ -165,95 +160,9 @@ class DataSource:
         url = f"{url}?{urlencode(kwargs) + streams}"
         logger.info(url)
 
-        data = partial(self.__load_data, url, cache)
-        return Data(data)
+        data = partial(self.__execute_sse_request, url)
 
-    def __load_data(self, url: str, cache: bool = False) -> Generator[dict, None, None]:
-        """Loads data from cache or provider.
-
-        Args:
-            url: Url.
-            cache: Flag if you what save to cache.
-
-        Returns:
-             obj: Generator
-        """
-        filename = None
-        logger.info(f"Cache status {cache}")
-
-        if cache:
-            filename = "__".join(url.split("/")[2:])
-            filename = f"{filename}.pickle"
-
-        if filename and self.__check_cache(filename):
-            data = self.__load_file(filename)
-        else:
-            data = self.__load_from_provider(url, filename)
-        return data
-
-    def __check_cache(self, filename: str) -> bool:
-        """Checks whether file exist.
-
-        Args:
-            filename: Name of the cache file.
-
-        Returns:
-            bool: File exists or not.
-
-        """
-        path = Path("./temp")
-        path.mkdir(exist_ok=True)
-        path = path.joinpath(filename)
-        return path.is_file()
-
-    def __load_file(self, filename: str) -> Generator[dict, None, None]:
-        """Loads records from pickle file.
-
-        Args:
-            filename: Name of the cache file.
-
-        Yields:
-            dict: Generator records.
-
-        """
-        path = Path("./").joinpath("temp").joinpath(filename)
-        if not path.is_file():
-            raise ValueError(f"{filename} isn't file.")
-
-        if path.suffix != ".pickle":
-            raise ValueError(f"File hasn't pickle extension.")
-
-        with open(path, "rb") as file:
-            while True:
-                try:
-                    decoded_data = pickle.load(file)
-                    yield decoded_data
-                except EOFError:
-                    break
-
-    def __load_from_provider(self, url: str, filename: str = None) -> Generator[dict, None, None]:
-        """Loads records from data provider.
-
-        Args:
-            url: Url.
-            filename: Filename if you what to create local storage.
-
-        Yields:
-            dict: Generator records.
-
-        """
-        file = None
-        if filename is not None:
-            path = Path("./").joinpath("temp").joinpath(filename)
-            file = open(path, "wb")
-
-        for record in self.__execute_sse_request(url):
-            if file is not None:
-                pickle.dump(record, file)
-            yield record
-
-        if file:
-            file.close()
+        return Data(data).map(change_pipeline_message).use_cache(cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
@@ -270,7 +179,7 @@ class DataSource:
         for record in client.events():
             if record.event == "error":
                 raise HTTPError(record.data)
-            if record.event not in ["close", "keep_alive", "messageIds"]:
+            if record.event not in ["close", "keep_alive", "message_ids"]:
                 record_data = json.loads(record.data)
                 yield record_data
 
@@ -293,14 +202,14 @@ class DataSource:
 
         response.release_conn()
 
-    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
+    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict, None]]:
         """Gets message/messages by ids.
 
         Args:
             messages_id: One str with MessageID or list of MessagesIDs.
 
         Returns:
-            List[Message_dict] if you request a list or Message_dict.
+            List[Message_dict] if you request a list or Message_dict or None if no massages found.
 
         Example:
             >>> How to use.
@@ -318,27 +227,50 @@ class DataSource:
             Returns list(dict) with 2 messages.
 
         """
+        msg_id_type_is_str = isinstance(messages_id, str)
         if isinstance(messages_id, str):
             messages_id = [messages_id]
+
         result = []
         for msg_id in messages_id:
+            index = None
+            if msg_id.find(".") != -1:
+                msg_id, index = "".join(msg_id.split(".")[:-1]), int(msg_id[-1])
+
             response = requests.get(f"{self.__url}/message/{msg_id}")
             try:
-                result.append(response.json())
-            except json.JSONDecodeError:
-                exception_msg = f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text} "
-                logger.error(exception_msg)
+                answer = response.json()
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
+                exception_msg = f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}"
+                logger.exception(exception_msg)
                 raise ValueError(exception_msg)
-        return result if len(result) > 1 else result[0] if result else None
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict]]:
+            answer = change_pipeline_message(answer)
+            if isinstance(answer, list):
+                if index:
+                    for message in answer:
+                        if message["body"]["metadata"]["id"]["subsequence"][0] == index:
+                            result.append(message)
+                            break
+                else:
+                    result += answer
+            else:
+                result.append(answer)
+
+            if len(result) > 1:
+                msg_id_type_is_str = False
+
+        return result[0] if msg_id_type_is_str else result if result else None
+
+    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str], broken_events: Optional[bool] = False) -> Optional[Union[List[dict], dict, None]]:
         """Gets event/events by ids.
 
         Args:
             events_id: One str with EventID or list of EventsIDs.
+            broken_events: If True broken events is replaced by a event stub.
 
         Returns:
-            List[Event_dict] if you request a list or Event_dict.
+            List[Event_dict] if you request a list or Event_dict or None if no events found.
 
         Example:
             >>> How to use.
@@ -356,18 +288,56 @@ class DataSource:
             Returns list(dict) with 2 events.
 
         """
-        if isinstance(events_id, str):
-            events_id = [events_id]
-        result = []
-        for event_id in events_id:
+
+        def __create_event_stub(broken_event_id):
+            """Creates a event stub.
+
+            Args:
+                broken_event_id: Broken event id.
+
+            Returns:
+                Event Stub.
+            """
+            event_stub = {
+                "attachedMessageIds": [],
+                "batchId": "Broken_Event",
+                "endTimestamp": {"nano": 0, "epochSecond": 0},
+                "startTimestamp": {"nano": 0, "epochSecond": 0},
+                "type": "event",
+                "eventId": f"{broken_event_id}",
+                "eventName": "Broken_Event",
+                "eventType": "Broken_Event",
+                "parentEventId": "Broken_Event",
+                "successful": None,
+                "isBatched": None,
+            }
+            return event_stub
+
+        def __get_event(event_id: str, stub: bool):
+            """Gets event from rpt-data-provider or replace on event stub.
+
+            Args:
+                event_id: Event id.
+                stub: If True a broken event is replaced by a event stub.
+            """
             response = requests.get(f"{self.__url}/event/{event_id}")
             try:
-                result.append(response.json())
-            except json.JSONDecodeError:
+                return response.json()
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
+                if stub:
+                    return __create_event_stub(event_id)
                 exception_msg = f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}"
                 logger.error(exception_msg)
                 raise ValueError(exception_msg)
-        return result if len(result) > 1 else result[0] if result else None
+
+        event_id_type_is_str = isinstance(events_id, str)
+        if isinstance(events_id, str):
+            events_id = [events_id]
+        result = []
+        for id_ in events_id:
+            result.append(__get_event(id_, broken_events))
+
+        return result[0] if event_id_type_is_str else result if result else None
 
     @staticmethod
     def read_csv_file(*sources: str) -> Generator[str, None, None]:

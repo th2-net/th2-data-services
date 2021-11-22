@@ -11,17 +11,17 @@
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L15"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `DataSource`
 The class that provides methods for getting messages and events from rpt-data-provider. 
 
-<a href="../../th2_data_services/data_source.py#L21"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
-__init__(url: str, chunk_length: int = 65536)
+__init__(url:str, chunk_length:int=65536)
 ```
 
 
@@ -39,14 +39,14 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L315"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L214"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_events_by_id_from_data_provider`
 
 ```python
 find_events_by_id_from_data_provider(
-    events_id: Union[Iterable, str]
-) → Union[List[dict], dict, NoneType]
+    events_id:Iterable
+) → Union[dict, List[dict], NoneType]
 ```
 
 Gets event/events by ids. 
@@ -82,14 +82,14 @@ Gets event/events by ids.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L279"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L178"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_messages_by_id_from_data_provider`
 
 ```python
 find_messages_by_id_from_data_provider(
-    messages_id: Union[Iterable, str]
-) → Union[List[dict], dict, NoneType]
+    messages_id:Iterable
+) → Union[dict, List[dict], NoneType]
 ```
 
 Gets message/messages by ids. 
@@ -125,12 +125,12 @@ Gets message/messages by ids.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L82"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L68"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_events_from_data_provider`
 
 ```python
-get_events_from_data_provider(cache: bool = False, **kwargs) → Data
+get_events_from_data_provider(cache:bool=False, **kwargs) → Data
 ```
 
 Sends SSE request for getting events. 
@@ -141,8 +141,9 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 **Args:**
  
- - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache.  (See `use_cache` method in `Data` class). 
+ - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache. 
  - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. 
+[Note: parameters startTimestamp, endTimestamp, query object are expected in utc format]
 
 
 
@@ -152,12 +153,12 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L115"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L100"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_messages_from_data_provider`
 
 ```python
-get_messages_from_data_provider(cache: bool = False, **kwargs) → Data
+get_messages_from_data_provider(cache:bool=False, **kwargs) → Data
 ```
 
 Sends SSE request for getting messages. 
@@ -168,8 +169,8 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 **Args:**
  
- - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache.  (See `use_cache` method in `Data` class). 
- - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. 
+ - <b>`cache`</b> (bool):  If True all requested data from rpt-data-provider will be saved to cache. 
+ - <b>`kwargs`</b>:  th2-rpt-data-provider API query options. [Note: parameters startTimestamp, endTimestamp, query object are expected in utc format] 
 
 
 
@@ -179,12 +180,12 @@ For help use this readme https://github.com/th2-net/th2-rpt-data-provider#sse-re
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L351"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L250"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `read_csv_file`
 
 ```python
-read_csv_file(*sources: str) → Generator[str, NoneType, NoneType]
+read_csv_file(*sources:str) → Generator[str, NoneType, NoneType]
 ```
 
 Gets data in a stream way from csv files. 
@@ -203,7 +204,7 @@ Gets data in a stream way from csv files.
 
 ---
 
-<a href="../../th2_data_services/data_source.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data_source.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sse_request_to_data_provider`
 
@@ -219,7 +220,7 @@ It used for create custom sse-request to data-provider use this readme https://g
 
 **Args:**
  
- - <b>`kwargs`</b>:  Query options. 
+ - <b>`kwargs`</b>:  Query options. [Note: parameters startTimestamp, endTimestamp, query object are expected in utc format]
 
 
 

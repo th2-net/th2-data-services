@@ -7,12 +7,7 @@ from th2_data_services.events_tree import EventsTree
 def test_build_tree(general_data: List[dict], test_events_tree: NamedTuple):
     tree = EventsTree(general_data)
 
-    assert all(
-        [
-            list(tree.events.keys()) == test_events_tree.events,
-            list(tree.unknown_events.keys()) == test_events_tree.unknown_events,
-        ]
-    )
+    assert list(tree.events.keys()) == test_events_tree.events and list(tree.unknown_events.keys()) == test_events_tree.unknown_events
 
 
 def test_append_element(general_data: List[dict], test_events_tree: NamedTuple):
@@ -97,7 +92,7 @@ def test_get_ancestor_by_name_negative(general_data: List[dict]):
 def test_get_ancestor_by_super_type_positive(general_data: List[dict]):
     tree = EventsTree(general_data)
     event = {
-        "parentEventId": "8c035903-d1b4-11eb-9278-591e568ad66e",
+        "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
         "eventType": "message",
     }
 

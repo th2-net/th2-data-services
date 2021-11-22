@@ -7,8 +7,8 @@ DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
 data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
-START_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=44, second=41, microsecond=692724)
-END_TIME = datetime(year=2021, month=6, day=17, hour=15, minute=45, second=49, microsecond=28579)
+START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724)  # object given in utc format
+END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
 
 # [2] Get events from START_TIME to END_TIME.
 events: Data = data_source.get_events_from_data_provider(
@@ -21,6 +21,7 @@ events: Data = data_source.get_events_from_data_provider(
 # [3] Work with your Data object.
 # [3.1] Filter.
 filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter events with empty body.
+
 
 # [3.2] Map.
 def transform_function(record):
@@ -40,19 +41,28 @@ assert list(filtered_and_mapped_events) == list(filtered_and_mapped_events_by_pi
 events_from_11_to_end: Data = events.sift(skip=10)
 only_first_10_events: Data = events.sift(limit=10)
 
-# [3.5] Walk through data.
+# [3.5] Changing cache status.
+events.use_cache(True)
+
+# [3.6] Walk through data.
 for event in events:
     # Do something with event (event is a dict).
     print(event)
+# After first iteration the events has a cache file.
+# Now they will be used the cache in following iteration.
 
-# [3.6] Get number of the elements in the Data object.
-number_of_events = len(events)
+# [3.7] Get number of the elements in the Data object.
+number_of_events = events.len
 
-# [3.7] Convert Data object to the list of elements(events or messages).
+# [3.8] Check that Data object isn't empty.
+# The data source should be not empty.
+assert events.is_empty is False
+
+# [3.9] Convert Data object to the list of elements(events or messages).
 # Be careful, this can take too much memory.
 events_list = list(events)
 
-# [3.8] Get event/message by id.
+# [3.10] Get event/message by id.
 desired_event = "9ce8a2ff-d600-4366-9aba-2082cfc69901:ef1d722e-cf5e-11eb-bcd0-ced60009573f"
 desired_events = [
     "deea079b-4235-4421-abf6-6a3ac1d04c76:ef1d3a20-cf5e-11eb-bcd0-ced60009573f",
@@ -69,3 +79,18 @@ data_source.find_events_by_id_from_data_provider(desired_events)  # Returns 2 ev
 
 data_source.find_messages_by_id_from_data_provider(desired_message)  # Returns 1 message (dict).
 data_source.find_messages_by_id_from_data_provider(desired_messages)  # Returns 2 messages list(dict).
+
+# [3.11] The cache inheritance.
+# Creates a new Data object that will use cache from the events Data object.
+events_with_batch = events.filter(lambda record: record.get("batchId"))
+
+# New Data objects don't use their own cache by default but use the cache of the parent Data object.
+# Use use_cache method to activate caching. After that, the Data object will create its own cache file.
+events_with_batch.use_cache(True)
+
+list(events_with_batch)
+
+events_types_with_batch = events_with_batch.map(lambda record: {"eventType": record.get("eventType")})
+
+events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
+events_without_types_with_batch.use_cache(True)
