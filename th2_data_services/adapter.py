@@ -1,10 +1,12 @@
+from warnings import warn
 from typing import Union, List
 
 
 def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
     msg_type = record.get("messageType")
     if not msg_type:
-        raise ValueError("Sorry, message doesn't have a messageType field.")
+        warn("Sorry, some messages don't have a messageType field.", stacklevel=3)
+        return record
 
     if "/" not in msg_type:
         return record
