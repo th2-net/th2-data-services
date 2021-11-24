@@ -91,20 +91,14 @@ def test_map_for_list_record(general_data: List[dict]):
     assert event_types == list(data)
 
 
-def test_limit_for_list_record(general_data: List[dict]):
-    data = Data(general_data).map(lambda record: [record, record]).map(lambda record: record.get("eventType")).limit(10)
+def test_filter_for_list_record(general_data: List[dict]):
+    data = Data(general_data).map(lambda record: [record, record]).map(lambda record: record.get("eventType")).filter(lambda record: record in ["placeOrderFIX", "Checkpoint"])
 
     event_types = [
-        "",
-        "",
-        "",
-        "",
         "placeOrderFIX",
         "placeOrderFIX",
         "Checkpoint",
         "Checkpoint",
-        "Checkpoint for session",
-        "Checkpoint for session",
     ]
 
     assert event_types == list(data)
