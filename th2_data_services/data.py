@@ -153,10 +153,15 @@ class Data:
                     break
                 if not isinstance(modified_records, (list, tuple)):
                     modified_records = [modified_records]
+
                 for modified_record in modified_records:
-                    if file is not None:
-                        pickle.dump(modified_record, file)
-                    yield modified_record
+                    if modified_record is not None:
+                        if file is not None:
+                            pickle.dump(modified_record, file)
+                        yield modified_record
+                    else:
+                        raise StopIteration
+
         finally:
             if file:
                 file.close()
@@ -215,7 +220,10 @@ class Data:
             if isinstance(record, (list, tuple)):
                 result = []
                 for r in record:
-                    compute = step["callback"](r)
+                    try:
+                        compute = step["callback"](r)
+                    except StopIteration as e:
+                        return [*result, None] if result else None
                     if compute is not None:
                         if step["type"] in ["filter", "limit"]:
                             result.append(r)
