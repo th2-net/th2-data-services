@@ -103,6 +103,6 @@
 
 # v0.5.2
 
-## BugFixed
+## BugFixes
 
 1. [TH2-2731] Fixed a problem with using map function with list of records.
