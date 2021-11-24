@@ -213,7 +213,15 @@ class Data:
         """
         for step in workflow:
             if isinstance(record, (list, tuple)):
-                record = [r for r in record if step["callback"](r) is not None]
+                result = []
+                for r in record:
+                    compute = step["callback"](r)
+                    if compute is not None:
+                        if step["type"] in ["filter", "limit"]:
+                            result.append(r)
+                        elif step["type"] == "map":
+                            result.append(compute)
+                record = result
                 if not record:
                     record = None
                     break
