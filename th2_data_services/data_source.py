@@ -8,7 +8,6 @@ from functools import partial
 from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional
-from urllib.parse import urlencode
 from sseclient import SSEClient
 
 from th2_data_services.adapter import change_pipeline_message
@@ -18,6 +17,7 @@ import logging
 
 logger = logging.getLogger('th2_data_services')
 logger.setLevel(logging.DEBUG)
+
 
 class DataSource:
     """The class that provides methods for getting messages and events from rpt-data-provider."""
@@ -73,9 +73,24 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + route
-        url = f"{url}?{urlencode(kwargs)}"
+        url = f"{url}?{self.url_encode(kwargs)[1:]}"
         logger.info(url)
         yield from self.__execute_sse_request(url)
+
+    @staticmethod
+    def url_encode(filters: dict) -> str:
+        result = ""
+        for filters_name, parameters in filters.items():
+            if filters_name == "filters":
+                for filter_name, parameter in parameters.items():
+                    if isinstance(parameter, list):
+                        for param in parameter:
+                            result += f"&{filter_name}={param}"
+                    else:
+                        result += f"&{filter_name}={parameter}"
+            else:
+                result += f"&{filters_name}={parameters}"
+        return result
 
     def get_events_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
         """Sends SSE request for getting events.
@@ -114,7 +129,7 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + "/search/sse/events"
-        url = f"{url}?{urlencode(kwargs)}"
+        url = f"{url}?{self.url_encode(kwargs)[1:]}"
         logger.info(url)
         data = partial(self.__execute_sse_request, url)
         return Data(data, cache=cache)
@@ -166,7 +181,7 @@ class DataSource:
         streams = f"&stream={streams}"
 
         url = self.__url + "/search/sse/messages"
-        url = f"{url}?{urlencode(kwargs) + streams}"
+        url = f"{url}?{self.url_encode(kwargs)[1:] + streams}"
         logger.info(url)
 
         data = partial(self.__execute_sse_request, url)

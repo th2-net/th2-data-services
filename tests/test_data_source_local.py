@@ -415,6 +415,13 @@ def test_find_message_by_id_from_data_provider_with_error(demo_data_source: Data
 
     assert "Sorry, but the answer rpt-data-provider doesn't match the json format." in str(exc_info)
 
+def test_url_encode_from_get_events():
+    def get_kwargs(**kwargs):
+        return kwargs
+    filters = get_kwargs(start=True, end=12345, filters={'type': ['recon', 'tm'], 'status': 'Failed',
+                                                         'another_filter':['a', 'b']})
+    assert DataSource.url_encode(filters) == "&start=True&end=12345&type=recon&type=tm&status=Failed&another_filter=a" \
+                                             "&another_filter=b"
 
 def test_get_events_from_data_provider_with_error(demo_data_source: DataSource):
     data_source = demo_data_source
