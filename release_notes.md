@@ -98,6 +98,7 @@
 # v0.5.1
 
 ## Improvements
+
 1. [TH2-2724] The user can be able to deal with problematic messages.
 
 

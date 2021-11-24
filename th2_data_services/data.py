@@ -147,6 +147,7 @@ class Data:
             file = open(filepath, "wb")
 
         try:
+            limit = False
             for record in working_data:
                 modified_records = self.__apply_workflow(record, workflow)
                 if modified_records is None:
@@ -154,14 +155,16 @@ class Data:
                 if not isinstance(modified_records, (list, tuple)):
                     modified_records = [modified_records]
 
-                for modified_record in modified_records:
-                    if modified_record is not None:
-                        if file is not None:
-                            pickle.dump(modified_record, file)
-                        yield modified_record
-                    else:
-                        raise StopIteration
+                if None in modified_records:
+                    limit = True
+                    modified_records = modified_records[:-1]
 
+                for modified_record in modified_records:
+                    if file is not None:
+                        pickle.dump(modified_record, file)
+                    yield modified_record
+                if limit:
+                    break
         finally:
             if file:
                 file.close()
