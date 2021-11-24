@@ -92,7 +92,7 @@ def test_map_for_list_record(general_data: List[dict]):
 
 
 def test_filter_for_list_record(general_data: List[dict]):
-    data = Data(general_data).map(lambda record: [record, record]).map(lambda record: record.get("eventType")).filter(lambda record: record in ["placeOrderFIX", "Checkpoint"])
+    data = Data(general_data).map(lambda record: [record, record]).filter(lambda record: record in ["placeOrderFIX", "Checkpoint"])
 
     event_types = [
         "placeOrderFIX",
@@ -112,6 +112,16 @@ def test_shuffle_data(general_data: List[dict]):
 
 def test_limit(general_data: List[dict]):
     data = Data(general_data)
+    data10 = data.limit(10)
+    data5 = data10.limit(5)
+
+    assert len(list(data10)) == 10
+    assert len(list(data5)) == 5
+
+
+def test_limit_for_list_record(general_data: List[dict]):
+    data = Data(general_data).map(lambda record: [record, record])
+
     data10 = data.limit(10)
     data5 = data10.limit(5)
 
