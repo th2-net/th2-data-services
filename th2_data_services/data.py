@@ -98,13 +98,13 @@ class Data:
             working_data = self.__load_file(self._cache_filename)
             yield from working_data
         else:
-            working_data = self._data() if callable(self._data) else self._data
-            workflow = self._workflow
-
             cache_filename = self.get_last_cache()
             if cache_filename:
                 working_data = self.__load_file(cache_filename)
                 workflow = self.__get_unapplied_workflow(cache_filename)
+            else:
+                working_data = self._data() if callable(self._data) else self._data
+                workflow = self._workflow
 
             yield from self.__change_data(working_data=working_data, workflow=workflow, cache=cache)
 
@@ -138,7 +138,7 @@ class Data:
             workflow: Workflow.
             cache: Set True if you are going to write and read from the cache.
 
-        Returns:
+        Yields:
             obj: Generator
         """
         file = None
@@ -147,16 +147,24 @@ class Data:
             file = open(filepath, "wb")
 
         try:
+            limit = False
             for record in working_data:
                 modified_records = self.__apply_workflow(record, workflow)
                 if modified_records is None:
                     break
                 if not isinstance(modified_records, (list, tuple)):
                     modified_records = [modified_records]
+
+                if None in modified_records:
+                    limit = True
+                    modified_records = modified_records[:-1]
+
                 for modified_record in modified_records:
                     if file is not None:
                         pickle.dump(modified_record, file)
                     yield modified_record
+                if limit:
+                    break
         finally:
             if file:
                 file.close()
@@ -207,13 +215,22 @@ class Data:
     def __apply_workflow(self, record: dict, workflow: WorkFlow) -> Optional[Union[dict, List[dict]]]:
         """Creates generator records with apply workflow.
 
-        Yields:
+        Returns:
             obj: Generator records.
 
         """
         for step in workflow:
             if isinstance(record, (list, tuple)):
-                record = [r for r in record if step["callback"](r) is not None]
+                result = []
+                for r in record:
+                    try:
+                        compute = step["callback"](r)
+                        if compute is not None:
+                            result.append(compute)
+                    except StopIteration as e:
+                        return [*result, None] if result else None
+
+                record = result
                 if not record:
                     record = None
                     break
