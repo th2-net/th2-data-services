@@ -41,6 +41,69 @@ def test_map_data_increase(general_data: List[dict]):
     assert len(list(data)) == 18
 
 
+def test_map_for_list_record(general_data: List[dict]):
+    data = Data(general_data).map(lambda record: [record, record]).map(lambda record: record.get("eventType"))
+
+    event_types = [
+        "",
+        "",
+        "",
+        "",
+        "placeOrderFIX",
+        "placeOrderFIX",
+        "Checkpoint",
+        "Checkpoint",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Checkpoint for session",
+        "Outgoing message",
+        "Outgoing message",
+        "Outgoing message",
+        "Outgoing message",
+        "",
+        "",
+        "Send message",
+        "Send message",
+        "Send message",
+        "Send message",
+        "message",
+        "message",
+        "Checkpoint for session",
+        "Checkpoint for session",
+    ]
+    assert event_types == list(data)
+
+
+def test_filter_for_list_record(general_data: List[dict]):
+    data = Data(general_data).map(lambda record: [record, record]).map(lambda record: record.get("eventType")).filter(lambda record: record in ["placeOrderFIX", "Checkpoint"])
+
+    event_types = [
+        "placeOrderFIX",
+        "placeOrderFIX",
+        "Checkpoint",
+        "Checkpoint",
+    ]
+
+    assert event_types == list(data)
+
+
 def test_shuffle_data(general_data: List[dict]):
     data = Data(general_data).filter(lambda record: record.get("batchId") is not None).map(lambda record: record.get("eventId")).filter(lambda record: "b" in record)
 
@@ -49,6 +112,16 @@ def test_shuffle_data(general_data: List[dict]):
 
 def test_limit(general_data: List[dict]):
     data = Data(general_data)
+    data10 = data.limit(10)
+    data5 = data10.limit(5)
+
+    assert len(list(data10)) == 10
+    assert len(list(data5)) == 5
+
+
+def test_limit_for_list_record(general_data: List[dict]):
+    data = Data(general_data).map(lambda record: [record, record])
+
     data10 = data.limit(10)
     data5 = data10.limit(5)
 
@@ -157,9 +230,7 @@ def test_cache_for_instance(general_data: List[dict]):
     assert data1.get_last_cache() != data4.get_last_cache() and data2.get_last_cache() == data3.get_last_cache()
 
 
-def test_write_to_file(
-    general_data,
-):
+def test_write_to_file(general_data):
     events = Data(general_data)
     file_to_test = "demo_file.txt"
     expected = """{'batchId': None,
@@ -171,7 +242,6 @@ def test_write_to_file(
  'parentEventId': None}
 --------------------------------------------------
 """
-
     events.limit(1).write_to_file(file_to_test)
     with open(file_to_test) as f:
         assert f.read() == expected
