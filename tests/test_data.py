@@ -104,6 +104,12 @@ def test_filter_for_list_record(general_data: List[dict]):
     assert event_types == list(data)
 
 
+def test_increase_records_after_similar_map(general_data: List[dict]):
+    data = Data(general_data).map(lambda record: [record, record]).map(lambda record: [record, record, record])
+
+    assert len(list(data)) == 126
+
+
 def test_shuffle_data(general_data: List[dict]):
     data = Data(general_data).filter(lambda record: record.get("batchId") is not None).map(lambda record: record.get("eventId")).filter(lambda record: "b" in record)
 
