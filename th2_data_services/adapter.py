@@ -11,8 +11,15 @@ def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
     if "/" not in msg_type:
         return record
 
+    body = record["body"]
+    if not body:
+        return record
+
     sub_messages = []
-    fields = record["body"]["fields"]
+    fields = body["fields"]
+    if not fields:
+        return record
+
     for sub_msg in fields:
         split_msg_name = sub_msg.split("-")
         if len(split_msg_name) > 1:
@@ -22,13 +29,23 @@ def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
             sub_msg_type = sub_msg
 
         new_record = record.copy()
+
         metadata = new_record["body"]["metadata"].copy()
         id_field = metadata["id"].copy()
-
         id_field["subsequence"] = [index]
         metadata["id"] = id_field
 
-        body = {**fields.get(sub_msg).get("messageValue"), "metadata": metadata}
+        body_fields = fields[sub_msg]
+        metadata.update(body_fields.get("metadata", {}))
+
+        body = {"metadata": metadata}
+        if body_fields.get("messageValue"):
+            body = {**body_fields["messageValue"], **body}
+        elif body_fields.get("fields"):
+            body = {**body_fields["fields"], **body}
+        else:
+            body = {"fields": {}, **body}
+
         new_record["body"] = body
         new_record["body"]["metadata"]["messageType"] = sub_msg_type
         new_record["messageType"] = sub_msg_type
