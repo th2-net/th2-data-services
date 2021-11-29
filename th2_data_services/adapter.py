@@ -29,16 +29,22 @@ def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
             sub_msg_type = sub_msg
 
         new_record = record.copy()
+
         metadata = new_record["body"]["metadata"].copy()
         id_field = metadata["id"].copy()
-
         id_field["subsequence"] = [index]
         metadata["id"] = id_field
 
         body_fields = fields[sub_msg]
+        message_metadata = body_fields.get("metadata")
+        if message_metadata:
+            metadata.update(message_metadata)
+
         body = {"metadata": metadata}
-        if body_fields.get("messageValue") or body_fields.get("fields"):
+        if body_fields.get("messageValue"):
             body = {**body_fields.get("messageValue"), **body}
+        elif body_fields.get("fields"):
+            body = {**body_fields.get("fields"), **body}
         else:
             body = {"fields": {}, **body}
 

@@ -1438,7 +1438,7 @@ def message_from_pipeline_empty_body():
     messages = {
         "attachedEventIds": [],
         "body": {
-            "fields": {"Csv_Header": {"fields": {}, "metadata": {}}, "Csv_Message": {"fields": {}, "metadata": {}}},
+            "fields": {"Csv_Header": {"fields": {}, "metadata": {}}, "Csv_Message": {"fields": {}, "metadata": {"TestField": "test", "timestamp": "2021-10-12T12:13:59.766600545Z"}}},
             "metadata": {
                 "id": {"connectionId": {"sessionAlias": "satscomments2"}, "sequence": "1634314921633704398", "subsequence": [1]},
                 "messageType": "Csv_Header",
@@ -1487,7 +1487,8 @@ def messages_from_after_pipeline_empty_body():
                     "id": {"connectionId": {"sessionAlias": "satscomments2"}, "sequence": "1634314921633704398", "subsequence": [2]},
                     "messageType": "Csv_Message",
                     "properties": {"logTimestamp": "2021-10-12 " "12:13:59.733300545"},
-                    "timestamp": "2021-10-12T12:13:59.733300545Z",
+                    "timestamp": "2021-10-12T12:13:59.766600545Z",
+                    "TestField": "test",
                 },
             },
             "bodyBase64": "Ik1lc3NhZ2UiLCJNc2dUeXBlIgoiQU8xMjExMDEyMTIwOTA3MTE0MDAxIC0gZGVwdGggeWllbGRzIG5vIGJhdGNoIiwiU0FUU0NvbW1lbnRzIg==",
