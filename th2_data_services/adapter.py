@@ -35,10 +35,10 @@ def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
         id_field["subsequence"] = [index]
         metadata["id"] = id_field
 
-        body_fields = fields.get(sub_msg)
+        body_fields = fields[sub_msg]
         body = {"metadata": metadata}
         if body_fields.get("messageValue") or body_fields.get("fields"):
-            body = {**fields.get(sub_msg).get("messageValue"), **body}
+            body = {**body_fields.get("messageValue"), **body}
         else:
             body = {"fields": {}, **body}
 
