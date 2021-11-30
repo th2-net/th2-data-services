@@ -26,7 +26,6 @@
 
 2. An experimental EventsTree2 class has been added with a real tree inside.
 
-
 ## BugFixes
 
 1. [TH2-2323] Memory leak when we use Data object.
@@ -102,12 +101,18 @@
 
 1. [TH2-2724] The user can be able to deal with problematic messages.
 
-
 # v0.5.2
 
 ## BugFixes
 
 1. [TH2-2731] Fixed a problem with using map function with list of records.
+
+# v0.5.3
+
+## BugFixes
+
+1. [TH2-2756] Changed adapter for messages from pipeline.
+2. Fixed a situation when messages were not opened from the list when we use map more that once.
 
 # v0.6.0
 

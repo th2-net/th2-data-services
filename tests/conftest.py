@@ -31,6 +31,7 @@ def demo_events_from_data_source(demo_data_source: DataSource) -> Data:
     # Failed = 6
     return events
 
+
 @pytest.fixture
 def demo_events_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
     events = demo_data_source.get_events_from_data_provider(
@@ -40,6 +41,7 @@ def demo_events_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
     )
     return events
 
+
 @pytest.fixture
 def demo_events_with_metadataOnly_metadata_not_set(demo_data_source: DataSource) -> Data:
     events = demo_data_source.get_events_from_data_provider(
@@ -48,17 +50,18 @@ def demo_events_with_metadataOnly_metadata_not_set(demo_data_source: DataSource)
     )
     return events
 
+
 @pytest.fixture
 def demo_messages_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
-    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME,
-                                                                stream=["th2-hand-demo"], metadataOnly=True)
+    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"], metadataOnly=True)
     return messages
+
 
 @pytest.fixture
 def demo_messages_with_metadataOnly_false(demo_data_source: DataSource) -> Data:
-    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME,
-                                                                stream=["th2-hand-demo"], metadataOnly=False)
+    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"], metadataOnly=False)
     return messages
+
 
 @pytest.fixture
 def demo_messages_from_data_source(demo_data_source: DataSource) -> Data:
@@ -1459,3 +1462,73 @@ def message_from_pipeline():
         "type": "message",
     }
     return message
+
+
+@pytest.fixture
+def message_from_pipeline_empty_body():
+    messages = {
+        "attachedEventIds": [],
+        "body": {
+            "fields": {"Csv_Header": {"fields": {}, "metadata": {}}, "Csv_Message": {"fields": {}, "metadata": {"TestField": "test", "timestamp": "2021-10-12T12:13:59.766600545Z"}}},
+            "metadata": {
+                "id": {"connectionId": {"sessionAlias": "satscomments2"}, "sequence": "1634314921633704398", "subsequence": [1]},
+                "messageType": "Csv_Header",
+                "properties": {"logTimestamp": "2021-10-12 " "12:13:59.733300545"},
+                "timestamp": "2021-10-12T12:13:59.733300545Z",
+            },
+        },
+        "bodyBase64": "Ik1lc3NhZ2UiLCJNc2dUeXBlIgoiQU8xMjExMDEyMTIwOTA3MTE0MDAxIC0gZGVwdGggeWllbGRzIG5vIGJhdGNoIiwiU0FUU0NvbW1lbnRzIg==",
+        "direction": "IN",
+        "messageId": "satscomments2:first:1634314921633704398",
+        "messageType": "Csv_Header/Csv_Message",
+        "sessionId": "satscomments2",
+        "timestamp": {"epochSecond": 1634040839, "nano": 733300545},
+        "type": "message",
+    }
+    return messages
+
+
+@pytest.fixture
+def messages_from_after_pipeline_empty_body():
+    messages = [
+        {
+            "attachedEventIds": [],
+            "body": {
+                "fields": {},
+                "metadata": {
+                    "id": {"connectionId": {"sessionAlias": "satscomments2"}, "sequence": "1634314921633704398", "subsequence": [1]},
+                    "messageType": "Csv_Header",
+                    "properties": {"logTimestamp": "2021-10-12 " "12:13:59.733300545"},
+                    "timestamp": "2021-10-12T12:13:59.733300545Z",
+                },
+            },
+            "bodyBase64": "Ik1lc3NhZ2UiLCJNc2dUeXBlIgoiQU8xMjExMDEyMTIwOTA3MTE0MDAxIC0gZGVwdGggeWllbGRzIG5vIGJhdGNoIiwiU0FUU0NvbW1lbnRzIg==",
+            "direction": "IN",
+            "messageId": "satscomments2:first:1634314921633704398.1",
+            "messageType": "Csv_Header",
+            "sessionId": "satscomments2",
+            "timestamp": {"epochSecond": 1634040839, "nano": 733300545},
+            "type": "message",
+        },
+        {
+            "attachedEventIds": [],
+            "body": {
+                "fields": {},
+                "metadata": {
+                    "id": {"connectionId": {"sessionAlias": "satscomments2"}, "sequence": "1634314921633704398", "subsequence": [2]},
+                    "messageType": "Csv_Message",
+                    "properties": {"logTimestamp": "2021-10-12 " "12:13:59.733300545"},
+                    "timestamp": "2021-10-12T12:13:59.766600545Z",
+                    "TestField": "test",
+                },
+            },
+            "bodyBase64": "Ik1lc3NhZ2UiLCJNc2dUeXBlIgoiQU8xMjExMDEyMTIwOTA3MTE0MDAxIC0gZGVwdGggeWllbGRzIG5vIGJhdGNoIiwiU0FUU0NvbW1lbnRzIg==",
+            "direction": "IN",
+            "messageId": "satscomments2:first:1634314921633704398.2",
+            "messageType": "Csv_Message",
+            "sessionId": "satscomments2",
+            "timestamp": {"epochSecond": 1634040839, "nano": 733300545},
+            "type": "message",
+        },
+    ]
+    return messages
