@@ -2,7 +2,8 @@ import pytest
 from urllib3.exceptions import HTTPError
 
 from th2_data_services.data import Data
-from th2_data_services.data_source import DataSource, Filter
+from th2_data_services.data_source import DataSource
+from th2_data_services.filter import Filter
 
 
 def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
