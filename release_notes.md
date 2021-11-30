@@ -101,10 +101,16 @@
 ## Improvements
 
 1. [TH2-2724] The user can be able to deal with problematic messages.
-2. [TH2-2283] Implemented rpt-data-provider FIlters API in data_source module.
+
 
 # v0.5.2
 
 ## BugFixes
 
 1. [TH2-2731] Fixed a problem with using map function with list of records.
+
+# v0.6.0
+
+## Features
+
+1. [TH2-2283] Implemented rpt-data-provider Filters API.
