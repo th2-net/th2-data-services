@@ -26,7 +26,6 @@
 
 2. An experimental EventsTree2 class has been added with a real tree inside.
 
-3. [TH2-2283] Implemented rpt-data-provider FIlters API in data_source module.
 
 ## BugFixes
 
@@ -102,7 +101,7 @@
 ## Improvements
 
 1. [TH2-2724] The user can be able to deal with problematic messages.
-
+2. [TH2-2283] Implemented rpt-data-provider FIlters API in data_source module.
 
 # v0.5.2
 
