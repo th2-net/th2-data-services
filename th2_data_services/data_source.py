@@ -9,14 +9,35 @@ from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional
 from sseclient import SSEClient
-
+from th2_grpc_data_provider.data_provider_pb2 import Filter as grpc_Filter, FilterName as grpc_FilterName
 from th2_data_services.adapter import change_pipeline_message
 from th2_data_services.data import Data
-
+import google.protobuf.wrappers_pb2
 import logging
 
 logger = logging.getLogger('th2_data_services')
 logger.setLevel(logging.DEBUG)
+
+
+class Filter:
+    def __init__(self, name: str, values: str or (list, tuple), negative: bool = False, conjunct: bool = False):
+        self.name = name
+
+        if isinstance(values, (list, tuple)):
+            self.values = map(str, values)
+        else:
+            self.values = [values]
+
+        self.negative = negative
+        self.conjunct = conjunct
+    def url(self):
+        return f"&filters={self.name}" + "".join([f"&{self.name}-values={val}" for val in self.values]) + f"&{self.name}-negative={self.negative}"
+
+    def grpc(self) -> grpc_Filter:
+        return grpc_Filter(name=grpc_FilterName(filter_name=self.name),
+                           negative=google.protobuf.wrappers_pb2.BoolValue(value=self.negative),
+                           values=self.values,
+                           conjunct=google.protobuf.wrappers_pb2.BoolValue(value=self.conjunct))
 
 
 class DataSource:
@@ -73,24 +94,10 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + route
-        url = f"{url}?{self.url_encode(kwargs)[1:]}"
+        url = f"{url}?{self._get_url(kwargs)}"
         logger.info(url)
         yield from self.__execute_sse_request(url)
 
-    @staticmethod
-    def url_encode(filters: dict) -> str:
-        result = ""
-        for filters_name, parameters in filters.items():
-            if filters_name == "filters":
-                for filter_name, parameter in parameters.items():
-                    if isinstance(parameter, list):
-                        for param in parameter:
-                            result += f"&{filter_name}={param}"
-                    else:
-                        result += f"&{filter_name}={parameter}"
-            else:
-                result += f"&{filters_name}={parameters}"
-        return result
 
     def get_events_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
         """Sends SSE request for getting events.
@@ -129,10 +136,25 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + "/search/sse/events"
-        url = f"{url}?{self.url_encode(kwargs)[1:]}"
+        url = f"{url}?{self._get_url(kwargs)}"
+
         logger.info(url)
         data = partial(self.__execute_sse_request, url)
         return Data(data, cache=cache)
+
+    @staticmethod
+    def _get_url(kwargs):
+        result = ""
+        for k, v in kwargs.items():
+            if k == "filters":
+                if isinstance(v, Filter):
+                    result += v.url()
+                elif isinstance(v, (tuple, list)):
+
+                    result += "".join([filter.url() for filter in v])
+            else:
+                result += f"&{k}={v}"
+        return result[1:] if result[0] == "&" else result
 
     def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
         """Sends SSE request for getting messages.
@@ -181,9 +203,9 @@ class DataSource:
         streams = f"&stream={streams}"
 
         url = self.__url + "/search/sse/messages"
-        url = f"{url}?{self.url_encode(kwargs)[1:] + streams}"
-        logger.info(url)
+        url = f"{url}?{self._get_url(kwargs) + streams}"
 
+        logger.info(url)
         data = partial(self.__execute_sse_request, url)
 
         return Data(data).map(change_pipeline_message).use_cache(cache)

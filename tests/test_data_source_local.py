@@ -2,7 +2,7 @@ import pytest
 from urllib3.exceptions import HTTPError
 
 from th2_data_services.data import Data
-from th2_data_services.data_source import DataSource
+from th2_data_services.data_source import DataSource, Filter
 
 
 def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
@@ -407,6 +407,26 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
     assert len(messages_with_one_element) == 1
 
 
+def test_Filter_url():
+    assert all([Filter("type", ["one", 2, "three"], False, False).url()[1:] ==
+                "filters=type&type-values=one&type-values=2&type-values=three&type-negative=False",
+                Filter("type", ["one", 2, "three"], True, True).url()[1:] ==
+                "filters=type&type-values=one&type-values=2&type-values=three&type-negative=True",
+                Filter("type", ["one", 2, "three"], False, True).url()[1:] ==
+                "filters=type&type-values=one&type-values=2&type-values=three&type-negative=False",
+                Filter("type", ["one", 2, "three"], True, False).url()[1:] ==
+                "filters=type&type-values=one&type-values=2&type-values=three&type-negative=True"])
+
+
+def test_Filter_grcp():
+    assert isinstance(Filter("type", ["one", 2, "three"], False, False), Filter)
+
+
+def test_get_url():
+    assert DataSource._get_url({"filters": [Filter('type', 'recon'), Filter('status', 'Failed', negative=True)]}) == "filters=type&type-values=recon&type-negative=False&filters=status&status-values=Failed&status-negative=True"
+    assert DataSource._get_url({"filters": Filter('type', 'recon')}) == "filters=type&type-values=recon&type-negative=False"
+
+
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
     data_source = demo_data_source
 
@@ -415,13 +435,6 @@ def test_find_message_by_id_from_data_provider_with_error(demo_data_source: Data
 
     assert "Sorry, but the answer rpt-data-provider doesn't match the json format." in str(exc_info)
 
-def test_url_encode_from_get_events():
-    def get_kwargs(**kwargs):
-        return kwargs
-    filters = get_kwargs(start=True, end=12345, filters={'type': ['recon', 'tm'], 'status': 'Failed',
-                                                         'another_filter':['a', 'b']})
-    assert DataSource.url_encode(filters) == "&start=True&end=12345&type=recon&type=tm&status=Failed&another_filter=a" \
-                                             "&another_filter=b"
 
 def test_get_events_from_data_provider_with_error(demo_data_source: DataSource):
     data_source = demo_data_source

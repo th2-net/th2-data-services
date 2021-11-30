@@ -26,6 +26,8 @@
 
 2. An experimental EventsTree2 class has been added with a real tree inside.
 
+3. [TH2-2283] Implemented rpt-data-provider FIlters API in data_source module.
+
 ## BugFixes
 
 1. [TH2-2323] Memory leak when we use Data object.
