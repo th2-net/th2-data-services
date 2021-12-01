@@ -4,4 +4,4 @@ anytree==2.8.0
 setuptools==58.1.0
 urllib3==1.26.7
 simplejson>=3.17.6
-th2-grpc-data-provider==1.0.2
+th2-grpc-data-provider>=1.0.2,<2
