@@ -429,8 +429,9 @@ def test_get_url():
     assert DataSource._get_url({"filters": [Filter('type', 'recon'), Filter('status', 'Failed', negative=True)]}) == "filters=type&type-values=recon&type-negative=False&filters=status&status-values=Failed&status-negative=True"
     assert DataSource._get_url({"filters": Filter('type', 'recon')}) == "filters=type&type-values=recon&type-negative=False"
 
-def test_test(demo_get_events_with_filter: Data, demo_get_messages_with_filter: Tuple[Data, Data]):
-    case1 = [{'attachedMessageIds': [],
+
+def test_get_X_with_filters(demo_get_events_with_filter: Tuple[Data, Data], demo_get_messages_with_filter: Data):
+    case = [{'attachedMessageIds': [],
                 'batchId': None,
                 'body': {},
                 'endTimestamp': None,
@@ -468,9 +469,81 @@ def test_test(demo_get_events_with_filter: Data, demo_get_messages_with_filter: 
               'successful': True,
               'type': 'event'}
              ]
+    case1 = [
+             {'attachedMessageIds': [],
+             'batchId': None,
+             'body': [],
+             'endTimestamp': {'epochSecond': 1623751880, 'nano': 978679000},
+             'eventId': '08320f24-cdc2-11eb-abbf-e19b27e6e490',
+             'eventName': "Send 'ExecutionReport' message",
+             'eventType': 'Send message',
+             'isBatched': False,
+             'parentEventId': '849a79d3-9c68-11eb-8598-691ebd7f413d',
+             'startTimestamp': {'epochSecond': 1623751880, 'nano': 978676000},
+             'successful': True,
+             'type': 'event'},
+            {'attachedMessageIds': [],
+             'batchId': None,
+             'body': [],
+             'endTimestamp': {'epochSecond': 1623760259, 'nano': 967877000},
+             'eventId': '8a7650fc-cdd5-11eb-abbf-e19b27e6e490',
+             'eventName': "Send 'ExecutionReport' message",
+             'eventType': 'Send message',
+             'isBatched': False,
+             'parentEventId': '849a79d3-9c68-11eb-8598-691ebd7f413d',
+             'startTimestamp': {'epochSecond': 1623760259, 'nano': 967873000},
+             'successful': True,
+             'type': 'event'}
+         ]
+    case3 = [{'attachedEventIds': [],
+ 'body': {'fields': {'header': {'messageValue': {'fields': {'BeginString': {'simpleValue': 'FIXT.1.1'},
+                                                            'BodyLength': {'simpleValue': '56'},
+                                                            'MsgSeqNum': {'simpleValue': '2'},
+                                                            'MsgType': {'simpleValue': '0'},
+                                                            'SenderCompID': {'simpleValue': 'FGW'},
+                                                            'SendingTime': {'simpleValue': '2021-01-26T13:38:48.833'},
+                                                            'TargetCompID': {'simpleValue': 'DEMO-CONN2'}}}},
+                     'trailer': {'messageValue': {'fields': {'CheckSum': {'simpleValue': '195'}}}}},
+          'metadata': {'id': {'connectionId': {'sessionAlias': 'demo-conn2'},
+                              'sequence': '1611668198530043002',
+                              'subsequence': [1]},
+                       'messageType': 'Heartbeat',
+                       'timestamp': '2021-01-26T13:38:48.838Z'}},
+ 'bodyBase64': 'OD1GSVhULjEuMQE5PTU2ATM1PTABMzQ9MgE0OT1GR1cBNTI9MjAyMTAxMjYtMTM6Mzg6NDguODMzATU2PURFTU8tQ09OTjIBMTA9MTk1AQ==',
+ 'direction': 'IN',
+ 'messageId': 'demo-conn2:first:1611668198530043002',
+ 'messageType': 'Heartbeat',
+ 'sessionId': 'demo-conn2',
+ 'timestamp': {'epochSecond': 1611668328, 'nano': 838000000},
+ 'type': 'message'},
+             {'attachedEventIds': [],
+              'body': {'fields': {'header': {'messageValue': {'fields': {'BeginString': {'simpleValue': 'FIXT.1.1'},
+                                                                         'BodyLength': {'simpleValue': '56'},
+                                                                         'MsgSeqNum': {'simpleValue': '9'},
+                                                                         'MsgType': {'simpleValue': '0'},
+                                                                         'SenderCompID': {'simpleValue': 'FGW'},
+                                                                         'SendingTime': {
+                                                                             'simpleValue': '2021-01-26T13:42:18.834'},
+                                                                         'TargetCompID': {
+                                                                             'simpleValue': 'DEMO-CONN2'}}}},
+                                  'trailer': {'messageValue': {'fields': {'CheckSum': {'simpleValue': '195'}}}}},
+                       'metadata': {'id': {'connectionId': {'sessionAlias': 'demo-conn2'},
+                                           'sequence': '1611668198530043009',
+                                           'subsequence': [1]},
+                                    'messageType': 'Heartbeat',
+                                    'timestamp': '2021-01-26T13:42:18.844Z'}},
+              'bodyBase64': 'OD1GSVhULjEuMQE5PTU2ATM1PTABMzQ9OQE0OT1GR1cBNTI9MjAyMTAxMjYtMTM6NDI6MTguODM0ATU2PURFTU8tQ09OTjIBMTA9MTk1AQ==',
+              'direction': 'IN',
+              'messageId': 'demo-conn2:first:1611668198530043009',
+              'messageType': 'Heartbeat',
+              'sessionId': 'demo-conn2',
+              'timestamp': {'epochSecond': 1611668538, 'nano': 844000000},
+              'type': 'message'}
+             ]
 
-    assert len(list(demo_get_messages_with_filter[1])) is 0 and len(list(demo_get_messages_with_filter[0])) is 36
-    assert list(demo_get_events_with_filter) == case1 and len(case1) is 3
+    assert list(demo_get_messages_with_filter) == case3
+    assert list(demo_get_events_with_filter[0]) == case and len(case) is 3
+    assert list(demo_get_events_with_filter[1]) == case1 and len(case1) is 2
 
 
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
