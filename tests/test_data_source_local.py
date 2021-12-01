@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pytest
 from urllib3.exceptions import HTTPError
 
@@ -426,6 +428,49 @@ def test_Filter_grcp():
 def test_get_url():
     assert DataSource._get_url({"filters": [Filter('type', 'recon'), Filter('status', 'Failed', negative=True)]}) == "filters=type&type-values=recon&type-negative=False&filters=status&status-values=Failed&status-negative=True"
     assert DataSource._get_url({"filters": Filter('type', 'recon')}) == "filters=type&type-values=recon&type-negative=False"
+
+def test_test(demo_get_events_with_filter: Data, demo_get_messages_with_filter: Tuple[Data, Data]):
+    case1 = [{'attachedMessageIds': [],
+                'batchId': None,
+                'body': {},
+                'endTimestamp': None,
+                'eventId': 'f05a7c66-cdc1-11eb-b095-3f988ca527fa',
+                'eventName': '[TS_0] Sending order via act-ui and verification '
+                            'ExecutionReport',
+                 'eventType': '',
+                 'isBatched': False,
+                 'parentEventId': None,
+                 'startTimestamp': {'epochSecond': 1623751840, 'nano': 977716000},
+                 'successful': True,
+                'type': 'event'},
+             {'attachedMessageIds': [],
+              'batchId': None,
+              'body': [],
+              'endTimestamp': {'epochSecond': 1623751880, 'nano': 978679000},
+              'eventId': '08320f24-cdc2-11eb-abbf-e19b27e6e490',
+              'eventName': "Send 'ExecutionReport' message",
+              'eventType': 'Send message',
+              'isBatched': False,
+              'parentEventId': '849a79d3-9c68-11eb-8598-691ebd7f413d',
+              'startTimestamp': {'epochSecond': 1623751880, 'nano': 978676000},
+              'successful': True,
+              'type': 'event'},
+             {'attachedMessageIds': [],
+              'batchId': None,
+              'body': [],
+              'endTimestamp': {'epochSecond': 1623760259, 'nano': 967877000},
+              'eventId': '8a7650fc-cdd5-11eb-abbf-e19b27e6e490',
+              'eventName': "Send 'ExecutionReport' message",
+              'eventType': 'Send message',
+              'isBatched': False,
+              'parentEventId': '849a79d3-9c68-11eb-8598-691ebd7f413d',
+              'startTimestamp': {'epochSecond': 1623760259, 'nano': 967873000},
+              'successful': True,
+              'type': 'event'}
+             ]
+
+    assert len(list(demo_get_messages_with_filter[1])) is 0 and len(list(demo_get_messages_with_filter[0])) is 36
+    assert list(demo_get_events_with_filter) == case1 and len(case1) is 3
 
 
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
