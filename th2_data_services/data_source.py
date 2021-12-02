@@ -102,7 +102,11 @@ class DataSource:
         on route http://localhost:8080/search/sse/events.
 
         Args:
-            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
+            cache (bool): If True, all requested data from rpt-data-provider will be saved to cache.
+            sse_adapter (bool): If True, all data will go through SSE adapter and yield dicts.
+                Otherwise adapter will yield SSE Events.
+            provider_adapter (callable): Adapter function for rpt-data-provider.
+                If None, Data object will yield object from previous map function.
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
@@ -145,7 +149,11 @@ class DataSource:
         on route http://localhost:8080/search/sse/messages.
 
         Args:
-            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
+            cache (bool): If True, all requested data from rpt-data-provider will be saved to cache.
+            sse_adapter (bool): If True, all data will go through SSE adapter and yield dicts.
+                Otherwise adapter will yield SSE Events.
+            provider_adapter (callable): Adapter function for rpt-data-provider.
+                If None, Data object will yield object from previous map function.
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
