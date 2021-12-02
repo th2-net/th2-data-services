@@ -11,13 +11,14 @@ from typing import Generator, Iterable, List, Union, Optional
 from urllib.parse import urlencode
 from sseclient import SSEClient
 
-from th2_data_services.adapter import change_pipeline_message
+from th2_data_services.adapters import adapter_provider5
 from th2_data_services.data import Data
 
 import logging
 
-logger = logging.getLogger('th2_data_services')
+logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
+
 
 class DataSource:
     """The class that provides methods for getting messages and events from rpt-data-provider."""
@@ -98,12 +99,13 @@ class DataSource:
         kwargs["metadataOnly"] = False
 
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            exception_msg = "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please "\
-                            "note it. More information on request here: " \
-                            "https://github.com/th2-net/th2-rpt-data-provider "
+            exception_msg = (
+                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please "
+                "note it. More information on request here: "
+                "https://github.com/th2-net/th2-rpt-data-provider "
+            )
             logger.error(exception_msg)
             raise ValueError(exception_msg)
-
 
         if isinstance(kwargs["startTimestamp"], datetime):
             timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
@@ -139,18 +141,18 @@ class DataSource:
         kwargs["metadataOnly"] = False
 
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            exception_msg = "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. " \
-                            "Please note it. More information on request here: " \
-                            "https://github.com/th2-net/th2-rpt-data-provider "
+            exception_msg = (
+                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. "
+                "Please note it. More information on request here: "
+                "https://github.com/th2-net/th2-rpt-data-provider "
+            )
             logger.error(exception_msg)
             raise ValueError(exception_msg)
 
         if not kwargs.get("stream"):
-            exception_msg = "'stream' is required field. Please note it." "More information on request here: " \
-                            "https://github.com/th2-net/th2-rpt-data-provider "
+            exception_msg = "'stream' is required field. Please note it." "More information on request here: " "https://github.com/th2-net/th2-rpt-data-provider "
             logger.error(exception_msg)
             raise ValueError(exception_msg)
-
 
         if isinstance(kwargs["startTimestamp"], datetime):
             timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
@@ -171,7 +173,7 @@ class DataSource:
 
         data = partial(self.__execute_sse_request, url)
 
-        return Data(data).map(change_pipeline_message).use_cache(cache)
+        return Data(data).map(adapter_provider5).use_cache(cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
@@ -254,7 +256,7 @@ class DataSource:
                 logger.exception(exception_msg)
                 raise ValueError(exception_msg)
 
-            answer = change_pipeline_message(answer)
+            answer = adapter_provider5(answer)
             if isinstance(answer, list):
                 if index:
                     for message in answer:

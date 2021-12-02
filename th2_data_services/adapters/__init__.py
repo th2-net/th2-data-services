@@ -1,0 +1,1 @@
+from .adapter_provider5 import adapter_provider5
