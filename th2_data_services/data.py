@@ -226,7 +226,9 @@ class Data:
                     try:
                         compute = step["callback"](r)
                         if compute is not None:
-                            result.append(compute)
+                            if not isinstance(compute, list):
+                                compute = [compute]
+                            result += compute
                     except StopIteration as e:
                         return [*result, None] if result else None
 
