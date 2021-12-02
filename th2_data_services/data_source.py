@@ -11,7 +11,7 @@ from typing import Generator, Iterable, List, Union, Optional
 from urllib.parse import urlencode
 from sseclient import SSEClient
 
-from th2_data_services.adapters import adapter_provider5
+from th2_data_services.adapters import adapter_provider5, adapter_sse
 from th2_data_services.data import Data
 
 import logging
@@ -47,6 +47,22 @@ class DataSource:
             url = url[:-1]
         self.__url = url
 
+    def __get_data_obj(self, url, sse_adapter_flag, provider_adapter, cache):
+        data = partial(self.__execute_sse_request, url)
+
+        if sse_adapter_flag:
+            if provider_adapter is not None:
+                data_obj = Data(data).map(adapter_sse).map(provider_adapter).use_cache(cache)
+            else:
+                data_obj = Data(data).map(adapter_sse).use_cache(cache)
+        else:
+            if provider_adapter is not None:
+                raise Exception(f"Provider adapter expected to get dict but SSE adapter is turned off.")
+            else:
+                data_obj = Data(data).use_cache(cache)
+
+        return data_obj
+
     def sse_request_to_data_provider(self, **kwargs) -> Generator[dict, None, None]:
         """Sends SSE request to rpt-data-provider.
 
@@ -78,7 +94,7 @@ class DataSource:
         logger.info(url)
         yield from self.__execute_sse_request(url)
 
-    def get_events_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
+    def get_events_from_data_provider(self, cache: bool = False, sse_adapter=True, provider_adapter=adapter_provider5, **kwargs) -> Data:
         """Sends SSE request for getting events.
 
         For help use this readme
@@ -118,10 +134,10 @@ class DataSource:
         url = self.__url + "/search/sse/events"
         url = f"{url}?{urlencode(kwargs)}"
         logger.info(url)
-        data = partial(self.__execute_sse_request, url)
-        return Data(data, cache=cache)
 
-    def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
+        return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)
+
+    def get_messages_from_data_provider(self, cache: bool = False, sse_adapter=True, provider_adapter=adapter_provider5, **kwargs) -> Data:
         """Sends SSE request for getting messages.
 
         For help use this readme
@@ -171,9 +187,7 @@ class DataSource:
         url = f"{url}?{urlencode(kwargs) + streams}"
         logger.info(url)
 
-        data = partial(self.__execute_sse_request, url)
-
-        return Data(data).map(adapter_provider5).use_cache(cache)
+        return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
@@ -188,11 +202,7 @@ class DataSource:
         response = self.__create_stream_connection(url)
         client = SSEClient(response)
         for record in client.events():
-            if record.event == "error":
-                raise HTTPError(record.data)
-            if record.event not in ["close", "keep_alive", "message_ids"]:
-                record_data = json.loads(record.data)
-                yield record_data
+            yield record
 
     def __create_stream_connection(self, url: str) -> Generator[bytes, None, None]:
         """Create stream connection.
