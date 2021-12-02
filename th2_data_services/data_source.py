@@ -57,7 +57,7 @@ class DataSource:
                 data_obj = Data(data).map(adapter_sse).use_cache(cache)
         else:
             if provider_adapter is not None:
-                raise Exception(f"Provider adapter expected to get dict but SSE adapter is turned off.")
+                raise Exception(f"Provider adapter expected to get dict but SSE adapter is turned off")
             else:
                 data_obj = Data(data).use_cache(cache)
 
