@@ -5,7 +5,6 @@ from urllib3.exceptions import HTTPError
 
 from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
-from th2_data_services.filter import Filter
 
 
 def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
@@ -410,27 +409,8 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
     assert len(messages_with_one_element) == 1
 
 
-def test_Filter_url():
-    assert all([Filter("type", ["one", 2, "three"], False, False).url()[1:] ==
-                "filters=type&type-values=one&type-values=2&type-values=three&type-negative=False",
-                Filter("type", ["one", 2, "three"], True, True).url()[1:] ==
-                "filters=type&type-values=one&type-values=2&type-values=three&type-negative=True",
-                Filter("type", ["one", 2, "three"], False, True).url()[1:] ==
-                "filters=type&type-values=one&type-values=2&type-values=three&type-negative=False",
-                Filter("type", ["one", 2, "three"], True, False).url()[1:] ==
-                "filters=type&type-values=one&type-values=2&type-values=three&type-negative=True"])
-
-
-def test_Filter_grcp():
-    assert isinstance(Filter("type", ["one", 2, "three"], False, False), Filter)
-
-
-def test_get_url():
-    assert DataSource._get_url({"filters": [Filter('type', 'recon'), Filter('status', 'Failed', negative=True)]}) == "filters=type&type-values=recon&type-negative=False&filters=status&status-values=Failed&status-negative=True"
-    assert DataSource._get_url({"filters": Filter('type', 'recon')}) == "filters=type&type-values=recon&type-negative=False"
-
-
-def test_get_X_with_filters(demo_get_events_with_filter: Tuple[Data, Data], demo_get_messages_with_filter: Data):
+def test_get_x_with_filters(demo_get_events_with_one_filter: Data, demo_get_messages_with_one_filter: Data,
+                            demo_get_events_with_filters: Data, demo_get_messages_with_filters: Data):
     case = [{'attachedMessageIds': [],
                 'batchId': None,
                 'body': {},
@@ -540,10 +520,10 @@ def test_get_X_with_filters(demo_get_events_with_filter: Tuple[Data, Data], demo
               'timestamp': {'epochSecond': 1611668538, 'nano': 844000000},
               'type': 'message'}
              ]
-
-    assert list(demo_get_messages_with_filter) == case3
-    assert list(demo_get_events_with_filter[0]) == case and len(case) is 3
-    assert list(demo_get_events_with_filter[1]) == case1 and len(case1) is 2
+    assert list(demo_get_messages_with_one_filter) == case3
+    assert list(demo_get_messages_with_filters) == case3
+    assert list(demo_get_events_with_one_filter) == case and len(case) is 3
+    assert list(demo_get_events_with_filters) == case1 and len(case1) is 2
 
 
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
