@@ -7,7 +7,7 @@ from urllib3.exceptions import HTTPError
 from functools import partial
 from datetime import datetime, timezone
 from csv import DictReader
-from typing import Generator, Iterable, List, Union, Optional
+from typing import Generator, Iterable, List, Union, Optional, Callable
 from urllib.parse import urlencode
 from sseclient import SSEClient
 
@@ -47,7 +47,7 @@ class DataSource:
             url = url[:-1]
         self.__url = url
 
-    def __get_data_obj(self, url, sse_adapter_flag, provider_adapter, cache):
+    def __get_data_obj(self, url: str, sse_adapter_flag: bool, provider_adapter: Optional[Callable], cache: bool) -> Data:
         data = partial(self.__execute_sse_request, url)
 
         if sse_adapter_flag:
@@ -94,7 +94,7 @@ class DataSource:
         logger.info(url)
         yield from self.__execute_sse_request(url)
 
-    def get_events_from_data_provider(self, cache: bool = False, sse_adapter=True, **kwargs) -> Data:
+    def get_events_from_data_provider(self, cache: bool = False, sse_adapter: bool = True, **kwargs) -> Data:
         """Sends SSE request for getting events.
 
         For help use this readme
@@ -139,7 +139,7 @@ class DataSource:
 
         return self.__get_data_obj(url, sse_adapter, None, cache)
 
-    def get_messages_from_data_provider(self, cache: bool = False, sse_adapter=True, provider_adapter=adapter_provider5, **kwargs) -> Data:
+    def get_messages_from_data_provider(self, cache: bool = False, sse_adapter: bool = True, provider_adapter: Optional[Callable] = adapter_provider5, **kwargs) -> Data:
         """Sends SSE request for getting messages.
 
         For help use this readme
@@ -229,7 +229,7 @@ class DataSource:
 
         response.release_conn()
 
-    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str], provider_adapter=adapter_provider5) -> Optional[Union[List[dict], dict, None]]:
+    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str], provider_adapter: Optional[Callable] = adapter_provider5) -> Optional[Union[List[dict], dict, None]]:
         """Gets message/messages by ids.
 
         Args:
