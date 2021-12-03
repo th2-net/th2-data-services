@@ -123,10 +123,13 @@
 ## Features
 1. You can import classes directly from th2_data_services now.  
    E.g. `from th2_data_services import Data, DataSource, Filter`
-2. [TH2-2755] Added new parameters to DataSource.get_X_from_data_provider:
-   - sse_adapter=True. If True, all data will go through SSE adapter and yield dicts.
-                Otherwise adapter will yield SSE Events. 
-   - provider_adapter=adapter_provider5. Adapter function for rpt-data-provider.
-                If None, Data object will yield object from previous map function.
+2. [TH2-2755] Added new parameters to DataSource methods.
+   1. get_X_from_data_provider:
+      - sse_adapter=True. If True, all data will go through SSE adapter and yield dicts.
+                   Otherwise adapter will yield SSE Events. 
+   2. get_messages_from_data_provider and find_messages_by_id_from_data_provider:
+      - provider_adapter=adapter_provider5. Adapter function for rpt-data-provider.
+                   If None, Data object will yield object from previous map function.
+
 
 ## BugFixes

@@ -94,7 +94,7 @@ class DataSource:
         logger.info(url)
         yield from self.__execute_sse_request(url)
 
-    def get_events_from_data_provider(self, cache: bool = False, sse_adapter=True, provider_adapter=adapter_provider5, **kwargs) -> Data:
+    def get_events_from_data_provider(self, cache: bool = False, sse_adapter=True, **kwargs) -> Data:
         """Sends SSE request for getting events.
 
         For help use this readme
@@ -105,8 +105,6 @@ class DataSource:
             cache (bool): If True, all requested data from rpt-data-provider will be saved to cache.
             sse_adapter (bool): If True, all data will go through SSE adapter and yield dicts.
                 Otherwise adapter will yield SSE Events.
-            provider_adapter (callable): Adapter function for rpt-data-provider.
-                If None, Data object will yield object from previous map function.
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
@@ -139,7 +137,7 @@ class DataSource:
         url = f"{url}?{urlencode(kwargs)}"
         logger.info(url)
 
-        return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)
+        return self.__get_data_obj(url, sse_adapter, None, cache)
 
     def get_messages_from_data_provider(self, cache: bool = False, sse_adapter=True, provider_adapter=adapter_provider5, **kwargs) -> Data:
         """Sends SSE request for getting messages.
@@ -231,7 +229,7 @@ class DataSource:
 
         response.release_conn()
 
-    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict, None]]:
+    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str], provider_adapter=adapter_provider5) -> Optional[Union[List[dict], dict, None]]:
         """Gets message/messages by ids.
 
         Args:
@@ -274,7 +272,9 @@ class DataSource:
                 logger.exception(exception_msg)
                 raise ValueError(exception_msg)
 
-            answer = adapter_provider5(answer)
+            if provider_adapter is not None:
+                answer = provider_adapter(answer)
+
             if isinstance(answer, list):
                 if index:
                     for message in answer:
