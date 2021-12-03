@@ -95,6 +95,6 @@ def test_find_messages_with_adapter(message_from_pipeline: dict):
 
 
 def test_message_with_empty_body(message_from_pipeline_empty_body, messages_from_after_pipeline_empty_body):
-    messages = change_pipeline_message(message_from_pipeline_empty_body)
+    messages = adapter_provider5(message_from_pipeline_empty_body)
 
     assert messages_from_after_pipeline_empty_body == messages
