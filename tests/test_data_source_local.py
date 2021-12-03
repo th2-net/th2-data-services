@@ -106,7 +106,9 @@ def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
     # Check Broken_Events
     assert broken_event == plug_for_broken_event
     assert broken_events == plug_for_broken_events
-    assert [event, broken_event] == data_source.find_events_by_id_from_data_provider(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"], True)
+    assert [event, broken_event] == data_source.find_events_by_id_from_data_provider(
+        ["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"], True
+    )
     with pytest.raises(ValueError):
         data_source.find_events_by_id_from_data_provider(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"])
     with pytest.raises(ValueError):
@@ -394,8 +396,12 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
     )
 
     message = data_source.find_messages_by_id_from_data_provider("demo-conn2:first:1624005448022245399")
-    messages = data_source.find_messages_by_id_from_data_provider(["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"])
-    messages_with_one_element = data_source.find_messages_by_id_from_data_provider(["demo-conn2:first:1624005448022245399"])
+    messages = data_source.find_messages_by_id_from_data_provider(
+        ["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"]
+    )
+    messages_with_one_element = data_source.find_messages_by_id_from_data_provider(
+        ["demo-conn2:first:1624005448022245399"]
+    )
     # Check types
     assert isinstance(message, dict)
     assert isinstance(messages, list)
@@ -422,7 +428,10 @@ def test_get_events_from_data_provider_with_error(demo_data_source: DataSource):
     events = data_source.get_events_from_data_provider(startTimestamp="test", endTimestamp="test")
     with pytest.raises(HTTPError) as exc_info:
         list(events)
-    assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
+    assert (
+        r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}'
+        in str(exc_info)
+    )
 
 
 def test_get_messages_from_data_provider_with_error(demo_data_source: DataSource):
@@ -431,13 +440,16 @@ def test_get_messages_from_data_provider_with_error(demo_data_source: DataSource
     events = data_source.get_messages_from_data_provider(startTimestamp="test", endTimestamp="test", stream="test")
     with pytest.raises(HTTPError) as exc_info:
         list(events)
-    assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
+    assert (
+        r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}'
+        in str(exc_info)
+    )
 
 
 def test_check_url_for_data_source():
     with pytest.raises(HTTPError) as exc_info:
         data_source = DataSource("http://test_test:8080/")
-    assert "Unable to connect to host 'http://test_test:8080'." in str(exc_info)
+    assert "Unable to connect to host 'http://test_test:8080'\\nReason:" in str(exc_info)
 
 
 def test_data_cache(demo_events_from_data_source: Data):
@@ -464,14 +476,22 @@ def test_messageIds_not_in_last_msg(demo_messages_from_data_source: Data):
     assert "messageIds" not in last_msg
 
 
-def test_get_events_from_data_provider_with_metadata_true(demo_events_with_metadataOnly_true: Data, demo_events_from_data_source: Data, demo_events_with_metadataOnly_metadata_not_set: Data):
+def test_get_events_from_data_provider_with_metadata_true(
+    demo_events_with_metadataOnly_true: Data,
+    demo_events_from_data_source: Data,
+    demo_events_with_metadataOnly_metadata_not_set: Data,
+):
     events = list(demo_events_with_metadataOnly_true)
     events0 = list(demo_events_from_data_source)
     events1 = list(demo_events_with_metadataOnly_metadata_not_set)
     assert events == events0 == events1
 
 
-def test_get_messages_from_data_provider_with_metadata_true(demo_messages_with_metadataOnly_true: Data, demo_messages_from_data_source: Data, demo_messages_with_metadataOnly_false: Data):
+def test_get_messages_from_data_provider_with_metadata_true(
+    demo_messages_with_metadataOnly_true: Data,
+    demo_messages_from_data_source: Data,
+    demo_messages_with_metadataOnly_false: Data,
+):
     messages = list(demo_messages_with_metadataOnly_true)
     messages0 = list(demo_messages_from_data_source)
     messages1 = list(demo_messages_with_metadataOnly_false)
