@@ -119,6 +119,7 @@
 ## User impact and migration instructions
 
 ## Improvements
+1. [TH2-2471] The option “metadataOnly“ now is "False" by default.
 
 ## Features
 1. You can import classes directly from th2_data_services now.  
