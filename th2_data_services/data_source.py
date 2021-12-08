@@ -155,7 +155,7 @@ class DataSource:
                 result += f"&{k}={v}"
         return result[1:] if result[0] == "&" else result
 
-    def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
+    def get_messages_from_data_provider(self, cache: bool = False, sse_adapter: bool = True, provider_adapter: Optional[Callable] = adapter_provider5, **kwargs) -> Data:
         """Sends SSE request for getting messages.
 
         For help use this readme
