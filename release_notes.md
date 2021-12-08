@@ -131,5 +131,9 @@
       - provider_adapter=adapter_provider5. Adapter function for rpt-data-provider.
                    If None, Data object will yield object from previous map function.
 3. [TH2-2283] Implemented rpt-data-provider Filters API.
+4. [TH2-2656] Added new optional parameters to events_tree (parent_events_tree) class.
+   - Make "preserve_body=True" to keep event bodies.
+   - Otherwise events bodies will be omitted. 
+
 
 ## BugFixes

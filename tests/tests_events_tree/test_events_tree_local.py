@@ -2,6 +2,7 @@ from datetime import datetime
 
 from th2_data_services.data_source import DataSource
 from th2_data_services.events_tree import EventsTree
+from th2_data_services.data import Data
 
 
 def test_recover_events_tree(demo_data_source: DataSource):
@@ -22,3 +23,38 @@ def test_recover_events_tree(demo_data_source: DataSource):
     after_recover_unknown_events = len(events_tree.unknown_events)
 
     assert before_recover_unknown_events != after_recover_unknown_events and after_recover_unknown_events == 0
+
+def test_preserve_body_is_notset(demo_events_from_data_source: Data):
+    events_tree = EventsTree(demo_events_from_data_source)
+    with_body = set()
+    for v in events_tree.events.values():
+        if v.get("body") is not None:
+            with_body.add(True)
+        else:
+            with_body.add(False)
+
+    assert False in with_body and len(with_body) is 1
+
+
+def test_preserve_body_is_false(demo_events_from_data_source: Data):
+    events_tree = EventsTree(demo_events_from_data_source, preserve_body=False)
+    with_body = set()
+    for v in events_tree.events.values():
+        if v.get("body") is not None:
+            with_body.add(True)
+        else:
+            with_body.add(False)
+
+    assert False in with_body and len(with_body) is 1
+
+
+def test_preserve_body_is_true(demo_events_from_data_source: Data):
+
+    events_tree = EventsTree(demo_events_from_data_source, preserve_body=True)
+    with_body = set()
+    for v in events_tree.events.values():
+        if v.get("body") is not None:
+            with_body.add(True)
+        else:
+            with_body.add(False)
+    assert True in with_body and len(with_body) is 1

@@ -27,10 +27,11 @@ class EventsTree:
 
     """
 
-    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None):
+    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, preserve_body: Optional[bool] = False):
         if data is None:
             data = []
 
+        self.preserve_body = preserve_body
         self._events = {}  # {EventID_str: Event_dict}
         self._unknown_events = defaultdict(lambda: 0)  # {parent_id: int(cnt)}
         self.build_tree(data)
@@ -71,10 +72,11 @@ class EventsTree:
             event: Event
         """
         event_id = event["eventId"]
-        try:
-            event.pop("body")
-        except KeyError:
-            pass
+        if not self.preserve_body:
+            try:
+                event.pop("body")
+            except KeyError:
+                pass
 
         self._events[event_id] = event
 
@@ -242,10 +244,10 @@ class TreeNode(Node):
 class EventsTree2:
     """EventsTree2 - experimental tree."""
 
-    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, ds=None):
+    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, ds=None, preserve_body: Optional[bool] = False):
         if data is None:
             data = []
-
+        self.preserve_body = preserve_body
         self._data_source = ds
         self._nodes = []
         self.roots: List[TreeNode] = []
@@ -263,10 +265,11 @@ class EventsTree2:
             event = event.copy()
 
             event_id = event["eventId"]
-            try:
-                event.pop("body")
-            except KeyError:
-                pass
+            if not self.preserve_body:
+                try:
+                    event.pop("body")
+                except KeyError:
+                    pass
 
             self._nodes.append(TreeNode(name=event["eventName"], data=event))
             self.events_ids.append(event_id)
@@ -279,11 +282,11 @@ class EventsTree2:
 
         for event in restored_events:
             event = event.copy()
-
-            try:
-                event.pop("body")
-            except KeyError:
-                pass
+            if not self.preserve_body:
+                try:
+                    event.pop("body")
+                except KeyError:
+                    pass
 
             self._nodes.append(TreeNode(name=event["eventName"], data=event))
 

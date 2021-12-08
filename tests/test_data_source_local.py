@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 from urllib3.exceptions import HTTPError
 
