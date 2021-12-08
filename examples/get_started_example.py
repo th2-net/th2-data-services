@@ -1,6 +1,7 @@
 from th2_data_services.data_source import DataSource
 from th2_data_services.data import Data
 from datetime import datetime
+from th2_data_services.filter import Filter
 
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
@@ -16,6 +17,8 @@ events: Data = data_source.get_events_from_data_provider(
     endTimestamp=END_TIME,
     metadataOnly=False,
     attachedMessages=True,
+    # Use this options to apply rpt-data-provider filters for obtaining specific data
+    filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")]
 )
 
 # [3] Work with your Data object.
