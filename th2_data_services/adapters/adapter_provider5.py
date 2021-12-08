@@ -2,7 +2,7 @@ from warnings import warn
 from typing import Union, List
 
 
-def change_pipeline_message(record: dict) -> Union[List[dict], dict]:
+def adapter_provider5(record: dict) -> Union[List[dict], dict]:
     msg_type = record.get("messageType")
     if not msg_type:
         warn("Please note, some messages don't have a messageType field. Perhaps a codec doesn't decode some messages.", stacklevel=3)
