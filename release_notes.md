@@ -117,9 +117,11 @@
 # v0.6.0
 
 ## User impact and migration instructions
+1. [I] The option “metadataOnly“ removed. It’s the option for Report Viewer front-end.
+
 
 ## Improvements
-1. [TH2-2471] The option “metadataOnly“ now is "False" by default.
+1. [TH2-2471] The option “metadataOnly“ removed from get_X_from_data_provider. 
 
 ## Features
 1. You can import classes directly from th2_data_services now.  
