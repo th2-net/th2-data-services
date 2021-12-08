@@ -1,11 +1,12 @@
 from collections import namedtuple
 from datetime import datetime
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Tuple
 
 import pytest
 
 from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
+from th2_data_services.filter import Filter
 
 
 @pytest.fixture
@@ -19,6 +20,52 @@ def demo_data_source():
 START_TIME = datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724)
 END_TIME = datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579)
 
+@pytest.fixture
+def demo_get_events_with_one_filter(demo_data_source: DataSource) -> Data:
+    case = demo_data_source.get_events_from_data_provider(
+        startTimestamp=START_TIME,
+        endTimestamp=END_TIME,
+        metadataOnly=False,
+        filters=[Filter("name", "ExecutionReport")]
+    )
+
+    return case
+
+@pytest.fixture
+def demo_get_events_with_filters(demo_data_source: DataSource) -> Data:
+
+    case = demo_data_source.get_events_from_data_provider(
+        startTimestamp=START_TIME,
+        endTimestamp=END_TIME,
+        metadataOnly=False,
+        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")]
+    )
+
+    return  case
+
+@pytest.fixture
+def demo_get_messages_with_one_filter(demo_data_source: DataSource) -> Data:
+
+    case = demo_data_source.get_messages_from_data_provider(
+        startTimestamp=datetime(year=2021, month=1, day=26, hour=12, minute=44, second=41, microsecond=692724),
+        endTimestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
+        stream=["demo-conn2"],
+        filters=Filter("body", "195")
+    )
+
+    return case
+
+@pytest.fixture
+def demo_get_messages_with_filters(demo_data_source: DataSource) -> Data:
+
+    case = demo_data_source.get_messages_from_data_provider(
+        startTimestamp=datetime(year=2021, month=1, day=26, hour=12, minute=44, second=41, microsecond=692724),
+        endTimestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
+        stream=["demo-conn2"],
+        filters=[Filter("type", ""), Filter("body", "195")]
+    )
+
+    return case
 
 @pytest.fixture
 def demo_events_from_data_source(demo_data_source: DataSource) -> Data:

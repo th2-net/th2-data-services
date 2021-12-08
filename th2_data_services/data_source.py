@@ -8,11 +8,11 @@ from functools import partial
 from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional, Callable
-from urllib.parse import urlencode
 from sseclient import SSEClient
 
 from th2_data_services.adapters import adapter_provider5, adapter_sse
 from th2_data_services.data import Data
+from th2_data_services.filter import Filter
 
 import logging
 
@@ -90,7 +90,7 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + route
-        url = f"{url}?{urlencode(kwargs)}"
+        url = f"{url}?{self._get_url(kwargs)}"
         logger.info(url)
         yield from self.__execute_sse_request(url)
 
@@ -134,10 +134,26 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + "/search/sse/events"
-        url = f"{url}?{urlencode(kwargs)}"
+        url = f"{url}?{self._get_url(kwargs)}"
+
         logger.info(url)
 
         return self.__get_data_obj(url, sse_adapter, None, cache)
+
+
+    @staticmethod
+    def _get_url(kwargs):
+        result = ""
+        for k, v in kwargs.items():
+            if k == "filters":
+                if isinstance(v, Filter):
+                    result += v.url()
+                elif isinstance(v, (tuple, list)):
+
+                    result += "".join([filter.url() for filter in v])
+            else:
+                result += f"&{k}={v}"
+        return result[1:] if result[0] == "&" else result
 
     def get_messages_from_data_provider(self, cache: bool = False, sse_adapter: bool = True, provider_adapter: Optional[Callable] = adapter_provider5, **kwargs) -> Data:
         """Sends SSE request for getting messages.
@@ -190,7 +206,8 @@ class DataSource:
         streams = f"&stream={streams}"
 
         url = self.__url + "/search/sse/messages"
-        url = f"{url}?{urlencode(kwargs) + streams}"
+        url = f"{url}?{self._get_url(kwargs) + streams}"
+
         logger.info(url)
 
         return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)

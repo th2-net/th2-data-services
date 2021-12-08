@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pytest
 from urllib3.exceptions import HTTPError
 
@@ -405,6 +407,123 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
     assert messages == expected_messages
     assert len(messages) == 2
     assert len(messages_with_one_element) == 1
+
+
+def test_get_x_with_filters(demo_get_events_with_one_filter: Data, demo_get_messages_with_one_filter: Data,
+                            demo_get_events_with_filters: Data, demo_get_messages_with_filters: Data):
+    case = [{'attachedMessageIds': [],
+                'batchId': None,
+                'body': {},
+                'endTimestamp': None,
+                'eventId': 'f05a7c66-cdc1-11eb-b095-3f988ca527fa',
+                'eventName': '[TS_0] Sending order via act-ui and verification '
+                            'ExecutionReport',
+                 'eventType': '',
+                 'isBatched': False,
+                 'parentEventId': None,
+                 'startTimestamp': {'epochSecond': 1623751840, 'nano': 977716000},
+                 'successful': True,
+                'type': 'event'},
+             {'attachedMessageIds': [],
+              'batchId': None,
+              'body': [],
+              'endTimestamp': {'epochSecond': 1623751880, 'nano': 978679000},
+              'eventId': '08320f24-cdc2-11eb-abbf-e19b27e6e490',
+              'eventName': "Send 'ExecutionReport' message",
+              'eventType': 'Send message',
+              'isBatched': False,
+              'parentEventId': '849a79d3-9c68-11eb-8598-691ebd7f413d',
+              'startTimestamp': {'epochSecond': 1623751880, 'nano': 978676000},
+              'successful': True,
+              'type': 'event'},
+             {'attachedMessageIds': [],
+              'batchId': None,
+              'body': [],
+              'endTimestamp': {'epochSecond': 1623760259, 'nano': 967877000},
+              'eventId': '8a7650fc-cdd5-11eb-abbf-e19b27e6e490',
+              'eventName': "Send 'ExecutionReport' message",
+              'eventType': 'Send message',
+              'isBatched': False,
+              'parentEventId': '849a79d3-9c68-11eb-8598-691ebd7f413d',
+              'startTimestamp': {'epochSecond': 1623760259, 'nano': 967873000},
+              'successful': True,
+              'type': 'event'}
+             ]
+    case1 = [
+             {'attachedMessageIds': [],
+             'batchId': None,
+             'body': [],
+             'endTimestamp': {'epochSecond': 1623751880, 'nano': 978679000},
+             'eventId': '08320f24-cdc2-11eb-abbf-e19b27e6e490',
+             'eventName': "Send 'ExecutionReport' message",
+             'eventType': 'Send message',
+             'isBatched': False,
+             'parentEventId': '849a79d3-9c68-11eb-8598-691ebd7f413d',
+             'startTimestamp': {'epochSecond': 1623751880, 'nano': 978676000},
+             'successful': True,
+             'type': 'event'},
+            {'attachedMessageIds': [],
+             'batchId': None,
+             'body': [],
+             'endTimestamp': {'epochSecond': 1623760259, 'nano': 967877000},
+             'eventId': '8a7650fc-cdd5-11eb-abbf-e19b27e6e490',
+             'eventName': "Send 'ExecutionReport' message",
+             'eventType': 'Send message',
+             'isBatched': False,
+             'parentEventId': '849a79d3-9c68-11eb-8598-691ebd7f413d',
+             'startTimestamp': {'epochSecond': 1623760259, 'nano': 967873000},
+             'successful': True,
+             'type': 'event'}
+         ]
+    case3 = [{'attachedEventIds': [],
+ 'body': {'fields': {'header': {'messageValue': {'fields': {'BeginString': {'simpleValue': 'FIXT.1.1'},
+                                                            'BodyLength': {'simpleValue': '56'},
+                                                            'MsgSeqNum': {'simpleValue': '2'},
+                                                            'MsgType': {'simpleValue': '0'},
+                                                            'SenderCompID': {'simpleValue': 'FGW'},
+                                                            'SendingTime': {'simpleValue': '2021-01-26T13:38:48.833'},
+                                                            'TargetCompID': {'simpleValue': 'DEMO-CONN2'}}}},
+                     'trailer': {'messageValue': {'fields': {'CheckSum': {'simpleValue': '195'}}}}},
+          'metadata': {'id': {'connectionId': {'sessionAlias': 'demo-conn2'},
+                              'sequence': '1611668198530043002',
+                              'subsequence': [1]},
+                       'messageType': 'Heartbeat',
+                       'timestamp': '2021-01-26T13:38:48.838Z'}},
+ 'bodyBase64': 'OD1GSVhULjEuMQE5PTU2ATM1PTABMzQ9MgE0OT1GR1cBNTI9MjAyMTAxMjYtMTM6Mzg6NDguODMzATU2PURFTU8tQ09OTjIBMTA9MTk1AQ==',
+ 'direction': 'IN',
+ 'messageId': 'demo-conn2:first:1611668198530043002',
+ 'messageType': 'Heartbeat',
+ 'sessionId': 'demo-conn2',
+ 'timestamp': {'epochSecond': 1611668328, 'nano': 838000000},
+ 'type': 'message'},
+             {'attachedEventIds': [],
+              'body': {'fields': {'header': {'messageValue': {'fields': {'BeginString': {'simpleValue': 'FIXT.1.1'},
+                                                                         'BodyLength': {'simpleValue': '56'},
+                                                                         'MsgSeqNum': {'simpleValue': '9'},
+                                                                         'MsgType': {'simpleValue': '0'},
+                                                                         'SenderCompID': {'simpleValue': 'FGW'},
+                                                                         'SendingTime': {
+                                                                             'simpleValue': '2021-01-26T13:42:18.834'},
+                                                                         'TargetCompID': {
+                                                                             'simpleValue': 'DEMO-CONN2'}}}},
+                                  'trailer': {'messageValue': {'fields': {'CheckSum': {'simpleValue': '195'}}}}},
+                       'metadata': {'id': {'connectionId': {'sessionAlias': 'demo-conn2'},
+                                           'sequence': '1611668198530043009',
+                                           'subsequence': [1]},
+                                    'messageType': 'Heartbeat',
+                                    'timestamp': '2021-01-26T13:42:18.844Z'}},
+              'bodyBase64': 'OD1GSVhULjEuMQE5PTU2ATM1PTABMzQ9OQE0OT1GR1cBNTI9MjAyMTAxMjYtMTM6NDI6MTguODM0ATU2PURFTU8tQ09OTjIBMTA9MTk1AQ==',
+              'direction': 'IN',
+              'messageId': 'demo-conn2:first:1611668198530043009',
+              'messageType': 'Heartbeat',
+              'sessionId': 'demo-conn2',
+              'timestamp': {'epochSecond': 1611668538, 'nano': 844000000},
+              'type': 'message'}
+             ]
+    assert list(demo_get_messages_with_one_filter) == case3
+    assert list(demo_get_messages_with_filters) == case3
+    assert list(demo_get_events_with_one_filter) == case and len(case) is 3
+    assert list(demo_get_events_with_filters) == case1 and len(case1) is 2
 
 
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
