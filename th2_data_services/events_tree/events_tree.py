@@ -28,10 +28,15 @@ class EventsTree:
     """
 
     def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, preserve_body: Optional[bool] = False):
+        """
+        Args:
+            data: Events.
+            preserve_body (:obj:`bool`, optional): if true keep events bodies.
+        """
         if data is None:
             data = []
 
-        self.preserve_body = preserve_body
+        self.__preserve_body = preserve_body
         self._events = {}  # {EventID_str: Event_dict}
         self._unknown_events = defaultdict(lambda: 0)  # {parent_id: int(cnt)}
         self.build_tree(data)
@@ -72,7 +77,7 @@ class EventsTree:
             event: Event
         """
         event_id = event["eventId"]
-        if not self.preserve_body:
+        if not self.__preserve_body:
             try:
                 event.pop("body")
             except KeyError:
@@ -247,7 +252,7 @@ class EventsTree2:
     def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, ds=None, preserve_body: Optional[bool] = False):
         if data is None:
             data = []
-        self.preserve_body = preserve_body
+        self.__preserve_body = preserve_body
         self._data_source = ds
         self._nodes = []
         self.roots: List[TreeNode] = []
@@ -265,7 +270,7 @@ class EventsTree2:
             event = event.copy()
 
             event_id = event["eventId"]
-            if not self.preserve_body:
+            if not self.__preserve_body:
                 try:
                     event.pop("body")
                 except KeyError:
@@ -282,7 +287,7 @@ class EventsTree2:
 
         for event in restored_events:
             event = event.copy()
-            if not self.preserve_body:
+            if not self.__preserve_body:
                 try:
                     event.pop("body")
                 except KeyError:

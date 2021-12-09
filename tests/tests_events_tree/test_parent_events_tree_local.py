@@ -58,3 +58,17 @@ def test_preserve_body_is_true(demo_events_from_data_source: Data):
             with_body.add(False)
 
     assert True in with_body and len(with_body) is 1
+
+
+def test_preserve_body_recover(demo_data_source: DataSource, demo_events_from_data_source):
+    parent_events_tree = ParentEventsTree(demo_events_from_data_source, preserve_body=True)
+    parent_events_tree.recover_unknown_events(demo_data_source)
+
+    with_body = set()
+    for v in parent_events_tree.events.values():
+        if v.get("body") is not None:
+            with_body.add(True)
+        else:
+            with_body.add(False)
+
+    assert True in with_body and len(with_body) is 1

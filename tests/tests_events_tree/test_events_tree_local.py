@@ -24,6 +24,7 @@ def test_recover_events_tree(demo_data_source: DataSource):
 
     assert before_recover_unknown_events != after_recover_unknown_events and after_recover_unknown_events == 0
 
+
 def test_preserve_body_is_notset(demo_events_from_data_source: Data):
     events_tree = EventsTree(demo_events_from_data_source)
     with_body = set()
@@ -57,4 +58,27 @@ def test_preserve_body_is_true(demo_events_from_data_source: Data):
             with_body.add(True)
         else:
             with_body.add(False)
+    assert True in with_body and len(with_body) is 1
+
+
+def test_preserve_body_recover(demo_data_source: DataSource):
+    start_time = datetime(year=2021, month=6, day=15, hour=9, minute=45, second=20, microsecond=692724)
+    end_time = datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579)
+
+    events = demo_data_source.get_events_from_data_provider(
+        startTimestamp=start_time,
+        endTimestamp=end_time,
+        metadataOnly=False,
+    )
+
+    events_tree = EventsTree(events, preserve_body=True)
+    events_tree.recover_unknown_events(demo_data_source)
+
+    with_body = set()
+    for v in events_tree.events.values():
+        if v.get("body") is not None:
+            with_body.add(True)
+        else:
+            with_body.add(False)
+
     assert True in with_body and len(with_body) is 1
