@@ -11,7 +11,8 @@ data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724)  # object given in utc format
 END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
 
-# [2] Get events from START_TIME to END_TIME.
+# [2] Get events or messages from START_TIME to END_TIME.
+# [2.1] Get events.
 events: Data = data_source.get_events_from_data_provider(
     startTimestamp=START_TIME,
     endTimestamp=END_TIME,
@@ -19,6 +20,17 @@ events: Data = data_source.get_events_from_data_provider(
     attachedMessages=True,
     # Use this options to apply rpt-data-provider filters for obtaining specific data
     filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")]
+)
+
+# [2.2] Get messages.
+messages: Data = data_source.get_messages_from_data_provider(
+    startTimestamp=START_TIME,
+    endTimestamp=END_TIME,
+    metadataOnly=False,
+    attachedMessages=True,
+    stream=["demo-conn2"],
+    # Use this options to apply rpt-data-provider filters for obtaining specific data
+    filters=[Filter("type", ""), Filter("body", "195")]
 )
 
 # [3] Work with your Data object.
