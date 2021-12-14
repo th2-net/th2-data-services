@@ -1,9 +1,9 @@
 import requests
 import json
 import simplejson
+import urllib3.exceptions
 from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
-from urllib3.exceptions import HTTPError
 from functools import partial
 from datetime import datetime, timezone
 from csv import DictReader
@@ -12,6 +12,7 @@ from sseclient import SSEClient
 
 from th2_data_services.adapters import adapter_provider5, adapter_sse
 from th2_data_services.data import Data
+from http import HTTPStatus
 from th2_data_services.filter import Filter
 
 import logging
@@ -32,9 +33,9 @@ class DataSource:
     def __check_connect(self) -> None:
         """Checks whether url is working."""
         try:
-            requests.get(self.__url, timeout=3.0)
+            requests.get(self.__url, timeout=5.0)
         except ConnectionError as error:
-            raise HTTPError(f"Unable to connect to host '{self.__url}'.")
+            raise urllib3.exceptions.HTTPError(f"Unable to connect to host '{self.__url}'\nReason: {error}")
 
     @property
     def url(self) -> str:
@@ -47,7 +48,9 @@ class DataSource:
             url = url[:-1]
         self.__url = url
 
-    def __get_data_obj(self, url: str, sse_adapter_flag: bool, provider_adapter: Optional[Callable], cache: bool) -> Data:
+    def __get_data_obj(
+        self, url: str, sse_adapter_flag: bool, provider_adapter: Optional[Callable], cache: bool
+    ) -> Data:
         data = partial(self.__execute_sse_request, url)
 
         if sse_adapter_flag:
@@ -140,7 +143,6 @@ class DataSource:
 
         return self.__get_data_obj(url, sse_adapter, None, cache)
 
-
     @staticmethod
     def _get_url(kwargs):
         result = ""
@@ -155,7 +157,13 @@ class DataSource:
                 result += f"&{k}={v}"
         return result[1:] if result[0] == "&" else result
 
-    def get_messages_from_data_provider(self, cache: bool = False, sse_adapter: bool = True, provider_adapter: Optional[Callable] = adapter_provider5, **kwargs) -> Data:
+    def get_messages_from_data_provider(
+        self,
+        cache: bool = False,
+        sse_adapter: bool = True,
+        provider_adapter: Optional[Callable] = adapter_provider5,
+        **kwargs,
+    ) -> Data:
         """Sends SSE request for getting messages.
 
         For help use this readme
@@ -188,7 +196,11 @@ class DataSource:
             raise ValueError(exception_msg)
 
         if not kwargs.get("stream"):
-            exception_msg = "'stream' is required field. Please note it." "More information on request here: " "https://github.com/th2-net/th2-rpt-data-provider "
+            exception_msg = (
+                "'stream' is required field. Please note it."
+                "More information on request here: "
+                "https://github.com/th2-net/th2-rpt-data-provider "
+            )
             logger.error(exception_msg)
             raise ValueError(exception_msg)
 
@@ -207,7 +219,6 @@ class DataSource:
 
         url = self.__url + "/search/sse/messages"
         url = f"{url}?{self._get_url(kwargs) + streams}"
-
         logger.info(url)
 
         return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)
@@ -241,12 +252,21 @@ class DataSource:
         http = PoolManager()
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
 
+        # Check response
+        if response.status != HTTPStatus.OK:
+            for s in HTTPStatus:
+                if s == response.status:
+                    raise urllib3.exceptions.HTTPError(f"{s.value} {s.phrase} ({s.description})")
+            raise urllib3.exceptions.HTTPError(f"Http returned bad status: {response.status}")
+
         for chunk in response.stream(self.__chunk_length):
             yield chunk
 
         response.release_conn()
 
-    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str], provider_adapter: Optional[Callable] = adapter_provider5) -> Optional[Union[List[dict], dict, None]]:
+    def find_messages_by_id_from_data_provider(
+        self, messages_id: Union[Iterable, str], provider_adapter: Optional[Callable] = adapter_provider5
+    ) -> Optional[Union[List[dict], dict]]:
         """Gets message/messages by ids.
 
         Args:
@@ -281,11 +301,16 @@ class DataSource:
             if msg_id.find(".") != -1:
                 msg_id, index = "".join(msg_id.split(".")[:-1]), int(msg_id[-1])
 
-            response = requests.get(f"{self.__url}/message/{msg_id}")
+            url = f"{self.__url}/message/{msg_id}"
+            logger.info(url)
+            response = requests.get(url)
             try:
                 answer = response.json()
             except (json.JSONDecodeError, simplejson.JSONDecodeError):
-                exception_msg = f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}"
+                exception_msg = (
+                    f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n"
+                    f"Answer:{response.text}"
+                )
                 logger.exception(exception_msg)
                 raise ValueError(exception_msg)
 
@@ -308,7 +333,9 @@ class DataSource:
 
         return result[0] if msg_id_type_is_str else result if result else None
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str], broken_events: Optional[bool] = False) -> Optional[Union[List[dict], dict, None]]:
+    def find_events_by_id_from_data_provider(
+        self, events_id: Union[Iterable, str], broken_events: Optional[bool] = False
+    ) -> Optional[Union[List[dict], dict]]:
         """Gets event/events by ids.
 
         Args:
@@ -366,13 +393,19 @@ class DataSource:
                 event_id: Event id.
                 stub: If True a broken event is replaced by a event stub.
             """
-            response = requests.get(f"{self.__url}/event/{event_id}")
+            url = f"{self.__url}/event/{event_id}"
+            logger.info(url)
+            response = requests.get(url)
+
             try:
                 return response.json()
             except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 if stub:
                     return __create_event_stub(event_id)
-                exception_msg = f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}"
+                exception_msg = (
+                    f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n"
+                    f"Answer:{response.text}"
+                )
                 logger.error(exception_msg)
                 raise ValueError(exception_msg)
 

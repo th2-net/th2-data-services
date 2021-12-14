@@ -15,5 +15,7 @@ def adapter_sse(record: Event) -> dict:
     if record.event == "error":
         raise HTTPError(record.data)
     if record.event not in ["close", "keep_alive", "message_ids"]:
-        record_data = json.loads(record.data)
-        return record_data
+        try:
+            return json.loads(record.data)
+        except json.JSONDecodeError as e:
+            raise Exception(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{record.data}")

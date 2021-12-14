@@ -1,6 +1,6 @@
 from collections import namedtuple
 from datetime import datetime
-from typing import List, NamedTuple, Tuple
+from typing import List, NamedTuple
 
 import pytest
 
@@ -20,52 +20,54 @@ def demo_data_source():
 START_TIME = datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724)
 END_TIME = datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579)
 
+
 @pytest.fixture
 def demo_get_events_with_one_filter(demo_data_source: DataSource) -> Data:
     case = demo_data_source.get_events_from_data_provider(
         startTimestamp=START_TIME,
         endTimestamp=END_TIME,
         metadataOnly=False,
-        filters=[Filter("name", "ExecutionReport")]
+        filters=[Filter("name", "ExecutionReport")],
     )
 
     return case
 
+
 @pytest.fixture
 def demo_get_events_with_filters(demo_data_source: DataSource) -> Data:
-
     case = demo_data_source.get_events_from_data_provider(
         startTimestamp=START_TIME,
         endTimestamp=END_TIME,
         metadataOnly=False,
-        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")]
+        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
     )
 
-    return  case
+    return case
+
 
 @pytest.fixture
 def demo_get_messages_with_one_filter(demo_data_source: DataSource) -> Data:
-
     case = demo_data_source.get_messages_from_data_provider(
         startTimestamp=datetime(year=2021, month=1, day=26, hour=12, minute=44, second=41, microsecond=692724),
         endTimestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
         stream=["demo-conn2"],
-        filters=Filter("body", "195")
+        filters=Filter("body", "195"),
     )
 
     return case
+
 
 @pytest.fixture
 def demo_get_messages_with_filters(demo_data_source: DataSource) -> Data:
-
     case = demo_data_source.get_messages_from_data_provider(
         startTimestamp=datetime(year=2021, month=1, day=26, hour=12, minute=44, second=41, microsecond=692724),
         endTimestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
         stream=["demo-conn2"],
-        filters=[Filter("type", ""), Filter("body", "195")]
+        filters=[Filter("type", ""), Filter("body", "195")],
     )
 
     return case
+
 
 @pytest.fixture
 def demo_events_from_data_source(demo_data_source: DataSource) -> Data:
@@ -100,19 +102,25 @@ def demo_events_with_metadataOnly_metadata_not_set(demo_data_source: DataSource)
 
 @pytest.fixture
 def demo_messages_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
-    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"], metadataOnly=True)
+    messages = demo_data_source.get_messages_from_data_provider(
+        startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"], metadataOnly=True
+    )
     return messages
 
 
 @pytest.fixture
 def demo_messages_with_metadataOnly_false(demo_data_source: DataSource) -> Data:
-    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"], metadataOnly=False)
+    messages = demo_data_source.get_messages_from_data_provider(
+        startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"], metadataOnly=False
+    )
     return messages
 
 
 @pytest.fixture
 def demo_messages_from_data_source(demo_data_source: DataSource) -> Data:
-    messages = demo_data_source.get_messages_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"])
+    messages = demo_data_source.get_messages_from_data_provider(
+        startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"]
+    )
     # Returns 36 messages
     return messages
 
@@ -121,7 +129,9 @@ def demo_messages_from_data_source(demo_data_source: DataSource) -> Data:
 def demo_events_from_data_source_with_cache_status(
     demo_data_source: DataSource,
 ) -> Data:
-    events = demo_data_source.get_events_from_data_provider(startTimestamp=START_TIME, endTimestamp=END_TIME, metadataOnly=False, cache=True)
+    events = demo_data_source.get_events_from_data_provider(
+        startTimestamp=START_TIME, endTimestamp=END_TIME, metadataOnly=False, cache=True
+    )
     # Returns 49 events
     # Failed = 6
     return events
@@ -149,7 +159,8 @@ def general_data() -> List[dict]:
         {
             "batchId": None,
             "eventId": "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
-            "eventName": 'placeOrderFIX demo-conn1 - STEP1: Trader "DEMO-CONN1" sends ' "request to create passive Order.",
+            "eventName": 'placeOrderFIX demo-conn1 - STEP1: Trader "DEMO-CONN1" sends '
+            "request to create passive Order.",
             "eventType": "placeOrderFIX",
             "isBatched": False,
             "parentEventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
@@ -165,7 +176,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a4-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'th2-hand-demo' direction 'FIRST' " "sequence '1623852603564709030'",
+            "eventName": "Checkpoint for session alias 'th2-hand-demo' direction 'FIRST' "
+            "sequence '1623852603564709030'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -173,7 +185,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a5-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'SECOND' " "sequence '1624005455622140289'",
+            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'SECOND' "
+            "sequence '1624005455622140289'",
             "eventType": "Checkpoint for session",
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
         },
@@ -196,7 +209,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a8-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'FIRST' " "sequence '1624005448022245399'",
+            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'FIRST' "
+            "sequence '1624005448022245399'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -204,7 +218,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a9-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'SECOND' " "sequence '1624005448022426113'",
+            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'SECOND' "
+            "sequence '1624005448022426113'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -228,7 +243,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ac-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'FIRST' " "sequence '1624005455622011522'",
+            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'FIRST' "
+            "sequence '1624005455622011522'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -1032,9 +1048,17 @@ def messages_before_pipeline_adapter():
         {
             "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce"],
             "body": {
-                "fields": {"PHCount": {"simpleValue": "0"}, "PHSequence": {"simpleValue": "15499"}, "PHSession": {"simpleValue": "M127205328"}},
+                "fields": {
+                    "PHCount": {"simpleValue": "0"},
+                    "PHSequence": {"simpleValue": "15499"},
+                    "PHSession": {"simpleValue": "M127205328"},
+                },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617064", "subsequence": [1]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617064",
+                        "subsequence": [1],
+                    },
                     "messageType": "PacketHeader",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:37.928Z",
@@ -1052,7 +1076,15 @@ def messages_before_pipeline_adapter():
             "body": {
                 "fields": {
                     "TestMessageHeader": {"messageValue": {"fields": {"Length": {"simpleValue": "4"}}}},
-                    "PacketHeader": {"messageValue": {"fields": {"PHCount": {"simpleValue": "3"}, "PHSequence": {"simpleValue": "15487"}, "PHSession": {"simpleValue": "M127204538"}}}},
+                    "PacketHeader": {
+                        "messageValue": {
+                            "fields": {
+                                "PHCount": {"simpleValue": "3"},
+                                "PHSequence": {"simpleValue": "15487"},
+                                "PHSession": {"simpleValue": "M127204538"},
+                            }
+                        }
+                    },
                     "SecondsMessage": {
                         "messageValue": {
                             "fields": {
@@ -1067,7 +1099,11 @@ def messages_before_pipeline_adapter():
                     },
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216519834417326", "subsequence": [1, 2, 3]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216519834417326",
+                        "subsequence": [1, 2, 3],
+                    },
                     "messageType": "PacketHeader/TestMessageHeader/SecondsMessage",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1106,7 +1142,15 @@ def messages_before_pipeline_adapter():
                     },
                     "TestMessageHeader-2": {"messageValue": {"fields": {"Length": {"simpleValue": "5"}}}},
                     "TestMessageHeader-4": {"messageValue": {"fields": {"Length": {"simpleValue": "37"}}}},
-                    "PacketHeader-1": {"messageValue": {"fields": {"PHCount": {"simpleValue": "2"}, "PHSequence": {"simpleValue": "15499"}, "PHSession": {"simpleValue": "M127205328"}}}},
+                    "PacketHeader-1": {
+                        "messageValue": {
+                            "fields": {
+                                "PHCount": {"simpleValue": "2"},
+                                "PHSequence": {"simpleValue": "15499"},
+                                "PHSession": {"simpleValue": "M127205328"},
+                            }
+                        }
+                    },
                     "SecondsMessage-3": {
                         "messageValue": {
                             "fields": {
@@ -1121,7 +1165,11 @@ def messages_before_pipeline_adapter():
                     },
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617066", "subsequence": [1, 2, 3, 4, 5]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617066",
+                        "subsequence": [1, 2, 3, 4, 5],
+                    },
                     "messageType": "PacketHeader/TestMessageHeader/SecondsMessage/TestMessageHeader/AddOrder",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1146,7 +1194,11 @@ def messages_before_pipeline_adapter():
                     "Second": {"simpleValue": "163231325458"},
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617064", "subsequence": [1]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617064",
+                        "subsequence": [1],
+                    },
                     "messageType": "SecondsMessage",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:37.928Z",
@@ -1179,7 +1231,11 @@ def messages_before_pipeline_adapter():
                     "TimestampNanoseconds": {"simpleValue": "2724576"},
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617064", "subsequence": [1]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617064",
+                        "subsequence": [1],
+                    },
                     "messageType": "AddOrder",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:37.928Z",
@@ -1202,9 +1258,17 @@ def messages_after_pipeline_adapter():
         {
             "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce"],
             "body": {
-                "fields": {"PHCount": {"simpleValue": "0"}, "PHSequence": {"simpleValue": "15499"}, "PHSession": {"simpleValue": "M127205328"}},
+                "fields": {
+                    "PHCount": {"simpleValue": "0"},
+                    "PHSequence": {"simpleValue": "15499"},
+                    "PHSession": {"simpleValue": "M127205328"},
+                },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617064", "subsequence": [1]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617064",
+                        "subsequence": [1],
+                    },
                     "messageType": "PacketHeader",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:37.928Z",
@@ -1222,7 +1286,11 @@ def messages_after_pipeline_adapter():
             "body": {
                 "fields": {"Length": {"simpleValue": "4"}},
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216519834417326", "subsequence": [2]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216519834417326",
+                        "subsequence": [2],
+                    },
                     "messageType": "TestMessageHeader",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1238,9 +1306,17 @@ def messages_after_pipeline_adapter():
         {
             "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
             "body": {
-                "fields": {"PHCount": {"simpleValue": "3"}, "PHSequence": {"simpleValue": "15487"}, "PHSession": {"simpleValue": "M127204538"}},
+                "fields": {
+                    "PHCount": {"simpleValue": "3"},
+                    "PHSequence": {"simpleValue": "15487"},
+                    "PHSession": {"simpleValue": "M127204538"},
+                },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216519834417326", "subsequence": [1]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216519834417326",
+                        "subsequence": [1],
+                    },
                     "messageType": "PacketHeader",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1265,7 +1341,11 @@ def messages_after_pipeline_adapter():
                     "Second": {"simpleValue": "1632375458"},
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216519834417326", "subsequence": [3]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216519834417326",
+                        "subsequence": [3],
+                    },
                     "messageType": "SecondsMessage",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1298,7 +1378,11 @@ def messages_after_pipeline_adapter():
                     "TimestampNanoseconds": {"simpleValue": "2724576"},
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617066", "subsequence": [5]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617066",
+                        "subsequence": [5],
+                    },
                     "messageType": "AddOrder",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1316,7 +1400,11 @@ def messages_after_pipeline_adapter():
             "body": {
                 "fields": {"Length": {"simpleValue": "5"}},
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617066", "subsequence": [2]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617066",
+                        "subsequence": [2],
+                    },
                     "messageType": "TestMessageHeader",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1334,7 +1422,11 @@ def messages_after_pipeline_adapter():
             "body": {
                 "fields": {"Length": {"simpleValue": "37"}},
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617066", "subsequence": [4]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617066",
+                        "subsequence": [4],
+                    },
                     "messageType": "TestMessageHeader",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1350,9 +1442,17 @@ def messages_after_pipeline_adapter():
         {
             "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
             "body": {
-                "fields": {"PHCount": {"simpleValue": "2"}, "PHSequence": {"simpleValue": "15499"}, "PHSession": {"simpleValue": "M127205328"}},
+                "fields": {
+                    "PHCount": {"simpleValue": "2"},
+                    "PHSequence": {"simpleValue": "15499"},
+                    "PHSession": {"simpleValue": "M127205328"},
+                },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617066", "subsequence": [1]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617066",
+                        "subsequence": [1],
+                    },
                     "messageType": "PacketHeader",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1377,7 +1477,11 @@ def messages_after_pipeline_adapter():
                     "Second": {"simpleValue": "1632375458"},
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617066", "subsequence": [3]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617066",
+                        "subsequence": [3],
+                    },
                     "messageType": "SecondsMessage",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1402,7 +1506,11 @@ def messages_after_pipeline_adapter():
                     "Second": {"simpleValue": "163231325458"},
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617064", "subsequence": [1]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617064",
+                        "subsequence": [1],
+                    },
                     "messageType": "SecondsMessage",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:37.928Z",
@@ -1435,7 +1543,11 @@ def messages_after_pipeline_adapter():
                     "TimestampNanoseconds": {"simpleValue": "2724576"},
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617064", "subsequence": [1]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617064",
+                        "subsequence": [1],
+                    },
                     "messageType": "AddOrder",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:37.928Z",
@@ -1480,7 +1592,15 @@ def message_from_pipeline():
                 },
                 "TestMessageHeader-2": {"messageValue": {"fields": {"Length": {"simpleValue": "5"}}}},
                 "TestMessageHeader-4": {"messageValue": {"fields": {"Length": {"simpleValue": "37"}}}},
-                "PacketHeader-1": {"messageValue": {"fields": {"PHCount": {"simpleValue": "2"}, "PHSequence": {"simpleValue": "15499"}, "PHSession": {"simpleValue": "M127205328"}}}},
+                "PacketHeader-1": {
+                    "messageValue": {
+                        "fields": {
+                            "PHCount": {"simpleValue": "2"},
+                            "PHSequence": {"simpleValue": "15499"},
+                            "PHSession": {"simpleValue": "M127205328"},
+                        }
+                    }
+                },
                 "SecondsMessage-3": {
                     "messageValue": {
                         "fields": {
@@ -1495,7 +1615,11 @@ def message_from_pipeline():
                 },
             },
             "metadata": {
-                "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617066", "subsequence": [1, 2, 3, 4, 5]},
+                "id": {
+                    "connectionId": {"sessionAlias": "test-42"},
+                    "sequence": "1632216515838617066",
+                    "subsequence": [1, 2, 3, 4, 5],
+                },
                 "messageType": "PacketHeader/TestMessageHeader/SecondsMessage/TestMessageHeader/AddOrder",
                 "protocol": "SOUP",
                 "timestamp": "2021-09-23T12:37:38.004Z",
@@ -1516,9 +1640,19 @@ def message_from_pipeline_empty_body():
     messages = {
         "attachedEventIds": [],
         "body": {
-            "fields": {"Csv_Header": {"fields": {}, "metadata": {}}, "Csv_Message": {"fields": {}, "metadata": {"TestField": "test", "timestamp": "2021-10-12T12:13:59.766600545Z"}}},
+            "fields": {
+                "Csv_Header": {"fields": {}, "metadata": {}},
+                "Csv_Message": {
+                    "fields": {},
+                    "metadata": {"TestField": "test", "timestamp": "2021-10-12T12:13:59.766600545Z"},
+                },
+            },
             "metadata": {
-                "id": {"connectionId": {"sessionAlias": "satscomments2"}, "sequence": "1634314921633704398", "subsequence": [1]},
+                "id": {
+                    "connectionId": {"sessionAlias": "satscomments2"},
+                    "sequence": "1634314921633704398",
+                    "subsequence": [1],
+                },
                 "messageType": "Csv_Header",
                 "properties": {"logTimestamp": "2021-10-12 " "12:13:59.733300545"},
                 "timestamp": "2021-10-12T12:13:59.733300545Z",
@@ -1543,7 +1677,11 @@ def messages_from_after_pipeline_empty_body():
             "body": {
                 "fields": {},
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "satscomments2"}, "sequence": "1634314921633704398", "subsequence": [1]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "satscomments2"},
+                        "sequence": "1634314921633704398",
+                        "subsequence": [1],
+                    },
                     "messageType": "Csv_Header",
                     "properties": {"logTimestamp": "2021-10-12 " "12:13:59.733300545"},
                     "timestamp": "2021-10-12T12:13:59.733300545Z",
@@ -1562,7 +1700,11 @@ def messages_from_after_pipeline_empty_body():
             "body": {
                 "fields": {},
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "satscomments2"}, "sequence": "1634314921633704398", "subsequence": [2]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "satscomments2"},
+                        "sequence": "1634314921633704398",
+                        "subsequence": [2],
+                    },
                     "messageType": "Csv_Message",
                     "properties": {"logTimestamp": "2021-10-12 " "12:13:59.733300545"},
                     "timestamp": "2021-10-12T12:13:59.766600545Z",
