@@ -131,5 +131,6 @@
       - provider_adapter=adapter_provider5. Adapter function for rpt-data-provider.
                    If None, Data object will yield object from previous map function.
 3. [TH2-2283] Implemented rpt-data-provider Filters API.
+4. [TH2-2471] The opportunity is removed to use metadataOnly=True
 
 ## BugFixes

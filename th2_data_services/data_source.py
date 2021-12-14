@@ -140,7 +140,6 @@ class DataSource:
 
         return self.__get_data_obj(url, sse_adapter, None, cache)
 
-
     @staticmethod
     def _get_url(kwargs):
         result = ""
@@ -174,10 +173,6 @@ class DataSource:
             Data: Data object with Messages.
 
         """
-        if kwargs.get("metadataOnly") and kwargs["metadataOnly"] is True:
-            logger.warning(f"Meta data status is {kwargs['metadataOnly']}")
-        kwargs["metadataOnly"] = False
-
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
             exception_msg = (
                 "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. "

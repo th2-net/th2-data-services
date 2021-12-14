@@ -16,21 +16,19 @@ END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, m
 events: Data = data_source.get_events_from_data_provider(
     startTimestamp=START_TIME,
     endTimestamp=END_TIME,
-    metadataOnly=False,
     attachedMessages=True,
     # Use this options to apply rpt-data-provider filters for obtaining specific data
-    filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")]
+    filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
 )
 
 # [2.2] Get messages.
 messages: Data = data_source.get_messages_from_data_provider(
     startTimestamp=START_TIME,
     endTimestamp=END_TIME,
-    metadataOnly=False,
     attachedMessages=True,
     stream=["demo-conn2"],
     # Use this options to apply rpt-data-provider filters for obtaining specific data
-    filters=[Filter("type", ""), Filter("body", "195")]
+    filters=[Filter("type", ""), Filter("body", "195")],
 )
 
 # [3] Work with your Data object.
