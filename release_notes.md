@@ -130,6 +130,6 @@
    2. get_messages_from_data_provider and find_messages_by_id_from_data_provider:
       - provider_adapter=adapter_provider5. Adapter function for rpt-data-provider.
                    If None, Data object will yield object from previous map function.
-
+3. [TH2-2283] Implemented rpt-data-provider Filters API.
 
 ## BugFixes

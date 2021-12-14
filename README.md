@@ -58,16 +58,18 @@ This example works with **Events**, but you also can do the same actions with **
     DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
     DEMO_PORT = "30999"  # Node port of rpt-data-provider.
     data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
-    
+
     START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724)  # object given in utc format
     END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
-    
+
     # [2] Get events from START_TIME to END_TIME.
     events: Data = data_source.get_events_from_data_provider(
         startTimestamp=START_TIME,
         endTimestamp=END_TIME,
         metadataOnly=False,
         attachedMessages=True,
+        # Use this options to apply rpt-data-provider filters for obtaining specific data
+        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")]
     )
     
     # [3] Work with your Data object.
