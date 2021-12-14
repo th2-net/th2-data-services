@@ -2,7 +2,6 @@ from datetime import datetime
 
 from th2_data_services.data_source import DataSource
 from th2_data_services.events_tree import EventsTree
-from th2_data_services.data import Data
 
 
 def test_recover_events_tree(demo_data_source: DataSource):
@@ -38,14 +37,13 @@ def test_preserve_body_is_notset(demo_data_source: DataSource):
     events_tree = EventsTree(events)
     events_tree.recover_unknown_events(demo_data_source)
 
-    with_body = set()
+    with_body = False
     for v in events_tree.events.values():
         if v.get("body") is not None:
-            with_body.add(True)
-        else:
-            with_body.add(False)
+            with_body = True
+            break
 
-    assert False in with_body and len(with_body) is 1
+    assert with_body is False
 
 
 def test_preserve_body_is_false(demo_data_source: DataSource):
@@ -61,14 +59,13 @@ def test_preserve_body_is_false(demo_data_source: DataSource):
     events_tree = EventsTree(events, preserve_body=False)
     events_tree.recover_unknown_events(demo_data_source)
 
-    with_body = set()
+    with_body = False
     for v in events_tree.events.values():
         if v.get("body") is not None:
-            with_body.add(True)
-        else:
-            with_body.add(False)
+            with_body = True
+            break
 
-    assert False in with_body and len(with_body) is 1
+    assert with_body is False
 
 
 def test_preserve_body_is_true_recover(demo_data_source: DataSource):
@@ -84,11 +81,10 @@ def test_preserve_body_is_true_recover(demo_data_source: DataSource):
     events_tree = EventsTree(events, preserve_body=True)
     events_tree.recover_unknown_events(demo_data_source)
 
-    with_body = set()
+    with_body = True
     for v in events_tree.events.values():
-        if v.get("body") is not None:
-            with_body.add(True)
-        else:
-            with_body.add(False)
+        if v.get("body") is None:
+            with_body = False
+            break
 
-    assert True in with_body and len(with_body) is 1
+    assert with_body is True
