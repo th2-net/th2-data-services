@@ -4,6 +4,7 @@ from typing import Generator, Union, Iterator, Optional, Callable, Dict, List
 from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
 from anytree import Node, RenderTree, findall
+from abc import ABC
 
 
 class EventsTree:
@@ -212,6 +213,11 @@ class TreeNode(Node):
             s += "[%s] %s%s\n" % (status, pre, node.name)
         return s
 
+    # TODO - this name?
+    @property
+    def path_str(self):
+        return self.separator.join([str(node.name) for node in self.path])
+
     def show(self, fmt: Callable = None, failed_only=False, show_status=True):
         if fmt is None:
 
@@ -232,50 +238,105 @@ class TreeNode(Node):
                     s += fmt(pre, fill, node)
         return s
 
+
+class TreeNodeProviderEvent(TreeNode, ABC):
+    def __init__(self, name, data, **kwargs):
+        super().__init__(name, **kwargs)
+        self._data = data
+
+    @property
+    def data(self):
+        return self._data
+
+    @property
+    def event_id(self):
+        return self.data[self.EVENT_ID_FIELD]
+
+    @property
+    def parent_event_id(self):
+        return self.data[self.PARENT_EVENT_ID_FIELD]
+
     def get_by_status(self, status: bool):
-        return findall(self, lambda node: node.data["successful"] is status)
+        return findall(self, lambda node: node.data[self.STATUS_FIELD] is status)
 
     def get_by_leaves_status(self, status: bool):
-        return [n for n in self.leaves if n.data["successful"] is status]
+        return [n for n in self.leaves if n.data[self.STATUS_FIELD] is status]
+
+
+class TreeNodeProvider5Event(TreeNodeProviderEvent):
+    EVENT_ID_FIELD = "eventId"
+    PARENT_EVENT_ID_FIELD = "parentEventId"
+    STATUS_FIELD = "successful"
 
 
 class EventsTree2:
     """EventsTree2 - experimental tree."""
 
     def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, ds=None):
+        """
+        Я бы, как пользователь, хотел иметь следующий доступ
+            ET['id']  or et.get_by_id('id')
+
+
+        Args:
+            data:
+            ds:
+        """
         if data is None:
             data = []
 
+        self._data = data
         self._data_source = ds
-        self._nodes = []
-        self.roots: List[TreeNode] = []
-        self.events_ids = []
+        self._all_nodes = []
+        self.roots: List[TreeNodeProvider5Event] = []
+        self.events = dict()  # {id: Node}
+        self.events_ids = []  # Used to find unknown_parents_ids
         self.parent_events_ids = set()
+        self.__unknown_parent_ids = set()
+        self.parentless_nodes = []  # TODO - нужнен параметр, который будет отвечать хотим ли мы такое
 
-        self._build_tree(data)
+        self._build_trees()
 
-    def _build_tree(self, data: Union[Iterator, Generator[dict, None, None]]) -> None:
+    def _create_node(self, event) -> TreeNodeProvider5Event:
+        return TreeNodeProvider5Event(name=event["eventName"], data=event)
+
+    def _append_node(self, node):
+        self._all_nodes.append(node)
+
+    def _append_events_ids(self, event_id):
+        self.events_ids.append(event_id)
+
+    def _get_events(self, with_body):
+        for event in self._data:
+            event = event.copy()
+
+            if not with_body:
+                try:
+                    event.pop("body")
+                except KeyError:
+                    pass
+            yield event
+
+    def _append_events(self, node: TreeNodeProvider5Event):
+        self.events[node] = node.data[""]
+
+    def _build_trees(self, with_body=False) -> None:
         """Build or append new events to family tree.
 
         :param data: Events.
         """
-        for event in data:
-            event = event.copy()
-
-            event_id = event["eventId"]
-            try:
-                event.pop("body")
-            except KeyError:
-                pass
-
-            self._nodes.append(TreeNode(name=event["eventName"], data=event))
-            self.events_ids.append(event_id)
+        for event in self._get_events(with_body):
+            node = self._create_node(event)
+            x = node.data
+            self._append_node(node)
+            # self.events
+            self._append_events_ids(event["eventId"])
             self.parent_events_ids.add(event["parentEventId"])
 
         unknown_parents_ids: list = self._get_unknown_parents_ids()
 
         # restore them
-        restored_events = self._get_unknown_events(unknown_parents_ids)
+        restored_events = self._get_unknown_events(unknown_parents_ids, broken_events=True)
 
         for event in restored_events:
             event = event.copy()
@@ -285,42 +346,98 @@ class EventsTree2:
             except KeyError:
                 pass
 
-            self._nodes.append(TreeNode(name=event["eventName"], data=event))
+            try:
+                self._all_nodes.append(TreeNode(name=event["eventName"], data=event))
+            except KeyError as er:
+                print(er)
+                print(event)
 
         # search roots
         node: Node
-        for node in self._nodes.copy():
+        for node in self._all_nodes.copy():
             if node.data["parentEventId"] is None:
                 self.roots.append(node)
-                self._nodes.remove(node)
+                self._all_nodes.remove(node)
 
-        def x(roots):
-            if len(self._nodes) != 0:
+        self._last_nodes_len = -1
+
+        try:
+            self.__build_trees(self.roots)
+        except RecursionError:
+            pass
+
+    def __build_trees(self, roots):
+        nodes_len = len(self._all_nodes)
+        if nodes_len != 0:
+            if nodes_len != self._last_nodes_len:
+                self._last_nodes_len = nodes_len
                 new_roots = []
-                for node in self._nodes.copy():
+                for node in self._all_nodes.copy():
                     for root_node in roots:
                         if node.data["parentEventId"] == root_node.data["eventId"]:
                             node.parent = root_node
-                            self._nodes.remove(node)
+                            try:
+                                self._all_nodes.remove(node)
+                            except ValueError as er:
+                                print(er)
+                                print("The Exception because Duplicate Nodes in the self._all_nodes!")
+                                print(node)
+                                print(self._all_nodes)
+                                raise
                             new_roots.append(node)
-                x(new_roots)
+                            break
+                self.__build_trees(new_roots)
             else:
-                return None
+                print(f"Cannot build EventsTree2, some nodes will be available as .parentless_nodes")
+                self.parentless_nodes = self._all_nodes
+                print(self.parentless_nodes)
+                # raise Exception(F"Cannot build EventsTree2, due to some Nodes doesn't have parents")
+        else:
+            return None
 
-        x(self.roots)
+    """
+    Думаю куда лучше будет иметь функцию, которая позволит получить пэренты, по списку ивентов.
+    """
 
     def _get_unknown_events(self, unknown_parents, broken_events: Optional[bool] = False):
         if unknown_parents:
-            new_events: list = self._data_source.find_events_by_id_from_data_provider(unknown_parents, broken_events)
+            for up in unknown_parents:
+                self.__unknown_parent_ids.add(up)
+
+            # Кейс 1 - когда брокен ивентс = фолс, то нужно бросить эксепшен и сказать кто ссылается на заправшиваемый ивент
+            if broken_events:
+                new_events = []
+                for up_id in unknown_parents:
+                    try:
+                        new_events.append(self._data_source.find_events_by_id_from_data_provider(up_id, broken_events))
+                    except ValueError as err:
+                        print(err)
+                        print(f'Owners: {[n for n in self._all_nodes if n.data["parentEventId"] == up_id]}')
+                        raise
+            else:
+                new_events: list = self._data_source.find_events_by_id_from_data_provider(unknown_parents, broken_events)
 
             unknown_parents2 = set()
             new_events = [new_events] if not isinstance(new_events, list) else new_events
             for e in new_events:
-                parent_event_id = e["parentEventId"]
-                if parent_event_id is not None:
+
+                try:
+                    parent_event_id = e["parentEventId"]
+                except KeyError as er:
+                    print("_get_unknown_events")
+                    print(er)
+                    print(e)
+                    print("Events which have ")
+                    # raise
+                    continue
+
+                if parent_event_id == "Broken_Event":
+                    print(e)
+
+                if parent_event_id is not None and parent_event_id != "Broken_Event" and parent_event_id not in self.__unknown_parent_ids:
                     unknown_parents2.add(parent_event_id)
 
-            new_events += self._get_unknown_events(unknown_parents2)
+            new_events += self._get_unknown_events(unknown_parents2, broken_events)
 
             return new_events
         else:
