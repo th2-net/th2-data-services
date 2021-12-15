@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Union, Iterator, Generator
+from typing import Union, Iterator, Generator, Optional
 
 from th2_data_services.data import Data
 from th2_data_services.events_tree import EventsTree
@@ -12,9 +12,17 @@ class ParentEventsTree(EventsTree):
     ParentEventsTree contains all parent events inside.
     """
 
-    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None):
+    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, preserve_body: Optional[bool] = False):
+
+        """
+        Args:
+            data: Events.
+            preserve_body (:obj:`bool`, optional): if true keep events bodies.
+        """
         if data is None:
             data = []
+
+        self.__preserve_body = preserve_body
         self._parents_ids = set()
         self._unknown_events = defaultdict(lambda: 0)
         self._events = {}
@@ -57,11 +65,11 @@ class ParentEventsTree(EventsTree):
             event: Event
         """
         event_id = event["eventId"]
-
-        try:
-            event.pop("body")
-        except KeyError:
-            pass
+        if not self.__preserve_body:
+            try:
+                event.pop("body")
+            except KeyError:
+                pass
 
         if event_id in self._parents_ids:
             self._events[event_id] = event

@@ -1,18 +1,24 @@
 import requests
 import json
 import simplejson
+import urllib3.exceptions
 from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
-from urllib3.exceptions import HTTPError
 from functools import partial
 from datetime import datetime, timezone
 from csv import DictReader
-from typing import Generator, Iterable, List, Union, Optional
-from urllib.parse import urlencode
+from typing import Generator, Iterable, List, Union, Optional, Callable
 from sseclient import SSEClient
 
-from th2_data_services.adapter import change_pipeline_message
+from th2_data_services.adapters import adapter_provider5, adapter_sse
 from th2_data_services.data import Data
+from http import HTTPStatus
+from th2_data_services.filter import Filter
+
+import logging
+
+logger = logging.getLogger("th2_data_services")
+logger.setLevel(logging.DEBUG)
 
 
 class DataSource:
@@ -22,13 +28,14 @@ class DataSource:
         self.url = url
         self.__chunk_length = chunk_length
         self.__check_connect()
+        logger.info(url)
 
     def __check_connect(self) -> None:
         """Checks whether url is working."""
         try:
-            requests.get(self.__url, timeout=3.0)
+            requests.get(self.__url, timeout=5.0)
         except ConnectionError as error:
-            raise HTTPError(f"Unable to connect to host '{self.__url}'.")
+            raise urllib3.exceptions.HTTPError(f"Unable to connect to host '{self.__url}'\nReason: {error}")
 
     @property
     def url(self) -> str:
@@ -40,6 +47,24 @@ class DataSource:
         if url[-1] == "/":
             url = url[:-1]
         self.__url = url
+
+    def __get_data_obj(
+        self, url: str, sse_adapter_flag: bool, provider_adapter: Optional[Callable], cache: bool
+    ) -> Data:
+        data = partial(self.__execute_sse_request, url)
+
+        if sse_adapter_flag:
+            if provider_adapter is not None:
+                data_obj = Data(data).map(adapter_sse).map(provider_adapter).use_cache(cache)
+            else:
+                data_obj = Data(data).map(adapter_sse).use_cache(cache)
+        else:
+            if provider_adapter is not None:
+                raise Exception(f"Provider adapter expected to get dict but SSE adapter is turned off")
+            else:
+                data_obj = Data(data).use_cache(cache)
+
+        return data_obj
 
     def sse_request_to_data_provider(self, **kwargs) -> Generator[dict, None, None]:
         """Sends SSE request to rpt-data-provider.
@@ -56,7 +81,9 @@ class DataSource:
         """
         route = kwargs.get("route")
         if not route:
-            raise ValueError("Route is required field. Please fill it.")
+            exception_msg = "Route is required field. Please fill it."
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
 
         if kwargs.get("startTimestamp") and isinstance(kwargs.get("startTimestamp"), datetime):
             timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
@@ -66,11 +93,11 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + route
-        url = f"{url}?{urlencode(kwargs)}"
-
+        url = f"{url}?{self._get_url(kwargs)}"
+        logger.info(url)
         yield from self.__execute_sse_request(url)
 
-    def get_events_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
+    def get_events_from_data_provider(self, cache: bool = False, sse_adapter: bool = True, **kwargs) -> Data:
         """Sends SSE request for getting events.
 
         For help use this readme
@@ -78,18 +105,29 @@ class DataSource:
         on route http://localhost:8080/search/sse/events.
 
         Args:
-            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
+            cache (bool): If True, all requested data from rpt-data-provider will be saved to cache.
+            sse_adapter (bool): If True, all data will go through SSE adapter and yield dicts.
+                Otherwise adapter will yield SSE Events.
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
             Data: Data object with Events.
 
         """
+
+        if kwargs.get("metadataOnly") and kwargs["metadataOnly"] is True:
+            logger.warning(f"Meta data status is {kwargs['metadataOnly']}")
+        kwargs["metadataOnly"] = False
+
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            raise ValueError(
-                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please note it. "
-                "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
+            exception_msg = (
+                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/events. Please "
+                "note it. More information on request here: "
+                "https://github.com/th2-net/th2-rpt-data-provider "
             )
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
+
         if isinstance(kwargs["startTimestamp"], datetime):
             timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
             kwargs["startTimestamp"] = int(timestamp * 1000)  # unix timestamp in milliseconds
@@ -99,12 +137,33 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         url = self.__url + "/search/sse/events"
-        url = f"{url}?{urlencode(kwargs)}"
+        url = f"{url}?{self._get_url(kwargs)}"
 
-        data = partial(self.__execute_sse_request, url)
-        return Data(data, cache=cache)
+        logger.info(url)
 
-    def get_messages_from_data_provider(self, cache: bool = False, **kwargs) -> Data:
+        return self.__get_data_obj(url, sse_adapter, None, cache)
+
+    @staticmethod
+    def _get_url(kwargs):
+        result = ""
+        for k, v in kwargs.items():
+            if k == "filters":
+                if isinstance(v, Filter):
+                    result += v.url()
+                elif isinstance(v, (tuple, list)):
+
+                    result += "".join([filter.url() for filter in v])
+            else:
+                result += f"&{k}={v}"
+        return result[1:] if result[0] == "&" else result
+
+    def get_messages_from_data_provider(
+        self,
+        cache: bool = False,
+        sse_adapter: bool = True,
+        provider_adapter: Optional[Callable] = adapter_provider5,
+        **kwargs,
+    ) -> Data:
         """Sends SSE request for getting messages.
 
         For help use this readme
@@ -112,7 +171,11 @@ class DataSource:
         on route http://localhost:8080/search/sse/messages.
 
         Args:
-            cache (bool): If True all requested data from rpt-data-provider will be saved to cache.
+            cache (bool): If True, all requested data from rpt-data-provider will be saved to cache.
+            sse_adapter (bool): If True, all data will go through SSE adapter and yield dicts.
+                Otherwise adapter will yield SSE Events.
+            provider_adapter (callable): Adapter function for rpt-data-provider.
+                If None, Data object will yield object from previous map function.
             kwargs: th2-rpt-data-provider API query options.
 
         Returns:
@@ -120,12 +183,22 @@ class DataSource:
 
         """
         if not kwargs.get("startTimestamp") and not kwargs.get("resumeFromId"):
-            raise ValueError(
-                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. Please note it. "
-                "More information on request here: https://github.com/th2-net/th2-rpt-data-provider"
+            exception_msg = (
+                "'startTimestamp' or 'resumeFromId' must not be null for route /search/sse/messages. "
+                "Please note it. More information on request here: "
+                "https://github.com/th2-net/th2-rpt-data-provider "
             )
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
+
         if not kwargs.get("stream"):
-            raise ValueError("'stream' is required field. Please note it." "More information on request here: https://github.com/th2-net/th2-rpt-data-provider")
+            exception_msg = (
+                "'stream' is required field. Please note it."
+                "More information on request here: "
+                "https://github.com/th2-net/th2-rpt-data-provider "
+            )
+            logger.error(exception_msg)
+            raise ValueError(exception_msg)
 
         if isinstance(kwargs["startTimestamp"], datetime):
             timestamp = kwargs["startTimestamp"].replace(tzinfo=timezone.utc).timestamp()
@@ -141,11 +214,10 @@ class DataSource:
         streams = f"&stream={streams}"
 
         url = self.__url + "/search/sse/messages"
-        url = f"{url}?{urlencode(kwargs) + streams}"
+        url = f"{url}?{self._get_url(kwargs) + streams}"
+        logger.info(url)
 
-        data = partial(self.__execute_sse_request, url)
-
-        return Data(data).map(change_pipeline_message).use_cache(cache)
+        return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
@@ -160,11 +232,7 @@ class DataSource:
         response = self.__create_stream_connection(url)
         client = SSEClient(response)
         for record in client.events():
-            if record.event == "error":
-                raise HTTPError(record.data)
-            if record.event not in ["close", "keep_alive", "message_ids"]:
-                record_data = json.loads(record.data)
-                yield record_data
+            yield record
 
     def __create_stream_connection(self, url: str) -> Generator[bytes, None, None]:
         """Create stream connection.
@@ -180,12 +248,21 @@ class DataSource:
         http = PoolManager()
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
 
+        # Check response
+        if response.status != HTTPStatus.OK:
+            for s in HTTPStatus:
+                if s == response.status:
+                    raise urllib3.exceptions.HTTPError(f"{s.value} {s.phrase} ({s.description})")
+            raise urllib3.exceptions.HTTPError(f"Http returned bad status: {response.status}")
+
         for chunk in response.stream(self.__chunk_length):
             yield chunk
 
         response.release_conn()
 
-    def find_messages_by_id_from_data_provider(self, messages_id: Union[Iterable, str]) -> Optional[Union[List[dict], dict, None]]:
+    def find_messages_by_id_from_data_provider(
+        self, messages_id: Union[Iterable, str], provider_adapter: Optional[Callable] = adapter_provider5
+    ) -> Optional[Union[List[dict], dict]]:
         """Gets message/messages by ids.
 
         Args:
@@ -220,13 +297,22 @@ class DataSource:
             if msg_id.find(".") != -1:
                 msg_id, index = "".join(msg_id.split(".")[:-1]), int(msg_id[-1])
 
-            response = requests.get(f"{self.__url}/message/{msg_id}")
+            url = f"{self.__url}/message/{msg_id}"
+            logger.info(url)
+            response = requests.get(url)
             try:
                 answer = response.json()
             except (json.JSONDecodeError, simplejson.JSONDecodeError):
-                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+                exception_msg = (
+                    f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n"
+                    f"Answer:{response.text}"
+                )
+                logger.exception(exception_msg)
+                raise ValueError(exception_msg)
 
-            answer = change_pipeline_message(answer)
+            if provider_adapter is not None:
+                answer = provider_adapter(answer)
+
             if isinstance(answer, list):
                 if index:
                     for message in answer:
@@ -243,7 +329,9 @@ class DataSource:
 
         return result[0] if msg_id_type_is_str else result if result else None
 
-    def find_events_by_id_from_data_provider(self, events_id: Union[Iterable, str], broken_events: Optional[bool] = False) -> Optional[Union[List[dict], dict, None]]:
+    def find_events_by_id_from_data_provider(
+        self, events_id: Union[Iterable, str], broken_events: Optional[bool] = False
+    ) -> Optional[Union[List[dict], dict]]:
         """Gets event/events by ids.
 
         Args:
@@ -301,13 +389,21 @@ class DataSource:
                 event_id: Event id.
                 stub: If True a broken event is replaced by a event stub.
             """
-            response = requests.get(f"{self.__url}/event/{event_id}")
+            url = f"{self.__url}/event/{event_id}"
+            logger.info(url)
+            response = requests.get(url)
+
             try:
                 return response.json()
             except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 if stub:
                     return __create_event_stub(event_id)
-                raise ValueError(f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n" f"Answer:{response.text}")
+                exception_msg = (
+                    f"Sorry, but the answer rpt-data-provider doesn't match the json format.\n"
+                    f"Answer:{response.text}"
+                )
+                logger.error(exception_msg)
+                raise ValueError(exception_msg)
 
         event_id_type_is_str = isinstance(events_id, str)
         if isinstance(events_id, str):

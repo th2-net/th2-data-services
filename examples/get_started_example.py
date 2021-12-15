@@ -1,21 +1,38 @@
-from th2_data_services.data_source import DataSource
-from th2_data_services.data import Data
+from collections import Generator
+from th2_data_services import DataSource, Data, Filter
 from datetime import datetime
+
 
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
 data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
-START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724)  # object given in utc format
+START_TIME = datetime(
+    year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
+)  # object given in utc format
 END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
 
-# [2] Get events from START_TIME to END_TIME.
+# [2] Get events or messages from START_TIME to END_TIME.
+# [2.1] Get events.
 events: Data = data_source.get_events_from_data_provider(
     startTimestamp=START_TIME,
     endTimestamp=END_TIME,
-    metadataOnly=False,
     attachedMessages=True,
+    # Use Filter class to apply rpt-data-provider filters.
+    filters=[  # Use the list to set multiple filters.
+        Filter("name", "ExecutionReport"),
+        Filter("type", "Send message"),
+    ],
+)
+
+# [2.2] Get messages.
+messages: Data = data_source.get_messages_from_data_provider(
+    startTimestamp=START_TIME,
+    endTimestamp=END_TIME,
+    attachedMessages=True,
+    stream=["demo-conn2"],
+    filters=Filter("body", "195"),
 )
 
 # [3] Work with your Data object.
@@ -38,8 +55,8 @@ filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []
 assert list(filtered_and_mapped_events) == list(filtered_and_mapped_events_by_pipeline)
 
 # [3.4] Sift. Skip the first few items or limit them.
-events_from_11_to_end: Data = events.sift(skip=10)
-only_first_10_events: Data = events.sift(limit=10)
+events_from_11_to_end: Generator = events.sift(skip=10)
+only_first_10_events: Generator = events.sift(limit=10)
 
 # [3.5] Changing cache status.
 events.use_cache(True)

@@ -114,3 +114,31 @@
 1. [TH2-2756] Changed adapter for messages from pipeline.
 2. Fixed a situation when messages were not opened from the list when we use map more that once.
 
+# v0.6.0
+
+## User impact and migration instructions
+
+1. [I] The "metadataOnly" query parameter will now always be set to False in the get_X_from_data_provider methods. It’s
+   the option for Report Viewer front-end only.  
+   [M] (Optional) Remove "metadataOnly" parameter in your requests to get more logical and clean code.
+
+## Improvements
+
+1. [TH2-2471] The "metadataOnly" query parameter will now always be set to False in the get_X_from_data_provider
+   methods.
+
+## Features
+
+1. You can import classes directly from th2_data_services now.  
+   E.g. `from th2_data_services import Data, DataSource, Filter`
+2. [TH2-2755] Added new parameters to DataSource methods.
+    1. get_X_from_data_provider:
+        - sse_adapter=True. If True, all data will go through SSE adapter and yield dicts. Otherwise adapter will yield
+          SSE Events.
+    2. get_messages_from_data_provider and find_messages_by_id_from_data_provider:
+        - provider_adapter=adapter_provider5. Adapter function for rpt-data-provider. If None, Data object will yield
+          object from previous map function.
+3. [TH2-2283] Implemented rpt-data-provider Filters API.
+4. [TH2-2656] Added new optional parameter to EventsTree (ParentEventsTree) classes.
+    - Set "preserve_body=True" to keep event bodies during tree building.
+    - Otherwise events bodies will be omitted.

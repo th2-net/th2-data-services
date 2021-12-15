@@ -106,7 +106,9 @@ def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
     # Check Broken_Events
     assert broken_event == plug_for_broken_event
     assert broken_events == plug_for_broken_events
-    assert [event, broken_event] == data_source.find_events_by_id_from_data_provider(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"], True)
+    assert [event, broken_event] == data_source.find_events_by_id_from_data_provider(
+        ["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"], True
+    )
     with pytest.raises(ValueError):
         data_source.find_events_by_id_from_data_provider(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"])
     with pytest.raises(ValueError):
@@ -394,8 +396,12 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
     )
 
     message = data_source.find_messages_by_id_from_data_provider("demo-conn2:first:1624005448022245399")
-    messages = data_source.find_messages_by_id_from_data_provider(["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"])
-    messages_with_one_element = data_source.find_messages_by_id_from_data_provider(["demo-conn2:first:1624005448022245399"])
+    messages = data_source.find_messages_by_id_from_data_provider(
+        ["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"]
+    )
+    messages_with_one_element = data_source.find_messages_by_id_from_data_provider(
+        ["demo-conn2:first:1624005448022245399"]
+    )
     # Check types
     assert isinstance(message, dict)
     assert isinstance(messages, list)
@@ -405,6 +411,168 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
     assert messages == expected_messages
     assert len(messages) == 2
     assert len(messages_with_one_element) == 1
+
+
+def test_get_x_with_filters(
+    demo_get_events_with_one_filter: Data,
+    demo_get_messages_with_one_filter: Data,
+    demo_get_events_with_filters: Data,
+    demo_get_messages_with_filters: Data,
+):
+    case = [
+        {
+            "attachedMessageIds": [],
+            "batchId": None,
+            "body": {},
+            "endTimestamp": None,
+            "eventId": "f05a7c66-cdc1-11eb-b095-3f988ca527fa",
+            "eventName": "[TS_0] Sending order via act-ui and verification " "ExecutionReport",
+            "eventType": "",
+            "isBatched": False,
+            "parentEventId": None,
+            "startTimestamp": {"epochSecond": 1623751840, "nano": 977716000},
+            "successful": True,
+            "type": "event",
+        },
+        {
+            "attachedMessageIds": [],
+            "batchId": None,
+            "body": [],
+            "endTimestamp": {"epochSecond": 1623751880, "nano": 978679000},
+            "eventId": "08320f24-cdc2-11eb-abbf-e19b27e6e490",
+            "eventName": "Send 'ExecutionReport' message",
+            "eventType": "Send message",
+            "isBatched": False,
+            "parentEventId": "849a79d3-9c68-11eb-8598-691ebd7f413d",
+            "startTimestamp": {"epochSecond": 1623751880, "nano": 978676000},
+            "successful": True,
+            "type": "event",
+        },
+        {
+            "attachedMessageIds": [],
+            "batchId": None,
+            "body": [],
+            "endTimestamp": {"epochSecond": 1623760259, "nano": 967877000},
+            "eventId": "8a7650fc-cdd5-11eb-abbf-e19b27e6e490",
+            "eventName": "Send 'ExecutionReport' message",
+            "eventType": "Send message",
+            "isBatched": False,
+            "parentEventId": "849a79d3-9c68-11eb-8598-691ebd7f413d",
+            "startTimestamp": {"epochSecond": 1623760259, "nano": 967873000},
+            "successful": True,
+            "type": "event",
+        },
+    ]
+    case1 = [
+        {
+            "attachedMessageIds": [],
+            "batchId": None,
+            "body": [],
+            "endTimestamp": {"epochSecond": 1623751880, "nano": 978679000},
+            "eventId": "08320f24-cdc2-11eb-abbf-e19b27e6e490",
+            "eventName": "Send 'ExecutionReport' message",
+            "eventType": "Send message",
+            "isBatched": False,
+            "parentEventId": "849a79d3-9c68-11eb-8598-691ebd7f413d",
+            "startTimestamp": {"epochSecond": 1623751880, "nano": 978676000},
+            "successful": True,
+            "type": "event",
+        },
+        {
+            "attachedMessageIds": [],
+            "batchId": None,
+            "body": [],
+            "endTimestamp": {"epochSecond": 1623760259, "nano": 967877000},
+            "eventId": "8a7650fc-cdd5-11eb-abbf-e19b27e6e490",
+            "eventName": "Send 'ExecutionReport' message",
+            "eventType": "Send message",
+            "isBatched": False,
+            "parentEventId": "849a79d3-9c68-11eb-8598-691ebd7f413d",
+            "startTimestamp": {"epochSecond": 1623760259, "nano": 967873000},
+            "successful": True,
+            "type": "event",
+        },
+    ]
+    case3 = [
+        {
+            "attachedEventIds": [],
+            "body": {
+                "fields": {
+                    "header": {
+                        "messageValue": {
+                            "fields": {
+                                "BeginString": {"simpleValue": "FIXT.1.1"},
+                                "BodyLength": {"simpleValue": "56"},
+                                "MsgSeqNum": {"simpleValue": "2"},
+                                "MsgType": {"simpleValue": "0"},
+                                "SenderCompID": {"simpleValue": "FGW"},
+                                "SendingTime": {"simpleValue": "2021-01-26T13:38:48.833"},
+                                "TargetCompID": {"simpleValue": "DEMO-CONN2"},
+                            }
+                        }
+                    },
+                    "trailer": {"messageValue": {"fields": {"CheckSum": {"simpleValue": "195"}}}},
+                },
+                "metadata": {
+                    "id": {
+                        "connectionId": {"sessionAlias": "demo-conn2"},
+                        "sequence": "1611668198530043002",
+                        "subsequence": [1],
+                    },
+                    "messageType": "Heartbeat",
+                    "timestamp": "2021-01-26T13:38:48.838Z",
+                },
+            },
+            "bodyBase64": "OD1GSVhULjEuMQE5PTU2ATM1PTABMzQ9MgE0OT1GR1cBNTI9MjAyMTAxMjYtMTM6Mzg6NDguODMzATU2PURFTU8tQ09OTjIBMTA9MTk1AQ==",
+            "direction": "IN",
+            "messageId": "demo-conn2:first:1611668198530043002",
+            "messageType": "Heartbeat",
+            "sessionId": "demo-conn2",
+            "timestamp": {"epochSecond": 1611668328, "nano": 838000000},
+            "type": "message",
+        },
+        {
+            "attachedEventIds": [],
+            "body": {
+                "fields": {
+                    "header": {
+                        "messageValue": {
+                            "fields": {
+                                "BeginString": {"simpleValue": "FIXT.1.1"},
+                                "BodyLength": {"simpleValue": "56"},
+                                "MsgSeqNum": {"simpleValue": "9"},
+                                "MsgType": {"simpleValue": "0"},
+                                "SenderCompID": {"simpleValue": "FGW"},
+                                "SendingTime": {"simpleValue": "2021-01-26T13:42:18.834"},
+                                "TargetCompID": {"simpleValue": "DEMO-CONN2"},
+                            }
+                        }
+                    },
+                    "trailer": {"messageValue": {"fields": {"CheckSum": {"simpleValue": "195"}}}},
+                },
+                "metadata": {
+                    "id": {
+                        "connectionId": {"sessionAlias": "demo-conn2"},
+                        "sequence": "1611668198530043009",
+                        "subsequence": [1],
+                    },
+                    "messageType": "Heartbeat",
+                    "timestamp": "2021-01-26T13:42:18.844Z",
+                },
+            },
+            "bodyBase64": "OD1GSVhULjEuMQE5PTU2ATM1PTABMzQ9OQE0OT1GR1cBNTI9MjAyMTAxMjYtMTM6NDI6MTguODM0ATU2PURFTU8tQ09OTjIBMTA9MTk1AQ==",
+            "direction": "IN",
+            "messageId": "demo-conn2:first:1611668198530043009",
+            "messageType": "Heartbeat",
+            "sessionId": "demo-conn2",
+            "timestamp": {"epochSecond": 1611668538, "nano": 844000000},
+            "type": "message",
+        },
+    ]
+    assert list(demo_get_messages_with_one_filter) == case3
+    assert list(demo_get_messages_with_filters) == case3
+    assert list(demo_get_events_with_one_filter) == case and len(case) is 3
+    assert list(demo_get_events_with_filters) == case1 and len(case1) is 2
 
 
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
@@ -422,7 +590,10 @@ def test_get_events_from_data_provider_with_error(demo_data_source: DataSource):
     events = data_source.get_events_from_data_provider(startTimestamp="test", endTimestamp="test")
     with pytest.raises(HTTPError) as exc_info:
         list(events)
-    assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
+    assert (
+        r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}'
+        in str(exc_info)
+    )
 
 
 def test_get_messages_from_data_provider_with_error(demo_data_source: DataSource):
@@ -431,13 +602,16 @@ def test_get_messages_from_data_provider_with_error(demo_data_source: DataSource
     events = data_source.get_messages_from_data_provider(startTimestamp="test", endTimestamp="test", stream="test")
     with pytest.raises(HTTPError) as exc_info:
         list(events)
-    assert r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}' in str(exc_info)
+    assert (
+        r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}'
+        in str(exc_info)
+    )
 
 
 def test_check_url_for_data_source():
     with pytest.raises(HTTPError) as exc_info:
         data_source = DataSource("http://test_test:8080/")
-    assert "Unable to connect to host 'http://test_test:8080'." in str(exc_info)
+    assert "Unable to connect to host 'http://test_test:8080'\\nReason:" in str(exc_info)
 
 
 def test_data_cache(demo_events_from_data_source: Data):
@@ -462,3 +636,25 @@ def test_messageIds_not_in_last_msg(demo_messages_from_data_source: Data):
     data_lst = list(data)
     last_msg = data_lst[-1]
     assert "messageIds" not in last_msg
+
+
+def test_get_events_from_data_provider_with_metadata_true(
+    demo_events_with_metadataOnly_true: Data,
+    demo_events_from_data_source: Data,
+    demo_events_with_metadataOnly_metadata_not_set: Data,
+):
+    events = list(demo_events_with_metadataOnly_true)
+    events0 = list(demo_events_from_data_source)
+    events1 = list(demo_events_with_metadataOnly_metadata_not_set)
+    assert events == events0 == events1
+
+
+def test_get_messages_from_data_provider_with_metadata_true(
+    demo_messages_with_metadataOnly_true: Data,
+    demo_messages_from_data_source: Data,
+    demo_messages_with_metadataOnly_false: Data,
+):
+    messages = list(demo_messages_with_metadataOnly_true)
+    messages0 = list(demo_messages_from_data_source)
+    messages1 = list(demo_messages_with_metadataOnly_false)
+    assert messages == messages0 == messages1
