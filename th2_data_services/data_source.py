@@ -58,11 +58,6 @@ class DataSource:
     ) -> Data:
         data = partial(self.__execute_sse_request, url)
 
-        # if isinstance(url, list):
-        #     data = partial(chain.from_iterable, [partial(self.__execute_sse_request, u) for u in url])
-        # else:
-        #     data = partial(self.__execute_sse_request, url)
-
         if sse_adapter_flag:
             if provider_adapter is not None:
                 data_obj = Data(data).map(adapter_sse).map(provider_adapter).use_cache(cache)
@@ -239,7 +234,7 @@ class DataSource:
         if len(resulting_urls) > 1:
             source = partial(
                 chain.from_iterable,
-                [self.__get_data_obj(r_url, sse_adapter, provider_adapter, cache) for r_url in resulting_urls],
+                [self.__get_data_obj(res_url, sse_adapter, provider_adapter, cache) for res_url in resulting_urls],
             )
             return Data(source).use_cache(cache)
         else:
