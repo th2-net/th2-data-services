@@ -89,7 +89,10 @@ def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
         "isBatched": None,
     }
 
-    plug_for_broken_events: list = [plug_for_broken_event.copy(), plug_for_broken_event.copy()]
+    plug_for_broken_events: list = [
+        plug_for_broken_event.copy(),
+        plug_for_broken_event.copy(),
+    ]
     plug_for_broken_events[1]["eventId"] = "ids"
 
     # Check types
@@ -658,3 +661,64 @@ def test_get_messages_from_data_provider_with_metadata_true(
     messages0 = list(demo_messages_from_data_source)
     messages1 = list(demo_messages_with_metadataOnly_false)
     assert messages == messages0 == messages1
+
+
+def test_get_messages_streams_many_symbols(
+    demo_messages_from_data_source_with_test_streams: Data,
+):
+    messages = demo_messages_from_data_source_with_test_streams
+    sources = messages._data.args[0]
+    url1, url2 = sources[0]._data.args[0], sources[1]._data.args[0]
+
+    assert (
+        url1 == "http://10.64.66.66:30999/search/sse/messages?startTimestamp=1623750281692&endTimestamp=1623761149028"
+        "&stream=Test-123&stream=Test-1234&stream=Test-12345&stream=Test-123456&stream=Test-1234567&stream"
+        "=Test-12345678&stream=Test-123456789&stream=Test-1234567810&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest1&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest2&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest3&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest4&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest5&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest6&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest7&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest8&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest9&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest10&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest11&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest12&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest13&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest14&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest15&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest16&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest17&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest18&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest19"
+        and url2
+        == "http://10.64.66.66:30999/search/sse/messages?startTimestamp=1623750281692&endTimestamp=1623761149028"
+        "&stream=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest20&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest21&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest22&stream=demo-dc1"
+        "&stream=demo-dc2&stream=demo-log&stream=th2-hand-demo"
+    )
+
+
+def test_get_messages_with_multiple_url(
+    demo_messages_from_data_source_with_test_streams: Data,
+    demo_messages_from_data_source: Data,
+):
+    messages = demo_messages_from_data_source_with_test_streams
+
+    messages_hand_demo_expected = demo_messages_from_data_source
+    messages_hand_demo_actual = messages.filter(lambda record: record.get("sessionId") == "th2-hand-demo")
+
+    assert len(list(messages)) == 138 and len(list(messages_hand_demo_actual)) == len(list(messages_hand_demo_expected))
+
+
+def test_get_messages_with_multiple_url_double_start(
+    demo_messages_from_data_source_with_test_streams: Data,
+):
+    messages1 = len(list(demo_messages_from_data_source_with_test_streams))
+    messages2 = len(list(demo_messages_from_data_source_with_test_streams))
+
+    assert messages1 == messages2

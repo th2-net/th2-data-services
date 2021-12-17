@@ -2,6 +2,7 @@ import requests
 import json
 import simplejson
 import urllib3.exceptions
+from itertools import chain
 from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
 from functools import partial
@@ -49,9 +50,18 @@ class DataSource:
         self.__url = url
 
     def __get_data_obj(
-        self, url: str, sse_adapter_flag: bool, provider_adapter: Optional[Callable], cache: bool
+        self,
+        url: str,
+        sse_adapter_flag: bool,
+        provider_adapter: Optional[Callable],
+        cache: bool,
     ) -> Data:
         data = partial(self.__execute_sse_request, url)
+
+        # if isinstance(url, list):
+        #     data = partial(chain.from_iterable, [partial(self.__execute_sse_request, u) for u in url])
+        # else:
+        #     data = partial(self.__execute_sse_request, url)
 
         if sse_adapter_flag:
             if provider_adapter is not None:
@@ -152,7 +162,7 @@ class DataSource:
                     result += v.url()
                 elif isinstance(v, (tuple, list)):
 
-                    result += "".join([filter.url() for filter in v])
+                    result += "".join([filter_.url() for filter_ in v])
             else:
                 result += f"&{k}={v}"
         return result[1:] if result[0] == "&" else result
@@ -209,15 +219,32 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         streams = kwargs.pop("stream")
-        if isinstance(streams, (list, tuple)):
-            streams = f"&stream=".join(streams)
-        streams = f"&stream={streams}"
+        if not isinstance(streams, (list, tuple)):
+            streams = [streams]
 
         url = self.__url + "/search/sse/messages"
-        url = f"{url}?{self._get_url(kwargs) + streams}"
-        logger.info(url)
+        url = f"{url}?{self._get_url(kwargs)}"
+        fixed_part_len = len(url)
 
-        return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)
+        current_url, resulting_urls = "", []
+        for stream in streams:
+            stream = f"&stream={stream}"
+            if fixed_part_len + len(current_url) + len(stream) >= 2048:
+                resulting_urls.append(url + current_url)
+                current_url = ""
+            current_url += stream
+        if current_url:
+            resulting_urls.append(url + current_url)
+
+        if len(resulting_urls) > 1:
+            source = partial(
+                chain.from_iterable,
+                [self.__get_data_obj(r_url, sse_adapter, provider_adapter, cache) for r_url in resulting_urls],
+            )
+            return Data(source).use_cache(cache)
+        else:
+            url = resulting_urls[0]
+            return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
@@ -261,12 +288,16 @@ class DataSource:
         response.release_conn()
 
     def find_messages_by_id_from_data_provider(
-        self, messages_id: Union[Iterable, str], provider_adapter: Optional[Callable] = adapter_provider5
+        self,
+        messages_id: Union[Iterable, str],
+        provider_adapter: Optional[Callable] = adapter_provider5,
     ) -> Optional[Union[List[dict], dict]]:
         """Gets message/messages by ids.
 
         Args:
             messages_id: One str with MessageID or list of MessagesIDs.
+            provider_adapter: Adapter function for rpt-data-provider.
+                If None, the function return message/messages without applying the adapter function.
 
         Returns:
             List[Message_dict] if you request a list or Message_dict or None if no massages found.
