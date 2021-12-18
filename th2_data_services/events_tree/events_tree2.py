@@ -1,9 +1,27 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Callable, Generator, Iterator, List, Union
 
 from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
 from anytree import Node, RenderTree, findall
+
+
+@dataclass
+class IProviderEvent(ABC):
+    EVENT_ID: str
+    PARENT_EVENT_ID: str
+    STATUS: str
+    NAME: str
+
+
+class Provider5Event(IProviderEvent):
+    pass
+
+
+provider5_event = Provider5Event(
+    EVENT_ID="eventId", PARENT_EVENT_ID="parentEventId", STATUS="successful", NAME="eventName"
+)
 
 
 class ITreeNodeShowFmt(ABC):
@@ -15,10 +33,14 @@ class ITreeNodeShowFmt(ABC):
 class TreeNode(Node):
     separator = " | "
 
+    def __init__(self, name, event_interface: IProviderEvent, **kwargs):
+        super().__init__(name, **kwargs)
+        self._event_interface = event_interface
+
     class DefaultShowFmt(ITreeNodeShowFmt):
         def __call__(self, pre, fill, node, **kwargs):
             if kwargs["show_status"]:
-                status = "P" if node.data["successful"] else "F"
+                status = "P" if kwargs["node_status"] else "F"
                 return "[%s] %s%s\n" % (status, pre, node.name)
             else:
                 return "%s%s\n" % (pre, node.name)
@@ -26,7 +48,7 @@ class TreeNode(Node):
     def __str__(self):
         s = ""
         for pre, fill, node in RenderTree(self):
-            status = "P" if node.data["successful"] else "F"
+            status = "P" if node.data[self._event_interface.STATUS] else "F"
             s += "[%s] %s%s\n" % (status, pre, node.name)
         return s
 
@@ -36,19 +58,21 @@ class TreeNode(Node):
 
     def show(self, fmt: Callable = DefaultShowFmt, failed_only=False, show_status=True, **kwargs):
         s = ""
-        if not failed_only:
-            for pre, fill, node in RenderTree(self):
-                s += fmt(pre, fill, node, show_status, **kwargs)
-        else:
-            for pre, fill, node in RenderTree(self):
-                if not node.data["successful"]:
-                    s += fmt(pre, fill, node, show_status, **kwargs)
+        for pre, fill, node in RenderTree(self):
+            status: bool = node.data[self._event_interface.STATUS]
+
+            if failed_only:
+                if status is False:
+                    s += fmt(pre, fill, node, show_status=show_status, node_status=status, **kwargs)
+            else:
+                s += fmt(pre, fill, node, show_status=show_status, node_status=status, **kwargs)
+
         return s
 
 
-class TreeNodeProviderEvent(TreeNode, ABC):
-    def __init__(self, name, data, **kwargs):
-        super().__init__(name, **kwargs)
+class TreeNodeProviderEvent(TreeNode):
+    def __init__(self, name, data, event_interface: IProviderEvent, **kwargs):
+        super().__init__(name, event_interface, **kwargs)
         self._data = data
 
     @property
@@ -70,12 +94,6 @@ class TreeNodeProviderEvent(TreeNode, ABC):
         return [n for n in self.leaves if n.data[self.STATUS_FIELD] is status]
 
 
-class TreeNodeProvider5Event(TreeNodeProviderEvent):
-    EVENT_ID_FIELD = "eventId"
-    PARENT_EVENT_ID_FIELD = "parentEventId"
-    STATUS_FIELD = "successful"
-
-
 class EventsTree2:
     """EventsTree2 - experimental tree."""
 
@@ -83,10 +101,12 @@ class EventsTree2:
         self,
         data: Union[Iterator, Generator[dict, None, None], Data],
         ds: DataSource,
+        event_interface: IProviderEvent = provider5_event,
         preserve_body: bool = False,
         broken_events: bool = False,
         parentless: bool = False,
     ):
+
         """
         Я бы, как пользователь, хотел иметь следующий доступ
             ET['id']  or et.get_by_id('id')
@@ -96,16 +116,14 @@ class EventsTree2:
             data:
             ds:
         """
-        if data is None:
-            data = []
-
-        self._data = data
+        self._data = data if data is not None else []
+        self._event_interface = event_interface
         self.__preserve_body = preserve_body
         self._broken_events_flag = broken_events
         self._parentless = parentless
         self._data_source = ds
         self._all_nodes = []
-        self.roots: List[TreeNodeProvider5Event] = []
+        self.roots: List[TreeNodeProviderEvent] = []
         self.events = dict()  # {id: Node}
         self.events_ids = []  # Used to find unknown_parents_ids
         self.parent_events_ids = set()
@@ -115,8 +133,10 @@ class EventsTree2:
 
         self._build_tree()
 
-    def _create_node(self, event) -> TreeNodeProvider5Event:
-        return TreeNodeProvider5Event(name=event["eventName"], data=event)
+    def _create_node(self, event) -> TreeNodeProviderEvent:
+        return TreeNodeProviderEvent(
+            name=event[self._event_interface.NAME], data=event, event_interface=self._event_interface
+        )
 
     def _append_node(self, node):
         self._all_nodes.append(node)
@@ -135,14 +155,14 @@ class EventsTree2:
                     pass
             yield event
 
-    def _append_events(self, node: TreeNodeProvider5Event):
+    def _append_events(self, node: TreeNodeProviderEvent):
         self.events[node] = node.data[""]
 
     def _append_node_and_ids(self, event):
         node = self._create_node(event)
         self._append_node(node)
-        self._append_events_ids(event["eventId"])
-        self.parent_events_ids.add(event["parentEventId"])
+        self._append_events_ids(event[self._event_interface.EVENT_ID])
+        self.parent_events_ids.add(event[self._event_interface.PARENT_EVENT_ID])
 
     def _build_tree(self) -> None:
         # Append nodes from the data source.
@@ -157,7 +177,7 @@ class EventsTree2:
         # Search roots.
         node: TreeNodeProviderEvent
         for node in self._all_nodes.copy():
-            if node.data["parentEventId"] is None:  # TODO - parentEventId
+            if node.data[self._event_interface.PARENT_EVENT_ID] is None:
                 self.roots.append(node)
                 self._all_nodes.remove(node)
 
@@ -172,7 +192,10 @@ class EventsTree2:
                 new_roots = []
                 for node in self._all_nodes.copy():
                     for root_node in roots:
-                        if node.data["parentEventId"] == root_node.data["eventId"]:
+                        if (
+                            node.data[self._event_interface.PARENT_EVENT_ID]
+                            == root_node.data[self._event_interface.EVENT_ID]
+                        ):
                             node.parent = root_node
                             try:
                                 self._all_nodes.remove(node)
@@ -208,7 +231,9 @@ class EventsTree2:
                     try:
                         new_events.append(self._data_source.find_events_by_id_from_data_provider(up_id, broken_events))
                     except ValueError as err:
-                        owners = {[n for n in self._all_nodes if n.data["parentEventId"] == up_id]}
+                        owners = {
+                            [n for n in self._all_nodes if n.data[self._event_interface.PARENT_EVENT_ID] == up_id]
+                        }
                         if self._parentless:
                             print(
                                 f"Cannot find in DB event with id: {up_id}\n"
@@ -229,7 +254,7 @@ class EventsTree2:
             unknown_parents_for_next_recursion_step = set()
             new_events = [new_events] if not isinstance(new_events, list) else new_events
             for e in new_events:
-                parent_event_id = e["parentEventId"]  # TODO - parentEventId может иметь другое имя.
+                parent_event_id = e[self._event_interface.PARENT_EVENT_ID]
 
                 if (
                     parent_event_id is not None
