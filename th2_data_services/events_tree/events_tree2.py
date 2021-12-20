@@ -15,12 +15,29 @@ class IProviderEvent(ABC):
     NAME: str
 
 
+@dataclass
 class Provider5Event(IProviderEvent):
-    pass
+    TYPE: str
+    BATCH_ID: str
+    IS_BATCHED: str
+    EVENT_TYPE: str
+    END_TIMESTAMP: str
+    START_TIMESTAMP: str
+    ATTACHED_MESSAGED: str
 
 
 provider5_event = Provider5Event(
-    EVENT_ID="eventId", PARENT_EVENT_ID="parentEventId", STATUS="successful", NAME="eventName"
+    EVENT_ID="eventId",
+    PARENT_EVENT_ID="parentEventId",
+    STATUS="successful",
+    NAME="eventName",
+    TYPE="type",
+    BATCH_ID="batchId",
+    IS_BATCHED="isBatched",
+    EVENT_TYPE="eventType",
+    END_TIMESTAMP="endTimestamp",
+    START_TIMESTAMP="startTimestamp",
+    ATTACHED_MESSAGED="attachedMessageIds",
 )
 
 
@@ -81,17 +98,17 @@ class TreeNodeProviderEvent(TreeNode):
 
     @property
     def event_id(self):
-        return self.data[self.EVENT_ID_FIELD]
+        return self.data[self._event_interface.EVENT_ID]
 
     @property
     def parent_event_id(self):
-        return self.data[self.PARENT_EVENT_ID_FIELD]
+        return self.data[self._event_interface.PARENT_EVENT_ID]
 
     def get_by_status(self, status: bool):
-        return findall(self, lambda node: node.data[self.STATUS_FIELD] is status)
+        return findall(self, lambda node: node.data[self._event_interface.STATUS] is status)
 
     def get_by_leaves_status(self, status: bool):
-        return [n for n in self.leaves if n.data[self.STATUS_FIELD] is status]
+        return [n for n in self.leaves if n.data[self._event_interface.STATUS] is status]
 
 
 class EventsTree2:
@@ -106,7 +123,7 @@ class EventsTree2:
         broken_events: bool = False,
         parentless: bool = False,
     ):
-
+        # TODO -
         """
         Я бы, как пользователь, хотел иметь следующий доступ
             ET['id']  or et.get_by_id('id')
@@ -131,7 +148,23 @@ class EventsTree2:
         self.parentless_nodes = []
         self._last_nodes_len = -1
 
-        self._build_tree()
+        # Append nodes from the data source.
+        for event in self._get_events(self._data):
+            self._append_node_and_ids(event)
+
+        # Append unknown nodes.
+        restored_events = self._get_unknown_events(self._get_unknown_parents_ids(), self._broken_events_flag)
+        for event in self._get_events(restored_events):
+            self._append_node_and_ids(event)
+
+        # Search roots.
+        node: TreeNodeProviderEvent
+        for node in self._all_nodes.copy():
+            if node.data[self._event_interface.PARENT_EVENT_ID] is None:
+                self.roots.append(node)
+                self._all_nodes.remove(node)
+
+        self._build_trees(self.roots)
 
     def _create_node(self, event) -> TreeNodeProviderEvent:
         return TreeNodeProviderEvent(
@@ -163,25 +196,6 @@ class EventsTree2:
         self._append_node(node)
         self._append_events_ids(event[self._event_interface.EVENT_ID])
         self.parent_events_ids.add(event[self._event_interface.PARENT_EVENT_ID])
-
-    def _build_tree(self) -> None:
-        # Append nodes from the data source.
-        for event in self._get_events(self._data):
-            self._append_node_and_ids(event)
-
-        # Append unknown nodes.
-        restored_events = self._get_unknown_events(self._get_unknown_parents_ids(), self._broken_events_flag)
-        for event in self._get_events(restored_events):
-            self._append_node_and_ids(event)
-
-        # Search roots.
-        node: TreeNodeProviderEvent
-        for node in self._all_nodes.copy():
-            if node.data[self._event_interface.PARENT_EVENT_ID] is None:
-                self.roots.append(node)
-                self._all_nodes.remove(node)
-
-        self._build_trees(self.roots)
 
     def _build_trees(self, roots):
         """Recursion method."""
