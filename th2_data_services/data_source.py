@@ -263,7 +263,7 @@ class DataSource:
     def find_messages_by_id_from_data_provider(
         self, messages_id: Union[Iterable, str], provider_adapter: Optional[Callable] = adapter_provider5
     ) -> Optional[Union[List[dict], dict]]:
-        """Gets message/messages by ids.
+        """Gets message/messages by events_id.
 
         Args:
             messages_id: One str with MessageID or list of MessagesIDs.
@@ -332,7 +332,7 @@ class DataSource:
     def find_events_by_id_from_data_provider(
         self, events_id: Union[Iterable, str], broken_events: Optional[bool] = False
     ) -> Optional[Union[List[dict], dict]]:
-        """Gets event/events by ids.
+        """Gets event/events by events_id.
 
         Args:
             events_id: One str with EventID or list of EventsIDs.

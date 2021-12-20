@@ -85,7 +85,7 @@ class EventsTree2:
     def __init__(
         self,
         data: Union[Iterator, Generator[dict, None, None], Data],
-        ds: DataSource,
+        data_source: DataSource,
         event_interface: ICurrentProviderEvent = provider5_http_event,
         preserve_body: bool = False,
         broken_events: bool = False,
@@ -94,7 +94,7 @@ class EventsTree2:
         """
         Args:
             data: Iterable object with provider events.
-            ds: Data source object.
+            data_source: Data source object.
             event_interface: Interface for provider Event.
             preserve_body (:obj:`bool`, optional): If True keep Events bodies.
             broken_events: If True broken events is replaced on event stub.
@@ -105,7 +105,7 @@ class EventsTree2:
         self.__preserve_body = preserve_body
         self._broken_events_flag = broken_events
         self._parentless = parentless
-        self._data_source = ds
+        self._data_source = data_source
         self._all_nodes = []
         self.roots: List[TreeNodeProviderEvent] = []
         self.events = dict()  # {id: Node}
@@ -251,9 +251,9 @@ class EventsTree2:
             return []
 
     def _get_unknown_parents_ids(self) -> List[str]:
-        """Searches unknown events ids.
+        """Searches unknown events events_id.
 
-        :return: Unknown events ids.
+        :return: Unknown events events_id.
         """
         unknown_parents_ids = []
 
@@ -264,15 +264,23 @@ class EventsTree2:
 
         return unknown_parents_ids
 
-    def get_by_id(self, ids: Union[List[str], str]) -> Union[dict, List[dict]]:
+    def get_by_id(self, events_id: Union[List[str], str]) -> Union[dict, List[dict]]:
+        """Gets event/events by ids.
+
+        Args:
+            events_id: One str with EventID or list of EventsIDs.
+
+        Returns:
+            List[Event_dict] if you request a list or Event_dict.
+        """
         is_str = False
 
-        if isinstance(ids, str):
+        if isinstance(events_id, str):
             is_str = True
-            ids = [ids]
+            events_id = [events_id]
 
         r = []
-        for event_id in ids:
+        for event_id in events_id:
             r.append(self.events[event_id])
 
         if is_str and len(r) == 1:
