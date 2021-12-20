@@ -142,3 +142,26 @@
 4. [TH2-2656] Added new optional parameter to EventsTree (ParentEventsTree) classes.
     - Set "preserve_body=True" to keep event bodies during tree building.
     - Otherwise events bodies will be omitted.
+
+# v0.7.0
+
+## User impact and migration instructions
+
+1. [I] EventsTree2 constructor has been changed.  
+      - ds parameter was renamed to data_source
+      - data_source parameter is required now
+   [M] Update your instantiating.
+
+## Improvements
+1. [TH2-2794] EventsTree2 refactoring.
+
+## Features
+1. [TH2-2794] EventsTree2 constructor has got new parameters:
+   - event_interface
+   - broken_events
+   - parentless
+2. [TH2-2794] EventsTree2 got new method get_by_id
+
+## BugFixes
+
+1. [TH2-2794] Fix recursion issue in EventsTree2.
