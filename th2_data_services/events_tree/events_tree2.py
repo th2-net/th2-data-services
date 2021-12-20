@@ -1,44 +1,12 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from typing import Callable, Generator, Iterator, List, Union
 
 from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
 from anytree import Node, RenderTree, findall
 
-
-@dataclass
-class IProviderEvent(ABC):
-    EVENT_ID: str
-    PARENT_EVENT_ID: str
-    STATUS: str
-    NAME: str
-
-
-@dataclass
-class Provider5Event(IProviderEvent):
-    TYPE: str
-    BATCH_ID: str
-    IS_BATCHED: str
-    EVENT_TYPE: str
-    END_TIMESTAMP: str
-    START_TIMESTAMP: str
-    ATTACHED_MESSAGED: str
-
-
-provider5_event = Provider5Event(
-    EVENT_ID="eventId",
-    PARENT_EVENT_ID="parentEventId",
-    STATUS="successful",
-    NAME="eventName",
-    TYPE="type",
-    BATCH_ID="batchId",
-    IS_BATCHED="isBatched",
-    EVENT_TYPE="eventType",
-    END_TIMESTAMP="endTimestamp",
-    START_TIMESTAMP="startTimestamp",
-    ATTACHED_MESSAGED="attachedMessageIds",
-)
+from th2_data_services.provider_api.event import ICurrentProviderEvent
+from th2_data_services.provider_api.provider5.event import provider5_http_event
 
 
 class ITreeNodeShowFmt(ABC):
@@ -50,7 +18,7 @@ class ITreeNodeShowFmt(ABC):
 class TreeNode(Node):
     separator = " | "
 
-    def __init__(self, name, event_interface: IProviderEvent, **kwargs):
+    def __init__(self, name, event_interface: ICurrentProviderEvent, **kwargs):
         super().__init__(name, **kwargs)
         self._event_interface = event_interface
 
@@ -88,7 +56,7 @@ class TreeNode(Node):
 
 
 class TreeNodeProviderEvent(TreeNode):
-    def __init__(self, name, data, event_interface: IProviderEvent, **kwargs):
+    def __init__(self, name, data, event_interface: ICurrentProviderEvent, **kwargs):
         super().__init__(name, event_interface, **kwargs)
         self._data = data
 
@@ -118,20 +86,19 @@ class EventsTree2:
         self,
         data: Union[Iterator, Generator[dict, None, None], Data],
         ds: DataSource,
-        event_interface: IProviderEvent = provider5_event,
+        event_interface: ICurrentProviderEvent = provider5_http_event,
         preserve_body: bool = False,
         broken_events: bool = False,
         parentless: bool = False,
     ):
-        # TODO -
         """
-        Я бы, как пользователь, хотел иметь следующий доступ
-            ET['id']  or et.get_by_id('id')
-
-
         Args:
-            data:
-            ds:
+            data: Iterable object with provider events.
+            ds: Data source object.
+            event_interface: Interface for provider Event.
+            preserve_body (:obj:`bool`, optional): If True keep Events bodies.
+            broken_events: If True broken events is replaced on event stub.
+            parentless: If True Events without body will be added to the tree.parentless.
         """
         self._data = data if data is not None else []
         self._event_interface = event_interface
@@ -296,3 +263,19 @@ class EventsTree2:
                     unknown_parents_ids.append(parent_id)
 
         return unknown_parents_ids
+
+    def get_by_id(self, ids: Union[List[str], str]) -> Union[dict, List[dict]]:
+        is_str = False
+
+        if isinstance(ids, str):
+            is_str = True
+            ids = [ids]
+
+        r = []
+        for event_id in ids:
+            r.append(self.events[event_id])
+
+        if is_str and len(r) == 1:
+            return r[0]
+        else:
+            return r
