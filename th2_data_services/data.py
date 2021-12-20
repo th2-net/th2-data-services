@@ -24,7 +24,7 @@ class Data:
             data: Data source.
             workflow: Workflow.
             parents_cache: Parents chain. Works as a stack.
-            cache: Flag if you want write and read from cache.
+            cache: Flag if you want to write and read from cache.
         """
         self._cache_filename = f"{str(id(self))}:{time()}.pickle"
         self._len = None
@@ -89,7 +89,7 @@ class Data:
         """Loads data from cache or data.
 
         Args:
-            cache: Flag if you what write and read from cache.
+            cache: Flag if you want to write and read from cache.
 
         Returns:
             obj: Generator
@@ -111,9 +111,9 @@ class Data:
     def get_last_cache(self) -> Optional[str]:
         """Returns last existing cache.
 
-        Returns: Cache filename
+        Returns: Cache filename.
         """
-        for cache_filename in self._parents_cache[::-1]:  # parents_cache works as a stack
+        for cache_filename in self._parents_cache[::-1]:  # parents_cache works as a stack.
             if self.__check_cache(cache_filename):
                 return cache_filename
         return None
@@ -126,8 +126,8 @@ class Data:
 
         Returns: Workflow which haven't applied.
         """
-        cache_index = self._parents_cache[::-1].index(cache_filename)  # parents_cache works as a stack
-        start_workflow = len(self._workflow) - 1 - cache_index  # each child has one more element then parent
+        cache_index = self._parents_cache[::-1].index(cache_filename)  # parents_cache works as a stack.
+        start_workflow = len(self._workflow) - 1 - cache_index  # Each child has one more element than parent.
         return self._workflow[start_workflow:]
 
     def __change_data(self, working_data: DataSet, workflow: WorkFlow, cache: bool = False) -> DataGenerator:
@@ -260,7 +260,10 @@ class Data:
             Data: Data object.
 
         """
-        new_workflow = [*self._workflow.copy(), {"type": "filter", "callback": lambda record: record if callback(record) else None}]
+        new_workflow = [
+            *self._workflow.copy(),
+            {"type": "filter", "callback": lambda record: record if callback(record) else None},
+        ]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         return Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
 
@@ -332,7 +335,7 @@ class Data:
         """Change status cache.
 
         If True all requested data from rpt-data-provider will be saved to cache file.
-        Further actions with Data object will be consume data from the cache file.
+        Further actions with the Data object will consume data from the cache file.
 
         Args:
             status(bool): Status.
@@ -348,7 +351,7 @@ class Data:
         """Get the records whose field value is written in the field_values list.
 
         When to use:
-            You have IDs of some messages and you want get them in the stream and stop searching
+            You have IDs of some messages and you want to get them in the stream and stop searching
             when you find all elements.
 
         Args:
