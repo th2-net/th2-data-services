@@ -1,5 +1,6 @@
 from collections import Generator
 from th2_data_services import DataSource, Data, Filter
+from th2_data_services.events_tree import EventsTree
 from datetime import datetime
 
 
@@ -111,3 +112,52 @@ events_types_with_batch = events_with_batch.map(lambda record: {"eventType": rec
 
 events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
 events_without_types_with_batch.use_cache(True)
+
+# [4] Work with EventsTree.
+# EventsTree it is an object with a dict 'events' inside which contains events
+events_tree = EventsTree(events)
+
+# [4.1] Get events.
+events_tree.events  # Contains 224 items.
+
+# [4.2] Get unknown events.
+events_tree.unknown_events
+
+# [4.3] Recover unknown events.
+events_tree.recover_unknown_events(data_source)  # After this call events_tree.events will contains 227 items.
+
+# [4.4] Get ancestor by name.
+events_tree.get_ancestor_by_name({
+        "eventId": "e571f2ec-cf52-11eb-a6e3-55bfdb2b3f21",
+        "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d", },
+        "Rule with class name")
+
+# [4.5] Get ancestor by supertype.
+
+
+def get_super_type(record: dict, *args):
+    event_type = record.get("eventName")
+    if event_type:
+        if not record.get("parentEventId"):
+            event_type = "Rule with class name"
+    return event_type
+
+
+events_tree.get_ancestor_by_super_type({
+        "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d", },
+        "Rule with class name", get_super_type)
+
+# [4.6] Check ancestor type.
+assert events_tree.is_in_ancestor_type({
+        "eventId": "e571f2ec-cf52-11eb-a6e3-55bfdb2b3f21",
+        "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d", },
+        "event")
+
+# [4.7] Check ancestor name.
+assert events_tree.is_in_ancestor_name({
+        "eventId": "e571f2ec-cf52-11eb-a6e3-55bfdb2b3f21",
+        "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d", },
+        "Rule")
+
+# [4.8] Get children by parentId.
+events_tree.get_children("845d70d2-9c68-11eb-8598-691ebd7f413d")  # Returns 80 children.
