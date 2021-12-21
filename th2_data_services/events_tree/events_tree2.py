@@ -196,10 +196,6 @@ class EventsTree2:
         else:
             return None
 
-    """
-    Думаю куда лучше будет иметь функцию, которая позволит получить пэренты, по списку ивентов.
-    """
-
     def _get_unknown_events(self, unknown_parents, broken_events) -> List[dict]:
         """Recursion function to get all unknown events."""
         if unknown_parents:
