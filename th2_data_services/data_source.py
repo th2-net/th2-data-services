@@ -8,12 +8,13 @@ from functools import partial
 from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional, Callable
-from sseclient import SSEClient
+from th2_data_services.sseclient import SSEClient
 
 from th2_data_services.adapters import adapter_provider5, adapter_sse
 from th2_data_services.data import Data
 from http import HTTPStatus
 from th2_data_services.filter import Filter
+from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 import logging
 
@@ -24,8 +25,24 @@ logger.setLevel(logging.DEBUG)
 class DataSource:
     """The class that provides methods for getting messages and events from rpt-data-provider."""
 
-    def __init__(self, url: str, chunk_length: int = 65536):
+    def __init__(
+        self,
+        url: str,
+        chunk_length: int = 65536,
+        char_enc: str = "utf-8",
+        decode_error_handler: str = UNICODE_REPLACE_HANDLER,
+    ):
+        """
+
+        Args:
+            url: HTTP data source url.
+            chunk_length: How much of the content to read in one chunk.
+            char_enc: Encoding for the byte stream.
+            decode_error_handler: Registered decode error handler.
+        """
         self.url = url
+        self._char_enc = char_enc
+        self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
         self.__check_connect()
         logger.info(url)
@@ -230,7 +247,7 @@ class DataSource:
 
         """
         response = self.__create_stream_connection(url)
-        client = SSEClient(response)
+        client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
         for record in client.events():
             yield record
 
