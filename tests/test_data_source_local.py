@@ -658,3 +658,9 @@ def test_get_messages_from_data_provider_with_metadata_true(
     messages0 = list(demo_messages_from_data_source)
     messages1 = list(demo_messages_with_metadataOnly_false)
     assert messages == messages0 == messages1
+
+
+def test_unprintable_character(demo_data_source: DataSource):
+    event = demo_data_source.find_events_by_id_from_data_provider("b85d9dca-6236-11ec-bc58-1b1c943c5c0d")
+
+    assert "\x80" in event["body"][0]["value"] and event["body"][0]["value"] == "nobJjpBJkTuQMmscc4R\x80"
