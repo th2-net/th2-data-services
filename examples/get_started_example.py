@@ -1,4 +1,5 @@
 from collections import Generator
+from typing import List
 from th2_data_services import DataSource, Data, Filter
 from th2_data_services.events_tree import EventsTree
 from datetime import datetime
@@ -114,38 +115,42 @@ events_without_types_with_batch = events_types_with_batch.filter(lambda record: 
 events_without_types_with_batch.use_cache(True)
 
 # [4] Work with EventsTree.
-# EventsTree it is an object with a dict 'events' inside which contains events
-events_tree = EventsTree(events)
+# EventsTree is a useful wrapper for your retrieved data.
+events_tree = EventsTree(events)  # It is an object with a dict 'events' inside which contains events
 
 # [4.1] Get events.
-events_tree.events  # Contains 224 items.
+tree_events = events_tree.events  # Contains 224 items. It looks like {EventID_str: Event_dict}.
 
 # [4.2] Get unknown events.
-events_tree.unknown_events
+# Contains parent_id of events that are not included in the current steam.
+unknown_events = events_tree.unknown_events  # It looks like {parent_id: int(cnt)}.
 
 # [4.3] Recover unknown events.
+# Loads unknown events from data provider and recover EventsTree.
 events_tree.recover_unknown_events(data_source)  # After this call events_tree.events will contains 227 items.
 
 # [4.4] Get ancestor by name.
+# This method gets event ancestor by event_name in the current stream.
 events_tree.get_ancestor_by_name({
         "eventId": "e571f2ec-cf52-11eb-a6e3-55bfdb2b3f21",
         "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d", },
         "Rule with class name")
 
 # [4.5] Get ancestor by supertype.
+# This method gets event ancestor by supertype. As example we get ancestor where eventType is event.
 
 
 def get_super_type(record: dict, *args):
-    event_type = record.get("eventName")
+    event_type = record.get("eventType")
     if event_type:
         if not record.get("parentEventId"):
-            event_type = "Rule with class name"
+            event_type = "event"
     return event_type
 
 
-events_tree.get_ancestor_by_super_type({
+supertype_ancestor = events_tree.get_ancestor_by_super_type({
         "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d", },
-        "Rule with class name", get_super_type)
+        "event", get_super_type)
 
 # [4.6] Check ancestor type.
 assert events_tree.is_in_ancestor_type({
@@ -160,4 +165,4 @@ assert events_tree.is_in_ancestor_name({
         "Rule")
 
 # [4.8] Get children by parentId.
-events_tree.get_children("845d70d2-9c68-11eb-8598-691ebd7f413d")  # Returns 80 children.
+child_events: List[dict] = events_tree.get_children("845d70d2-9c68-11eb-8598-691ebd7f413d")  # Returns 80 children.
