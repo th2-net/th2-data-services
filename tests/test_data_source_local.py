@@ -722,3 +722,9 @@ def test_get_messages_with_multiple_url_double_start(
     messages2 = len(list(demo_messages_from_data_source_with_test_streams))
 
     assert messages1 == messages2
+
+
+def test_unprintable_character(demo_data_source: DataSource):
+    event = demo_data_source.find_events_by_id_from_data_provider("b85d9dca-6236-11ec-bc58-1b1c943c5c0d")
+
+    assert "\x80" in event["body"][0]["value"] and event["body"][0]["value"] == "nobJjpBJkTuQMmscc4R\x80"
