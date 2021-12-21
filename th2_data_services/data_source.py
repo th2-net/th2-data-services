@@ -2,18 +2,20 @@ import requests
 import json
 import simplejson
 import urllib3.exceptions
+from itertools import chain
 from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
 from functools import partial
 from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional, Callable
-from sseclient import SSEClient
+from th2_data_services.sseclient import SSEClient
 
 from th2_data_services.adapters import adapter_provider5, adapter_sse
 from th2_data_services.data import Data
 from http import HTTPStatus
 from th2_data_services.filter import Filter
+from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 import logging
 
@@ -24,8 +26,24 @@ logger.setLevel(logging.DEBUG)
 class DataSource:
     """The class that provides methods for getting messages and events from rpt-data-provider."""
 
-    def __init__(self, url: str, chunk_length: int = 65536):
+    def __init__(
+        self,
+        url: str,
+        chunk_length: int = 65536,
+        char_enc: str = "utf-8",
+        decode_error_handler: str = UNICODE_REPLACE_HANDLER,
+    ):
+        """
+
+        Args:
+            url: HTTP data source url.
+            chunk_length: How much of the content to read in one chunk.
+            char_enc: Encoding for the byte stream.
+            decode_error_handler: Registered decode error handler.
+        """
         self.url = url
+        self._char_enc = char_enc
+        self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
         self.__check_connect()
         logger.info(url)
@@ -49,7 +67,11 @@ class DataSource:
         self.__url = url
 
     def __get_data_obj(
-        self, url: str, sse_adapter_flag: bool, provider_adapter: Optional[Callable], cache: bool
+        self,
+        url: str,
+        sse_adapter_flag: bool,
+        provider_adapter: Optional[Callable],
+        cache: bool,
     ) -> Data:
         data = partial(self.__execute_sse_request, url)
 
@@ -152,7 +174,7 @@ class DataSource:
                     result += v.url()
                 elif isinstance(v, (tuple, list)):
 
-                    result += "".join([filter.url() for filter in v])
+                    result += "".join([filter_.url() for filter_ in v])
             else:
                 result += f"&{k}={v}"
         return result[1:] if result[0] == "&" else result
@@ -209,15 +231,32 @@ class DataSource:
             kwargs["endTimestamp"] = int(timestamp * 1000)
 
         streams = kwargs.pop("stream")
-        if isinstance(streams, (list, tuple)):
-            streams = f"&stream=".join(streams)
-        streams = f"&stream={streams}"
+        if not isinstance(streams, (list, tuple)):
+            streams = [streams]
 
         url = self.__url + "/search/sse/messages"
-        url = f"{url}?{self._get_url(kwargs) + streams}"
-        logger.info(url)
+        url = f"{url}?{self._get_url(kwargs)}"
+        fixed_part_len = len(url)
 
-        return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)
+        current_url, resulting_urls = "", []
+        for stream in streams:
+            stream = f"&stream={stream}"
+            if fixed_part_len + len(current_url) + len(stream) >= 2048:
+                resulting_urls.append(url + current_url)
+                current_url = ""
+            current_url += stream
+        if current_url:
+            resulting_urls.append(url + current_url)
+
+        if len(resulting_urls) > 1:
+            source = partial(
+                chain.from_iterable,
+                [self.__get_data_obj(res_url, sse_adapter, provider_adapter, cache) for res_url in resulting_urls],
+            )
+            return Data(source).use_cache(cache)
+        else:
+            url = resulting_urls[0]
+            return self.__get_data_obj(url, sse_adapter, provider_adapter, cache)
 
     def __execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
@@ -230,7 +269,7 @@ class DataSource:
 
         """
         response = self.__create_stream_connection(url)
-        client = SSEClient(response)
+        client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
         for record in client.events():
             yield record
 
@@ -261,12 +300,16 @@ class DataSource:
         response.release_conn()
 
     def find_messages_by_id_from_data_provider(
-        self, messages_id: Union[Iterable, str], provider_adapter: Optional[Callable] = adapter_provider5
+        self,
+        messages_id: Union[Iterable, str],
+        provider_adapter: Optional[Callable] = adapter_provider5,
     ) -> Optional[Union[List[dict], dict]]:
         """Gets message/messages by ids.
 
         Args:
             messages_id: One str with MessageID or list of MessagesIDs.
+            provider_adapter: Adapter function for rpt-data-provider.
+                If None, the function return message/messages without applying the adapter function.
 
         Returns:
             List[Message_dict] if you request a list or Message_dict or None if no massages found.

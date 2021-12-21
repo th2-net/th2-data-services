@@ -48,7 +48,15 @@ def demo_get_events_with_filters(demo_data_source: DataSource) -> Data:
 @pytest.fixture
 def demo_get_messages_with_one_filter(demo_data_source: DataSource) -> Data:
     case = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=datetime(year=2021, month=1, day=26, hour=12, minute=44, second=41, microsecond=692724),
+        startTimestamp=datetime(
+            year=2021,
+            month=1,
+            day=26,
+            hour=12,
+            minute=44,
+            second=41,
+            microsecond=692724,
+        ),
         endTimestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
         stream=["demo-conn2"],
         filters=Filter("body", "195"),
@@ -60,7 +68,15 @@ def demo_get_messages_with_one_filter(demo_data_source: DataSource) -> Data:
 @pytest.fixture
 def demo_get_messages_with_filters(demo_data_source: DataSource) -> Data:
     case = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=datetime(year=2021, month=1, day=26, hour=12, minute=44, second=41, microsecond=692724),
+        startTimestamp=datetime(
+            year=2021,
+            month=1,
+            day=26,
+            hour=12,
+            minute=44,
+            second=41,
+            microsecond=692724,
+        ),
         endTimestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
         stream=["demo-conn2"],
         filters=[Filter("type", ""), Filter("body", "195")],
@@ -92,7 +108,9 @@ def demo_events_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
 
 
 @pytest.fixture
-def demo_events_with_metadataOnly_metadata_not_set(demo_data_source: DataSource) -> Data:
+def demo_events_with_metadataOnly_metadata_not_set(
+    demo_data_source: DataSource,
+) -> Data:
     events = demo_data_source.get_events_from_data_provider(
         startTimestamp=START_TIME,
         endTimestamp=END_TIME,
@@ -103,7 +121,10 @@ def demo_events_with_metadataOnly_metadata_not_set(demo_data_source: DataSource)
 @pytest.fixture
 def demo_messages_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
     messages = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"], metadataOnly=True
+        startTimestamp=START_TIME,
+        endTimestamp=END_TIME,
+        stream=["th2-hand-demo"],
+        metadataOnly=True,
     )
     return messages
 
@@ -111,7 +132,10 @@ def demo_messages_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
 @pytest.fixture
 def demo_messages_with_metadataOnly_false(demo_data_source: DataSource) -> Data:
     messages = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"], metadataOnly=False
+        startTimestamp=START_TIME,
+        endTimestamp=END_TIME,
+        stream=["th2-hand-demo"],
+        metadataOnly=False,
     )
     return messages
 
@@ -135,6 +159,54 @@ def demo_events_from_data_source_with_cache_status(
     # Returns 49 events
     # Failed = 6
     return events
+
+
+@pytest.fixture
+def demo_messages_from_data_source_with_test_streams(
+    demo_data_source: DataSource,
+) -> Data:
+    messages = demo_data_source.get_messages_from_data_provider(
+        startTimestamp=START_TIME,
+        endTimestamp=END_TIME,
+        stream=[
+            "Test-123",
+            "Test-1234",
+            "Test-12345",
+            "Test-123456",
+            "Test-1234567",
+            "Test-12345678",
+            "Test-123456789",
+            "Test-1234567810",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest1",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest2",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest3",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest4",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest5",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest6",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest7",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest8",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest9",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest10",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest11",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest12",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest13",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest14",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest15",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest16",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest17",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest18",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest19",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest20",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest21",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest22",
+            "demo-dc1",
+            "demo-dc2",
+            "demo-log",
+            "th2-hand-demo",
+        ],
+    )
+    return messages
 
 
 @pytest.fixture
@@ -367,7 +439,10 @@ def test_parent_events_tree() -> NamedTuple:
             "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
             "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
         ],
-        unknown_events=["a3779b94-d051-11eb-986f-1e8d42132387", "845d70d2-9c68-11eb-8598-691ebd7f413d"],
+        unknown_events=[
+            "a3779b94-d051-11eb-986f-1e8d42132387",
+            "845d70d2-9c68-11eb-8598-691ebd7f413d",
+        ],
     )
     return test_parent_events_tree
 
@@ -1072,7 +1147,10 @@ def messages_before_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {
                     "TestMessageHeader": {"messageValue": {"fields": {"Length": {"simpleValue": "4"}}}},
@@ -1117,7 +1195,10 @@ def messages_before_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {
                     "AddOrder-5": {
@@ -1282,7 +1363,10 @@ def messages_after_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {"Length": {"simpleValue": "4"}},
                 "metadata": {
@@ -1304,7 +1388,10 @@ def messages_after_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {
                     "PHCount": {"simpleValue": "3"},
@@ -1330,7 +1417,10 @@ def messages_after_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {
                     "MessageSequenceNumber": {"simpleValue": "15487"},
@@ -1359,7 +1449,10 @@ def messages_after_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {
                     "ExchangeOrderType": {"simpleValue": "0"},
@@ -1396,7 +1489,10 @@ def messages_after_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {"Length": {"simpleValue": "5"}},
                 "metadata": {
@@ -1418,7 +1514,10 @@ def messages_after_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {"Length": {"simpleValue": "37"}},
                 "metadata": {
@@ -1440,7 +1539,10 @@ def messages_after_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {
                     "PHCount": {"simpleValue": "2"},
@@ -1466,7 +1568,10 @@ def messages_after_pipeline_adapter():
             "type": "message",
         },
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {
                     "MessageSequenceNumber": {"simpleValue": "15499"},
@@ -1567,7 +1672,10 @@ def messages_after_pipeline_adapter():
 @pytest.fixture
 def message_from_pipeline():
     message = {
-        "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+        "attachedEventIds": [
+            "09960e51-1c6b-11ec-9d85-cd5454918fce",
+            "09963563-1c6b-11ec-9d85-cd5454918fce",
+        ],
         "body": {
             "fields": {
                 "AddOrder-5": {
@@ -1644,7 +1752,10 @@ def message_from_pipeline_empty_body():
                 "Csv_Header": {"fields": {}, "metadata": {}},
                 "Csv_Message": {
                     "fields": {},
-                    "metadata": {"TestField": "test", "timestamp": "2021-10-12T12:13:59.766600545Z"},
+                    "metadata": {
+                        "TestField": "test",
+                        "timestamp": "2021-10-12T12:13:59.766600545Z",
+                    },
                 },
             },
             "metadata": {
