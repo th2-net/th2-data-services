@@ -150,3 +150,9 @@
 1. [TH2-2858] Resolved HTTP error 414 on a client side.
 2. [TH2-2851] UnicodeDecodeError is raised during events extracting if not utf-8 character in the byte stream. 
 User will get original byte now.
+
+# v0.6.2
+
+## BugFixes
+
+1. [TH2-2922] Fixed infinite loop in events tree.

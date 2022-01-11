@@ -27,7 +27,9 @@ class EventsTree:
 
     """
 
-    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, preserve_body: Optional[bool] = False):
+    def __init__(
+        self, data: Union[Iterator, Generator[dict, None, None], Data] = None, preserve_body: Optional[bool] = False
+    ):
         """
         Args:
             data: Events.
@@ -100,6 +102,8 @@ class EventsTree:
         for event in self.events.values():
             parent_id = event["parentEventId"]
             if parent_id is not None:
+                if parent_id == "Broken_Event":
+                    continue
                 if parent_id not in self._events:
                     parent_id = event["parentEventId"]
                     self._unknown_events[parent_id] += 1
@@ -200,6 +204,8 @@ class EventsTree:
             new_events = data_source.find_events_by_id_from_data_provider(self._unknown_events.keys(), broken_events)
             if isinstance(new_events, dict):
                 new_events = [new_events]
+            if new_events is None:
+                new_events = []
             self.build_tree(new_events)
             if self._unknown_events == old_unknown_events:
                 break
@@ -249,7 +255,12 @@ class TreeNode(Node):
 class EventsTree2:
     """EventsTree2 - experimental tree."""
 
-    def __init__(self, data: Union[Iterator, Generator[dict, None, None], Data] = None, ds=None, preserve_body: Optional[bool] = False):
+    def __init__(
+        self,
+        data: Union[Iterator, Generator[dict, None, None], Data] = None,
+        ds=None,
+        preserve_body: Optional[bool] = False,
+    ):
         if data is None:
             data = []
         self.__preserve_body = preserve_body
