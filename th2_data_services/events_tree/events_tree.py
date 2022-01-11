@@ -102,6 +102,8 @@ class EventsTree:
         for event in self.events.values():
             parent_id = event["parentEventId"]
             if parent_id is not None:
+                if parent_id == "Broken_Event":
+                    continue
                 if parent_id not in self._events:
                     parent_id = event["parentEventId"]
                     self._unknown_events[parent_id] += 1
