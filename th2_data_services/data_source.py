@@ -453,6 +453,8 @@ class DataSource:
             events_id = [events_id]
         result = []
         for id_ in events_id:
+            if id_ == "Broken_Event":
+                continue
             result.append(__get_event(id_, broken_events))
 
         return result[0] if event_id_type_is_str else result if result else None
