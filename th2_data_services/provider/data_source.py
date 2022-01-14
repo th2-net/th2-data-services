@@ -16,23 +16,23 @@ if TYPE_CHECKING:
 
 
 class IProviderDataSource(IDataSource):
-    @abstractmethod
     @property
+    @abstractmethod
     def event_struct(self) -> IEventStruct:
         """Returns event structure class."""
 
-    @abstractmethod
     @property
+    @abstractmethod
     def message_struct(self) -> IMessageStruct:
         """Returns message structure class."""
 
-    @abstractmethod
     @property
+    @abstractmethod
     def event_stub(self) -> IEventStub:
         """Returns event stub template."""
 
-    @abstractmethod
     @property
+    @abstractmethod
     def message_stub(self) -> IMessageStub:
         """Returns message stub template."""
 
@@ -40,8 +40,8 @@ class IProviderDataSource(IDataSource):
     def command(self, cmd: IProviderCommand):
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def source_api(self) -> IProviderSourceAPI:
         pass
 

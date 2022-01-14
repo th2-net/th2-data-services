@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
 import requests
@@ -37,8 +39,8 @@ class IDataSource(ABC):
     def command(self, cmd: ICommand):
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def source_api(self) -> ISourceAPI:
         pass
 
