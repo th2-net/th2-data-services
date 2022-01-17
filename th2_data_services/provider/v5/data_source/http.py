@@ -10,7 +10,7 @@ import logging
 from th2_data_services.provider.data_source import IHTTPProviderDataSource
 from th2_data_services.provider.v5.commands.interface import IHTTPProvider5Command
 from th2_data_services.provider.v5.provider_api.http import HTTPProvider5API
-from th2_data_services.provider.v5.struct import provider5_http_event
+from th2_data_services.provider.v5.struct import provider5_event_struct, provider5_message_struct
 from th2_data_services.source_api import IEventStruct, IMessageStub, IEventStub, IMessageStruct
 
 logger = logging.getLogger("th2_data_services")
@@ -24,8 +24,8 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         chunk_length: int = 65536,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
-        event_struct=provider5_http_event,
-        message_struct=provider5_http_event,
+        event_struct=provider5_event_struct,
+        message_struct=provider5_message_struct,
     ):
         """
 
@@ -42,6 +42,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         self.__check_connect()
         self._provider_api = HTTPProvider5API()
         self._event_struct = event_struct
+        self._message_struct = message_struct
         logger.info(url)
 
     @property
@@ -75,7 +76,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
 
     @property
     def message_struct(self) -> IMessageStruct:
-        pass
+        return self._message_struct
 
     @property
     def event_stub(self) -> IEventStub:
