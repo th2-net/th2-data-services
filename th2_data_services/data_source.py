@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+
 import requests
 import json
 import simplejson
@@ -9,18 +13,36 @@ from functools import partial
 from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional, Callable
+
 from th2_data_services.sseclient import SSEClient
 
-from th2_data_services.adapters import adapter_provider5, adapter_sse
+from th2_data_services.provider.adapters import adapter_provider5, adapter_sse
 from th2_data_services.data import Data
 from http import HTTPStatus
 from th2_data_services.filter import Filter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from th2_data_services.command import ICommand
+    from th2_data_services.source_api import ISourceAPI
+
 import logging
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
+
+
+class IDataSource(ABC):
+    @abstractmethod
+    def command(self, cmd: ICommand):
+        pass
+
+    @property
+    @abstractmethod
+    def source_api(self) -> ISourceAPI:
+        pass
 
 
 class DataSource:

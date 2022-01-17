@@ -1,3 +1,4 @@
+import logging
 from typing import Iterable
 from th2_grpc_common.common_pb2 import MessageID, EventID
 from th2_grpc_data_provider.data_provider_pb2_grpc import DataProviderStub
@@ -18,10 +19,13 @@ from th2_grpc_data_provider.data_provider_pb2 import (
     MessageData,
 )
 from grpc import Channel, insecure_channel
-from th2_data_services.grpc_provider_api.IGRPCProviderAPI import IGRPCProviderAPI
+from th2_data_services.provider.source_api import IGRPCProviderSourceAPI
+
+logger = logging.getLogger("th2_data_services")
+logger.setLevel(logging.DEBUG)
 
 
-class GRPCProviderAPI(IGRPCProviderAPI):
+class GRPCProvider5API(IGRPCProviderSourceAPI):
     def __init__(self, url: str):
         self._create_connection(url)
 
