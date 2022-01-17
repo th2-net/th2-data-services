@@ -11,7 +11,7 @@ from th2_data_services.provider.data_source import IHTTPProviderDataSource
 from th2_data_services.provider.v5.commands.interface import IHTTPProvider5Command
 from th2_data_services.provider.v5.provider_api.http import HTTPProvider5API
 from th2_data_services.provider.v5.struct import provider5_event_struct, provider5_message_struct
-from th2_data_services.source_api import IEventStruct, IMessageStub, IEventStub, IMessageStruct
+from th2_data_services.provider.v5.stub_builder import provider5_event_stub_builder, provider5_message_stub_builder
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
@@ -26,6 +26,8 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         event_struct=provider5_event_struct,
         message_struct=provider5_message_struct,
+        event_stub_builder=provider5_event_stub_builder,
+        message_stub_builder=provider5_message_stub_builder,
     ):
         """
 
@@ -35,26 +37,15 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
         """
-        self.url = url
+        super().__init__(url, event_struct, message_struct, event_stub_builder, message_stub_builder)
+
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
         self.__check_connect()
         self._provider_api = HTTPProvider5API()
-        self._event_struct = event_struct
-        self._message_struct = message_struct
+
         logger.info(url)
-
-    @property
-    def url(self) -> str:
-        """str: URL of rpt-data-provider."""
-        return self.__url
-
-    @url.setter
-    def url(self, url):
-        if url[-1] == "/":
-            url = url[:-1]
-        self.__url = url
 
     def __check_connect(self) -> None:
         """Checks whether url is working."""
@@ -69,19 +60,3 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
     @property
     def source_api(self) -> HTTPProvider5API:
         return self._provider_api
-
-    @property
-    def event_struct(self) -> IEventStruct:
-        return self._event_struct
-
-    @property
-    def message_struct(self) -> IMessageStruct:
-        return self._message_struct
-
-    @property
-    def event_stub(self) -> IEventStub:
-        pass
-
-    @property
-    def message_stub(self) -> IMessageStub:
-        pass
