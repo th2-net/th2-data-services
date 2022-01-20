@@ -1,34 +1,10 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
+from abc import abstractmethod
 
-from abc import abstractmethod, ABC
-
-if TYPE_CHECKING:
-    from th2_data_services.command import (
-        IGRPCProviderCommand,
-        IHTTPProviderCommand,
-        IProviderCommand,
-        ICommand,
-    )
-    from th2_data_services.provider.source_api import (
-        ISourceAPI,
-        IProviderSourceAPI,
-        IHTTPProviderSourceAPI,
-        IGRPCProviderSourceAPI,
-    )
-    from th2_data_services.provider.struct import IEventStruct, IMessageStruct
-    from th2_data_services.provider.stub_builder import IEventStub, IMessageStub
-
-
-class IDataSource(ABC):
-    @abstractmethod
-    def command(self, cmd: ICommand):
-        pass
-
-    @property
-    @abstractmethod
-    def source_api(self) -> ISourceAPI:
-        pass
+from th2_data_services.command import IGRPCProviderCommand, IHTTPProviderCommand, IProviderCommand
+from th2_data_services.data_source import IDataSource
+from th2_data_services.provider.source_api import IHTTPProviderSourceAPI, IGRPCProviderSourceAPI, IProviderSourceAPI
+from th2_data_services.provider.struct import IEventStruct, IMessageStruct
+from th2_data_services.provider.stub_builder import IEventStub, IMessageStub
 
 
 class IProviderDataSource(IDataSource):

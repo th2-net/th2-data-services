@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import ABC, abstractmethod
 
 import requests
 import json
@@ -17,12 +18,25 @@ from th2_data_services.data import Data
 from http import HTTPStatus
 from th2_data_services.filter import Filter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
-from th2_data_services.sse_client import SSEClient
+
+from th2_data_services.command import ICommand
+from th2_data_services.source_api import ISourceAPI
 
 import logging
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
+
+
+class IDataSource(ABC):
+    @abstractmethod
+    def command(self, cmd: ICommand):
+        pass
+
+    @property
+    @abstractmethod
+    def source_api(self) -> ISourceAPI:
+        pass
 
 
 class DataSource:

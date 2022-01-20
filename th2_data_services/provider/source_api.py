@@ -1,8 +1,4 @@
-from abc import ABC
-
-
-class ISourceAPI(ABC):
-    """High level interface for Source API."""
+from th2_data_services.source_api import ISourceAPI
 
 
 class IProviderSourceAPI(ISourceAPI):
