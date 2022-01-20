@@ -1,3 +1,5 @@
+from grpc._channel import _InactiveRpcError
+
 from th2_data_services.command import IGRPCProviderCommand
 from th2_data_services.provider.data_source import IGRPCProviderDataSource
 
@@ -42,7 +44,10 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
         logger.info(url)
 
     def command(self, cmd: IGRPCProviderCommand):
-        return cmd.handle(data_source=self)
+        try:
+            return cmd.handle(data_source=self)
+        except _InactiveRpcError as info:
+            raise ValueError(f"A command has broken. Details of error:\n{info.details()}")
 
     @property
     def source_api(self) -> GRPCProvider5API:

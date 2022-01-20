@@ -1,5 +1,8 @@
 from th2_data_services.provider.stub_builder import IEventStub, IMessageStub
-from th2_data_services.provider.v5.struct import provider5_event_struct, provider5_message_struct
+from th2_data_services.provider.v5.struct import (
+    provider5_event_struct,
+    provider5_message_struct,
+)
 
 
 class Provider5EventStubBuilder(IEventStub):

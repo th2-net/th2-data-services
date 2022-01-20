@@ -18,7 +18,13 @@ class Data:
     Such approach to data analysis called streaming transformation.
     """
 
-    def __init__(self, data: DataSet, cache: bool = False, workflow: WorkFlow = None, parents_cache: List[str] = None):
+    def __init__(
+        self,
+        data: DataSet,
+        cache: bool = False,
+        workflow: WorkFlow = None,
+        parents_cache: List[str] = None,
+    ):
         """
         Args:
             data: Data source.
@@ -260,7 +266,13 @@ class Data:
             Data: Data object.
 
         """
-        new_workflow = [*self._workflow.copy(), {"type": "filter", "callback": lambda record: record if callback(record) else None}]
+        new_workflow = [
+            *self._workflow.copy(),
+            {
+                "type": "filter",
+                "callback": lambda record: record if callback(record) else None,
+            },
+        ]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         return Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
 

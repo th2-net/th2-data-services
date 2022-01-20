@@ -3,7 +3,10 @@ from typing import List
 from th2_data_services.provider.adapters import adapter_provider5
 
 
-def test_adapter_with_id(messages_before_pipeline_adapter: List[dict], messages_after_pipeline_adapter: List[dict]):
+def test_adapter_with_id(
+    messages_before_pipeline_adapter: List[dict],
+    messages_after_pipeline_adapter: List[dict],
+):
     output = []
     for message in messages_before_pipeline_adapter:
         messages = adapter_provider5(message)
@@ -36,7 +39,10 @@ def test_find_sub_message_with_adapter(message_from_pipeline: dict):
 
     assert result == [
         {
-            "attachedEventIds": ["09960e51-1c6b-11ec-9d85-cd5454918fce", "09963563-1c6b-11ec-9d85-cd5454918fce"],
+            "attachedEventIds": [
+                "09960e51-1c6b-11ec-9d85-cd5454918fce",
+                "09963563-1c6b-11ec-9d85-cd5454918fce",
+            ],
             "body": {
                 "fields": {
                     "ExchangeOrderType": {"simpleValue": "0"},

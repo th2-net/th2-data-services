@@ -28,7 +28,9 @@ class EventsTree:
     """
 
     def __init__(
-        self, data: Union[Iterator, Generator[dict, None, None], Data] = None, preserve_body: Optional[bool] = False
+        self,
+        data: Union[Iterator, Generator[dict, None, None], Data] = None,
+        preserve_body: Optional[bool] = False,
     ):
         """
         Args:

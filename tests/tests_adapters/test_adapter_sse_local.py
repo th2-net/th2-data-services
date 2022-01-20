@@ -39,7 +39,11 @@ class TestSSEFlagTrue:
     )
     def test_x_flag_true_or_default(self, demo_data_source: DataSource, params):
         ds = demo_data_source
-        data: Data = get_data_obj(params[0], ds, dict(startTimestamp=START_TIME, endTimestamp=END_TIME, **params[1]))
+        data: Data = get_data_obj(
+            params[0],
+            ds,
+            dict(startTimestamp=START_TIME, endTimestamp=END_TIME, **params[1]),
+        )
 
         for e in data:
             assert isinstance(e, dict)

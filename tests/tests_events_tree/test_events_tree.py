@@ -7,7 +7,10 @@ from th2_data_services.events_tree import EventsTree
 def test_build_tree(general_data: List[dict], test_events_tree: NamedTuple):
     tree = EventsTree(general_data)
 
-    assert list(tree.events.keys()) == test_events_tree.events and list(tree.unknown_events.keys()) == test_events_tree.unknown_events
+    assert (
+        list(tree.events.keys()) == test_events_tree.events
+        and list(tree.unknown_events.keys()) == test_events_tree.unknown_events
+    )
 
 
 def test_append_element(general_data: List[dict], test_events_tree: NamedTuple):

@@ -271,7 +271,11 @@ class DataSource:
 
         """
         response = self.__create_stream_connection(url)
-        client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
+        client = SSEClient(
+            response,
+            char_enc=self._char_enc,
+            decode_errors_handler=self._decode_error_handler,
+        )
         for record in client.events():
             yield record
 

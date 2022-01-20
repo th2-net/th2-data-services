@@ -1,5 +1,11 @@
 class Filter:
-    def __init__(self, name: str, values: str or (list, tuple), negative: bool = False, conjunct: bool = False):
+    def __init__(
+        self,
+        name: str,
+        values: str or (list, tuple),
+        negative: bool = False,
+        conjunct: bool = False,
+    ):
         self.name = name
 
         if isinstance(values, (list, tuple)):
