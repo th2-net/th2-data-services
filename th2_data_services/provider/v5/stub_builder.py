@@ -31,8 +31,17 @@ class Provider5MessageStubBuilder(IMessageStub):
 
     @property
     def template(self) -> dict:
-        # TODO - will be implemented by Grigory
-        pass
+        return {
+            self.message_fields.DIRECTION: None,
+            self.message_fields.SESSION_ID: "Broken_Message",
+            self.message_fields.MESSAGE_TYPE: "Broken_Message",
+            self.message_fields.TIMESTAMP: {"nano": 0, "epochSecond": 0},
+            self.message_fields.BODY: [],
+            self.message_fields.BODY_BASE64: [],
+            self.message_fields.TYPE: "message",
+            self.message_fields.MESSAGE_ID: self.REQUIRED_FIELD,
+            self.message_fields.ATTACHED_EVENT_IDS: [],
+        }
 
 
 provider5_event_stub_builder = Provider5EventStubBuilder()
