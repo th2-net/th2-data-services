@@ -36,7 +36,11 @@ def test_map_data_transform(general_data: List[dict]):
 
 
 def test_map_data_increase(general_data: List[dict]):
-    data = Data(general_data).filter(lambda record: record.get("batchId") is None).map(lambda record: (record.get("eventType"), record.get("eventType")))
+    data = (
+        Data(general_data)
+        .filter(lambda record: record.get("batchId") is None)
+        .map(lambda record: (record.get("eventType"), record.get("eventType")))
+    )
 
     assert len(list(data)) == 18
 
@@ -92,7 +96,12 @@ def test_map_for_list_record(general_data: List[dict]):
 
 
 def test_filter_for_list_record(general_data: List[dict]):
-    data = Data(general_data).map(lambda record: [record, record]).map(lambda record: record.get("eventType")).filter(lambda record: record in ["placeOrderFIX", "Checkpoint"])
+    data = (
+        Data(general_data)
+        .map(lambda record: [record, record])
+        .map(lambda record: record.get("eventType"))
+        .filter(lambda record: record in ["placeOrderFIX", "Checkpoint"])
+    )
 
     event_types = [
         "placeOrderFIX",
@@ -111,7 +120,12 @@ def test_increase_records_after_similar_map(general_data: List[dict]):
 
 
 def test_shuffle_data(general_data: List[dict]):
-    data = Data(general_data).filter(lambda record: record.get("batchId") is not None).map(lambda record: record.get("eventId")).filter(lambda record: "b" in record)
+    data = (
+        Data(general_data)
+        .filter(lambda record: record.get("batchId") is not None)
+        .map(lambda record: record.get("eventId"))
+        .filter(lambda record: "b" in record)
+    )
 
     assert len(list(data)) == 12
 
@@ -282,9 +296,13 @@ def test_len_with_stream_cache(general_data: List[dict], cache):
     data = Data(general_data, cache=cache)
     r = data.len
     if cache:
-        assert Path(f"./temp/{data._cache_filename}").is_file() is True, f"The cache was dumped after using len: {cache}"
+        assert (
+            Path(f"./temp/{data._cache_filename}").is_file() is True
+        ), f"The cache was dumped after using len: {cache}"
     else:
-        assert Path(f"./temp/{data._cache_filename}").is_file() is False, f"The cache was dumped after using len: {cache}"
+        assert (
+            Path(f"./temp/{data._cache_filename}").is_file() is False
+        ), f"The cache was dumped after using len: {cache}"
 
     # Check that we do not calc len, after already calculated len or after iter
     # TODO - append when we add logging
