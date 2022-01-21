@@ -12,10 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
-import logging
-from logging import NullHandler
+from codecs import register_error
 
-logging.getLogger(__name__).addHandler(NullHandler())
+
+def handler(err: UnicodeDecodeError):
+    return chr(err.object[err.start]), err.end
+
+
+UNICODE_REPLACE_HANDLER = "unicode_replace"
+
+register_error(UNICODE_REPLACE_HANDLER, handler)

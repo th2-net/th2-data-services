@@ -12,10 +12,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
-import logging
-from logging import NullHandler
+from abc import abstractmethod
 
-logging.getLogger(__name__).addHandler(NullHandler())
+from th2_data_services.provider.command import IHTTPProviderCommand, IGRPCProviderCommand
+from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
+from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
+
+
+class IHTTPProvider5Command(IHTTPProviderCommand):
+    @abstractmethod
+    def handle(self, data_source: HTTPProvider5DataSource):
+        pass
+
+
+class IGRPCProvider5Command(IGRPCProviderCommand):
+    @abstractmethod
+    def handle(self, data_source: GRPCProvider5DataSource):
+        pass

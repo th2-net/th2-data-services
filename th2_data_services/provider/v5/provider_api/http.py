@@ -12,10 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
 import logging
-from logging import NullHandler
 
-logging.getLogger(__name__).addHandler(NullHandler())
+from th2_data_services.provider.source_api import IHTTPProviderSourceAPI
+
+logger = logging.getLogger("th2_data_services")
+logger.setLevel(logging.DEBUG)
+
+
+class HTTPProvider5API(IHTTPProviderSourceAPI):
+    """It will be made by Grigory"""
