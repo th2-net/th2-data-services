@@ -1,18 +1,27 @@
-from abc import abstractmethod
-from typing import TYPE_CHECKING
+#  Copyright 2022 Exactpro (Exactpro Systems Limited)
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 
-if TYPE_CHECKING:
-    from th2_data_services.command import IGRPCProviderCommand, IHTTPProviderCommand, IProviderCommand
-    from th2_data_services.source_api import (
-        IProviderSourceAPI,
-        IHTTPProviderSourceAPI,
-        IGRPCProviderSourceAPI,
-        IEventStruct,
-        IMessageStruct,
-        IEventStub,
-        IMessageStub,
-    )
-    from th2_data_services.data_source import IDataSource
+
+"""Interfaces for Provider Data Source."""
+
+from abc import abstractmethod
+
+from th2_data_services.provider.command import IGRPCProviderCommand, IHTTPProviderCommand, IProviderCommand
+from th2_data_services.data_source import IDataSource
+from th2_data_services.provider.source_api import IHTTPProviderSourceAPI, IGRPCProviderSourceAPI, IProviderSourceAPI
+from th2_data_services.provider.struct import IEventStruct, IMessageStruct
+from th2_data_services.provider.stub_builder import IEventStub, IMessageStub
 
 
 class IProviderDataSource(IDataSource):

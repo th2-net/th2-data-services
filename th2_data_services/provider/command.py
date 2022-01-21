@@ -12,18 +12,37 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
+"""Interfaces for Provider Commands."""
+
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import TYPE_CHECKING
 
+from th2_data_services.command import ICommand
+
 if TYPE_CHECKING:
-    from th2_data_services.data_source import IDataSource
+    from th2_data_services.provider.data_source import (
+        IProviderDataSource,
+        IHTTPProviderDataSource,
+        IGRPCProviderDataSource,
+    )
 
 
-class ICommand(ABC):
-    """High level interface for Command."""
-
+class IProviderCommand(ICommand):
     @abstractmethod
-    def handle(self, data_source: IDataSource):
+    def handle(self, data_source: IProviderDataSource):
+        pass
+
+
+class IHTTPProviderCommand(IProviderCommand):
+    @abstractmethod
+    def handle(self, data_source: IHTTPProviderDataSource):
+        pass
+
+
+class IGRPCProviderCommand(IProviderCommand):
+    @abstractmethod
+    def handle(self, data_source: IGRPCProviderDataSource):
         pass
