@@ -59,5 +59,5 @@ class IEventStub(IStub):
     """Just to mark Event Stub class."""
 
 
-class IMessageStub(ABC):
+class IMessageStub(IStub):
     """Just to mark Message Stub class."""
