@@ -19,7 +19,7 @@ from urllib3 import PoolManager, exceptions
 
 from th2_data_services.provider.source_api import IHTTPProviderSourceAPI
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
-from th2_data_services.sseclient import SSEClient
+from th2_data_services.sse_client import SSEClient
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
