@@ -12,18 +12,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import annotations
+from abc import abstractmethod
 
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from th2_data_services.data_source import IDataSource
+from th2_data_services.provider.command import IHTTPProviderCommand, IGRPCProviderCommand
+from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
+from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 
 
-class ICommand(ABC):
-    """High level interface for Command."""
-
+class IHTTPProvider5Command(IHTTPProviderCommand):
     @abstractmethod
-    def handle(self, data_source: IDataSource):
+    def handle(self, data_source: HTTPProvider5DataSource):
+        pass
+
+
+class IGRPCProvider5Command(IGRPCProviderCommand):
+    @abstractmethod
+    def handle(self, data_source: GRPCProvider5DataSource):
         pass
