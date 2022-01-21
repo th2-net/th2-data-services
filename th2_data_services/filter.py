@@ -1,31 +1,39 @@
-#  Copyright 2022 Exactpro (Exactpro Systems Limited)
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+from typing import Union, List, Tuple
 
 
 class Filter:
-    def __init__(self, name: str, values: str or (list, tuple), negative: bool = False, conjunct: bool = False):
+    """The class for using rpt-data-provider filters API."""
+
+    def __init__(self, name: str, values: Union[List[str], Tuple[str], str], negative: bool = False, conjunct: bool = False):
+        """
+        Args:
+            name (str): Filter name.
+            values (Union[List[str], Tuple[str], str]): One string with filter value or list of filter values.
+            negative (bool):  If true, will match events/messages that do not match those specified values.
+                If false, will match the events/messages by their values. Defaults to false.
+            conjunct (bool): If true, each of the specific filter values should be applied
+                If false, at least one of the specific filter values must be applied.
+        """
+
         self.name = name
 
         if isinstance(values, (list, tuple)):
             self.values = map(str, values)
         else:
-            self.values = [values]
+            self.values = [str(values)]
 
         self.negative = negative
         self.conjunct = conjunct
 
-    def url(self):
+    def url(self) -> str:
+        """Forms a filter.
+
+        For help use this readme:
+        https://github.com/th2-net/th2-rpt-data-provider#filters-api.
+
+        Returns:
+            str: Formed filter.
+        """
         return (
             f"&filters={self.name}"
             + "".join([f"&{self.name}-values={val}" for val in self.values])
