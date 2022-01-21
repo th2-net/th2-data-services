@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from abc import ABC, abstractmethod
 
 import requests
@@ -14,19 +13,14 @@ from datetime import datetime, timezone
 from csv import DictReader
 from typing import Generator, Iterable, List, Union, Optional, Callable
 
-from th2_data_services.sseclient import SSEClient
-
 from th2_data_services.provider.adapters import adapter_provider5, adapter_sse
 from th2_data_services.data import Data
 from http import HTTPStatus
 from th2_data_services.filter import Filter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from th2_data_services.command import ICommand
-    from th2_data_services.source_api import ISourceAPI
+from th2_data_services.command import ICommand
+from th2_data_services.source_api import ISourceAPI
 
 import logging
 
@@ -291,7 +285,11 @@ class DataSource:
 
         """
         response = self.__create_stream_connection(url)
-        client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
+        client = SSEClient(
+            response,
+            char_enc=self._char_enc,
+            decode_errors_handler=self._decode_error_handler,
+        )
         for record in client.events():
             yield record
 

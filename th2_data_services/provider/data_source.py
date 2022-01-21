@@ -1,18 +1,10 @@
 from abc import abstractmethod
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from th2_data_services.command import IGRPCProviderCommand, IHTTPProviderCommand, IProviderCommand
-    from th2_data_services.source_api import (
-        IProviderSourceAPI,
-        IHTTPProviderSourceAPI,
-        IGRPCProviderSourceAPI,
-        IEventStruct,
-        IMessageStruct,
-        IEventStub,
-        IMessageStub,
-    )
-    from th2_data_services.data_source import IDataSource
+from th2_data_services.command import IGRPCProviderCommand, IHTTPProviderCommand, IProviderCommand
+from th2_data_services.data_source import IDataSource
+from th2_data_services.provider.source_api import IHTTPProviderSourceAPI, IGRPCProviderSourceAPI, IProviderSourceAPI
+from th2_data_services.provider.struct import IEventStruct, IMessageStruct
+from th2_data_services.provider.stub_builder import IEventStub, IMessageStub
 
 
 class IProviderDataSource(IDataSource):
