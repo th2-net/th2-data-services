@@ -54,6 +54,11 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         self._create_connection(url)
 
     def _create_connection(self, url: str) -> None:
+        """Creates gRPC channel to gRPC-server.
+
+        Args:
+            url: Url of gRPC-server.
+        """
         channel: Channel = insecure_channel(url)
         self.__stub: DataProviderStub = DataProviderStub(channel)
 
@@ -61,9 +66,6 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         """GRPC-API `getMessageStreams` call returns a list of message stream names."""
         return self.__stub.getMessageStreams(MessageStreamNamesRequest())
 
-    # TODO Filters
-    # TODO nano in timestamp
-    # TODO - May be we change datetime to int (nano-seconds) or Timestamp? (Sviatoslav)
     def search_events(
         self,
         start_timestamp: int = None,
@@ -81,10 +83,22 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         """GRPC-API `searchEvents` call creates an event or an event metadata stream that matches the filter.
 
         Args:
-            TODO - by Sviatoslav
+            start_timestamp: Sets the search starting point. One of the 'start_timestamp'
+                or 'resume_from_id' must not absent.
+            end_timestamp: Sets the timestamp to which the search will be performed, starting with 'start_timestamp'.
+            parent_event: Match events to the specified parent.
+            search_direction: Sets the lookup direction. Can be 'NEXT' or 'PREVIOUS'.
+            resume_from_id: The last event id from which we start searching for events.
+            result_count_limit: Sets the maximum amount of events to return.
+            keep_open: Option if the search has reached the current moment,
+                it is necessary to wait further for the appearance of new data.
+            limit_for_parent: How many children events for each parent do we want to request.
+            metadata_only: Receive only metadata (true) or entire event (false) (without attachedMessageIds).
+            attached_messages: Option if you want to load attachedMessageIds additionally.
+            filters: Which filters to apply in a search.
 
         Returns:
-            TODO - by Sviatoslav
+            Iterable object which return events as parts of streaming response.
         """
         if filters is None:
             filters = []
@@ -134,7 +148,6 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         )
         return self.__stub.searchEvents(event_search_request)
 
-    # TODO - message_search_request is empty
     def search_messages(
         self,
         start_timestamp: int,
@@ -149,12 +162,23 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         filters: Optional[List[Filter]] = None,
     ) -> Iterable[StreamResponse]:
         """GRPC-API `searchMessages` call creates a message stream that matches the filter.
-
         Args:
-            TODO - by Sviatoslav
+            start_timestamp: Sets the search starting point. One of the 'start_timestamp'
+                or 'resume_from_id' must not absent.
+            stream: Sets the stream ids to search in.
+            end_timestamp: Sets the timestamp to which the search will be performed, starting with 'start_timestamp'.
+            search_direction: Sets the lookup direction. Can be 'NEXT' or 'PREVIOUS'.
+            resume_from_ids: The last event id from which we start searching for messages.
+            result_count_limit: Sets the maximum amount of messages to return.
+            keep_open: Option if the search has reached the current moment,
+                it is necessary to wait further for the appearance of new data.
+            attached_events: Option if you want to load attachedEventIds additionally.
+            lookup_limit_days: The number of days that will be viewed on the first request to get
+                the one closest to the specified timestamp.
+            filters: Which filters to apply in a search.
 
         Returns:
-            TODO - by Sviatoslav
+            Iterable object which return messages as parts of streaming response.
         """
         if filters is None:
             filters = []
@@ -207,6 +231,14 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
 
     @staticmethod
     def __build_message_id_object(message_id: str) -> MessageID:
+        """Builds a MessageID of 'protobuf' entity.
+
+        Args:
+            message_id: Message id.
+
+        Returns:
+            MessageID object.
+        """
         split_id = message_id.split(":")
         split_id.reverse()  # Parse the message id from the end.
 

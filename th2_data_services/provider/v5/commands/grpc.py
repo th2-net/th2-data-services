@@ -47,7 +47,6 @@ class GetEventsById(IGRPCProvider5Command):
         return response
 
 
-# TODO Events
 class GetEvents(IGRPCProvider5Command):
     def __init__(
         self,
@@ -78,8 +77,8 @@ class GetEvents(IGRPCProvider5Command):
     def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[StreamResponse]:
         api: GRPCProvider5API = data_source.source_api
 
-        start_timestamp = self._start_timestamp.timestamp() * 10 ** 9
-        end_timestamp = self._end_timestamp.timestamp() * 10 ** 9
+        start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)
+        end_timestamp = int(self._end_timestamp.timestamp() * 10 ** 9)
 
         stream_response = api.search_events(
             start_timestamp=start_timestamp,
