@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 import logging
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.wrappers_pb2 import BoolValue, Int32Value, Int64Value
@@ -35,10 +35,9 @@ from th2_grpc_data_provider.data_provider_pb2 import (
     IsMatched,
     MessageData,
     TimeRelation,
+    Filter,
 )
 from grpc import Channel, insecure_channel
-
-from th2_data_services import Filter
 from th2_data_services.provider.source_api import IGRPCProviderSourceAPI
 
 logger = logging.getLogger("th2_data_services")
@@ -47,6 +46,11 @@ logger.setLevel(logging.DEBUG)
 
 class GRPCProvider5API(IGRPCProviderSourceAPI):
     def __init__(self, url: str):
+        """GRPC Provider5 API.
+
+        Args:
+            url: GRPC data source url.
+        """
         self._create_connection(url)
 
     def _create_connection(self, url: str) -> None:
@@ -54,8 +58,12 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         self.__stub: DataProviderStub = DataProviderStub(channel)
 
     def get_message_streams(self) -> StringList:
+        """GRPC-API `getMessageStreams` call returns a list of message stream names."""
         return self.__stub.getMessageStreams(MessageStreamNamesRequest())
 
+    # TODO Filters
+    # TODO nano in timestamp
+    # TODO - May be we change datetime to int (nano-seconds) or Timestamp? (Sviatoslav)
     def search_events(
         self,
         start_timestamp: int = None,
@@ -68,8 +76,19 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         limit_for_parent: int = None,
         metadata_only: bool = True,
         attached_messages: bool = False,
-        filters: List[Filter] = None,
+        filters: Optional[List[Filter]] = None,
     ) -> Iterable[StreamResponse]:
+        """GRPC-API `searchEvents` call creates an event or an event metadata stream that matches the filter.
+
+        Args:
+            TODO - by Sviatoslav
+
+        Returns:
+            TODO - by Sviatoslav
+        """
+        if filters is None:
+            filters = []
+
         if start_timestamp is None and resume_from_id is None:
             raise ValueError("One of the 'startTimestamp' or 'resumeFromId' must not be null.")
 
@@ -115,19 +134,31 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         )
         return self.__stub.searchEvents(event_search_request)
 
+    # TODO - message_search_request is empty
     def search_messages(
         self,
         start_timestamp: int,
         stream: List[str],
         end_timestamp: int = None,
         resume_from_ids: List[str] = None,
-        search_direction: str = None,
+        search_direction: str = "NEXT",
         result_count_limit: int = None,
         keep_open: bool = False,
         attached_events: bool = False,
         lookup_limit_days: int = None,
-        filters: List[Filter] = None,
+        filters: Optional[List[Filter]] = None,
     ) -> Iterable[StreamResponse]:
+        """GRPC-API `searchMessages` call creates a message stream that matches the filter.
+
+        Args:
+            TODO - by Sviatoslav
+
+        Returns:
+            TODO - by Sviatoslav
+        """
+        if filters is None:
+            filters = []
+
         if start_timestamp is None and resume_from_ids is None:
             raise ValueError("One of the 'startTimestamp' or 'resumeFromId' must not be null.")
 
@@ -177,7 +208,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
     @staticmethod
     def __build_message_id_object(message_id: str) -> MessageID:
         split_id = message_id.split(":")
-        split_id.reverse()
+        split_id.reverse()  # Parse the message id from the end.
 
         sequence, direction, alias = split_id[0], split_id[1].upper(), split_id[2:]
         split_sequence = sequence.split(".")
@@ -198,32 +229,40 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         return message_id
 
     def get_event(self, event_id: str) -> EventData:
+        """GRPC-API `getEvent` call returns a single event with the specified id."""
         event_id = EventID(id=event_id)
         return self.__stub.getEvent(event_id)
 
     def get_message(self, message_id: str) -> MessageData:
+        """GRPC-API `getMessage` call returns a single message with the specified id."""
         message_id = self.__build_message_id_object(message_id)
         return self.__stub.getMessage(message_id)
 
     def get_messages_filters(self) -> ListFilterName:
+        """GRPC-API `getMessagesFilters` call returns all the names of sse message filters."""
         return self.__stub.getMessagesFilters(MessageFiltersRequest())
 
     def get_events_filters(self) -> ListFilterName:
+        """GRPC-API `getEventsFilters` call returns all the names of sse event filters."""
         return self.__stub.getEventsFilters(EventFiltersRequest())
 
     def get_event_filter_info(self, filter_name: str) -> FilterInfo:
+        """GRPC-API `getEventFilterInfo` call returns event filter info."""
         filter_name = FilterName(filter_name=filter_name)
         return self.__stub.getEventFilterInfo(filter_name)
 
     def get_message_filter_info(self, filter_name: str) -> FilterInfo:
+        """GRPC-API `getMessageFilterInfo` call returns message filter info."""
         filter_name = FilterName(filter_name=filter_name)
         return self.__stub.getMessageFilterInfo(filter_name)
 
     def match_event(self, event_id: str, filters: List[Filter]) -> IsMatched:
+        """GRPC-API `matchEvent` call checks that the event with the specified id is matched by the filter."""
         match_request = MatchRequest(event_id=EventID(id=event_id), filters=filters)
         return self.__stub.matchEvent(match_request)
 
     def match_message(self, message_id: str, filters: List[Filter]) -> IsMatched:
+        """GRPC-API `matchMessage` call checks that the message with the specified id is matched by the filter."""
         message_id = self.__build_message_id_object(message_id)
         match_request = MatchRequest(message_id=message_id, filters=filters)
         return self.__stub.matchMessage(match_request)

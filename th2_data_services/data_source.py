@@ -38,6 +38,8 @@ from th2_data_services.source_api import ISourceAPI
 
 import logging
 
+from th2_data_services.sse_client import SSEClient
+
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
 
