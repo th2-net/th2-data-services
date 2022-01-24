@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 import logging
-from datetime import timezone, datetime
 from typing import Iterable, List
 
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -38,6 +37,8 @@ from th2_grpc_data_provider.data_provider_pb2 import (
     TimeRelation,
 )
 from grpc import Channel, insecure_channel
+
+from th2_data_services import Filter
 from th2_data_services.provider.source_api import IGRPCProviderSourceAPI
 
 logger = logging.getLogger("th2_data_services")
@@ -55,12 +56,10 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
     def get_message_streams(self) -> StringList:
         return self.__stub.getMessageStreams(MessageStreamNamesRequest())
 
-    # TODO Filters
-    # TODO nano in timestamp
     def search_events(
         self,
-        start_timestamp: datetime = None,
-        end_timestamp: datetime = None,
+        start_timestamp: int = None,
+        end_timestamp: int = None,
         parent_event: str = None,
         search_direction: str = "NEXT",
         resume_from_id: str = None,
@@ -69,6 +68,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         limit_for_parent: int = None,
         metadata_only: bool = True,
         attached_messages: bool = False,
+        filters: List[Filter] = None,
     ) -> Iterable[StreamResponse]:
         if start_timestamp is None and resume_from_id is None:
             raise ValueError("One of the 'startTimestamp' or 'resumeFromId' must not be null.")
@@ -82,12 +82,14 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
                 raise ValueError("Argument 'search_direction' must be 'NEXT' or 'PREVIOUS'.")
 
         if start_timestamp:
-            start_timestamp = start_timestamp.replace(tzinfo=timezone.utc).timestamp()
-            start_timestamp = Timestamp(seconds=int(start_timestamp * 1000))
+            nanos = start_timestamp % 10 ** 9
+            seconds = start_timestamp // 10 ** 9
+            start_timestamp = Timestamp(seconds=seconds, nanos=nanos)
 
         if end_timestamp:
-            end_timestamp = end_timestamp.replace(tzinfo=timezone.utc).timestamp()
-            end_timestamp = Timestamp(seconds=int(end_timestamp * 1000))
+            nanos = end_timestamp % 10 ** 9
+            seconds = end_timestamp // 10 ** 9
+            end_timestamp = Timestamp(seconds=seconds, nanos=nanos)
 
         parent_event = EventID(id=parent_event) if parent_event else None
         search_direction = TimeRelation.Value(search_direction)  # getting a value from enum
@@ -109,23 +111,24 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             limit_for_parent=limit_for_parent,
             metadata_only=metadata_only,
             attached_messages=attached_messages,
+            filters=filters,
         )
         return self.__stub.searchEvents(event_search_request)
 
     def search_messages(
         self,
-        start_timestamp: datetime,
+        start_timestamp: int,
         stream: List[str],
-        end_timestamp: datetime = None,
-        resume_from_id: str = None,
+        end_timestamp: int = None,
+        resume_from_ids: List[str] = None,
         search_direction: str = None,
         result_count_limit: int = None,
         keep_open: bool = False,
-        message_id: List[str] = None,
         attached_events: bool = False,
-        look_limit_days: int = None,
+        lookup_limit_days: int = None,
+        filters: List[Filter] = None,
     ) -> Iterable[StreamResponse]:
-        if start_timestamp is None and resume_from_id is None:
+        if start_timestamp is None and resume_from_ids is None:
             raise ValueError("One of the 'startTimestamp' or 'resumeFromId' must not be null.")
 
         if end_timestamp is None and result_count_limit is None:
@@ -139,18 +142,40 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         if stream is None:
             raise ValueError("Argument 'stream' is required.")
 
-        # TODO
+        if start_timestamp:
+            nanos = start_timestamp % 10 ** 9
+            seconds = start_timestamp // 10 ** 9
+            start_timestamp = Timestamp(seconds=seconds, nanos=nanos)
 
-        # TODO END
+        if end_timestamp:
+            nanos = end_timestamp % 10 ** 9
+            seconds = end_timestamp // 10 ** 9
+            end_timestamp = Timestamp(seconds=seconds, nanos=nanos)
 
-        message_search_request = MessageSearchRequest()
+        search_direction = TimeRelation.Value(search_direction)  # getting a value from enum
+        resume_from_ids = (
+            [self.__build_message_id_object(id_) for id_ in resume_from_ids] if resume_from_ids else MessageID()
+        )
+        result_count_limit = Int32Value(value=result_count_limit) if result_count_limit else None
+        keep_open = BoolValue(value=keep_open)
+        attached_events = BoolValue(value=attached_events)
+        lookup_limit_days = Int32Value(value=lookup_limit_days) if lookup_limit_days else None
+
+        message_search_request = MessageSearchRequest(
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            search_direction=search_direction,
+            resume_from_ids=resume_from_ids,
+            result_count_limit=result_count_limit,
+            keep_open=keep_open,
+            attached_events=attached_events,
+            lookup_limit_days=lookup_limit_days,
+            filters=filters,
+        )
         return self.__stub.searchMessages(message_search_request)
 
-    def get_event(self, event_id: str) -> EventData:
-        event_id = EventID(id=event_id)
-        return self.__stub.getEvent(event_id)
-
-    def get_message(self, message_id: str) -> MessageData:
+    @staticmethod
+    def __build_message_id_object(message_id: str) -> MessageID:
         split_id = message_id.split(":")
         split_id.reverse()
 
@@ -170,6 +195,14 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             sequence=sequence,
             subsequence=subsequence,
         )
+        return message_id
+
+    def get_event(self, event_id: str) -> EventData:
+        event_id = EventID(id=event_id)
+        return self.__stub.getEvent(event_id)
+
+    def get_message(self, message_id: str) -> MessageData:
+        message_id = self.__build_message_id_object(message_id)
         return self.__stub.getMessage(message_id)
 
     def get_messages_filters(self) -> ListFilterName:
@@ -186,32 +219,11 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         filter_name = FilterName(filter_name=filter_name)
         return self.__stub.getMessageFilterInfo(filter_name)
 
-    # TODO Filters
-    def match_event(self, event_id: str, filters=None) -> IsMatched:
+    def match_event(self, event_id: str, filters: List[Filter]) -> IsMatched:
         match_request = MatchRequest(event_id=EventID(id=event_id), filters=filters)
         return self.__stub.matchEvent(match_request)
 
-    # TODO Filters
-    def match_message(self, message_id: str, filters=None) -> IsMatched:
-        split_id = message_id.split(":")
-        split_id.reverse()
-
-        sequence, direction, alias = split_id[0], split_id[1].upper(), split_id[2:]
-        split_sequence = sequence.split(".")
-        sequence, subsequence = int(split_sequence[0]), split_sequence[1:]
-        subsequence = map(int, subsequence) if subsequence else subsequence
-        alias.reverse()
-        alias = ":".join(alias)
-
-        connection_id = ConnectionID(session_alias=alias)
-        direction = Direction.Value(direction)  # Get a value from enum.
-
-        message_id = MessageID(
-            connection_id=connection_id,
-            direction=direction,
-            sequence=sequence,
-            subsequence=subsequence,
-        )
-
+    def match_message(self, message_id: str, filters: List[Filter]) -> IsMatched:
+        message_id = self.__build_message_id_object(message_id)
         match_request = MatchRequest(message_id=message_id, filters=filters)
         return self.__stub.matchMessage(match_request)

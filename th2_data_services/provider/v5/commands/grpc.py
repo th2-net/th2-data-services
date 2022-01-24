@@ -21,14 +21,15 @@ from th2_grpc_data_provider.data_provider_pb2 import (
     MessageData,
 )
 
+from th2_data_services import Filter
 from th2_data_services.provider.v5.command import IGRPCProvider5Command
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
 from th2_data_services.provider.v5.provider_api import GRPCProvider5API
 
 
 class GetEventById(IGRPCProvider5Command):
-    def __init__(self, id_: str):
-        self._id = id_
+    def __init__(self, id: str):
+        self._id = id
 
     def handle(self, data_source: GRPCProvider5DataSource) -> EventData:
         api: GRPCProvider5API = data_source.source_api
@@ -50,7 +51,7 @@ class GetEventsById(IGRPCProvider5Command):
 class GetEvents(IGRPCProvider5Command):
     def __init__(
         self,
-        start_timestamp: datetime = None,
+        start_timestamp: datetime,
         end_timestamp: datetime = None,
         parent_event: str = None,
         search_direction: str = "NEXT",
@@ -60,6 +61,7 @@ class GetEvents(IGRPCProvider5Command):
         limit_for_parent: int = None,
         metadata_only: bool = True,
         attached_messages: bool = False,
+        filters: List[Filter] = None,
     ):
         self._start_timestamp = start_timestamp
         self._end_timestamp = end_timestamp
@@ -71,12 +73,17 @@ class GetEvents(IGRPCProvider5Command):
         self._limit_for_parent = limit_for_parent
         self._metadata_only = metadata_only
         self._attached_messages = attached_messages
+        self._filters = filters
 
     def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[StreamResponse]:
         api: GRPCProvider5API = data_source.source_api
+
+        start_timestamp = self._start_timestamp.timestamp() * 10 ** 9
+        end_timestamp = self._end_timestamp.timestamp() * 10 ** 9
+
         stream_response = api.search_events(
-            start_timestamp=self._start_timestamp,
-            end_timestamp=self._end_timestamp,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
             parent_event=self._parent_event,
             search_direction=self._search_direction,
             resume_from_id=self._resume_from_id,
@@ -85,14 +92,15 @@ class GetEvents(IGRPCProvider5Command):
             limit_for_parent=self._limit_for_parent,
             metadata_only=self._metadata_only,
             attached_messages=self._attached_messages,
+            filters=self._filters,
         )
         for response in stream_response:
             yield response
 
 
 class GetMessageById(IGRPCProvider5Command):
-    def __init__(self, id_: str):
-        self._id = id_
+    def __init__(self, id: str):
+        self._id = id
 
     def handle(self, data_source: GRPCProvider5DataSource) -> MessageData:
         api: GRPCProvider5API = data_source.source_api
@@ -112,7 +120,6 @@ class GetMessagesById(IGRPCProvider5Command):
         return response
 
 
-# TODO Filters
 class GetMessages(IGRPCProvider5Command):
     def __init__(
         self,
@@ -125,7 +132,8 @@ class GetMessages(IGRPCProvider5Command):
         keep_open: bool = False,
         message_id: List[str] = None,
         attached_events: bool = False,
-        look_limit_days: int = None,
+        lookup_limit_days: int = None,
+        filters: List[Filter] = None,
     ):
         self._start_timestamp = start_timestamp
         self._end_timestamp = end_timestamp
@@ -136,22 +144,25 @@ class GetMessages(IGRPCProvider5Command):
         self._keep_open = keep_open
         self._message_id = message_id
         self._attached_events = attached_events
-        self._look_limit_days = look_limit_days
+        self._lookup_limit_days = lookup_limit_days
+        self._filters = filters
 
     def handle(self, data_source: GRPCProvider5DataSource) -> List[MessageData]:
         api = data_source.source_api
 
+        start_timestamp = self._start_timestamp.timestamp() * 10 ** 9
+        end_timestamp = self._end_timestamp.timestamp() * 10 ** 9
+
         response = api.search_messages(
-            start_timestamp=self._start_timestamp,
-            end_timestamp=self._end_timestamp,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
             stream=self._stream,
-            resume_from_id=self._resume_from_id,
+            resume_from_ids=self._resume_from_id,
             search_direction=self._search_direction,
             result_count_limit=self._result_count_limit,
             keep_open=self._keep_open,
-            message_id=self._message_id,
             attached_events=self._attached_events,
-            look_limit_days=self._look_limit_days,
+            lookup_limit_days=self._lookup_limit_days,
         )
 
         for message in response:
