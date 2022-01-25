@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import logging
+from collections import namedtuple
 from typing import Iterable, List, Optional
 
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -42,6 +43,10 @@ from th2_data_services.provider.source_api import IGRPCProviderSourceAPI
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
+
+BasicRequest = namedtuple(
+    "BasicRequest", ["start_timestamp", "end_timestamp", "result_count_limit", "keep_open", "search_direction"]
+)
 
 
 class GRPCProvider5API(IGRPCProviderSourceAPI):
@@ -104,48 +109,35 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         if filters is None:
             filters = []
 
-        if start_timestamp is None and resume_from_id is None:
-            raise ValueError("One of the 'startTimestamp' or 'resumeFromId' must not be null.")
+        self.__search_basic_checks(
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            result_count_limit=result_count_limit,
+            resume_from_ids=resume_from_id,
+            search_direction=search_direction,
+        )
 
-        if end_timestamp is None and result_count_limit is None:
-            raise ValueError("One of the 'end_timestamp' or 'result_count_limit' must not be null.")
-
-        if (
-            start_timestamp is not None
-            and len(str(start_timestamp)) != 19
-            or end_timestamp is not None
-            and len(str(end_timestamp)) != 19
-        ):
-            raise ValueError("Arguments 'start_timestamp' and 'end_timestamp' are expected in nanoseconds.")
-
-        if search_direction is not None:
-            search_direction = search_direction.upper()
-            if search_direction not in ("NEXT", "PREVIOUS"):
-                raise ValueError("Argument 'search_direction' must be 'NEXT' or 'PREVIOUS'.")
-
-        if start_timestamp:
-            start_timestamp = self.__build_timestamp_object(start_timestamp)
-
-        if end_timestamp:
-            end_timestamp = self.__build_timestamp_object(end_timestamp)
-
+        basic_request = self.__build_basic_request_object(
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            search_direction=search_direction,
+            result_count_limit=result_count_limit,
+            keep_open=keep_open,
+        )
         parent_event = EventID(id=parent_event) if parent_event else None
-        search_direction = TimeRelation.Value(search_direction)  # getting a value from enum
         resume_from_id = EventID(id=resume_from_id) if resume_from_id else EventID()
-        result_count_limit = Int32Value(value=result_count_limit) if result_count_limit else None
-        keep_open = BoolValue(value=keep_open)
         limit_for_parent = Int64Value(value=limit_for_parent) if limit_for_parent else None
         metadata_only = BoolValue(value=metadata_only)
         attached_messages = BoolValue(value=attached_messages)
 
         event_search_request = EventSearchRequest(
-            start_timestamp=start_timestamp,
-            end_timestamp=end_timestamp,
+            start_timestamp=basic_request.start_timestamp,
+            end_timestamp=basic_request.end_timestamp,
             parent_event=parent_event,
-            search_direction=search_direction,
+            search_direction=basic_request.search_direction,
             resume_from_id=resume_from_id,
-            result_count_limit=result_count_limit,
-            keep_open=keep_open,
+            result_count_limit=basic_request.result_count_limit,
+            keep_open=basic_request.keep_open,
             limit_for_parent=limit_for_parent,
             metadata_only=metadata_only,
             attached_messages=attached_messages,
@@ -189,8 +181,52 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         if filters is None:
             filters = []
 
+        if stream is None:
+            raise ValueError("Argument 'stream' is required.")
+        self.__search_basic_checks(
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            result_count_limit=result_count_limit,
+            resume_from_ids=resume_from_ids,
+            search_direction=search_direction,
+        )
+
+        basic_request = self.__build_basic_request_object(
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            result_count_limit=result_count_limit,
+            keep_open=keep_open,
+            search_direction=search_direction,
+        )
+        resume_from_ids = (
+            [self.__build_message_id_object(id_) for id_ in resume_from_ids] if resume_from_ids else MessageID()
+        )
+        attached_events = BoolValue(value=attached_events)
+        lookup_limit_days = Int32Value(value=lookup_limit_days) if lookup_limit_days else None
+
+        message_search_request = MessageSearchRequest(
+            start_timestamp=basic_request.start_timestamp,
+            end_timestamp=basic_request.end_timestamp,
+            search_direction=basic_request.search_direction,
+            resume_from_ids=resume_from_ids,
+            result_count_limit=basic_request.result_count_limit,
+            keep_open=basic_request.keep_open,
+            attached_events=attached_events,
+            lookup_limit_days=lookup_limit_days,
+            filters=filters,
+        )
+        return self.__stub.searchMessages(message_search_request)
+
+    @staticmethod
+    def __search_basic_checks(
+        start_timestamp: Optional[int],
+        end_timestamp: Optional[int],
+        resume_from_ids: Optional[str],
+        search_direction: Optional[str],
+        result_count_limit: Optional[int],
+    ):
         if start_timestamp is None and resume_from_ids is None:
-            raise ValueError("One of the 'startTimestamp' or 'resumeFromId' must not be null.")
+            raise ValueError("One of the 'startTimestamp' or 'resumeFromId(s)' must not be null.")
 
         if end_timestamp is None and result_count_limit is None:
             raise ValueError("One of the 'end_timestamp' or 'result_count_limit' must not be null.")
@@ -208,36 +244,40 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             if search_direction not in ("NEXT", "PREVIOUS"):
                 raise ValueError("Argument 'search_direction' must be 'NEXT' or 'PREVIOUS'.")
 
-        if stream is None:
-            raise ValueError("Argument 'stream' is required.")
+    def __build_basic_request_object(
+        self,
+        start_timestamp: int = None,
+        end_timestamp: int = None,
+        result_count_limit: int = None,
+        keep_open: bool = False,
+        search_direction: str = "NEXT",
+    ) -> BasicRequest:
+        """Builds a BasicRequest wrapper-object.
 
-        if start_timestamp:
-            start_timestamp = self.__build_timestamp_object(start_timestamp)
+        Args:
+            start_timestamp: Start Timestamp for request.
+            end_timestamp: End Timestamp for request.
+            result_count_limit: Data count limit.
+            keep_open: Option for stream-request.
+            search_direction: Searching direction.
 
-        if end_timestamp:
-            end_timestamp = self.__build_timestamp_object(end_timestamp)
-
+        Returns:
+            BasicRequest wrapper-object.
+        """
+        start_timestamp = self.__build_timestamp_object(start_timestamp) if start_timestamp else None
+        end_timestamp = self.__build_timestamp_object(end_timestamp) if end_timestamp else None
         search_direction = TimeRelation.Value(search_direction)  # getting a value from enum
-        resume_from_ids = (
-            [self.__build_message_id_object(id_) for id_ in resume_from_ids] if resume_from_ids else MessageID()
-        )
         result_count_limit = Int32Value(value=result_count_limit) if result_count_limit else None
         keep_open = BoolValue(value=keep_open)
-        attached_events = BoolValue(value=attached_events)
-        lookup_limit_days = Int32Value(value=lookup_limit_days) if lookup_limit_days else None
 
-        message_search_request = MessageSearchRequest(
+        basic_request = BasicRequest(
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
             search_direction=search_direction,
-            resume_from_ids=resume_from_ids,
             result_count_limit=result_count_limit,
             keep_open=keep_open,
-            attached_events=attached_events,
-            lookup_limit_days=lookup_limit_days,
-            filters=filters,
         )
-        return self.__stub.searchMessages(message_search_request)
+        return basic_request
 
     @staticmethod
     def __build_timestamp_object(timestamp: int) -> Timestamp:
