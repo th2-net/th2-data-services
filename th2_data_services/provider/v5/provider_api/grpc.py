@@ -45,7 +45,8 @@ logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
 
 BasicRequest = namedtuple(
-    "BasicRequest", ["start_timestamp", "end_timestamp", "result_count_limit", "keep_open", "search_direction"]
+    "BasicRequest",
+    ["start_timestamp", "end_timestamp", "result_count_limit", "keep_open", "search_direction", "filters"],
 )
 
 
@@ -106,9 +107,6 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         Returns:
             Iterable object which return events as parts of streaming response.
         """
-        if filters is None:
-            filters = []
-
         self.__search_basic_checks(
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
@@ -123,6 +121,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             search_direction=search_direction,
             result_count_limit=result_count_limit,
             keep_open=keep_open,
+            filters=filters,
         )
         parent_event = EventID(id=parent_event) if parent_event else None
         resume_from_id = EventID(id=resume_from_id) if resume_from_id else EventID()
@@ -141,7 +140,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             limit_for_parent=limit_for_parent,
             metadata_only=metadata_only,
             attached_messages=attached_messages,
-            filters=filters,
+            filters=basic_request.filters,
         )
         return self.__stub.searchEvents(event_search_request)
 
@@ -178,9 +177,6 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         Returns:
             Iterable object which return messages as parts of streaming response.
         """
-        if filters is None:
-            filters = []
-
         if stream is None:
             raise ValueError("Argument 'stream' is required.")
         self.__search_basic_checks(
@@ -197,6 +193,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             result_count_limit=result_count_limit,
             keep_open=keep_open,
             search_direction=search_direction,
+            filters=filters,
         )
         resume_from_ids = (
             [self.__build_message_id_object(id_) for id_ in resume_from_ids] if resume_from_ids else MessageID()
@@ -213,7 +210,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             keep_open=basic_request.keep_open,
             attached_events=attached_events,
             lookup_limit_days=lookup_limit_days,
-            filters=filters,
+            filters=basic_request.filters,
         )
         return self.__stub.searchMessages(message_search_request)
 
@@ -251,6 +248,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         result_count_limit: int = None,
         keep_open: bool = False,
         search_direction: str = "NEXT",
+        filters: Optional[List[Filter]] = None,
     ) -> BasicRequest:
         """Builds a BasicRequest wrapper-object.
 
@@ -260,10 +258,14 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             result_count_limit: Data count limit.
             keep_open: Option for stream-request.
             search_direction: Searching direction.
+            filters: Which filters to apply in a request.
 
         Returns:
             BasicRequest wrapper-object.
         """
+        if filters is None:
+            filters = []
+
         start_timestamp = self.__build_timestamp_object(start_timestamp) if start_timestamp else None
         end_timestamp = self.__build_timestamp_object(end_timestamp) if end_timestamp else None
         search_direction = TimeRelation.Value(search_direction)  # getting a value from enum
@@ -276,6 +278,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             search_direction=search_direction,
             result_count_limit=result_count_limit,
             keep_open=keep_open,
+            filters=filters,
         )
         return basic_request
 
