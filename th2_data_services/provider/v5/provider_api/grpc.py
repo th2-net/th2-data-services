@@ -83,9 +83,10 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         """GRPC-API `searchEvents` call creates an event or an event metadata stream that matches the filter.
 
         Args:
-            start_timestamp: Sets the search starting point. One of the 'start_timestamp'
+            start_timestamp: Sets the search starting point. Expected in nanoseconds. One of the 'start_timestamp'
                 or 'resume_from_id' must not absent.
             end_timestamp: Sets the timestamp to which the search will be performed, starting with 'start_timestamp'.
+                Expected in nanoseconds.
             parent_event: Match events to the specified parent.
             search_direction: Sets the lookup direction. Can be 'NEXT' or 'PREVIOUS'.
             resume_from_id: The last event id from which we start searching for events.
@@ -109,20 +110,19 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         if end_timestamp is None and result_count_limit is None:
             raise ValueError("One of the 'end_timestamp' or 'result_count_limit' must not be null.")
 
+        if len(str(start_timestamp)) < 19 or len(str(end_timestamp)) < 19:
+            raise ValueError("Arguments 'start_timestamp' and 'end_timestamp' are expected in nanoseconds.")
+
         if search_direction is not None:
             search_direction = search_direction.upper()
             if search_direction not in ("NEXT", "PREVIOUS"):
                 raise ValueError("Argument 'search_direction' must be 'NEXT' or 'PREVIOUS'.")
 
         if start_timestamp:
-            nanos = start_timestamp % 10 ** 9
-            seconds = start_timestamp // 10 ** 9
-            start_timestamp = Timestamp(seconds=seconds, nanos=nanos)
+            start_timestamp = self.__build_timestamp_object(start_timestamp)
 
         if end_timestamp:
-            nanos = end_timestamp % 10 ** 9
-            seconds = end_timestamp // 10 ** 9
-            end_timestamp = Timestamp(seconds=seconds, nanos=nanos)
+            end_timestamp = self.__build_timestamp_object(end_timestamp)
 
         parent_event = EventID(id=parent_event) if parent_event else None
         search_direction = TimeRelation.Value(search_direction)  # getting a value from enum
@@ -163,10 +163,11 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
     ) -> Iterable[StreamResponse]:
         """GRPC-API `searchMessages` call creates a message stream that matches the filter.
         Args:
-            start_timestamp: Sets the search starting point. One of the 'start_timestamp'
+            start_timestamp: Sets the search starting point. Expected in nanoseconds. One of the 'start_timestamp'
                 or 'resume_from_id' must not absent.
             stream: Sets the stream ids to search in.
             end_timestamp: Sets the timestamp to which the search will be performed, starting with 'start_timestamp'.
+                Expected in nanoseconds.
             search_direction: Sets the lookup direction. Can be 'NEXT' or 'PREVIOUS'.
             resume_from_ids: The last event id from which we start searching for messages.
             result_count_limit: Sets the maximum amount of messages to return.
@@ -189,6 +190,9 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         if end_timestamp is None and result_count_limit is None:
             raise ValueError("One of the 'end_timestamp' or 'result_count_limit' must not be null.")
 
+        if len(str(start_timestamp)) != 19 or len(str(end_timestamp)) != 19:
+            raise ValueError("Arguments 'start_timestamp' and 'end_timestamp' are expected in nanoseconds.")
+
         if search_direction is not None:
             search_direction = search_direction.upper()
             if search_direction not in ("NEXT", "PREVIOUS"):
@@ -198,14 +202,10 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             raise ValueError("Argument 'stream' is required.")
 
         if start_timestamp:
-            nanos = start_timestamp % 10 ** 9
-            seconds = start_timestamp // 10 ** 9
-            start_timestamp = Timestamp(seconds=seconds, nanos=nanos)
+            start_timestamp = self.__build_timestamp_object(start_timestamp)
 
         if end_timestamp:
-            nanos = end_timestamp % 10 ** 9
-            seconds = end_timestamp // 10 ** 9
-            end_timestamp = Timestamp(seconds=seconds, nanos=nanos)
+            end_timestamp = self.__build_timestamp_object(end_timestamp)
 
         search_direction = TimeRelation.Value(search_direction)  # getting a value from enum
         resume_from_ids = (
@@ -228,6 +228,21 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             filters=filters,
         )
         return self.__stub.searchMessages(message_search_request)
+
+    @staticmethod
+    def __build_timestamp_object(timestamp: int) -> Timestamp:
+        """Builds a Timestamp of 'protobuf' entity.
+
+        Args:
+            timestamp: Timestamp in nanoseconds.
+
+        Returns:
+            Timestamp object.
+        """
+        nanos = timestamp % 10 ** 9
+        seconds = timestamp // 10 ** 9
+        timestamp = Timestamp(seconds=seconds, nanos=nanos)
+        return timestamp
 
     @staticmethod
     def __build_message_id_object(message_id: str) -> MessageID:
