@@ -110,7 +110,12 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         if end_timestamp is None and result_count_limit is None:
             raise ValueError("One of the 'end_timestamp' or 'result_count_limit' must not be null.")
 
-        if len(str(start_timestamp)) < 19 or len(str(end_timestamp)) < 19:
+        if (
+            start_timestamp is not None
+            and len(str(start_timestamp)) != 19
+            or end_timestamp is not None
+            and len(str(end_timestamp)) != 19
+        ):
             raise ValueError("Arguments 'start_timestamp' and 'end_timestamp' are expected in nanoseconds.")
 
         if search_direction is not None:
@@ -190,7 +195,12 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         if end_timestamp is None and result_count_limit is None:
             raise ValueError("One of the 'end_timestamp' or 'result_count_limit' must not be null.")
 
-        if len(str(start_timestamp)) != 19 or len(str(end_timestamp)) != 19:
+        if (
+            start_timestamp is not None
+            and len(str(start_timestamp)) != 19
+            or end_timestamp is not None
+            and len(str(end_timestamp)) != 19
+        ):
             raise ValueError("Arguments 'start_timestamp' and 'end_timestamp' are expected in nanoseconds.")
 
         if search_direction is not None:
