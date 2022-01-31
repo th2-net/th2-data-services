@@ -11,19 +11,20 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from __future__ import annotations
 
 import requests
 import urllib3
-
-
-from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
-
-
 import logging
 
+from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from th2_data_services.provider.v5.command import IHTTPProvider5Command
+    from th2_data_services.provider.v5.provider_api.http import HTTPProvider5API
+
 from th2_data_services.provider.data_source import IHTTPProviderDataSource
-from th2_data_services.provider.v5.command import IHTTPProvider5Command
-from th2_data_services.provider.v5.provider_api.http import HTTPProvider5API
 from th2_data_services.provider.v5.struct import (
     provider5_event_struct,
     provider5_message_struct,
