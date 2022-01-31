@@ -12,10 +12,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
-import logging
-from logging import NullHandler
+from abc import ABC, abstractmethod
 
-logging.getLogger(__name__).addHandler(NullHandler())
+
+class IAdapter(ABC):
+    @abstractmethod
+    def handle(self, record):
+        pass
+
+
+class IMessageAdapter(IAdapter):
+    @abstractmethod
+    def handle(self, record: dict):
+        pass
+
+
+class IEventAdapter(IAdapter):
+    pass

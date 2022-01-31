@@ -12,10 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
-import logging
-from logging import NullHandler
+from __future__ import annotations
 
-logging.getLogger(__name__).addHandler(NullHandler())
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from th2_data_services.data_source import IDataSource
+
+
+class ICommand(ABC):
+    """High level interface for Command."""
+
+    @abstractmethod
+    def handle(self, data_source: IDataSource):
+        pass

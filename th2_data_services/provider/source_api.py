@@ -12,10 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
-import logging
-from logging import NullHandler
+from th2_data_services.source_api import ISourceAPI
 
-logging.getLogger(__name__).addHandler(NullHandler())
+
+class IProviderSourceAPI(ISourceAPI):
+    pass
+
+
+class IHTTPProviderSourceAPI(IProviderSourceAPI):
+    pass
+
+
+class IGRPCProviderSourceAPI(IProviderSourceAPI):
+    pass
