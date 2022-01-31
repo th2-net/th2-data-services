@@ -11,8 +11,11 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import json
 from abc import abstractmethod
+
+from google.protobuf.json_format import MessageToDict
+from th2_grpc_data_provider.data_provider_template_pb2 import EventData, MessageData
 
 from th2_data_services.provider.command import IHTTPProviderCommand, IGRPCProviderCommand
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
@@ -29,3 +32,33 @@ class IGRPCProvider5Command(IGRPCProviderCommand):
     @abstractmethod
     def handle(self, data_source: GRPCProvider5DataSource):
         pass
+
+
+class IGRPCProvider5EventCommand(IGRPCProvider5Command):
+    @abstractmethod
+    def handle(self, data_source: GRPCProvider5DataSource):
+        pass
+
+    @staticmethod
+    def _decode_event(event: EventData) -> dict:
+        new_event = MessageToDict(event, including_default_value_fields=True)
+        try:
+            new_event["body"] = json.loads(event.body)
+        except (KeyError, json.JSONDecodeError):
+            return new_event
+        return new_event
+
+
+class IGRPCProvider5MessageCommand(IGRPCProvider5Command):
+    @abstractmethod
+    def handle(self, data_source: GRPCProvider5DataSource):
+        pass
+
+    @staticmethod
+    def _decode_message(message: MessageData) -> dict:
+        new_message = MessageToDict(message, including_default_value_fields=True)
+        try:
+            new_message["body"] = json.loads(message.body)
+        except (KeyError, json.JSONDecodeError):
+            return new_message
+        return new_message
