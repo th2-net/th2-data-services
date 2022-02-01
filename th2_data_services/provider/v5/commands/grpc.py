@@ -73,7 +73,7 @@ class GetEventById(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> dict:
-        event = {"eventId": self._id}
+        event = {provider5_event_stub_builder.event_fields.EVENT_ID: self._id}
         try:
             event = GetEventByIdGRPCObject(self._id).handle(data_source)
             event = self._decode_event(event)
@@ -112,7 +112,7 @@ class GetEventsById(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
 
         response = []
         for event_id in self.ids:
-            event = {"eventId": event_id}
+            event = {provider5_event_stub_builder.event_fields.EVENT_ID: event_id}
             try:
                 event = api.get_event(event_id)
                 event = self._decode_event(event)
@@ -314,7 +314,7 @@ class GetMessageById(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableCommand
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> dict:
-        message = {"messageId": self._id}
+        message = {provider5_message_stub_builder.message_fields.MESSAGE_ID: self._id}
         try:
             message = GetMessageByIdGRPCObject(self._id).handle(data_source)
             message = self._decode_message(message)
@@ -350,7 +350,7 @@ class GetMessagesById(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableComman
     def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:
         response = []
         for id_ in self._ids:
-            message = {"messageId": id_}
+            message = {provider5_message_stub_builder.message_fields.MESSAGE_ID: id_}
             try:
                 message = GetMessageByIdGRPCObject(id_).handle(data_source)
                 message = self._decode_message(message)
