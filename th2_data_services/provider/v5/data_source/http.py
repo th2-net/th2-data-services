@@ -64,7 +64,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
         self.__check_connect()
-        self._provider_api = HTTPProvider5API()
+        self._provider_api = HTTPProvider5API(url)
 
         logger.info(url)
 
@@ -76,7 +76,10 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
             raise urllib3.exceptions.HTTPError(f"Unable to connect to host '{self.url}'\nReason: {error}")
 
     def command(self, cmd: IHTTPProvider5Command):
-        return cmd.handle(data_source=self)
+        try:
+            return cmd.handle(data_source=self)
+        except Exception as e:
+            raise ValueError(f"A command has broken. Details of error:\n{e}")
 
     @property
     def source_api(self) -> HTTPProvider5API:
