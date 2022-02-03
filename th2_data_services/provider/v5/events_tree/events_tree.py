@@ -3,7 +3,7 @@ from typing import Callable, Generator, Iterator, Optional, Union
 
 from th2_data_services import Data
 from th2_data_services.et_interface import IEventsTree
-from th2_data_services.provider.v5.command_resolver import resolver_get_event_by_id
+from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct
@@ -151,11 +151,11 @@ class EventsTree5(IEventsTree):
         Args:
             stub: True If you need handle broken events.
         """
-        command_get_events_by_id = resolver_get_event_by_id(self._data_source)
+        command_get_events_by_id = resolver_get_events_by_id(self._data_source)
 
         old_unknown_events = self._unknown_events.keys()
         while self._unknown_events:
-            instance_command = command_get_events_by_id(self._unknown_events)
+            instance_command = command_get_events_by_id(self._unknown_events.keys())
             if stub:
                 instance_command = command_get_events_by_id.use_stub()
 
