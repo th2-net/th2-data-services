@@ -2,9 +2,10 @@ from collections import defaultdict
 from typing import Callable, Generator, Iterator, Optional, Union
 
 from th2_data_services import Data
-from th2_data_services.data_source import IDataSource
 from th2_data_services.et_interface import IEventsTree
-from th2_data_services.provider.v5.commands.grpc import GetEventsById
+from th2_data_services.provider.v5.command_resolver import resolver_get_event_by_id
+from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
+from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
@@ -12,7 +13,7 @@ class EventsTree5(IEventsTree):
     def __init__(
         self,
         data: Union[Iterator, Generator[dict, None, None], Data] = None,
-        data_source: IDataSource = None,
+        data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource] = None,
         event_struct=provider5_event_struct,
         preserve_body: Optional[bool] = False,
     ):
@@ -118,7 +119,7 @@ class EventsTree5(IEventsTree):
 
         ancestor = self._events.get(parent_id)
         while ancestor:
-            if check_function:
+            if check_function(event):
                 return True
             ancestor = self._events.get(ancestor.get("parentEventId"))
         return False
@@ -139,24 +140,26 @@ class EventsTree5(IEventsTree):
 
         ancestor = self._events.get(parent_id)
         while ancestor:
-            if condition_function:
+            if condition_function(event):
                 return ancestor
             ancestor = self._events.get(ancestor.get("parentEventId"))
         return ancestor
 
-    def recover_unknown_events(self, data_source: IDataSource, broken_events: Optional[bool] = False) -> None:
+    def recover_unknown_events(self, stub: Optional[bool] = False) -> None:
         """Loads unknown events from data provider and recover EventsTree.
 
-        :param data_source: DataSources.
-        :param broken_events: If True broken events is replaced on event stub.
+        Args:
+            stub: True If you need handle broken events.
         """
+        command_get_events_by_id = resolver_get_event_by_id(self._data_source)
+
         old_unknown_events = self._unknown_events.keys()
         while self._unknown_events:
-            command = GetEventsById(list(self._unknown_events.keys()))
-            if broken_events:
-                command.use_stub()
-            new_events = data_source.command(command)
+            instance_command = command_get_events_by_id(self._unknown_events)
+            if stub:
+                instance_command = command_get_events_by_id.use_stub()
 
+            new_events = self._data_source.command(instance_command)
             if isinstance(new_events, dict):
                 new_events = [new_events]
             if new_events is None:
