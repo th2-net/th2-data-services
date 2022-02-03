@@ -120,8 +120,8 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
     def get_url_search_sse_events(
         self,
-        start_timestamp: (int, float),
-        end_timestamp: (int, float) = None,
+        start_timestamp: int,
+        end_timestamp: int = None,
         parent_event: str = None,
         resume_from_id: str = None,
         search_direction: str = "NEXT",
@@ -137,7 +137,8 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
         """
         kwargs = {
-            "startTimestamp": int(start_timestamp.replace(tzinfo=timezone.utc).timestamp() * 1000),
+            "startTimestamp": start_timestamp,
+            "endTimestamp": end_timestamp,
             "resumeFromId": resume_from_id,
             "parentEvent": parent_event,
             "searchDirection": search_direction,
@@ -147,9 +148,6 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             "metadataOnly": metadata_only,
             "attachedMessages": attached_messages,
         }
-
-        if end_timestamp is not None:
-            kwargs["endTimestamp"] = int(end_timestamp.replace(tzinfo=timezone.utc).timestamp() * 1000)
 
         query = ""
         url = f"{self._url}/search/sse/events/?"
@@ -162,9 +160,9 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
     def get_url_search_sse_messages(
         self,
-        start_timestamp: datetime,
+        start_timestamp: int,
         stream: List[str],
-        end_timestamp: datetime = None,
+        end_timestamp: int = None,
         resume_from_id: str = None,
         search_direction: str = "NEXT",
         result_count_limit: (int, float) = None,
@@ -179,7 +177,8 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
         """
         kwargs = {
-            "startTimestamp": int(start_timestamp.replace(tzinfo=timezone.utc).timestamp() * 1000),
+            "startTimestamp": start_timestamp,
+            "endTimestamp": end_timestamp,
             "resumeFromId": resume_from_id,
             "stream": stream,
             "searchDirection": search_direction,
@@ -189,9 +188,6 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             "attachedEvents": attached_events,
             "lookupLimitDays": lookup_limit_days,
         }
-
-        if end_timestamp is not None:
-            kwargs["endTimestamp"] = int(end_timestamp.replace(tzinfo=timezone.utc).timestamp() * 1000)
 
         query = ""
         url = f"{self._url}/search/sse/messages/?"
@@ -204,6 +200,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
     def __create_stream_connection(self, url: str) -> Generator[bytes, None, None]:
         """Create stream connection.
+
         Args:
             url: Url.
         Yields:
@@ -226,10 +223,11 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
     def execute_sse_request(self, url: str) -> Generator[dict, None, None]:
         """Creates SSE connection to server.
+
         Args:
             url: Url.
-        Returns:
-            dict: Response data.
+        Yields:
+            obj: Generator.
         """
         response = self.__create_stream_connection(url)
         client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
@@ -238,6 +236,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
     def execute_request(self, url: str) -> Response:
         """Sends a GET request to provider.
+
         Args:
             url: Url.
         Returns:
