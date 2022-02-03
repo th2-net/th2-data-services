@@ -43,8 +43,8 @@ class Provider5EventStubBuilder(IEventStub):
 
 class Provider5MessageStubBuilder(IMessageStub):
     def __init__(self, message_struct=provider5_message_struct):
-        super().__init__()
         self.message_fields = message_struct
+        super().__init__()
 
     @property
     def template(self) -> dict:
@@ -62,4 +62,4 @@ class Provider5MessageStubBuilder(IMessageStub):
 
 
 provider5_event_stub_builder = Provider5EventStubBuilder()
-provider5_message_stub_builder = Provider5EventStubBuilder()
+provider5_message_stub_builder = Provider5MessageStubBuilder()

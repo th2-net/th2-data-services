@@ -1,9 +1,10 @@
 from collections import defaultdict
-from typing import Union, Iterator, Generator, Optional
+from typing import Callable, Generator, Iterator, Optional, Union
 
 from th2_data_services import Data
 from th2_data_services.data_source import IDataSource
 from th2_data_services.et_interface import IEventsTree
+from th2_data_services.provider.v5.commands.grpc import GetEventsById
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
@@ -12,18 +13,23 @@ class EventsTree5(IEventsTree):
         self,
         data: Union[Iterator, Generator[dict, None, None], Data] = None,
         data_source: IDataSource = None,
-        preserve_body: Optional[bool] = False,
         event_struct=provider5_event_struct,
+        preserve_body: Optional[bool] = False,
     ):
         """
         Args:
             data: Events.
-            preserve_body (:obj:`bool`, optional): if true keep events bodies.
+            data_source: Data Source.
+            event_struct: Event Struct.
+            preserve_body ('bool', optional): If true keep events bodies.
         """
         if data is None:
             data = []
 
-        self.__preserve_body = preserve_body
+        self._preserve_body = preserve_body
+        self._data_source = data_source
+        self._event_struct = event_struct
+
         self._events = {}  # {EventID_str: Event_dict}
         self._unknown_events = defaultdict(lambda: 0)  # {parent_id: int(cnt)}
         self.build_tree(data)
@@ -65,7 +71,7 @@ class EventsTree5(IEventsTree):
             event: Event
         """
         event_id = event["eventId"]
-        if not self.__preserve_body:
+        if not self._preserve_body:
             try:
                 event.pop("body")
             except KeyError:
@@ -96,90 +102,49 @@ class EventsTree5(IEventsTree):
 
         return self._unknown_events
 
-    def is_in_ancestor_name(self, event: dict, event_name: str):
-        """Verify event has ancestor with specified event name.
+    def is_ancestor_by_condition(self, event: dict, check_function: Callable) -> bool:
+        """Checks that events ancestor passed condition.
 
-        :param event: Event parent id.
-        :param event_name: Event name.
-        :return: True/False.
+        Args:
+            event: Event.
+            check_function: Condition function.
+
+        Returns:
+            True if condition is passed.
         """
         parent_id = event.get("parentEventId")
-
         if parent_id is None:
-            raise ValueError("event must have field 'parentEventId'")
+            return False
 
         ancestor = self._events.get(parent_id)
         while ancestor:
-            if event_name in ancestor.get("eventName"):
+            if check_function:
                 return True
             ancestor = self._events.get(ancestor.get("parentEventId"))
         return False
 
-    def is_in_ancestor_type(self, event: dict, event_type: str) -> bool:
-        """Verify event has ancestor with specified event type.
+    def get_ancestor_by_condition(self, event: dict, condition_function: Callable) -> Optional[dict]:
+        """Gets event ancestor by condition.
 
-        :param event: Event.
-        :param event_type: Event type.
-        :return: True/False.
+        Args:
+            event: Event.
+            condition_function: Condition function.
+
+        Returns:
+            Ancestor event If condition is True.
         """
         parent_id = event.get("parentEventId")
-
         if parent_id is None:
-            raise ValueError("event must have field 'parentEventId'")
+            return None
 
         ancestor = self._events.get(parent_id)
         while ancestor:
-            if event_type == ancestor.get("eventType"):
-                return True
-            ancestor = self._events.get(ancestor.get("parentEventId"))
-        return False
-
-    def get_ancestor_by_name(self, event: dict, event_name: str) -> Optional[dict]:
-        """Gets event ancestor by event_name.
-
-        :param event: Record.
-        :param event_name: Event name.
-        :return: Event.
-        """
-        parent_id = event.get("parentEventId")
-
-        if parent_id is None:
-            raise ValueError("event must have field 'parentEventId'")
-
-        ancestor = self._events.get(parent_id)
-        while ancestor:
-            if event_name in ancestor.get("eventName"):
+            if condition_function:
                 return ancestor
             ancestor = self._events.get(ancestor.get("parentEventId"))
         return ancestor
 
-    def get_ancestor_by_super_type(
-        self,
-        event: dict,
-        super_type: str,
-        super_type_get_func: Callable[[dict, Dict[int, dict]], str],
-    ) -> Optional[dict]:
-        """Gets event ancestor by super_type.
-
-        :param event: Event.
-        :param super_type: Super type.
-        :param super_type_get_func: Super type get function.
-        :return: Event.
-        """
-        parent_id = event.get("parentEventId")
-
-        if parent_id is None:
-            raise ValueError("event must have field 'parentEventId'")
-
-        ancestor = self._events.get(parent_id)
-        while ancestor:
-            if super_type == super_type_get_func(ancestor, self._events):
-                return ancestor
-            parent_id = ancestor.get("parentEventId")
-            ancestor = self._events.get(parent_id)
-        return ancestor
-
-    def recover_unknown_events(self, data_source: DataSource, broken_events: Optional[bool] = False) -> None:
+    def recover_unknown_events(self, data_source: IDataSource, broken_events: Optional[bool] = False) -> None:
         """Loads unknown events from data provider and recover EventsTree.
 
         :param data_source: DataSources.
@@ -187,7 +152,11 @@ class EventsTree5(IEventsTree):
         """
         old_unknown_events = self._unknown_events.keys()
         while self._unknown_events:
-            new_events = data_source.find_events_by_id_from_data_provider(self._unknown_events.keys(), broken_events)
+            command = GetEventsById(list(self._unknown_events.keys()))
+            if broken_events:
+                command.use_stub()
+            new_events = data_source.command(command)
+
             if isinstance(new_events, dict):
                 new_events = [new_events]
             if new_events is None:

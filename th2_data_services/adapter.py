@@ -13,19 +13,22 @@
 #  limitations under the License.
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class IAdapter(ABC):
     @abstractmethod
-    def handle(self, record):
+    def handle(self, record: Any) -> Any:
         pass
 
 
 class IMessageAdapter(IAdapter):
     @abstractmethod
-    def handle(self, record: dict):
+    def handle(self, message: dict) -> Any:
         pass
 
 
 class IEventAdapter(IAdapter):
-    pass
+    @abstractmethod
+    def handle(self, event: dict) -> Any:
+        pass
