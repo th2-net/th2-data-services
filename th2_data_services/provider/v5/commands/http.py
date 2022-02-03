@@ -17,5 +17,8 @@ from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSour
 
 
 class GetEventById(IHTTPProvider5Command):
+    def __init__(self, id):
+        self._id = id
+
     def handle(self, data_source: HTTPProvider5DataSource):
         pass
