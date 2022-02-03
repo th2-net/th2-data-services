@@ -23,14 +23,11 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
 
 from th2_data_services import Filter
 from th2_data_services.provider.command import IGRPCProviderAdaptableCommand
-from th2_data_services.provider.v5.command import (
-    IGRPCProvider5Command,
-    IGRPCProvider5EventCommand,
-    IGRPCProvider5MessageCommand,
-)
+from th2_data_services.provider.v5.adapters.basic_adapters import AdapterGRPCObjectToDict
+from th2_data_services.provider.v5.command import IGRPCProvider5Command
+
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
 from th2_data_services.provider.v5.provider_api import GRPCProvider5API
-from th2_data_services.provider.v5.stub_builder import provider5_event_stub_builder, provider5_message_stub_builder
 
 
 class GetEventByIdGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
@@ -52,11 +49,11 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableComman
         api: GRPCProvider5API = data_source.source_api
         event = api.get_event(self._id)
 
-        event = self._handle_adapters(event) if self._workflow else event
+        event = self._handle_adapters(event)
         return event
 
 
-class GetEventById(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
+class GetEventById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id.
@@ -70,20 +67,21 @@ class GetEventById(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
         """
         super().__init__()
         self._id = id
+        self._decoder = AdapterGRPCObjectToDict()
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> dict:
-        event = {provider5_event_stub_builder.event_fields.EVENT_ID: self._id}
+        event = {data_source.event_struct.EVENT_ID: self._id}
         try:
             event = GetEventByIdGRPCObject(self._id).handle(data_source)
-            event = self._decode_event(event)
+            event = self._decoder.handle(event)
         except _InactiveRpcError:
             if self._stub_status:
-                event = provider5_event_stub_builder.build(event)
+                event = data_source.event_stub.build(event)
             else:
                 raise ValueError("Unable to find the event.")
 
-        event = self._handle_adapters(event) if self._workflow else event
+        event = self._handle_adapters(event)
         return event
 
     def use_stub(self):
@@ -91,7 +89,7 @@ class GetEventById(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
         return self
 
 
-class GetEventsById(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
+class GetEventsById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the events by id.
@@ -105,6 +103,7 @@ class GetEventsById(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
         """
         super().__init__()
         self.ids = ids
+        self._decoder = AdapterGRPCObjectToDict()
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> List[EventData]:
@@ -112,17 +111,17 @@ class GetEventsById(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
 
         response = []
         for event_id in self.ids:
-            event = {provider5_event_stub_builder.event_fields.EVENT_ID: event_id}
+            event = {data_source.event_struct.EVENT_ID: event_id}
             try:
                 event = api.get_event(event_id)
-                event = self._decode_event(event)
+                event = self._decoder.handle(event)
             except _InactiveRpcError:
                 if self._stub_status:
-                    event = provider5_event_stub_builder.build(event)
+                    event = data_source.event_stub.build(event)
                 else:
                     raise ValueError("Unable to find the event.")
 
-            event = self._handle_adapters(event) if self._workflow else event
+            event = self._handle_adapters(event)
             response.append(event)
         return response
 
@@ -205,7 +204,7 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IGRPCProviderAdaptableCommand)
             yield response
 
 
-class GetEvents(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
+class GetEvents(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
@@ -255,6 +254,8 @@ class GetEvents(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
         self._attached_messages = attached_messages
         self._filters = filters
 
+        self._decoder = AdapterGRPCObjectToDict()
+
     def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[dict]:
         stream = GetEventsGRPCObjects(
             start_timestamp=self._start_timestamp,
@@ -270,7 +271,7 @@ class GetEvents(IGRPCProvider5EventCommand, IGRPCProviderAdaptableCommand):
             filters=self._filters,
         ).handle(data_source)
         for stream_body in stream:
-            event = self._decode_event(stream_body.event)
+            event = self._decoder.handle(stream_body.event)
             event = self._handle_adapters(event)
             yield event
 
@@ -293,11 +294,11 @@ class GetMessageByIdGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableComm
     def handle(self, data_source: GRPCProvider5DataSource) -> MessageData:
         api: GRPCProvider5API = data_source.source_api
         response = api.get_message(self._id)
-        response = self._handle_adapters(response) if self._workflow else response
+        response = self._handle_adapters(response)
         return response
 
 
-class GetMessageById(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableCommand):
+class GetMessageById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id.
@@ -311,19 +312,20 @@ class GetMessageById(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableCommand
         """
         super().__init__()
         self._id = id
+        self._decoder = AdapterGRPCObjectToDict()
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> dict:
-        message = {provider5_message_stub_builder.message_fields.MESSAGE_ID: self._id}
+        message = {data_source.message_struct.MESSAGE_ID: self._id}
         try:
             message = GetMessageByIdGRPCObject(self._id).handle(data_source)
-            message = self._decode_message(message)
+            message = self._decoder.handle(message)
         except _InactiveRpcError:
             if self._stub_status:
-                message = provider5_message_stub_builder.build(message)
+                message = data_source.message_stub.build(message)
             else:
                 raise ValueError("Unable to find the message.")
-        message = self._handle_adapters(message) if self._workflow else message
+        message = self._handle_adapters(message)
         return message
 
     def use_stub(self):
@@ -331,7 +333,7 @@ class GetMessageById(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableCommand
         return self
 
 
-class GetMessagesById(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableCommand):
+class GetMessagesById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the messages by id.
@@ -345,21 +347,22 @@ class GetMessagesById(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableComman
         """
         super().__init__()
         self._ids = ids
+        self._decoder = AdapterGRPCObjectToDict()
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:
         response = []
         for id_ in self._ids:
-            message = {provider5_message_stub_builder.message_fields.MESSAGE_ID: id_}
+            message = {data_source.message_struct.MESSAGE_ID: id_}
             try:
                 message = GetMessageByIdGRPCObject(id_).handle(data_source)
-                message = self._decode_message(message)
+                message = self._decoder.handle(message)
             except _InactiveRpcError:
                 if self._stub_status:
-                    message = provider5_message_stub_builder.build(message)
+                    message = data_source.message_stub.build(message)
                 else:
                     raise ValueError("Unable to find the message.")
-            message = self._handle_adapters(message) if self._workflow else message
+            message = self._handle_adapters(message)
             response.append(message)
         return response
 
@@ -426,11 +429,11 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableCommand
         )
 
         for message in response:
-            message = self._handle_adapters(message) if self._workflow else message
+            message = self._handle_adapters(message)
             yield message
 
 
-class GetMessages(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableCommand):
+class GetMessages(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.
@@ -470,6 +473,8 @@ class GetMessages(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableCommand):
         self._keep_open = keep_open
         self._filters = filters
 
+        self._decoder = AdapterGRPCObjectToDict()
+
     def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:
         stream = GetMessagesGRPCObject(
             start_timestamp=self._start_timestamp,
@@ -482,6 +487,6 @@ class GetMessages(IGRPCProvider5MessageCommand, IGRPCProviderAdaptableCommand):
             filters=self._filters,
         ).handle(data_source)
         for stream_body in stream:
-            message = self._decode_message(stream_body.message)
-            message = self._handle_adapters(message) if self._workflow else message
+            message = self._decoder.handle(stream_body.message)
+            message = self._handle_adapters(message)
             yield message
