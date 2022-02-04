@@ -19,7 +19,7 @@ from typing import List, Generator
 import requests
 from requests import Response
 from urllib3 import PoolManager, exceptions
-from datetime import datetime, timezone
+
 
 from th2_data_services.provider.source_api import IHTTPProviderSourceAPI
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
@@ -240,6 +240,6 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         Args:
             url: Url.
         Returns:
-            dict: Response data.
+            obj: Response data.
         """
         return requests.get(url)
