@@ -21,14 +21,12 @@ This repository is a library for creating th2-data-services applications.
 
 Data Services is a tool for analyzing stream data
 from ["Report Data Provider"](https://github.com/th2-net/th2-rpt-data-provider)
-via aggregate operations. The tool allows the user to manipulate the workflow to analyze the required
-data.
+via aggregate operations. The tool allows the user to manipulate the workflow to analyze the required data.
 
 Current capabilities:
 
 - Filtering stream data
 - Transforming stream data
-
 
 # 2. Getting started
 
@@ -40,7 +38,7 @@ Current capabilities:
     pip install th2-data-services
     ```
 
-- From Source   
+- From Source
     ```
     git clone https://github.com/th2-net/th2-data-services
     pip install th2-data-services/
@@ -59,13 +57,13 @@ from collections import Generator
 from th2_data_services import DataSource, Data, Filter
 from datetime import datetime
 
-
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
 data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
-START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724)  # object given in utc format
+START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41,
+                      microsecond=692724)  # object given in utc format
 END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
 
 # [2] Get events or messages from START_TIME to END_TIME.
@@ -175,57 +173,51 @@ The library provides stream data and some tools for data manipulation.
 What’s the definition of a stream?   
 A short definition is "a sequence of elements from a source that supports aggregate operations."
 
-- **Data object**: An object of `Data` class which is wrapper under stream. 
+- **Data object**: An object of `Data` class which is wrapper under stream.
 - **Sequence of elements**:
-  A _Data object_ provides an interface to a sequenced set of values of a specific element type. 
-  Stream inside the _Data object_ **don’t actually store** elements; they are computed on demand.
-- **DataSource**: 
-  Streams consume from a data-providing source ([Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)) 
-  but it also can be collections, arrays, or I/O resources. 
+  A _Data object_ provides an interface to a sequenced set of values of a specific element type. Stream inside the _Data
+  object_ **don’t actually store** elements; they are computed on demand.
+- **DataSource**:
+  Streams consume from a data-providing
+  source ([Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider))
+  but it also can be collections, arrays, or I/O resources.
   _DataSource object_ provides connection to _th2-rpt-provider_ or read csv files from cradle-viewer.
-- **Aggregate operations**: 
-  Common operations such as filter, map, find and so on. 
+- **Aggregate operations**:
+  Common operations such as filter, map, find and so on.
 - **Data caching**:
-  The _Data object_ provides the ability to use the cache. 
-  The cache works for each _Data object_, that is, you choose which _Data object_ you want to save. 
-  The _Data object_ cache is saved after the first iteration, but the iteration source may be different.
-  If you don't use the cache, your source will be the data source you have in the _Data Object_. 
-  But if you use the cache, your source can be the data source, the parent cache, or own cache:
-  * The data source: 
-  If the "Data Object" doesn't have a parent cache and its cache.
-  * The parent cache: 
-  If the "Data Object" has a parent cache. 
-  It doesn't matter what position the parent cache has in inheritance. 
-  "Data Object" understands whose cache it is and executes the part of the workflow that was not executed.
-  * The own cache: 
-  If it is not the first iteration of this Data object.
-  
+  The _Data object_ provides the ability to use the cache. The cache works for each _Data object_, that is, you choose
+  which _Data object_ you want to save. The _Data object_ cache is saved after the first iteration, but the iteration
+  source may be different. If you don't use the cache, your source will be the data source you have in the _Data Object_
+  . But if you use the cache, your source can be the data source, the parent cache, or own cache:
+    * The data source:
+      If the "Data Object" doesn't have a parent cache and its cache.
+    * The parent cache:
+      If the "Data Object" has a parent cache. It doesn't matter what position the parent cache has in inheritance.
+      "Data Object" understands whose cache it is and executes the part of the workflow that was not executed.
+    * The own cache:
+      If it is not the first iteration of this Data object.
+
   Note that the cache state of the Data object is not inherited.
-  
 
-Furthermore, stream operations have two fundamental characteristics that make them very different 
-from collection operations:
+Furthermore, stream operations have two fundamental characteristics that make them very different from collection
+operations:
 
-- **Pipelining**: Many stream operations return a stream themselves. 
-This allows operations to be chained to form a larger pipeline.
+- **Pipelining**: Many stream operations return a stream themselves. This allows operations to be chained to form a
+  larger pipeline.
 
 ![Data stream pipeline](documentation/img/data_stream_pipeline.png)
 
-- **Internal iteration**: In contrast to collections, which are iterated explicitly (external iteration), 
-stream operations do the iteration behind the scenes for you. Note, it doesn’t mean you cannot iterate 
-the _Data object_.
+- **Internal iteration**: In contrast to collections, which are iterated explicitly (external iteration), stream
+  operations do the iteration behind the scenes for you. Note, it doesn’t mean you cannot iterate the _Data object_.
 
-  
 ## 2.4. Links
 
 - [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)
 - [Th2 Data Services Utils](https://github.com/th2-net/th2-data-services-utils)
 
-
-
 # 3. API
-[Documentation](documentation/api/index.md)
 
+[Documentation](documentation/api/index.md)
 
 # 4. Examples
 

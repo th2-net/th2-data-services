@@ -2,7 +2,6 @@ from collections import Generator
 from th2_data_services import DataSource, Data, Filter
 from datetime import datetime
 
-
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.

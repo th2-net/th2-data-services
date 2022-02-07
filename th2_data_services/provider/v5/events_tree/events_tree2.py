@@ -1,3 +1,17 @@
+#  Copyright 2022 Exactpro (Exactpro Systems Limited)
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 from abc import ABC, abstractmethod
 from typing import Callable, Generator, Iterator, List, Union
 
@@ -5,8 +19,8 @@ from th2_data_services.data import Data
 from th2_data_services.data_source import DataSource
 from anytree import Node, RenderTree, findall
 
-from th2_data_services.provider_api.event import ICurrentProviderEvent
-from th2_data_services.provider_api.provider5.event import provider5_http_event
+from th2_data_services.provider.data_source import IProviderDataSource
+from th2_data_services.provider.v5.struct import provider5_event_struct, Provider5EventStruct
 
 
 class ITreeNodeShowFmt(ABC):
@@ -18,7 +32,7 @@ class ITreeNodeShowFmt(ABC):
 class TreeNode(Node):
     separator = " | "
 
-    def __init__(self, name, event_interface: ICurrentProviderEvent, **kwargs):
+    def __init__(self, name, event_interface: Provider5EventStruct, **kwargs):
         super().__init__(name, **kwargs)
         self._event_interface = event_interface
 
@@ -56,7 +70,7 @@ class TreeNode(Node):
 
 
 class TreeNodeProviderEvent(TreeNode):
-    def __init__(self, name, data, event_interface: ICurrentProviderEvent, **kwargs):
+    def __init__(self, name, data, event_interface: Provider5EventStruct, **kwargs):
         super().__init__(name, event_interface, **kwargs)
         self._data = data
 
@@ -80,20 +94,19 @@ class TreeNodeProviderEvent(TreeNode):
 
 
 class EventsTree2:
-    """EventsTree2 - experimental tree."""
-
     def __init__(
         self,
         data: Union[Iterator, Generator[dict, None, None], Data],
-        data_source: DataSource,
-        event_interface: ICurrentProviderEvent = provider5_http_event,
+        data_source: IProviderDataSource,
+        event_interface: Provider5EventStruct = provider5_event_struct,
         preserve_body: bool = False,
         broken_events: bool = False,
         parentless: bool = False,
     ):
-        """
+        """EventsTree2 - builds real trees, provides them and convenient methods to retrieve data.
+
         Args:
-            data: Iterable object with provider events.
+            data: Iterable object with provider _events.
             data_source: Data source object.
             event_interface: Interface for provider Event.
             preserve_body (:obj:`bool`, optional): If True keep Events bodies.
@@ -102,13 +115,13 @@ class EventsTree2:
         """
         self._data = data if data is not None else []
         self._event_interface = event_interface
-        self.__preserve_body = preserve_body
+        self._preserve_body = preserve_body
         self._broken_events_flag = broken_events
         self._parentless = parentless
         self._data_source = data_source
         self._all_nodes = []
-        self.roots: List[TreeNodeProviderEvent] = []
-        self.events = dict()  # {id: Node}
+        self._roots: List[TreeNodeProviderEvent] = []
+        self._events = dict()  # {id: Node}
         self.events_ids = []  # Used to find unknown_parents_ids
         self.parent_events_ids = set()
         self.__unknown_parent_ids = set()  # Set in order to remove duplicate Event IDs.
@@ -124,14 +137,14 @@ class EventsTree2:
         for event in self._get_events(restored_events):
             self._append_node_and_ids(event)
 
-        # Search roots.
+        # Search _roots.
         node: TreeNodeProviderEvent
         for node in self._all_nodes.copy():
             if node.data[self._event_interface.PARENT_EVENT_ID] is None:
-                self.roots.append(node)
+                self._roots.append(node)
                 self._all_nodes.remove(node)
 
-        self._build_trees(self.roots)
+        self._build_trees(self._roots)
 
     def _create_node(self, event) -> TreeNodeProviderEvent:
         return TreeNodeProviderEvent(
@@ -148,7 +161,7 @@ class EventsTree2:
         for event in data:
             event = event.copy()
 
-            if not self.__preserve_body:
+            if not self._preserve_body:
                 try:
                     event.pop("body")
                 except KeyError:
@@ -156,7 +169,7 @@ class EventsTree2:
             yield event
 
     def _append_events(self, node: TreeNodeProviderEvent):
-        self.events[node] = node.data[""]
+        self._events[node] = node.data[""]
 
     def _append_node_and_ids(self, event):
         node = self._create_node(event)
@@ -196,6 +209,9 @@ class EventsTree2:
         else:
             return None
 
+    def recover_unknown_events(self, data_source: DataSource, broken_events: Optional[bool] = False) -> None:
+        pass
+
     def _get_unknown_events(self, unknown_parents, broken_events) -> List[dict]:
         """Recursion function to get all unknown events."""
         if unknown_parents:
@@ -206,6 +222,7 @@ class EventsTree2:
                 new_events = []
                 for up_id in unknown_parents:
                     try:
+                        self._data_source.command()
                         new_events.append(self._data_source.find_events_by_id_from_data_provider(up_id, broken_events))
                     except ValueError as err:
                         owners = {
@@ -247,9 +264,9 @@ class EventsTree2:
             return []
 
     def _get_unknown_parents_ids(self) -> List[str]:
-        """Searches unknown events events_id.
+        """Searches unknown events events_ids.
 
-        :return: Unknown events events_id.
+        :return: Unknown _events events_ids.
         """
         unknown_parents_ids = []
 
@@ -260,26 +277,38 @@ class EventsTree2:
 
         return unknown_parents_ids
 
-    def get_by_id(self, events_id: Union[List[str], str]) -> Union[dict, List[dict]]:
-        """Gets event/events by ids.
+    @property
+    def roots(self) -> List[TreeNodeProviderEvent]:
+        """Returns all roots for the time."""
+        return self._roots
+
+    @property
+    def events(self) -> dict:
+        return self._events
+
+    def get_event_by_id(self, event_id: str) -> dict:
+        """Returns event by id.
 
         Args:
-            events_id: One str with EventID or list of EventsIDs.
+            event_id: String with EventID.
 
         Returns:
-            List[Event_dict] if you request a list or Event_dict.
+            Event_dict.
         """
-        is_str = False
+        # TODO - what if ID not found?
+        return self._events[event_id]
 
-        if isinstance(events_id, str):
-            is_str = True
-            events_id = [events_id]
+    def get_events_by_id(self, events_ids: List[str]) -> List[dict]:
+        """Returns events by ids.
 
+        Args:
+            events_ids: list of EventsIDs.
+
+        Returns:
+            List[Event_dict]
+        """
+        # TODO - what if ID not found?
         r = []
-        for event_id in events_id:
-            r.append(self.events[event_id])
-
-        if is_str and len(r) == 1:
-            return r[0]
-        else:
-            return r
+        for event_id in events_ids:
+            self.get_event_by_id(event_id)
+        return r
