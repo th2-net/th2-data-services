@@ -17,6 +17,9 @@
 
 from abc import abstractmethod
 
+import requests
+import urllib3
+
 from th2_data_services.provider.command import IGRPCProviderCommand, IHTTPProviderCommand, IProviderCommand
 from th2_data_services.data_source import IDataSource
 from th2_data_services.provider.source_api import IHTTPProviderSourceAPI, IGRPCProviderSourceAPI, IProviderSourceAPI
@@ -80,6 +83,17 @@ class IHTTPProviderDataSource(IProviderDataSource):
     @abstractmethod
     def command(self, cmd: IHTTPProviderCommand):
         pass
+
+    def check_connect(self, timeout: (int, float) = 5.0) -> None:
+        """Checks whether url is working.
+
+        Args:
+            timeout: (int, float)
+        """
+        try:
+            requests.get(self.url, timeout=timeout)
+        except ConnectionError as error:
+            raise urllib3.exceptions.HTTPError(f"Unable to connect to host '{self.url}'\nReason: {error}")
 
     @property
     @abstractmethod

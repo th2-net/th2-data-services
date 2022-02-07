@@ -13,8 +13,6 @@
 #  limitations under the License.
 from __future__ import annotations
 
-import requests
-import urllib3
 import logging
 
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
@@ -63,17 +61,10 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
-        self.__check_connect()
-        self._provider_api = HTTPProvider5API(url)
+        self.check_connect()
+        self._provider_api = HTTPProvider5API(url, chunk_length, decode_error_handler, char_enc)
 
         logger.info(url)
-
-    def __check_connect(self) -> None:
-        """Checks whether url is working."""
-        try:
-            requests.get(self.url, timeout=5.0)
-        except ConnectionError as error:
-            raise urllib3.exceptions.HTTPError(f"Unable to connect to host '{self.url}'\nReason: {error}")
 
     def command(self, cmd: IHTTPProvider5Command):
         try:
