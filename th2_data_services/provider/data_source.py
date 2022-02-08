@@ -25,6 +25,8 @@ from th2_data_services.provider.stub_builder import IEventStub, IMessageStub
 
 
 class IProviderDataSource(IDataSource):
+    """Interface of DataSource that provides work with rpt-data-provider."""
+
     def __init__(
         self,
         url: str,
@@ -68,31 +70,35 @@ class IProviderDataSource(IDataSource):
 
     @abstractmethod
     def command(self, cmd: IProviderCommand):
-        pass
+        """Execute the transmitted command."""
 
     @property
     @abstractmethod
     def source_api(self) -> IProviderSourceAPI:
-        pass
+        """Returns Provider API."""
 
 
 class IHTTPProviderDataSource(IProviderDataSource):
+    """Interface of DataSource that provides work with rpt-data-provider via HTTP."""
+
     @abstractmethod
     def command(self, cmd: IHTTPProviderCommand):
-        pass
+        """Execute the transmitted HTTP command."""
 
     @property
     @abstractmethod
     def source_api(self) -> IHTTPProviderSourceAPI:
-        pass
+        """Returns HTTP Provider API."""
 
 
 class IGRPCProviderDataSource(IProviderDataSource):
+    """Interface of DataSource that provides work with rpt-data-provider via GRPC."""
+
     @abstractmethod
     def command(self, cmd: IGRPCProviderCommand):
-        pass
+        """Execute the transmitted GRPC command."""
 
     @property
     @abstractmethod
     def source_api(self) -> IGRPCProviderSourceAPI:
-        pass
+        """Returns GRPC Provider API."""

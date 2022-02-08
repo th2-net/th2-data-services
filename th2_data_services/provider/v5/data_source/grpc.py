@@ -37,6 +37,12 @@ logger.setLevel(logging.DEBUG)
 
 
 class GRPCProvider5DataSource(IGRPCProviderDataSource):
+    """DataSource class which provide work with rpt-data-provider.
+
+    Rpt-data-provider version: 5.x.y
+    Protocol: GRPC
+    """
+
     def __init__(
         self,
         url: str,
@@ -57,7 +63,18 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
 
         logger.info(url)
 
-    def command(self, cmd: IGRPCProviderCommand):
+    def command(self, cmd: IGRPCProviderCommand) -> Any:
+        """Execute the transmitted GRPC command.
+
+        Args:
+            cmd: GRPC Command.
+
+        Returns:
+            Any: Command response.
+
+        Raises:
+            ValueError: If command has broken.
+        """
         try:
             return cmd.handle(data_source=self)
         except _InactiveRpcError as info:
@@ -65,4 +82,5 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
 
     @property
     def source_api(self) -> GRPCProvider5API:
+        """Returns Provider API."""
         return self.__provider_api
