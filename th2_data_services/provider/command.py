@@ -19,7 +19,6 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Callable, Any
-from warnings import warn
 
 from th2_data_services.command import ICommand
 
@@ -63,9 +62,5 @@ class IGRPCProviderAdaptableCommand(IGRPCProviderCommand):
 
     def _handle_adapters(self, data):
         for step in self._workflow:
-            try:
-                data = step(data)
-            except Exception:
-                warn(f"Adapter '{step.__name__}' didn't apply because of Error.", stacklevel=2)
-                return data
+            data = step(data)
         return data
