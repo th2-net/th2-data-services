@@ -19,6 +19,7 @@ from typing import List, Generator
 import requests
 from requests import Response
 from urllib3 import PoolManager, exceptions
+from sseclient import Event
 
 
 from th2_data_services.provider.source_api import IHTTPProviderSourceAPI
@@ -221,13 +222,13 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
         response.release_conn()
 
-    def execute_sse_request(self, url: str) -> Generator[dict, None, None]:
+    def execute_sse_request(self, url: str) -> Generator[Event, None, None]:
         """Creates SSE connection to server.
 
         Args:
-            url: Url.
+            url: Url for a sse request to rpt-data-provider.
         Yields:
-            obj: Generator.
+            Generator with sseclinet Events.
         """
         response = self.__create_stream_connection(url)
         client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
@@ -238,8 +239,8 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         """Sends a GET request to provider.
 
         Args:
-            url: Url.
+            url: Url for a get request to rpt-data-provider.
         Returns:
-            obj: Response data.
+            requests.Response: Response data.
         """
         return requests.get(url)
