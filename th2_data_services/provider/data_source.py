@@ -84,11 +84,11 @@ class IHTTPProviderDataSource(IProviderDataSource):
     def command(self, cmd: IHTTPProviderCommand):
         pass
 
-    def check_connect(self, timeout: (int, float) = 5.0) -> None:
+    def check_connect(self, timeout: (int, float)) -> None:
         """Checks whether url is working.
 
         Args:
-            timeout: (int, float)
+            timeout: How many seconds to wait for the server to send data before giving up
         """
         try:
             requests.get(self.url, timeout=timeout)

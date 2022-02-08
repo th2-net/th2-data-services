@@ -40,6 +40,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
     def __init__(
         self,
         url: str,
+        check_connect_timeout: (int, float) = 0.5,
         chunk_length: int = 65536,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
@@ -52,21 +53,33 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
 
         Args:
             url: HTTP data source url.
+            check_connect_timeout: How many seconds to wait for the server to send data before giving up
             chunk_length: How much of the content to read in one chunk.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
+            event_struct: Struct of event from rpt-data-provider.
+            message_struct: Struct of message from rpt-data-provider.
+            event_stub_builder: Stub for event.
+            message_stub_builder: Stub for message.
         """
         super().__init__(url, event_struct, message_struct, event_stub_builder, message_stub_builder)
 
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
-        self.check_connect()
+        self.check_connect(check_connect_timeout)
         self._provider_api = HTTPProvider5API(url, chunk_length, decode_error_handler, char_enc)
 
         logger.info(url)
 
     def command(self, cmd: IHTTPProvider5Command):
+        """HTTP Provider5 command processor.
+
+        Args:
+            cmd: The command of data source to execute.
+        Returns:
+            Data source command result.
+        """
         try:
             return cmd.handle(data_source=self)
         except Exception as e:
@@ -74,4 +87,5 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
 
     @property
     def source_api(self) -> HTTPProvider5API:
+        """HTTP Provider5 API."""
         return self._provider_api
