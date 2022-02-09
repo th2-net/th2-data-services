@@ -14,10 +14,13 @@
 
 import logging
 from http import HTTPStatus
-from typing import List
+from typing import List, Generator
 
 import requests
+from requests import Response
 from urllib3 import PoolManager, exceptions
+from sseclient import Event
+
 
 from th2_data_services.provider.source_api import IHTTPProviderSourceAPI
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
@@ -100,30 +103,26 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         """
         return f"{self._url}/filters/sse-events/{filter_name}"
 
-    # TODO - realise filters (Grigory)
     def get_url_match_event_by_id(self, event_id: str, filters: str = "") -> str:
         """REST-API `match/event/{id}` call returns boolean value.
         Checks that event with the specified id is matched by filter.
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
         """
-        return f"{self._url}/match/event/{event_id}"
+        return f"{self._url}/match/event/{event_id}{filters}"
 
-    # TODO - realise filters (Grigory)
     def get_url_match_message_by_id(self, message_id: str, filters: str = "") -> str:
         """REST-API `match/message/{id}` call returns boolean value.
         Checks that message with the specified id is matched by filter.
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
         """
-        return f"{self._url}/match/message/{message_id}"
+        return f"{self._url}/match/message/{message_id}{filters}"
 
-    # TODO - float??? (Grigory)
-    # TODO - add DocString (Grigory)
     def get_url_search_sse_events(
         self,
-        start_timestamp: (int, float),
-        end_timestamp: (int, float) = None,
+        start_timestamp: int,
+        end_timestamp: int = None,
         parent_event: str = None,
         resume_from_id: str = None,
         search_direction: str = "NEXT",
@@ -134,18 +133,23 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         attached_messages: bool = False,
         filters: str = "",
     ) -> str:
+        """REST-API `search/sse/events` call create a sse channel of event metadata that matches the filter.
+
+        https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
+        """
         kwargs = {
             "startTimestamp": start_timestamp,
+            "endTimestamp": end_timestamp,
             "resumeFromId": resume_from_id,
             "parentEvent": parent_event,
             "searchDirection": search_direction,
             "resultCountLimit": result_count_limit,
-            "endTimestamp": end_timestamp,
             "limitForParent": limit_for_parent,
             "keepOpen": keep_open,
             "metadataOnly": metadata_only,
             "attachedMessages": attached_messages,
         }
+
         query = ""
         url = f"{self._url}/search/sse/events/?"
         for k, v in kwargs.items():
@@ -155,13 +159,11 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
                 query += f"&{k}={v}"
         return f"{url}{query[1:]}{filters}"
 
-    # TODO - float??? (Grigory)
-    # TODO - add DocString (Grigory)
     def get_url_search_sse_messages(
         self,
-        start_timestamp: (int, float),
+        start_timestamp: int,
         stream: List[str],
-        end_timestamp: (int, float) = None,
+        end_timestamp: int = None,
         resume_from_id: str = None,
         search_direction: str = "NEXT",
         result_count_limit: (int, float) = None,
@@ -171,18 +173,23 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         lookup_limit_days: (int, float) = None,
         filters: str = "",
     ) -> str:
+        """REST-API `search/sse/messages` call create a sse channel of messages that matches the filter.
+
+        https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
+        """
         kwargs = {
             "startTimestamp": start_timestamp,
+            "endTimestamp": end_timestamp,
             "resumeFromId": resume_from_id,
             "stream": stream,
             "searchDirection": search_direction,
             "resultCountLimit": result_count_limit,
-            "endTimestamp": end_timestamp,
             "keepOpen": keep_open,
             "messageId": message_id,
             "attachedEvents": attached_events,
             "lookupLimitDays": lookup_limit_days,
         }
+
         query = ""
         url = f"{self._url}/search/sse/messages/?"
         for k, v in kwargs.items():
@@ -192,7 +199,14 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
                 query += f"&{k}={v}"
         return f"{url}{query[1:]}{filters}"
 
-    def __create_stream_connection(self, url: str):
+    def __create_stream_connection(self, url: str) -> Generator[bytes, None, None]:
+        """Create stream connection.
+
+        Args:
+            url: Url.
+        Yields:
+             str: Response stream data.
+        """
         headers = {"Accept": "text/event-stream"}
         http = PoolManager()
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
@@ -208,13 +222,25 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
         response.release_conn()
 
-    # TODO - add DocString (Grigory)
-    def execute_sse_request(self, url: str):
+    def execute_sse_request(self, url: str) -> Generator[Event, None, None]:
+        """Creates SSE connection to server.
+
+        Args:
+            url: Url for a sse request to rpt-data-provider.
+        Yields:
+            Generator with sseclinet Events.
+        """
         response = self.__create_stream_connection(url)
         client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
         for record in client.events():
             yield record
 
-    # TODO - add DocString (Grigory)
-    def execute_request(self, url: str):
+    def execute_request(self, url: str) -> Response:
+        """Sends a GET request to provider.
+
+        Args:
+            url: Url for a get request to rpt-data-provider.
+        Returns:
+            requests.Response: Response data.
+        """
         return requests.get(url)
