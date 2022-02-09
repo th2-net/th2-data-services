@@ -16,16 +16,20 @@ from abc import ABC, abstractmethod
 
 
 class IAdapter(ABC):
+    """High level interface for Adapter."""
+
     @abstractmethod
     def handle(self, record):
         pass
 
 
 class IMessageAdapter(IAdapter):
+    """Interface of Adapter for messages."""
+
     @abstractmethod
     def handle(self, record: dict):
         pass
 
 
 class IEventAdapter(IAdapter):
-    pass
+    """Interface of Adapter for events."""

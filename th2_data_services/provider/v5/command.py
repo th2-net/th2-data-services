@@ -20,12 +20,24 @@ from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSour
 
 
 class IHTTPProvider5Command(IHTTPProviderCommand):
+    """Interface of command for rpt-data-provider.
+
+    Rpt-data-provider version: 5.x.y
+    Protocol: HTTP
+    """
+
     @abstractmethod
     def handle(self, data_source: HTTPProvider5DataSource):
         pass
 
 
 class IGRPCProvider5Command(IGRPCProviderCommand):
+    """Interface of command for rpt-data-provider.
+
+    Rpt-data-provider version: 5.x.y
+    Protocol: GRPC
+    """
+
     @abstractmethod
     def handle(self, data_source: GRPCProvider5DataSource):
         pass

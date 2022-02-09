@@ -16,12 +16,12 @@ from th2_data_services.source_api import ISourceAPI
 
 
 class IProviderSourceAPI(ISourceAPI):
-    pass
+    """Interface for Source API of rpt-data-provider."""
 
 
 class IHTTPProviderSourceAPI(IProviderSourceAPI):
-    pass
+    """Interface for Source API of rpt-data-provider which works via HTTP."""
 
 
 class IGRPCProviderSourceAPI(IProviderSourceAPI):
-    pass
+    """Interface for Source API of rpt-data-provider which works via GRPC."""
