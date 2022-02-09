@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import Any
 
 from grpc._channel import _InactiveRpcError
 
@@ -51,6 +52,14 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
         event_stub_builder: IEventStub = provider5_event_stub_builder,
         message_stub_builder: IMessageStub = provider5_message_stub_builder,
     ):
+        """
+        Args:
+            url: Url of rpt-data-provider.
+            event_struct: Event structure that is supplied by rpt-data-provider.
+            message_struct: Message structure that is supplied by rpt-data-provider.
+            event_stub_builder: Stub builder for broken events.
+            message_stub_builder: Stub builder for broken messages.
+        """
         super().__init__(
             url=url,
             event_struct=event_struct,
