@@ -40,7 +40,6 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
     def __init__(
         self,
         url: str,
-        check_connect_timeout: (int, float) = 0.5,
         chunk_length: int = 65536,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
@@ -48,12 +47,13 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         message_struct=provider5_message_struct,
         event_stub_builder=provider5_event_stub_builder,
         message_stub_builder=provider5_message_stub_builder,
+        check_connect_timeout: (int, float) = 5
     ):
         """
 
         Args:
             url: HTTP data source url.
-            check_connect_timeout: How many seconds to wait for the server to send data before giving up
+            check_connect_timeout: How many seconds to wait for the server to send data before giving up.
             chunk_length: How much of the content to read in one chunk.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
