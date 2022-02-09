@@ -88,7 +88,7 @@ class IHTTPProviderDataSource(IProviderDataSource):
         """Checks whether url is working.
 
         Args:
-            timeout: How many seconds to wait for the server to send data before giving up
+            timeout: How many seconds to wait for the server to send data before giving up.
         """
         try:
             requests.get(self.url, timeout=timeout)
