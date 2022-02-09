@@ -13,8 +13,6 @@
 #  limitations under the License.
 from __future__ import annotations
 
-import requests
-import urllib3
 import logging
 
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
@@ -49,35 +47,45 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         message_struct=provider5_message_struct,
         event_stub_builder=provider5_event_stub_builder,
         message_stub_builder=provider5_message_stub_builder,
+        check_connect_timeout: (int, float) = 5
     ):
         """
 
         Args:
             url: HTTP data source url.
+            check_connect_timeout: How many seconds to wait for the server to send data before giving up.
             chunk_length: How much of the content to read in one chunk.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
+            event_struct: Struct of event from rpt-data-provider.
+            message_struct: Struct of message from rpt-data-provider.
+            event_stub_builder: Stub for event.
+            message_stub_builder: Stub for message.
         """
         super().__init__(url, event_struct, message_struct, event_stub_builder, message_stub_builder)
 
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
-        self.__check_connect()
-        self._provider_api = HTTPProvider5API()
+        self.check_connect(check_connect_timeout)
+        self._provider_api = HTTPProvider5API(url, chunk_length, decode_error_handler, char_enc)
 
         logger.info(url)
 
-    def __check_connect(self) -> None:
-        """Checks whether url is working."""
-        try:
-            requests.get(self.url, timeout=5.0)
-        except ConnectionError as error:
-            raise urllib3.exceptions.HTTPError(f"Unable to connect to host '{self.url}'\nReason: {error}")
-
     def command(self, cmd: IHTTPProvider5Command):
-        return cmd.handle(data_source=self)
+        """HTTP Provider5 command processor.
+
+        Args:
+            cmd: The command of data source to execute.
+        Returns:
+            Data source command result.
+        """
+        try:
+            return cmd.handle(data_source=self)
+        except Exception as e:
+            raise ValueError(f"A command has broken. Details of error:\n{e}")
 
     @property
     def source_api(self) -> HTTPProvider5API:
+        """HTTP Provider5 API."""
         return self._provider_api
