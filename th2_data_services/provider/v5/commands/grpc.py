@@ -17,7 +17,6 @@ from typing import List, Iterable
 from grpc._channel import _InactiveRpcError
 from th2_grpc_data_provider.data_provider_template_pb2 import (
     EventData,
-    StreamResponse,
     MessageData,
 )
 
@@ -34,6 +33,9 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableComman
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id as GRPC object.
+
+    Returns:
+        EventData: Th2 event.
     """
 
     def __init__(self, id: str):
@@ -57,6 +59,12 @@ class GetEventById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id.
+
+    Returns:
+        dict: Th2 event.
+
+    Raises:
+        ValueError: If event by Id wasn't found.
     """
 
     def __init__(self, id: str):
@@ -79,7 +87,7 @@ class GetEventById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
             if self._stub_status:
                 event = data_source.event_stub.build(event)
             else:
-                raise ValueError("Unable to find the event.")
+                raise ValueError(f"Unable to find the event. Id: {self._id}")
 
         event = self._handle_adapters(event)
         return event
@@ -93,6 +101,12 @@ class GetEventsById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the events by id.
+
+    Returns:
+        List[dict]: Th2 events.
+
+    Raises:
+        ValueError: If any event by Id wasn't found.
     """
 
     def __init__(self, ids: List[str]):
@@ -119,7 +133,7 @@ class GetEventsById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
                 if self._stub_status:
                     event = data_source.event_stub.build(event)
                 else:
-                    raise ValueError("Unable to find the event.")
+                    raise ValueError(f"Unable to find the event. Id: {event_id}")
 
             event = self._handle_adapters(event)
             response.append(event)
@@ -134,6 +148,9 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IGRPCProviderAdaptableCommand)
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream as GRPC object by options.
+
+    Returns:
+        Iterable[EventData]: Stream of Th2 events.
     """
 
     def __init__(
@@ -180,7 +197,7 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IGRPCProviderAdaptableCommand)
         self._attached_messages = attached_messages
         self._filters = filters
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[StreamResponse]:
+    def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[EventData]:
         api: GRPCProvider5API = data_source.source_api
 
         start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)
@@ -201,13 +218,16 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IGRPCProviderAdaptableCommand)
         )
         for response in stream_response:
             response = self._handle_adapters(response)
-            yield response
+            yield response.event
 
 
 class GetEvents(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
+
+    Returns:
+        Iterable[dict]: Stream of Th2 events.
     """
 
     def __init__(
@@ -270,8 +290,8 @@ class GetEvents(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
             attached_messages=self._attached_messages,
             filters=self._filters,
         ).handle(data_source)
-        for stream_body in stream:
-            event = self._decoder.handle(stream_body.event)
+        for event in stream:
+            event = self._decoder.handle(event)
             event = self._handle_adapters(event)
             yield event
 
@@ -280,6 +300,9 @@ class GetMessageByIdGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableComm
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id as GRPC Object.
+
+    Returns:
+        MessageData: Th2 message.
     """
 
     def __init__(self, id: str):
@@ -302,6 +325,12 @@ class GetMessageById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id.
+
+    Returns:
+        dict: Th2 message.
+
+    Raises:
+        ValueError: If message by id wasn't found.
     """
 
     def __init__(self, id: str):
@@ -324,7 +353,7 @@ class GetMessageById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
             if self._stub_status:
                 message = data_source.message_stub.build(message)
             else:
-                raise ValueError("Unable to find the message.")
+                raise ValueError(f"Unable to find the message. Id: {self._id}")
         message = self._handle_adapters(message)
         return message
 
@@ -337,6 +366,12 @@ class GetMessagesById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the messages by id.
+
+    Returns:
+        List[dict]: Th2 messages.
+
+    Raises:
+        ValueError: If any message by id wasn't found.
     """
 
     def __init__(self, ids: List[str]):
@@ -361,7 +396,7 @@ class GetMessagesById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
                 if self._stub_status:
                     message = data_source.message_stub.build(message)
                 else:
-                    raise ValueError("Unable to find the message.")
+                    raise ValueError(f"Unable to find the message. Id: {id_}")
             message = self._handle_adapters(message)
             response.append(message)
         return response
@@ -375,6 +410,9 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableCommand
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream as GRPC object by options.
+
+    Returns:
+        Iterable[MessageData]: Stream of Th2 messages.
     """
 
     def __init__(
@@ -417,7 +455,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableCommand
         start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)
         end_timestamp = int(self._end_timestamp.timestamp() * 10 ** 9)
 
-        response = api.search_messages(
+        stream_response = api.search_messages(
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
             stream=self._stream,
@@ -428,15 +466,18 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableCommand
             filters=self._filters,
         )
 
-        for message in response:
-            message = self._handle_adapters(message)
-            yield message
+        for response in stream_response:
+            response = self._handle_adapters(response)
+            yield response.message
 
 
 class GetMessages(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.
+
+    Returns:
+        Iterable[dict]: Stream of Th2 messages.
     """
 
     def __init__(
@@ -486,7 +527,7 @@ class GetMessages(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
             keep_open=self._keep_open,
             filters=self._filters,
         ).handle(data_source)
-        for stream_body in stream:
-            message = self._decoder.handle(stream_body.message)
+        for message in stream:
+            message = self._decoder.handle(message)
             message = self._handle_adapters(message)
             yield message

@@ -22,7 +22,7 @@ from th2_data_services.provider.v5.struct import (
 class Provider5EventStubBuilder(IEventStub):
     def __init__(self, event_struct=provider5_event_struct):
         self.event_fields = event_struct
-        super().__init__()
+        super().__init__()  # Requirement to define fields for the template earlier.
 
     @property
     def template(self) -> dict:
@@ -44,7 +44,7 @@ class Provider5EventStubBuilder(IEventStub):
 class Provider5MessageStubBuilder(IMessageStub):
     def __init__(self, message_struct=provider5_message_struct):
         self.message_fields = message_struct
-        super().__init__()
+        super().__init__()  # Requirement to define fields for the template earlier.
 
     @property
     def template(self) -> dict:

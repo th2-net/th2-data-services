@@ -19,7 +19,6 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Callable, Any
-from warnings import warn
 
 from th2_data_services.command import ICommand
 
@@ -32,18 +31,24 @@ if TYPE_CHECKING:
 
 
 class IProviderCommand(ICommand):
+    """Interface of command for rpt-data-provider."""
+
     @abstractmethod
     def handle(self, data_source: IProviderDataSource):
         pass
 
 
 class IHTTPProviderCommand(IProviderCommand):
+    """Interface of command for rpt-data-provider which works via HTTP."""
+
     @abstractmethod
     def handle(self, data_source: IHTTPProviderDataSource):
         pass
 
 
 class IGRPCProviderCommand(IProviderCommand):
+    """Interface of command for rpt-data-provider which works via GRPC."""
+
     @abstractmethod
     def handle(self, data_source: IGRPCProviderDataSource):
         pass
@@ -63,9 +68,5 @@ class IGRPCProviderAdaptableCommand(IGRPCProviderCommand):
 
     def _handle_adapters(self, data):
         for step in self._workflow:
-            try:
-                data = step(data)
-            except Exception:
-                warn(f"Adapter '{step.__name__}' didn't apply because of Error.", stacklevel=2)
-                return data
+            data = step(data)
         return data
