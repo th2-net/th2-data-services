@@ -16,16 +16,14 @@ import logging
 from collections import namedtuple
 from typing import Iterable, List, Optional
 
+from google.protobuf.empty_pb2 import Empty
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.wrappers_pb2 import BoolValue, Int32Value, Int64Value
 from th2_grpc_common.common_pb2 import MessageID, EventID, ConnectionID, Direction
-from th2_grpc_data_provider.data_provider_pb2_grpc import DataProviderStub
-from th2_grpc_data_provider.data_provider_pb2 import (
-    MessageStreamNamesRequest,
+from th2_grpc_data_provider.data_provider_template_pb2_grpc import DataProviderStub
+from th2_grpc_data_provider.data_provider_template_pb2 import (
     EventSearchRequest,
     MessageSearchRequest,
-    MessageFiltersRequest,
-    EventFiltersRequest,
     FilterName,
     MatchRequest,
     FilterInfo,
@@ -70,7 +68,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
 
     def get_message_streams(self) -> StringList:
         """GRPC-API `getMessageStreams` call returns a list of message stream names."""
-        return self.__stub.getMessageStreams(MessageStreamNamesRequest())
+        return self.__stub.getMessageStreams(Empty())
 
     def search_events(
         self,
@@ -124,7 +122,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             filters=filters,
         )
         parent_event = EventID(id=parent_event) if parent_event else None
-        resume_from_id = EventID(id=resume_from_id) if resume_from_id else EventID()
+        resume_from_id = EventID(id=resume_from_id) if resume_from_id else None
         limit_for_parent = Int64Value(value=limit_for_parent) if limit_for_parent else None
         metadata_only = BoolValue(value=metadata_only)
         attached_messages = BoolValue(value=attached_messages)
@@ -149,12 +147,10 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         start_timestamp: int,
         stream: List[str],
         end_timestamp: int = None,
-        resume_from_ids: List[str] = None,
+        resume_from_id: str = None,
         search_direction: str = "NEXT",
         result_count_limit: int = None,
         keep_open: bool = False,
-        attached_events: bool = False,
-        lookup_limit_days: int = None,
         filters: Optional[List[Filter]] = None,
     ) -> Iterable[StreamResponse]:
         """GRPC-API `searchMessages` call creates a message stream that matches the filter.
@@ -165,13 +161,10 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             end_timestamp: Sets the timestamp to which the search will be performed, starting with 'start_timestamp'.
                 Expected in nanoseconds.
             search_direction: Sets the lookup direction. Can be 'NEXT' or 'PREVIOUS'.
-            resume_from_ids: The last event id from which we start searching for messages.
+            resume_from_id: The last event id from which we start searching for messages.
             result_count_limit: Sets the maximum amount of messages to return.
             keep_open: Option if the search has reached the current moment,
                 it is necessary to wait further for the appearance of new data.
-            attached_events: Option if you want to load attachedEventIds additionally.
-            lookup_limit_days: The number of days that will be viewed on the first request to get
-                the one closest to the specified timestamp.
             filters: Which filters to apply in a search.
 
         Returns:
@@ -183,7 +176,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
             result_count_limit=result_count_limit,
-            resume_from_ids=resume_from_ids,
+            resume_from_ids=resume_from_id,
             search_direction=search_direction,
         )
 
@@ -195,21 +188,16 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             search_direction=search_direction,
             filters=filters,
         )
-        resume_from_ids = (
-            [self.__build_message_id_object(id_) for id_ in resume_from_ids] if resume_from_ids else MessageID()
-        )
-        attached_events = BoolValue(value=attached_events)
-        lookup_limit_days = Int32Value(value=lookup_limit_days) if lookup_limit_days else None
+        resume_from_id = self.__build_message_id_object(resume_from_id) if resume_from_id else None
 
         message_search_request = MessageSearchRequest(
             start_timestamp=basic_request.start_timestamp,
             end_timestamp=basic_request.end_timestamp,
+            stream=StringList(list_string=stream),
             search_direction=basic_request.search_direction,
-            resume_from_ids=resume_from_ids,
+            resume_from_id=resume_from_id,
             result_count_limit=basic_request.result_count_limit,
             keep_open=basic_request.keep_open,
-            attached_events=attached_events,
-            lookup_limit_days=lookup_limit_days,
             filters=basic_request.filters,
         )
         return self.__stub.searchMessages(message_search_request)
@@ -240,6 +228,8 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             search_direction = search_direction.upper()
             if search_direction not in ("NEXT", "PREVIOUS"):
                 raise ValueError("Argument 'search_direction' must be 'NEXT' or 'PREVIOUS'.")
+        else:
+            raise ValueError("Argument 'search_direction' must be 'NEXT' or 'PREVIOUS'.")
 
     def __build_basic_request_object(
         self,
@@ -340,11 +330,11 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
 
     def get_messages_filters(self) -> ListFilterName:
         """GRPC-API `getMessagesFilters` call returns all the names of sse message filters."""
-        return self.__stub.getMessagesFilters(MessageFiltersRequest())
+        return self.__stub.getMessagesFilters(Empty())
 
     def get_events_filters(self) -> ListFilterName:
         """GRPC-API `getEventsFilters` call returns all the names of sse event filters."""
-        return self.__stub.getEventsFilters(EventFiltersRequest())
+        return self.__stub.getEventsFilters(Empty())
 
     def get_event_filter_info(self, filter_name: str) -> FilterInfo:
         """GRPC-API `getEventFilterInfo` call returns event filter info."""

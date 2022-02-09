@@ -13,13 +13,14 @@
 #  limitations under the License.
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class IAdapter(ABC):
     """High level interface for Adapter."""
 
     @abstractmethod
-    def handle(self, record):
+    def handle(self, record: Any) -> Any:
         pass
 
 
@@ -27,9 +28,13 @@ class IMessageAdapter(IAdapter):
     """Interface of Adapter for messages."""
 
     @abstractmethod
-    def handle(self, record: dict):
+    def handle(self, message: dict) -> Any:
         pass
 
 
 class IEventAdapter(IAdapter):
     """Interface of Adapter for events."""
+
+    @abstractmethod
+    def handle(self, event: dict) -> Any:
+        pass
