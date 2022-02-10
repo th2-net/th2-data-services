@@ -9,7 +9,7 @@ from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSour
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
-class EventsTree5(IEventsTree):
+class EventsTree(IEventsTree):
     def __init__(
         self,
         data: Union[Iterator, Generator[dict, None, None], Data] = None,
