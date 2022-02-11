@@ -23,6 +23,7 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
 from th2_data_services import Filter
 from th2_data_services.provider.command import IGRPCProviderAdaptableCommand
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterGRPCObjectToDict
+from th2_data_services.provider.v5.adapters.events_adapters import AdapterDeleteEventWrappers
 from th2_data_services.provider.v5.command import IGRPCProvider5Command
 
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
@@ -75,14 +76,16 @@ class GetEventById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
         """
         super().__init__()
         self._id = id
-        self._decoder = AdapterGRPCObjectToDict()
+        self._grpc_decoder = AdapterGRPCObjectToDict()
+        self._wrapper_deleter = AdapterDeleteEventWrappers()
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> dict:
         event = {data_source.event_struct.EVENT_ID: self._id}
         try:
             event = GetEventByIdGRPCObject(self._id).handle(data_source)
-            event = self._decoder.handle(event)
+            event = self._grpc_decoder.handle(event)
+            event = self._wrapper_deleter.handle(event)
         except _InactiveRpcError:
             if self._stub_status:
                 event = data_source.event_stub.build(event)
@@ -117,24 +120,12 @@ class GetEventsById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
         """
         super().__init__()
         self.ids = ids
-        self._decoder = AdapterGRPCObjectToDict()
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> List[EventData]:
-        api: GRPCProvider5API = data_source.source_api
-
         response = []
         for event_id in self.ids:
-            event = {data_source.event_struct.EVENT_ID: event_id}
-            try:
-                event = api.get_event(event_id)
-                event = self._decoder.handle(event)
-            except _InactiveRpcError:
-                if self._stub_status:
-                    event = data_source.event_stub.build(event)
-                else:
-                    raise ValueError(f"Unable to find the event. Id: {event_id}")
-
+            event = GetEventById(event_id).handle(data_source=data_source)
             event = self._handle_adapters(event)
             response.append(event)
         return response
@@ -274,7 +265,8 @@ class GetEvents(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
         self._attached_messages = attached_messages
         self._filters = filters
 
-        self._decoder = AdapterGRPCObjectToDict()
+        self._grpc_decoder = AdapterGRPCObjectToDict()
+        self._wrapper_deleter = AdapterDeleteEventWrappers()
 
     def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[dict]:
         stream = GetEventsGRPCObjects(
@@ -291,7 +283,8 @@ class GetEvents(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
             filters=self._filters,
         ).handle(data_source)
         for event in stream:
-            event = self._decoder.handle(event)
+            event = self._grpc_decoder.handle(event)
+            event = self._wrapper_deleter.handle(event)
             event = self._handle_adapters(event)
             yield event
 
@@ -382,21 +375,12 @@ class GetMessagesById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
         """
         super().__init__()
         self._ids = ids
-        self._decoder = AdapterGRPCObjectToDict()
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:
         response = []
         for id_ in self._ids:
-            message = {data_source.message_struct.MESSAGE_ID: id_}
-            try:
-                message = GetMessageByIdGRPCObject(id_).handle(data_source)
-                message = self._decoder.handle(message)
-            except _InactiveRpcError:
-                if self._stub_status:
-                    message = data_source.message_stub.build(message)
-                else:
-                    raise ValueError(f"Unable to find the message. Id: {id_}")
+            message = GetMessageById(id_).handle(data_source)
             message = self._handle_adapters(message)
             response.append(message)
         return response
