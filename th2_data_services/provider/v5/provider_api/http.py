@@ -195,6 +195,9 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         for k, v in kwargs.items():
             if v is None:
                 continue
+            if k == "stream":
+                for s in stream:
+                    query += f"&{k}={s}"
             else:
                 query += f"&{k}={v}"
         return f"{url}{query[1:]}{filters}"
