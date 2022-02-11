@@ -17,10 +17,27 @@ from th2_data_services.provider.v5.struct import Provider5EventStruct, provider5
 
 
 class AdapterDeleteEventWrappers(IEventAdapter):
+    """Adapter that delete unnecessary wrappers in events.
+
+    It use for events to which an AdaptorGRPCObjectToDict has been applied.
+    """
+
     def __init__(self, event_struct: Provider5EventStruct = provider5_event_struct):
+        """
+        Args:
+            event_struct: Event struct.
+        """
         self._event_struct = event_struct
 
     def handle(self, event: dict) -> dict:
+        """Deletes unnecessary wrappers for fields eventId, parentEventId and BatchId.
+
+        Args:
+            event: Event.
+
+        Returns:
+            Event without wrappers.
+        """
         event_id_field = self._event_struct.EVENT_ID
         parent_event_id_field = self._event_struct.PARENT_EVENT_ID
         batch_id_field = self._event_struct.BATCH_ID
@@ -40,6 +57,7 @@ class AdapterDeleteEventWrappers(IEventAdapter):
 
     @staticmethod
     def __get_id_from_wrapper(event: dict, field: str):
+        """Opens the wrapper and getting the id."""
         wrapper: dict = event.get(field)
         if wrapper:
             return wrapper["id"]
