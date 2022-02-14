@@ -13,12 +13,15 @@
 #  limitations under the License.
 from functools import partial
 from typing import List
+import json
+import simplejson
 
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterSSE
 from th2_data_services.data import Data
 from th2_data_services.provider.v5.command import IHTTPProvider5Command
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
+from th2_data_services.provider.command import IHTTPProviderAdaptableCommand
 
 import logging
 
@@ -26,7 +29,7 @@ logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
 
 
-class GetEventById(IHTTPProvider5Command):
+class GetEventById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id.
@@ -41,7 +44,9 @@ class GetEventById(IHTTPProvider5Command):
             id: Event id.
 
         """
+        super().__init__()
         self._id = id
+        self._stub_status = False
 
     def handle(self, data_source: HTTPProvider5DataSource) -> dict:
         api: HTTPProvider5API = data_source.source_api
@@ -49,10 +54,24 @@ class GetEventById(IHTTPProvider5Command):
 
         logger.info(url)
 
-        return api.execute_request(url).json()
+        response = api.execute_request(url)
+        try:
+            event = response.json()
+        except (json.JSONDecodeError, simplejson.JSONDecodeError):
+            if self._stub_status:
+                return data_source.event_stub.build({data_source.event_struct.EVENT_ID: self._id})
+            else:
+                exception_msg = f"Unable to find the message. Id: {self._id}"
+                logger.error(exception_msg)
+                raise ValueError(exception_msg)
+        return self._handle_adapters(event)
+
+    def use_stub(self):
+        self._stub_status = True
+        return self
 
 
-class GetEventsById(IHTTPProvider5Command):
+class GetEventsById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the events by ids.
@@ -67,21 +86,31 @@ class GetEventsById(IHTTPProvider5Command):
             ids: Event id list.
 
         """
+        super().__init__()
         self._ids: ids = ids
+        self._stub_status = False
 
     def handle(self, data_source: HTTPProvider5DataSource):
-        api: HTTPProvider5API = data_source.source_api
-        url = api.get_url_find_events_by_id(*self._ids)
-
-        logger.info(url)
-
         result = []
-        for event in api.execute_request(url).json():
-            result.append(event)
+        for event_id in self._ids:
+            try:
+                event = GetEventById(event_id).handle(data_source)
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
+                if self._stub_status:
+                    return data_source.event_stub.build({data_source.event_struct.EVENT_ID: event_id})
+                else:
+                    exception_msg = f"Unable to find the message. Id: {event_id}"
+                    logger.error(exception_msg)
+                    raise ValueError(exception_msg)
+            result.append(self._handle_adapters(event))
         return result
 
+    def use_stub(self):
+        self._stub_status = True
+        return self
 
-class GetEvents(IHTTPProvider5Command, AdapterSSE):
+
+class GetEvents(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
@@ -121,6 +150,7 @@ class GetEvents(IHTTPProvider5Command, AdapterSSE):
             filters: Filters using in search for messages.
 
         """
+        super().__init__()
         self._start_timestamp = start_timestamp
         self._end_timestamp = end_timestamp
         self._parent_event = parent_event
@@ -152,11 +182,13 @@ class GetEvents(IHTTPProvider5Command, AdapterSSE):
         )
 
         logger.info(url)
+        data = Data(partial(api.execute_sse_request, url)).map(self._adapters.handle)
 
-        return Data(partial(api.execute_sse_request, url)).map(self._adapters.handle)
+        for event in data:
+            yield self._handle_adapters(event)
 
 
-class GetMessageById(IHTTPProvider5Command):
+class GetMessageById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id.
@@ -171,7 +203,9 @@ class GetMessageById(IHTTPProvider5Command):
             id: Message id.
 
         """
+        super().__init__()
         self._id = id
+        self._stub_status = False
 
     def handle(self, data_source: HTTPProvider5DataSource):
         api: HTTPProvider5API = data_source.source_api
@@ -179,10 +213,24 @@ class GetMessageById(IHTTPProvider5Command):
 
         logger.info(url)
 
-        return api.execute_request(url).json()
+        response = api.execute_request(url)
+        try:
+            message = response.json()
+        except (json.JSONDecodeError, simplejson.JSONDecodeError):
+            if self._stub_status:
+                return data_source.message_stub.build({data_source.message_struct.MESSAGE_ID: self._id})
+            else:
+                exception_msg = f"Unable to find the message. Id: {self._id}"
+                logger.error(exception_msg)
+                raise ValueError(exception_msg)
+        return self._handle_adapters(message)
+
+    def use_stub(self):
+        self._stub_status = True
+        return self
 
 
-class GetMessagesById(IHTTPProvider5Command):
+class GetMessagesById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the messages by ids.
@@ -197,20 +245,31 @@ class GetMessagesById(IHTTPProvider5Command):
             ids: Message id list.
 
         """
+        super().__init__()
         self._ids: ids = ids
+        self._stub_status = False
 
     def handle(self, data_source: HTTPProvider5DataSource):
-        api: HTTPProvider5API = data_source.source_api
         result = []
-        for id in self._ids:
-            url = api.get_url_find_message_by_id(id)
-            result.append(api.execute_request(url).json())
-
-            logger.info(url)
+        for message_id in self._ids:
+            try:
+                message = GetMessageById(message_id).handle(data_source)
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
+                if self._stub_status:
+                    return data_source.event_stub.build({data_source.message_struct.MESSAGE_ID: message_id})
+                else:
+                    exception_msg = f"Unable to find the message. Id: {message_id}"
+                    logger.error(exception_msg)
+                    raise ValueError(exception_msg)
+            result.append(self._handle_adapters(message))
         return result
 
+    def use_stub(self):
+        self._stub_status = True
+        return self
 
-class GetMessages(IHTTPProvider5Command, AdapterSSE):
+
+class GetMessages(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.
@@ -250,6 +309,7 @@ class GetMessages(IHTTPProvider5Command, AdapterSSE):
                 the first request to get the one closest to the specified timestamp.
             filters: Filters using in search for messages.
         """
+        super().__init__()
         self._start_timestamp = start_timestamp
         self._end_timestamp = end_timestamp
         self._stream = stream
@@ -262,7 +322,7 @@ class GetMessages(IHTTPProvider5Command, AdapterSSE):
         self._lookup_limit_days = lookup_limit_days
         self._filters = filters
 
-        self._adapters = AdapterSSE()
+        self._adapter_sse = AdapterSSE()
 
     def handle(self, data_source: HTTPProvider5DataSource):
         api: HTTPProvider5API = data_source.source_api
@@ -280,4 +340,7 @@ class GetMessages(IHTTPProvider5Command, AdapterSSE):
 
         logger.info(url)
 
-        return Data(partial(api.execute_sse_request, url)).map(self._adapters.handle)
+        data = Data(partial(api.execute_sse_request, url)).map(self._adapter_sse.handle)
+
+        for message in data:
+            yield self._handle_adapters(message)

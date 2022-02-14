@@ -46,6 +46,24 @@ class IHTTPProviderCommand(IProviderCommand):
         pass
 
 
+class IHTTPProviderAdaptableCommand(IHTTPProviderCommand):
+    def __init__(self):
+        self._workflow = []
+
+    @abstractmethod
+    def handle(self, data_source: IHTTPProviderDataSource) -> Any:
+        pass
+
+    def apply_adapter(self, adapter: Callable):
+        self._workflow.append(adapter)
+        return self
+
+    def _handle_adapters(self, data):
+        for step in self._workflow:
+            data = step(data)
+        return data
+
+
 class IGRPCProviderCommand(IProviderCommand):
     """Interface of command for rpt-data-provider which works via GRPC."""
 
