@@ -11,13 +11,11 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from functools import partial
 from typing import List
 import json
 import simplejson
 
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterSSE
-from th2_data_services.data import Data
 from th2_data_services.provider.v5.command import IHTTPProvider5Command
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
@@ -182,10 +180,11 @@ class GetEvents(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
         )
 
         logger.info(url)
-        data = Data(partial(api.execute_sse_request, url)).map(self._adapters.handle)
 
-        for event in data:
-            yield self._handle_adapters(event)
+        for response in api.execute_sse_request(url):
+            response = self._handle_adapters(response)
+            if response is not None:
+                yield response
 
 
 class GetMessageById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
@@ -336,11 +335,12 @@ class GetMessages(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
             keep_open=self._keep_open,
             attached_events=self._attached_events,
             lookup_limit_days=self._lookup_limit_days,
+            filters=self._filters,
         )
 
         logger.info(url)
 
-        data = Data(partial(api.execute_sse_request, url)).map(self._adapter_sse.handle)
-
-        for message in data:
-            yield self._handle_adapters(message)
+        for response in api.execute_sse_request(url):
+            response = self._handle_adapters(response)
+            if response is not None:
+                yield response

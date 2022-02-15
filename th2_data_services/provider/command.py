@@ -60,7 +60,8 @@ class IHTTPProviderAdaptableCommand(IHTTPProviderCommand):
 
     def _handle_adapters(self, data):
         for step in self._workflow:
-            data = step(data)
+            command = step()
+            data = command.handle(data)
         return data
 
 
@@ -86,5 +87,6 @@ class IGRPCProviderAdaptableCommand(IGRPCProviderCommand):
 
     def _handle_adapters(self, data):
         for step in self._workflow:
-            data = step(data)
+            command = step()
+            data = command.handle(data)
         return data
