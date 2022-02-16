@@ -21,7 +21,7 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
 )
 
 from th2_data_services import Filter
-from th2_data_services.provider.command import IGRPCProviderAdaptableCommand
+from th2_data_services.provider.command import IProviderAdaptableCommand
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterGRPCObjectToDict
 from th2_data_services.provider.v5.command import IGRPCProvider5Command
 
@@ -29,7 +29,7 @@ from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSour
 from th2_data_services.provider.v5.provider_api import GRPCProvider5API
 
 
-class GetEventByIdGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetEventByIdGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id as GRPC object.
@@ -55,7 +55,7 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableComman
         return event
 
 
-class GetEventById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetEventById(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id.
@@ -97,7 +97,7 @@ class GetEventById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
         return self
 
 
-class GetEventsById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetEventsById(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the events by id.
@@ -144,7 +144,7 @@ class GetEventsById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
         return self
 
 
-class GetEventsGRPCObjects(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetEventsGRPCObjects(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream as GRPC object by options.
@@ -221,7 +221,7 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IGRPCProviderAdaptableCommand)
             yield response.event
 
 
-class GetEvents(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
@@ -296,7 +296,7 @@ class GetEvents(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
             yield event
 
 
-class GetMessageByIdGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetMessageByIdGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id as GRPC Object.
@@ -321,7 +321,7 @@ class GetMessageByIdGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableComm
         return response
 
 
-class GetMessageById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetMessageById(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id.
@@ -362,7 +362,7 @@ class GetMessageById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
         return self
 
 
-class GetMessagesById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetMessagesById(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the messages by id.
@@ -406,7 +406,7 @@ class GetMessagesById(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
         return self
 
 
-class GetMessagesGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetMessagesGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream as GRPC object by options.
@@ -471,7 +471,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, IGRPCProviderAdaptableCommand
             yield response.message
 
 
-class GetMessages(IGRPCProvider5Command, IGRPCProviderAdaptableCommand):
+class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.

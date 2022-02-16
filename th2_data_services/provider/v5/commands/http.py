@@ -19,7 +19,7 @@ from th2_data_services.provider.v5.adapters.basic_adapters import AdapterSSE
 from th2_data_services.provider.v5.command import IHTTPProvider5Command
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
-from th2_data_services.provider.command import IHTTPProviderAdaptableCommand
+from th2_data_services.provider.command import IProviderAdaptableCommand
 
 import logging
 
@@ -27,7 +27,7 @@ logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
 
 
-class GetEventById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
+class GetEventById(IHTTPProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id.
@@ -69,7 +69,7 @@ class GetEventById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
         return self
 
 
-class GetEventsById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
+class GetEventsById(IHTTPProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the events by ids.
@@ -108,7 +108,7 @@ class GetEventsById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
         return self
 
 
-class GetEvents(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
+class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
@@ -187,7 +187,7 @@ class GetEvents(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
                 yield response
 
 
-class GetMessageById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
+class GetMessageById(IHTTPProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id.
@@ -229,7 +229,7 @@ class GetMessageById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
         return self
 
 
-class GetMessagesById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
+class GetMessagesById(IHTTPProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the messages by ids.
@@ -268,7 +268,7 @@ class GetMessagesById(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
         return self
 
 
-class GetMessages(IHTTPProvider5Command, IHTTPProviderAdaptableCommand):
+class GetMessages(IHTTPProvider5Command, IProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.
