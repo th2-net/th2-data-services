@@ -18,7 +18,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Callable, Any
+from typing import Callable, TYPE_CHECKING
 
 from th2_data_services.command import ICommand
 
@@ -54,13 +54,9 @@ class IGRPCProviderCommand(IProviderCommand):
         pass
 
 
-class IProviderAdaptableCommand(IHTTPProviderCommand, IGRPCProviderCommand):
+class IProviderAdaptableCommand(IProviderCommand):
     def __init__(self):
         self._workflow = []
-
-    @abstractmethod
-    def handle(self, data_source: (IHTTPProviderDataSource, IGRPCProviderDataSource)) -> Any:
-        pass
 
     def apply_adapter(self, adapter: Callable):
         self._workflow.append(adapter)
@@ -68,6 +64,5 @@ class IProviderAdaptableCommand(IHTTPProviderCommand, IGRPCProviderCommand):
 
     def _handle_adapters(self, data):
         for step in self._workflow:
-            command = step()
-            data = command.handle(data)
+            data = step(data)
         return data
