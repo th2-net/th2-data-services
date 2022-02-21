@@ -164,20 +164,26 @@ class Data:
             limit = False
             for record in working_data:
                 modified_records = self.__apply_workflow(record, workflow)
-                if modified_records is None:
+                if modified_records is None:  # None will appear if StopIteration happens (with limit rich)
                     break
-                if not isinstance(modified_records, (list, tuple)):
-                    modified_records = [modified_records]
 
-                if None in modified_records:
-                    limit = True
-                    modified_records = modified_records[:-1]
+                if isinstance(modified_records, (list, tuple)):
+                    if None in modified_records:  # None will appear if StopIteration happens (with limit rich)
+                        limit = True
+                        modified_records = modified_records[:-1]
 
-                for modified_record in modified_records:
+                    for modified_record in modified_records:
+                        if file is not None:
+                            pickle.dump(modified_record, file)
+                        yield modified_record
+
+                else:  # Just one record.
                     if file is not None:
-                        pickle.dump(modified_record, file)
-                    yield modified_record
+                        pickle.dump(modified_records, file)
+                    yield modified_records
+
                 if limit:
+                    # Break after the value will be yielded.
                     break
         finally:
             if file:
@@ -248,7 +254,7 @@ class Data:
 
                 record = result
                 if not record:
-                    record = None
+                    record = []
                     break
             else:
                 try:
@@ -256,10 +262,9 @@ class Data:
                 except StopIteration as e:
                     return None
                 if record is None:
+                    record = []
                     break
 
-        if record is None:
-            record = []
         return record
 
     def filter(self, callback: Callable) -> "Data":
