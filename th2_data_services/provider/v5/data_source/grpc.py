@@ -15,7 +15,11 @@ from typing import Any
 
 from grpc._channel import _InactiveRpcError
 
-from th2_data_services.provider.command import IGRPCProviderCommand
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from th2_data_services.provider.v5.command import IGRPCProvider5Command
+
 from th2_data_services.provider.data_source import IGRPCProviderDataSource
 
 import logging
@@ -72,7 +76,7 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
 
         logger.info(url)
 
-    def command(self, cmd: IGRPCProviderCommand) -> Any:
+    def command(self, cmd: IGRPCProvider5Command) -> Any:
         """Execute the transmitted GRPC command.
 
         Args:
