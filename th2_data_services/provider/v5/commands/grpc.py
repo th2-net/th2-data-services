@@ -88,7 +88,7 @@ class GetEventById(IGRPCProvider5Command, IProviderAdaptableCommand):
             event = self._wrapper_deleter.handle(event)
         except _InactiveRpcError:
             if self._stub_status:
-                event = data_source.event_stub.build(event)
+                event = data_source.event_stub_builder.build(event)
             else:
                 raise ValueError(f"Unable to find the event. Id: {self._id}")
 
@@ -344,7 +344,7 @@ class GetMessageById(IGRPCProvider5Command, IProviderAdaptableCommand):
             message = self._decoder.handle(message)
         except _InactiveRpcError:
             if self._stub_status:
-                message = data_source.message_stub.build(message)
+                message = data_source.message_stub_builder.build(message)
             else:
                 raise ValueError(f"Unable to find the message. Id: {self._id}")
         message = self._handle_adapters(message)

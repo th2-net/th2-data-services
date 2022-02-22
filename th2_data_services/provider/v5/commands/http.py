@@ -57,7 +57,7 @@ class GetEventById(IHTTPProvider5Command, IProviderAdaptableCommand):
             event = response.json()
         except (json.JSONDecodeError, simplejson.JSONDecodeError):
             if self._stub_status:
-                return data_source.event_stub.build({data_source.event_struct.EVENT_ID: self._id})
+                return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
             else:
                 exception_msg = f"Unable to find the message. Id: {self._id}"
                 logger.error(exception_msg)
@@ -95,7 +95,7 @@ class GetEventsById(IHTTPProvider5Command, IProviderAdaptableCommand):
                 event = GetEventById(event_id).handle(data_source)
             except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 if self._stub_status:
-                    return data_source.event_stub.build({data_source.event_struct.EVENT_ID: event_id})
+                    return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: event_id})
                 else:
                     exception_msg = f"Unable to find the message. Id: {event_id}"
                     logger.error(exception_msg)
@@ -217,7 +217,7 @@ class GetMessageById(IHTTPProvider5Command, IProviderAdaptableCommand):
             message = response.json()
         except (json.JSONDecodeError, simplejson.JSONDecodeError):
             if self._stub_status:
-                return data_source.message_stub.build({data_source.message_struct.MESSAGE_ID: self._id})
+                return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
             else:
                 exception_msg = f"Unable to find the message. Id: {self._id}"
                 logger.error(exception_msg)
@@ -255,7 +255,7 @@ class GetMessagesById(IHTTPProvider5Command, IProviderAdaptableCommand):
                 message = GetMessageById(message_id).handle(data_source)
             except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 if self._stub_status:
-                    return data_source.event_stub.build({data_source.message_struct.MESSAGE_ID: message_id})
+                    return data_source.event_stub_builder.build({data_source.message_struct.MESSAGE_ID: message_id})
                 else:
                     exception_msg = f"Unable to find the message. Id: {message_id}"
                     logger.error(exception_msg)
