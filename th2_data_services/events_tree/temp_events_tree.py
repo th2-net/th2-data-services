@@ -26,6 +26,20 @@ class EventsTree:
     def roots(self) -> List[dict]:
         pass
 
+    def get_children_for_event(self, event: dict) -> None:
+        """Gets children for a event.
+
+        Args:
+            event: Event.
+        """
+
+    def get_parent_for_event(self, event: dict) -> None:
+        """Gets parent for a event.
+
+        Args:
+            event: Event.
+        """
+
     def build_tree(self, data: Data) -> None:
         """Builds or appends new events to events tree.
 
