@@ -1,60 +1,43 @@
 from collections import Generator
-from datetime import datetime, timezone
+from datetime import datetime
 
 from th2_data_services import Data
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
 from th2_data_services.filter import Filter
-from th2_data_services.provider.v5.adapters.basic_adapters import AdapterSSE
 
 # [1] Create DataSource object to connect to rpt-data-provider.
-DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
-DEMO_PORT = "30999"  # Node port of rpt-data-provider.
-data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}/")
+DEMO_HOST = "th2-qa"  # th2-qa  Host port where rpt-data-provider is located.
+DEMO_PORT = "31299"  # Node port of rpt-data-provider.
+data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
 
-START_TIME = int(
-    1000
-    * datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724)
-    .replace(tzinfo=timezone.utc)
-    .timestamp()
-)  # Unix timestamp in milliseconds.
-END_TIME = int(
-    1000
-    * datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
-    .replace(tzinfo=timezone.utc)
-    .timestamp()
-)
+START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724)
+END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
 
 # [2] Get events or messages from START_TIME to END_TIME.
-adapter = AdapterSSE()
-
 # [2.1] Get events.
 events: Data = data_source.command(
     http.GetEvents(
         start_timestamp=START_TIME,
         end_timestamp=END_TIME,
         attached_messages=True,
-        metadata_only=False,
         # Use Filter class to apply rpt-data-provider filters.
-        filters=f"{Filter('name', 'ExecutionReport').url()}{Filter('type', 'Send message').url()}",
-    ).apply_adapter(adapter.handle)
+        filters=[Filter("name", "Codec error"), Filter("type", "CodecError")],
+    )
 )
 
 # [2.2] Get messages.
-messages = data_source.command(
+messages: Data = data_source.command(
     http.GetMessages(
         start_timestamp=START_TIME,
-        end_timestamp=END_TIME,
         attached_events=True,
-        stream=["demo-conn2"],
-        filters=f"{Filter('body', '195').url()}",
-    ).apply_adapter(adapter.handle)
+        stream=["239.105.210.13:21006_ITCH", "arfq01fix04"],
+        filters=f"{Filter('body', '195')}",
+    )
 )
 
 # [3] Work with your Data object.
-events = Data(list(events))
-
 # [3.1] Filter.
 filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter events with empty body.
 
@@ -99,15 +82,15 @@ assert events.is_empty is False
 events_list = list(events)
 
 # [3.10] Get event/message by id.
-desired_event = "9ce8a2ff-d600-4366-9aba-2082cfc69901:ef1d722e-cf5e-11eb-bcd0-ced60009573f"
+desired_event = "a1e272a3-cf69-11eb-b934-1525a25edf64"
 desired_events = [
-    "deea079b-4235-4421-abf6-6a3ac1d04c76:ef1d3a20-cf5e-11eb-bcd0-ced60009573f",
-    "a34e3cb4-c635-4a90-8f42-37dd984209cb:ef1c5cea-cf5e-11eb-bcd0-ced60009573f",
+    "a1e272a3-cf69-11eb-b934-1525a25edf64",
+    "a36d5864-cf69-11eb-b934-1525a25edf64",
 ]
-desired_message = "demo-conn1:first:1619506157132265837"
+desired_message = "arfq01fix04:first:1623903875361580545"
 desired_messages = [
-    "demo-conn1:first:1619506157132265836",
-    "demo-conn1:first:1619506157132265833",
+    "arfq01fix04:first:1623903875361580548",
+    "arfq01fix04:second:1623903875361664548",
 ]
 
 data_source.command(http.GetEventById(desired_event))  # Returns 1 event (dict).
