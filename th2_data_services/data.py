@@ -35,6 +35,8 @@ class Data:
         self._cache_status = cache
         self._parents_cache = parents_cache if parents_cache else []
         self._finalizer = finalize(self, self.__remove)
+        self._limit_num = None
+        self.pushed = 0
 
     def __remove(self):
         if self.__check_cache(self._cache_filename):
@@ -94,6 +96,29 @@ class Data:
         Returns:
             obj: Generator
         """
+
+        def build_workflow(workflow):
+            new_workflow = workflow.copy()
+            def callback(r):
+                print(f"    {callback}, {callback.pushed}")
+                if callback.pushed < self._limit_num:
+                    callback.pushed += 1
+                    return r
+                else:
+                    print("null")
+                    callback.pushed = 0
+                    raise StopIteration
+
+            callback.pushed = 0
+
+            for w in new_workflow:
+                if w['type'] == 'limit':
+                    print('limit')
+                    w['callback'] = callback
+                    print(w['callback'])
+
+            return new_workflow
+
         if cache and self.__check_cache(self._cache_filename):
             working_data = self.__load_file(self._cache_filename)
             yield from working_data
@@ -102,9 +127,12 @@ class Data:
             if cache_filename:
                 working_data = self.__load_file(cache_filename)
                 workflow = self.__get_unapplied_workflow(cache_filename)
+
             else:
                 working_data = self._data() if callable(self._data) else self._data
                 workflow = self._workflow
+
+            workflow = build_workflow(workflow)
 
             yield from self.__change_data(working_data=working_data, workflow=workflow, cache=cache)
 
@@ -289,20 +317,12 @@ class Data:
 
         """
 
-        def callback(r):
-            if callback.pushed < num:
-                callback.pushed += 1
-                return r
-            else:
-                callback.pushed = 0
-                raise StopIteration
-
-        callback.pushed = 0
-
-        new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": callback}]
+        new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": None}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
         data_obj._length_hint = num
+        data_obj._len = num
+        data_obj._limit_num = num
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
