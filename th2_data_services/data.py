@@ -1,3 +1,4 @@
+import copy
 import pickle
 import pprint
 from pathlib import Path
@@ -87,6 +88,31 @@ class Data:
         except StopIteration:
             return None
 
+    def _build_workflow(self, workflow):
+        new_workflow = copy.deepcopy(workflow)
+        print("Build workflow")
+        print(f"workflow: {new_workflow}")
+
+        def callback(r):
+            if callback.pushed < self._limit_num:
+                callback.pushed += 1
+                print(f"callback.pushed += 1 | {id(callback)}, {callback.pushed}")
+                return r
+            else:
+                callback.pushed = 0
+                print(f"StopIteration callback.pushed = 0 | {id(callback)}, {callback.pushed}")
+                raise StopIteration
+
+        callback.pushed = 0
+        print(f"INIT callback.pushed = 0, limit={self._limit_num} | {id(callback)}, {callback.pushed}")
+
+        for w in new_workflow:
+            if w["type"] == "limit" and w["callback"] is None:
+                print("limit!")
+                w["callback"] = callback
+
+        return new_workflow
+
     def __load_data(self, cache: bool = False) -> DataGenerator:
         """Loads data from cache or data.
 
@@ -96,28 +122,6 @@ class Data:
         Returns:
             obj: Generator
         """
-
-        def build_workflow(workflow):
-            new_workflow = workflow.copy()
-            def callback(r):
-                print(f"    {callback}, {callback.pushed}")
-                if callback.pushed < self._limit_num:
-                    callback.pushed += 1
-                    return r
-                else:
-                    print("null")
-                    callback.pushed = 0
-                    raise StopIteration
-
-            callback.pushed = 0
-
-            for w in new_workflow:
-                if w['type'] == 'limit':
-                    print('limit')
-                    w['callback'] = callback
-                    print(w['callback'])
-
-            return new_workflow
 
         if cache and self.__check_cache(self._cache_filename):
             working_data = self.__load_file(self._cache_filename)
@@ -132,7 +136,7 @@ class Data:
                 working_data = self._data() if callable(self._data) else self._data
                 workflow = self._workflow
 
-            workflow = build_workflow(workflow)
+            workflow = self._build_workflow(workflow)
 
             yield from self.__change_data(working_data=working_data, workflow=workflow, cache=cache)
 
@@ -288,7 +292,10 @@ class Data:
             Data: Data object.
 
         """
-        new_workflow = [*self._workflow.copy(), {"type": "filter", "callback": lambda record: record if callback(record) else None}]
+        new_workflow = [
+            *self._workflow.copy(),
+            {"type": "filter", "callback": lambda record: record if callback(record) else None},
+        ]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         return Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
 
@@ -317,11 +324,23 @@ class Data:
 
         """
 
+        def callback(r):
+            if callback.pushed < self._limit_num:
+                callback.pushed += 1
+                print(f"callback.pushed += 1 | {id(callback)}, {callback.pushed}")
+                return r
+            else:
+                callback.pushed = 0
+                print(f"StopIteration callback.pushed = 0 | {id(callback)}, {callback.pushed}")
+                raise StopIteration
+
+        callback.pushed = 0
+        print(f"INIT callback.pushed = 0, limit={self._limit_num} | {id(callback)}, {callback.pushed}")
+
         new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": None}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
         data_obj._length_hint = num
-        data_obj._len = num
         data_obj._limit_num = num
         return data_obj
 

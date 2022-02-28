@@ -6,6 +6,7 @@ import pytest
 
 from th2_data_services.data import Data
 
+
 def test_iter_data(general_data: List[dict]):
     data = Data(general_data)
 
@@ -35,7 +36,11 @@ def test_map_data_transform(general_data: List[dict]):
 
 
 def test_map_data_increase(general_data: List[dict]):
-    data = Data(general_data).filter(lambda record: record.get("batchId") is None).map(lambda record: (record.get("eventType"), record.get("eventType")))
+    data = (
+        Data(general_data)
+        .filter(lambda record: record.get("batchId") is None)
+        .map(lambda record: (record.get("eventType"), record.get("eventType")))
+    )
 
     assert len(list(data)) == 18
 
@@ -91,7 +96,12 @@ def test_map_for_list_record(general_data: List[dict]):
 
 
 def test_filter_for_list_record(general_data: List[dict]):
-    data = Data(general_data).map(lambda record: [record, record]).map(lambda record: record.get("eventType")).filter(lambda record: record in ["placeOrderFIX", "Checkpoint"])
+    data = (
+        Data(general_data)
+        .map(lambda record: [record, record])
+        .map(lambda record: record.get("eventType"))
+        .filter(lambda record: record in ["placeOrderFIX", "Checkpoint"])
+    )
 
     event_types = [
         "placeOrderFIX",
@@ -110,13 +120,19 @@ def test_increase_records_after_similar_map(general_data: List[dict]):
 
 
 def test_shuffle_data(general_data: List[dict]):
-    data = Data(general_data).filter(lambda record: record.get("batchId") is not None).map(lambda record: record.get("eventId")).filter(lambda record: "b" in record)
+    data = (
+        Data(general_data)
+        .filter(lambda record: record.get("batchId") is not None)
+        .map(lambda record: record.get("eventId"))
+        .filter(lambda record: "b" in record)
+    )
 
     assert len(list(data)) == 12
 
-'''def test_main():
+
+"""def test_main():
     assert main() == [3, 9]
-'''
+"""
 
 
 def test_limit(general_data: List[dict]):
@@ -137,42 +153,49 @@ def test_limit_for_list_record(general_data: List[dict]):
     assert len(list(data10)) == 10
     assert len(list(data5)) == 5
 
+
+def test_limit_QQQQQQQ(general_data: List[dict]):
+    data = Data(general_data)
+    res5 = [0 for _ in range(4)]
+    for _ in data.limit(4):
+        res5[0] += 1
+        for __ in data.limit(3):
+            res5[1] += 1
+            for ___ in data.limit(2):
+                res5[2] += 1
+                for ____ in data.limit(1):
+                    res5[3] += 1
+
+    assert res5 == [4, 4 * 3, 4 * 3 * 2, 4 * 3 * 2 * 1]
+
+
 def test_limit_for_iterations(general_data: List[dict]):
-    data = Data(general_data).map(lambda record: [record, record])
+    data = Data(general_data)
     data5 = data.limit(5)
-    data10 = data.limit(10)
 
     res5 = [0 for _ in range(4)]
-    print(res5)
+
     for _ in data5:
         res5[0] += 1
+        print(f"FIRST {data5._workflow}")
         for __ in data5:
             res5[1] += 1
+            print(f"    SECOND {data5._workflow}")
+
             for ___ in data5:
                 res5[2] += 1
                 for ____ in data5:
                     res5[3] += 1
 
-    res10 = [0 for _ in range(4)]
-    for _ in data10:
-        res10[0] += 1
-        for __ in data10:
-            res10[1] += 1
-            for ___ in data10:
-                res10[2] += 1
-                for ____ in data10:
-                    res10[3] += 1
-
     assert res5 == [data5._limit_num, data5._limit_num ** 2, data5._limit_num ** 3, data5._limit_num ** 4]
-    assert res10 == [data10._limit_num, data10._limit_num ** 2, data10._limit_num ** 3, data10._limit_num ** 4]
+
 
 def test_limit_for_limit_in_iterations(general_data: List[dict]):
-    data = Data(general_data).map(lambda record: [record, record])
+    data = Data(general_data)
     data5 = data.limit(5)
-    data10 = data.limit(10)
+    # data10 = data.limit(10)
 
     res5 = [0 for _ in range(4)]
-    print(res5)
     for _ in data5.limit(4):
         res5[0] += 1
         for __ in data5.limit(3):
@@ -182,24 +205,26 @@ def test_limit_for_limit_in_iterations(general_data: List[dict]):
                 for ____ in data5.limit(2):
                     res5[3] += 1
 
-    res10 = [0 for _ in range(4)]
-    for _ in data10.limit(11):
-        res10[0] += 1
-        for __ in data10.limit(2):
-            res10[1] += 1
-            for ___ in data10.limit(4):
-                res10[2] += 1
-                for ____ in data10.limit(1):
-                    res10[3] += 1
+    # res10 = [0 for _ in range(4)]
+    # for _ in data10.limit(11):
+    #     res10[0] += 1
+    #     for __ in data10.limit(2):
+    #         res10[1] += 1
+    #         for ___ in data10.limit(4):
+    #             res10[2] += 1
+    #             for ____ in data10.limit(1):
+    #                 res10[3] += 1
 
     assert res5 == [4, data5._limit_num ** 2, data5._limit_num ** 3, data5._limit_num ** 4]
-    assert res10 == [data10._limit_num, data10._limit_num ** 2, data10._limit_num ** 3, data10._limit_num ** 4]
+    # assert res10 == [data10._limit_num, data10._limit_num ** 2, data10._limit_num ** 3, data10._limit_num ** 4]
+
 
 def test_sift_limit_data(general_data: List[dict]):
     data = Data(general_data)
     output = [record for record in data.sift(limit=2)]
 
     assert len(output) == 2
+
 
 def test_sift_skip_data(general_data: List[dict]):
     data = Data(general_data)
@@ -341,9 +366,13 @@ def test_len_with_stream_cache(general_data: List[dict], cache):
     data = Data(general_data, cache=cache)
     r = data.len
     if cache:
-        assert Path(f"./temp/{data._cache_filename}").is_file() is True, f"The cache was dumped after using len: {cache}"
+        assert (
+            Path(f"./temp/{data._cache_filename}").is_file() is True
+        ), f"The cache was dumped after using len: {cache}"
     else:
-        assert Path(f"./temp/{data._cache_filename}").is_file() is False, f"The cache was dumped after using len: {cache}"
+        assert (
+            Path(f"./temp/{data._cache_filename}").is_file() is False
+        ), f"The cache was dumped after using len: {cache}"
 
     # Check that we do not calc len, after already calculated len or after iter
     # TODO - append when we add logging
