@@ -201,7 +201,6 @@ def test_sift_limit_data(general_data: List[dict]):
 
     assert len(output) == 2
 
-
 def test_sift_skip_data(general_data: List[dict]):
     data = Data(general_data)
     output1 = data.sift(limit=2)
