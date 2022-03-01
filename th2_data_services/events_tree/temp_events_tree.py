@@ -1,109 +1,193 @@
-from typing import Union, Iterable, Generator, List, Callable, Optional
+from typing import Union, Iterable, Generator, List, Callable, Optional, Tuple
 
+import treelib
 
 Data = Union[Iterable, Generator]
 EventStruct = dict
 
+"""
+Examples
+
+In [36]: tree.show()
+Harry
+├── Bill
+└── Jane
+    ├── Diane
+    │   └── Mary
+    └── Mark
+    
+    
+tree.subtree('jane').show()
+Jane
+├── Diane
+│   └── Mary
+└── Mark
+
+
+Event Id in the tree
+In [14]: tree.contains('e22dd3fe-98ac-11ec-970e-712ca9ad16c9')
+Out[14]: True
+In [15]: 'e22dd3fe-98ac-11ec-970e-712ca9ad16c9' in tree
+Out[15]: True
+
+In [42]: tree.children('harry')
+Out[42]: 
+[Node(tag=Jane, identifier=jane, data=None),
+ Node(tag=Bill, identifier=bill, data=None)]
+
+
+# Returns the children (IDs) list of nid. - only one level
+In [77]: tree.is_branch('jane')
+Out[77]: ['diane', 'e22dd3fe-98ac-11ec-970e-712ca9ad16c9']
+
+
+# Returns all nodes ids from putted to root
+In [83]: list(tree.rsearch('diane'))
+Out[83]: ['diane', 'jane', 'harry']
+
+# All nodes for the tree or subtree
+tree.all_nodes()
+Out[85]: 
+[Node(tag=Harry, identifier=harry, data=None),
+ Node(tag=Jane, identifier=jane, data=None),
+ Node(tag=Bill, identifier=bill, data=None),
+ Node(tag=Diane, identifier=diane, data=None),
+ Node(tag=Mary, identifier=e22dd3fd-98ac-11ec-970e-712ca9ad16c9, data=None),
+ Node(tag=Mark, identifier=e22dd3fe-98ac-11ec-970e-712ca9ad16c9, data=None)]
+
+---------- 01.03.2022
+
+event = tree['id']
+tree.is_root('id')
+tree.is_leaf('id')
+
+tree_collection.is_root('id')  # Ok
+tree_collection.is_leaf('id')  # Ok 
+
+# subtree 
+Just create new EventsTree
+tree.get_subtree('id')
+tree_collection.get_subtree('id')
+
+# children
+tree.children('harry') -> [onlt children]
+tree_collection.children('harry') -> [onlt children]
+
+# All nodes for the tree or subtree (perhaps as generators)
+tree.all_events() -> [Event]
+tree_collection.all_events() -> [Event]
+
+# Ancestor
+
+
+
+
+"""
+
+
+class EventsTreesCollection:
+    """Builds events trees and keep them."""
+
+    def __init__(self, data: Data, datasource, preserve_body: bool, event_struct: EventStruct, event_stub_builder):
+        _roots: List[EventsTree] = []
+        _unknown_ids: List[str]
+
+    def get_roots_ids(self):
+        """"""
+
+    def get_trees(self):
+        pass
+
+    def get_root_by_id(self, id):
+        pass
+
+
+class UnlinkedEventsTreeCollection:
+    # TODO - think the name!!!!
+    pass
+
 
 class EventsTree:
-    def __init__(self, data: Data, preserve_body: bool, event_struct: EventStruct):
-        """
-        Args:
-            data: Data
-            preserve_body: True If you need to keep events bodies.
-            event_struct: Event Struct.
-        """
+    def __init__(self, treelib_tree: treelib.Tree):
+        self._treelib_tree = treelib_tree
 
-    @property
-    def events(self) -> List[dict]:
+    def get_event(self, id) -> dict:
         pass
 
-    @property
-    def unknown_events(self) -> List[dict]:
+    # def __getitem__(self, item):
+    #     pass
+
+    def get_leaves(self):
         pass
 
-    @property
-    def roots(self) -> List[dict]:
-        pass
-
-    def get_children_for_event(self, event: dict) -> None:
+    def get_children(self, id: str) -> Tuple[dict]:
         """Gets children for a event.
 
         Args:
             event: Event.
         """
 
-    def get_parent_for_event(self, event: dict) -> None:
-        """Gets parent for a event.
+    def get_children_iter(self, id: str) -> Tuple[dict]:
+        pass
 
-        Args:
-            event: Event.
+    def get_parent(self, id: str) -> dict:
+        """Gets parent for an event."""
+
+    def get_full_path(self, id: str):
+        """Returns full path in some view
+
+        Harry
+        ├── Bill
+        └── Jane
+            ├── Diane
+            │   └── Mary
+            └── Mark
+
+        examples:
+
+        tree.get_full_path('Jane', id)
+        ['Harry-event-id', 'Jane-event-id']
+
+        tree.get_full_path('Jane', name)
+        ['Harry-event-name', 'Jane-event-name']
+
+        tree.get_full_path('Jane', event)
+        ['Harry-event', 'Jane-event']
+
+
+        l = ['Harry-event', 'Jane-event']
+        [x[name] for x in l]
         """
 
-    def build_tree(self, data: Data) -> None:
-        """Builds or appends new events to events tree.
+    # def get_full_path_value(self, id: str, value: str):
+    #     return [x[value] for x in self.get_full_path(id)]
 
-        :param data: Events.
-        """
+    def findall(node, filter_=None, stop=None, maxlevel=None, mincount=None, maxcount=None):
+        pass
 
-    def append_element(self, event: dict) -> None:
-        """Appends new event to events tree.
+    def findall_by_field(node, value, name="name", maxlevel=None, mincount=None, maxcount=None):
+        pass
 
-        Will update the event if event_id matches.
-        Will remove the event from unknown_events if it in unknown_events dict.
+    def find(node, filter_=None, stop=None, maxlevel=None):
+        pass
 
-        Args:
-            event: Event
-        """
+    def find_by_field(node, value, name="name", maxlevel=None):
+        pass
 
-    def line_up_family_tree_by_event_id(self, event_id) -> List[dict]:
-        """Lines up events as a family tree by event id.
-
-        Args:
-            event_id: Event Id
-        """
-
-    def find_by_condition(self, condition: Callable) -> dict:
-        """Finds events in the tree by condition.
-
-        Args:
-            condition: Condition function.
-        """
-
-    def check_by_condition(self, condition: Callable) -> dict:
-        """Checks If the tree has an event that satisfies the condition.
-
-        Args:
-            condition: Condition function.
-        """
-
-    def get_ancestor_by_condition(self, event: dict, condition: Callable) -> Optional[dict]:
+    def get_ancestor_by_filter(self, event: dict, filter: Callable) -> Optional[dict]:
         """Gets event ancestor by condition.
 
         Args:
             event: Event.
-            condition: Condition function.
+            filter: filter function that has one argument - ancestor event.
         """
 
-    def is_ancestor_by_condition(self, event: dict, condition: Callable) -> Optional[dict]:
-        """Verifies event has ancestor by condition.
-
-        Args:
-            event: Event.
-            condition: Condition function.
-        """
-
-    def recover_unknown_events(self) -> None:
-        """Loads unknown events and recover EventsTree parts."""
-
-    def get_event_by_id(self, event_id: str) -> dict:
-        """Gets event from Events Tree by id.
-
-        Args:
-            event_id: Event id.
-        """
+    def get_ancestors(self):
+        # list(tree.rsearch('diane'))
+        pass
 
     def show(self) -> None:
+        # TODO - add output format class.
         """Prints EventsTree as tree view.
 
         For example:
