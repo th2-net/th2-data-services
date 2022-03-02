@@ -38,7 +38,7 @@ class Data:
             data: Data source.
             workflow: Workflow.
             parents_cache: Parents chain. Works as a stack.
-            cache: Flag if you want write and read from cache.
+            cache: Flag if you want to write and read from cache.
         """
         self._cache_filename = f"{str(id(self))}:{time()}.pickle"
         self._len = None
@@ -75,7 +75,6 @@ class Data:
         return True
 
     def __calc_len(self) -> int:
-        # TODO - request rpt-data-provide provide "select count"
         for _ in self:
             pass
         return self._len
@@ -103,7 +102,7 @@ class Data:
         """Loads data from cache or data.
 
         Args:
-            cache: Flag if you what write and read from cache.
+            cache: Flag if you what to write and read from cache.
 
         Returns:
             obj: Generator
@@ -349,7 +348,7 @@ class Data:
         """Change status cache.
 
         If True all requested data from rpt-data-provider will be saved to cache file.
-        Further actions with Data object will be consume data from the cache file.
+        Further actions with the Data object will consume data from the cache file.
 
         Args:
             status(bool): Status.
