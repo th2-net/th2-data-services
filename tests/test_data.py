@@ -154,7 +154,7 @@ def test_limit_for_list_record(general_data: List[dict]):
     assert len(list(data5)) == 5
 
 
-def test_limit_QQQQQQQ(general_data: List[dict]):
+def test_limit_in_cycles(general_data: List[dict]):
     data = Data(general_data)
     res5 = [0 for _ in range(4)]
     for _ in data.limit(4):
@@ -169,9 +169,9 @@ def test_limit_QQQQQQQ(general_data: List[dict]):
     assert res5 == [4, 4 * 3, 4 * 3 * 2, 4 * 3 * 2 * 1]
 
 
-def test_limit_for_iterations(general_data: List[dict]):
-    data = Data(general_data)
-    data5 = data.limit(5)
+def test_limit_before_cycles(general_data: List[dict]):
+    data3 = Data(general_data)
+    data5 = data3.limit(5)
 
     res5 = [0 for _ in range(4)]
 
@@ -186,6 +186,20 @@ def test_limit_for_iterations(general_data: List[dict]):
 
     assert res5 == [data5._limit_num, data5._limit_num ** 2, data5._limit_num ** 3, data5._limit_num ** 4]
 
+def test_new_limit_is_bigger(general_data: List[dict]):
+    data = Data(general_data).limit(3)
+    data5 = data.limit(5)
+
+    res = [0 for _ in range(3)]
+
+    for _ in data5:
+        res[0] += 1
+        for __ in data5:
+            res[1] += 1
+            for ___ in data5:
+                res[2] += 1
+
+    assert res == [3, 9, 27]
 
 def test_limit_for_limit_in_iterations(general_data: List[dict]):
     data = Data(general_data)
