@@ -14,6 +14,7 @@
 
 import pickle
 import pprint
+from os import rename
 from pathlib import Path
 from time import time
 from typing import Callable, Dict, Generator, Iterator, List, Optional, Union
@@ -51,10 +52,15 @@ class Data:
         self._finalizer = finalize(self, self.__remove)
 
     def __remove(self):
+        """Destructor of Data class."""
         if self.__check_cache(self._cache_filename):
-            path = Path("./").joinpath("temp").joinpath(self._cache_filename)
-            path.unlink()
+            self.__delete_cache()
         del self._data
+
+    def __delete_cache(self) -> None:
+        """Removes cache file."""
+        path = Path("./").joinpath("temp").joinpath(self._cache_filename)
+        path.unlink()
 
     @property
     def len(self) -> int:
@@ -92,12 +98,18 @@ class Data:
 
     def __iter__(self) -> DataSet:
         self._len = 0
+        self._interruption = True
         try:
             for record in self.__load_data(self._cache_status):
                 yield record
                 self._len += 1
+            else:
+                self._interruption = False
         except StopIteration:
             return None
+        finally:
+            if self._interruption:
+                self.__delete_cache()
 
     def __load_data(self, cache: bool = False) -> DataGenerator:
         """Loads data from cache or data.
@@ -120,7 +132,22 @@ class Data:
                 working_data = self._data() if callable(self._data) else self._data
                 workflow = self._workflow
 
+            if self.__check_file_recording(self._cache_filename):
+                cache = False
+
             yield from self.__change_data(working_data=working_data, workflow=workflow, cache=cache)
+
+    def __check_file_recording(self, filename: str) -> bool:
+        """Checks whether there is a current recording in the files.
+
+        Args:
+            filename: Filename.
+
+        Returns:
+            File recording status.
+        """
+        filepath = f"[PENDING]{filename}"
+        return self.__check_cache(filepath)
 
     def get_last_cache(self) -> Optional[str]:
         """Returns last existing cache.
@@ -157,7 +184,7 @@ class Data:
         """
         file = None
         if cache:
-            filepath = f"./temp/{self._cache_filename}"
+            filepath = f"./temp/[PENDING]{self._cache_filename}"
             file = open(filepath, "wb")
 
         try:
@@ -182,6 +209,7 @@ class Data:
         finally:
             if file:
                 file.close()
+                rename(file.name, f"./temp/{self._cache_filename}")
 
     def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.
