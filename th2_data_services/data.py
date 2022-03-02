@@ -52,8 +52,8 @@ class Data:
         self._finalizer = finalize(self, self.__remove)
 
     def __remove(self):
-        """Destructor of Data class."""
-        if self.__check_cache(self._cache_filename):
+        """Data class destructor."""
+        if self.__is_cache_file_exists(self._cache_filename):
             self.__delete_cache()
         del self._data
 
@@ -98,17 +98,18 @@ class Data:
 
     def __iter__(self) -> DataSet:
         self._len = 0
-        self._interruption = True
+        interruption = True
         try:
             for record in self.__load_data(self._cache_status):
                 yield record
                 self._len += 1
             else:
-                self._interruption = False
+                # Loop fell through ..............
+                interruption = False
         except StopIteration:
             return None
         finally:
-            if self._interruption:
+            if interruption:
                 self.__delete_cache()
 
     def __load_data(self, cache: bool = False) -> DataGenerator:
@@ -120,7 +121,7 @@ class Data:
         Returns:
             obj: Generator
         """
-        if cache and self.__check_cache(self._cache_filename):
+        if cache and self.__is_cache_file_exists(self._cache_filename):
             working_data = self.__load_file(self._cache_filename)
             yield from working_data
         else:
@@ -133,29 +134,30 @@ class Data:
                 workflow = self._workflow
 
             if self.__check_file_recording(self._cache_filename):
+                # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
                 cache = False
 
             yield from self.__change_data(working_data=working_data, workflow=workflow, cache=cache)
 
     def __check_file_recording(self, filename: str) -> bool:
-        """Checks whether there is a current recording in the files.
+        """Checks whether there is a current recording in the file.
 
         Args:
             filename: Filename.
 
         Returns:
-            File recording status.
+            bool: File recording status.
         """
         filepath = f"[PENDING]{filename}"
-        return self.__check_cache(filepath)
+        return self.__is_cache_file_exists(filepath)
 
     def get_last_cache(self) -> Optional[str]:
         """Returns last existing cache.
 
         Returns: Cache filename
         """
-        for cache_filename in self._parents_cache[::-1]:  # parents_cache works as a stack
-            if self.__check_cache(cache_filename):
+        for cache_filename in self._parents_cache[::-1]:  # parents_cache works like a stack.
+            if self.__is_cache_file_exists(cache_filename):
                 return cache_filename
         return None
 
@@ -211,7 +213,7 @@ class Data:
                 file.close()
                 rename(file.name, f"./temp/{self._cache_filename}")
 
-    def __check_cache(self, filename: str) -> bool:
+    def __is_cache_file_exists(self, filename: str) -> bool:
         """Checks whether file exist.
 
         Args:
