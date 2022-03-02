@@ -296,3 +296,45 @@ def test_is_empty(general_data: List[dict]):
 
     assert empty_data.is_empty is True
     assert data.is_empty is False
+
+
+def test_inner_cycle_with_cache(general_data: List[dict]):
+    data = Data(general_data).use_cache(True)  # 21 objects
+    external_counter = 0
+    internal_counter = 0
+
+    for _ in data:
+        external_counter += 1
+        for _ in data:
+            internal_counter += 1
+
+    assert external_counter == 21 and internal_counter == 441
+
+
+def test_inner_cycle_with_cache_and_workflow(general_data: List[dict]):
+    data = Data(general_data).use_cache(True)  # 21 objects
+    data_filter = data.filter(lambda record: "Checkpoint" in record.get("eventType"))  # 12 objects
+    external_counter = 0
+    internal_counter = 0
+
+    for _ in data:
+        external_counter += 1
+        for _ in data_filter:
+            internal_counter += 1
+
+    assert external_counter == 21 and internal_counter == 252
+
+
+def test_break_cycle(general_data: List[dict]):
+    data = Data(general_data).use_cache(True)  # 21 objects
+    first_cycle = 0
+    second_cycle = 0
+
+    for _ in data:
+        first_cycle += 1
+        if first_cycle == 10:
+            break
+    for _ in data:
+        second_cycle += 1
+
+    assert second_cycle == 21
