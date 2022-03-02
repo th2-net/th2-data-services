@@ -177,11 +177,8 @@ def test_limit_for_iterations(general_data: List[dict]):
 
     for _ in data5:
         res5[0] += 1
-        print(f"FIRST {data5._workflow}")
         for __ in data5:
             res5[1] += 1
-            print(f"    SECOND {data5._workflow}")
-
             for ___ in data5:
                 res5[2] += 1
                 for ____ in data5:
@@ -193,7 +190,6 @@ def test_limit_for_iterations(general_data: List[dict]):
 def test_limit_for_limit_in_iterations(general_data: List[dict]):
     data = Data(general_data)
     data5 = data.limit(5)
-    # data10 = data.limit(10)
 
     res5 = [0 for _ in range(4)]
     for _ in data5.limit(4):
@@ -205,18 +201,7 @@ def test_limit_for_limit_in_iterations(general_data: List[dict]):
                 for ____ in data5.limit(2):
                     res5[3] += 1
 
-    # res10 = [0 for _ in range(4)]
-    # for _ in data10.limit(11):
-    #     res10[0] += 1
-    #     for __ in data10.limit(2):
-    #         res10[1] += 1
-    #         for ___ in data10.limit(4):
-    #             res10[2] += 1
-    #             for ____ in data10.limit(1):
-    #                 res10[3] += 1
-
-    assert res5 == [4, data5._limit_num ** 2, data5._limit_num ** 3, data5._limit_num ** 4]
-    # assert res10 == [data10._limit_num, data10._limit_num ** 2, data10._limit_num ** 3, data10._limit_num ** 4]
+    assert res5 == [4, 3 * 4, 3 * 4 * 5, 3 * 4 * 5 * 2]
 
 
 def test_sift_limit_data(general_data: List[dict]):

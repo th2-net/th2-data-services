@@ -91,25 +91,13 @@ class Data:
     def _build_workflow(self, workflow):
         new_workflow = copy.deepcopy(workflow)
         print("Build workflow")
-        print(f"workflow: {new_workflow}")
+        print(f"workflow: {[id(w['callback']) for w in new_workflow]}")
 
-        def callback(r):
-            if callback.pushed < self._limit_num:
-                callback.pushed += 1
-                print(f"callback.pushed += 1 | {id(callback)}, {callback.pushed}")
-                return r
-            else:
-                callback.pushed = 0
-                print(f"StopIteration callback.pushed = 0 | {id(callback)}, {callback.pushed}")
-                raise StopIteration
-
-        callback.pushed = 0
-        print(f"INIT callback.pushed = 0, limit={self._limit_num} | {id(callback)}, {callback.pushed}")
-
-        for w in new_workflow:
-            if w["type"] == "limit" and w["callback"] is None:
+        for w in new_workflow[::-1]:
+            if w["type"] == "limit":
                 print("limit!")
-                w["callback"] = callback
+                w["callback"] = self._build_limit_callback(self._limit_num)
+                break
 
         return new_workflow
 
@@ -313,6 +301,23 @@ class Data:
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         return Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
 
+    def _build_limit_callback(self, num):
+        def callback(r):
+            if callback.pushed < num:
+                callback.pushed += 1
+                print(f"callback.pushed += 1 | {id(callback)}, {callback.pushed}")
+                return r
+            else:
+                callback.pushed = 0
+                print(f"StopIteration callback.pushed = 0 | {id(callback)}, {callback.pushed}")
+                raise StopIteration
+
+        callback.limit = num
+        callback.pushed = 0
+        print(f"\nINIT callback.pushed = 0, limit={num} | {id(callback)}, {callback.pushed}")
+
+        return callback
+
     def limit(self, num: int) -> "Data":
         """Limits the stream to `num` entries.
 
@@ -324,20 +329,15 @@ class Data:
 
         """
 
-        def callback(r):
-            if callback.pushed < self._limit_num:
-                callback.pushed += 1
-                print(f"callback.pushed += 1 | {id(callback)}, {callback.pushed}")
-                return r
+        nwf = []
+        for step in copy.deepcopy(self._workflow):
+            if step["type"] == "limit":
+                step["callback"] = self._build_limit_callback(step["callback"].limit)
+                nwf.append(step)
             else:
-                callback.pushed = 0
-                print(f"StopIteration callback.pushed = 0 | {id(callback)}, {callback.pushed}")
-                raise StopIteration
+                nwf.append(step)
 
-        callback.pushed = 0
-        print(f"INIT callback.pushed = 0, limit={self._limit_num} | {id(callback)}, {callback.pushed}")
-
-        new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": None}]
+        new_workflow = [*nwf, {"type": "limit", "callback": self._build_limit_callback(num)}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
         data_obj._length_hint = num
