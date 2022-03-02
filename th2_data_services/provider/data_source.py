@@ -62,12 +62,12 @@ class IProviderDataSource(IDataSource):
         return self._message_struct
 
     @property
-    def event_stub(self) -> IEventStub:
+    def event_stub_builder(self) -> IEventStub:
         """Returns event stub template."""
         return self._event_stub_builder
 
     @property
-    def message_stub(self) -> IMessageStub:
+    def message_stub_builder(self) -> IMessageStub:
         """Returns message stub template."""
         return self._message_stub_builder
 

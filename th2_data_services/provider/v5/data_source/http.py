@@ -20,7 +20,6 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from th2_data_services.provider.v5.command import IHTTPProvider5Command
-    from th2_data_services.provider.v5.provider_api.http import HTTPProvider5API
 
 from th2_data_services.provider.data_source import IHTTPProviderDataSource
 from th2_data_services.provider.v5.struct import (
@@ -31,6 +30,7 @@ from th2_data_services.provider.v5.stub_builder import (
     provider5_event_stub_builder,
     provider5_message_stub_builder,
 )
+from th2_data_services.provider.v5.provider_api.http import HTTPProvider5API
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
@@ -47,7 +47,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         message_struct=provider5_message_struct,
         event_stub_builder=provider5_event_stub_builder,
         message_stub_builder=provider5_message_stub_builder,
-        check_connect_timeout: (int, float) = 5
+        check_connect_timeout: (int, float) = 5,
     ):
         """
 

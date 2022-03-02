@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 from datetime import datetime
-from typing import List, Iterable
+from functools import partial
+from typing import List, Iterable, Generator
 
 from grpc._channel import _InactiveRpcError
 from th2_grpc_data_provider.data_provider_template_pb2 import (
@@ -20,7 +21,7 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
     MessageData,
 )
 
-from th2_data_services import Filter
+from th2_data_services import Filter, Data
 from th2_data_services.provider.command import IProviderAdaptableCommand
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterGRPCObjectToDict
 from th2_data_services.provider.v5.adapters.events_adapters import AdapterDeleteEventWrappers
@@ -88,7 +89,7 @@ class GetEventById(IGRPCProvider5Command, IProviderAdaptableCommand):
             event = self._wrapper_deleter.handle(event)
         except _InactiveRpcError:
             if self._stub_status:
-                event = data_source.event_stub.build(event)
+                event = data_source.event_stub_builder.build(event)
             else:
                 raise ValueError(f"Unable to find the event. Id: {self._id}")
 
@@ -154,7 +155,6 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IProviderAdaptableCommand):
         result_count_limit: int = None,
         keep_open: bool = False,
         limit_for_parent: int = None,
-        metadata_only: bool = True,
         attached_messages: bool = False,
         filters: List[Filter] = None,
     ):
@@ -170,7 +170,6 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IProviderAdaptableCommand):
                 It is need to wait further for the appearance of new data.
                 the one closest to the specified timestamp.
             limit_for_parent: How many children events for each parent do we want to request.
-            metadata_only: Receive only metadata (true) or entire event (false) (without attached_messages).
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
 
@@ -184,7 +183,7 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IProviderAdaptableCommand):
         self._result_count_limit = result_count_limit
         self._keep_open = keep_open
         self._limit_for_parent = limit_for_parent
-        self._metadata_only = metadata_only
+        self._metadata_only = False
         self._attached_messages = attached_messages
         self._filters = filters
 
@@ -208,8 +207,9 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IProviderAdaptableCommand):
             filters=self._filters,
         )
         for response in stream_response:
-            response = self._handle_adapters(response)
-            yield response.event
+            if response.WhichOneof("data") == "event":
+                response = self._handle_adapters(response)
+                yield response.event
 
 
 class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
@@ -231,7 +231,6 @@ class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
         result_count_limit: int = None,
         keep_open: bool = False,
         limit_for_parent: int = None,
-        metadata_only: bool = True,
         attached_messages: bool = False,
         filters: List[Filter] = None,
     ):
@@ -247,7 +246,6 @@ class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
                 It is need to wait further for the appearance of new data.
                 the one closest to the specified timestamp.
             limit_for_parent: How many children events for each parent do we want to request.
-            metadata_only: Receive only metadata (true) or entire event (false) (without attached_messages).
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
 
@@ -261,14 +259,18 @@ class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
         self._result_count_limit = result_count_limit
         self._keep_open = keep_open
         self._limit_for_parent = limit_for_parent
-        self._metadata_only = metadata_only
+        self._metadata_only = False
         self._attached_messages = attached_messages
         self._filters = filters
 
         self._grpc_decoder = AdapterGRPCObjectToDict()
         self._wrapper_deleter = AdapterDeleteEventWrappers()
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[dict]:
+    def handle(self, data_source: GRPCProvider5DataSource) -> Data:
+        source = partial(self.__handle_stream, data_source)
+        return Data(source)
+
+    def __handle_stream(self, data_source: GRPCProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetEventsGRPCObjects(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
@@ -278,7 +280,6 @@ class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
             result_count_limit=self._result_count_limit,
             keep_open=self._keep_open,
             limit_for_parent=self._limit_for_parent,
-            metadata_only=self._metadata_only,
             attached_messages=self._attached_messages,
             filters=self._filters,
         ).handle(data_source)
@@ -344,7 +345,7 @@ class GetMessageById(IGRPCProvider5Command, IProviderAdaptableCommand):
             message = self._decoder.handle(message)
         except _InactiveRpcError:
             if self._stub_status:
-                message = data_source.message_stub.build(message)
+                message = data_source.message_stub_builder.build(message)
             else:
                 raise ValueError(f"Unable to find the message. Id: {self._id}")
         message = self._handle_adapters(message)
@@ -449,10 +450,10 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
             keep_open=self._keep_open,
             filters=self._filters,
         )
-
         for response in stream_response:
-            response = self._handle_adapters(response)
-            yield response.message
+            if response.WhichOneof("data") == "message":
+                response = self._handle_adapters(response)
+                yield response.message
 
 
 class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
@@ -500,7 +501,11 @@ class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
 
         self._decoder = AdapterGRPCObjectToDict()
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:
+    def handle(self, data_source: GRPCProvider5DataSource) -> Data:
+        source = partial(self.__handle_stream, data_source)
+        return Data(source)
+
+    def __handle_stream(self, data_source: GRPCProvider5DataSource) -> Iterable[dict]:
         stream = GetMessagesGRPCObject(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
