@@ -312,8 +312,12 @@ class Data:
                 print(f"StopIteration callback.pushed = 0 | {id(callback)}, {callback.pushed}")
                 raise StopIteration
 
-        callback.limit = num
+        if self._limit_num is not None:
+            callback.limit = min(num, self._limit_num)
+        else:
+            callback.limit = num
         callback.pushed = 0
+
         print(f"\nINIT callback.pushed = 0, limit={num} | {id(callback)}, {callback.pushed}")
 
         return callback
@@ -333,15 +337,18 @@ class Data:
         for step in copy.deepcopy(self._workflow):
             if step["type"] == "limit":
                 step["callback"] = self._build_limit_callback(step["callback"].limit)
-                nwf.append(step)
-            else:
-                nwf.append(step)
+
+            nwf.append(step)
 
         new_workflow = [*nwf, {"type": "limit", "callback": self._build_limit_callback(num)}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
-        data_obj._length_hint = num
-        data_obj._limit_num = num
+        if self._limit_num is not None:
+            data_obj._length_hint = min(self._limit_num, num)
+            data_obj._limit_num = min(self._limit_num, num)
+        else:
+            data_obj._length_hint = num
+            data_obj._limit_num = num
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:

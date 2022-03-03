@@ -189,7 +189,7 @@ def test_limit_before_cycles(general_data: List[dict]):
 def test_new_limit_is_bigger(general_data: List[dict]):
     data = Data(general_data).limit(3)
     data5 = data.limit(5)
-    res = [0 for _ in range(3)]
+    res = [0 for _ in range(4)]
 
     for _ in data5:
         res[0] += 1
@@ -197,8 +197,10 @@ def test_new_limit_is_bigger(general_data: List[dict]):
             res[1] += 1
             for ___ in data5:
                 res[2] += 1
+                for ____ in data5:
+                    res[3] += 1
 
-    assert res == [3, 9, 27]
+    assert res == [3, 9, 27, 81]
 
 def test_limit_for_limit_in_iterations(general_data: List[dict]):
     data = Data(general_data)
