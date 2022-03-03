@@ -59,7 +59,7 @@ class Data:
 
     def __delete_cache(self) -> None:
         """Removes cache file."""
-        path = Path("./").joinpath("temp").joinpath(self._cache_filename)
+        path = Path(self.__get_cache_filepath())
         path.unlink()
 
     @property
@@ -132,23 +132,28 @@ class Data:
                 working_data = self._data() if callable(self._data) else self._data
                 workflow = self._workflow
 
-            if self.__check_file_recording(self._cache_filename):
+            if self.__check_file_recording():
                 # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
                 cache = False
 
             yield from self.__change_data(working_data=working_data, workflow=workflow, cache=cache)
 
-    def __check_file_recording(self, filename: str) -> bool:
+    def __check_file_recording(self) -> bool:
         """Checks whether there is a current recording in the file.
-
-        Args:
-            filename: Filename.
 
         Returns:
             bool: File recording status.
         """
-        filepath = f"[PENDING]{filename}"
-        return self.__is_cache_file_exists(filepath)
+        filename = f"[PENDING]{self._cache_filename}"
+        return self.__is_cache_file_exists(filename)
+
+    def __get_pending_cache_filepath(self) -> str:
+        """Gets filepath for a cache file in pending status."""
+        return f"./temp/[PENDING]{self._cache_filename}"
+
+    def __get_cache_filepath(self) -> str:
+        """Gets filepath for a cache file."""
+        return f"./temp/{self._cache_filename}"
 
     def get_last_cache(self) -> Optional[str]:
         """Returns last existing cache.
@@ -185,7 +190,7 @@ class Data:
         """
         file = None
         if cache:
-            filepath = f"./temp/[PENDING]{self._cache_filename}"
+            filepath = self.__get_pending_cache_filepath()
             file = open(filepath, "wb")
 
         try:
@@ -210,7 +215,7 @@ class Data:
         finally:
             if file:
                 file.close()
-                rename(file.name, f"./temp/{self._cache_filename}")
+                rename(file.name, self.__get_cache_filepath())
 
     def __is_cache_file_exists(self, filename: str) -> bool:
         """Checks whether file exist.
