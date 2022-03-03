@@ -97,14 +97,14 @@ class GetEventsById(IHTTPProvider5Command, IProviderAdaptableCommand):
         result = []
         for event_id in self._ids:
             try:
-                event = GetEventById(event_id).handle(data_source)
-            except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 if self._stub_status:
-                    return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: event_id})
+                    event = GetEventById(event_id).use_stub().handle(data_source)
                 else:
-                    exception_msg = f"Unable to find the message. Id: {event_id}"
-                    logger.error(exception_msg)
-                    raise ValueError(exception_msg)
+                    event = GetEventById(event_id).handle(data_source)
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
+                exception_msg = f"Unable to find the message. Id: {event_id}"
+                logger.error(exception_msg)
+                raise ValueError(exception_msg)
             result.append(self._handle_adapters(event))
         return result
 
@@ -417,14 +417,14 @@ class GetMessagesById(IHTTPProvider5Command, IProviderAdaptableCommand):
         result = []
         for message_id in self._ids:
             try:
-                message = GetMessageById(message_id).handle(data_source)
-            except (json.JSONDecodeError, simplejson.JSONDecodeError):
                 if self._stub_status:
-                    return data_source.event_stub_builder.build({data_source.message_struct.MESSAGE_ID: message_id})
+                    message = GetMessageById(message_id).use_stub().handle(data_source)
                 else:
-                    exception_msg = f"Unable to find the message. Id: {message_id}"
-                    logger.error(exception_msg)
-                    raise ValueError(exception_msg)
+                    message = GetMessageById(message_id).handle(data_source)
+            except (json.JSONDecodeError, simplejson.JSONDecodeError):
+                exception_msg = f"Unable to find the message. Id: {message_id}"
+                logger.error(exception_msg)
+                raise ValueError(exception_msg)
             result.append(self._handle_adapters(message))
         return result
 
