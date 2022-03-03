@@ -233,6 +233,7 @@ class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
         limit_for_parent: int = None,
         attached_messages: bool = False,
         filters: List[Filter] = None,
+        cache: bool = False,
     ):
         """
         Args:
@@ -248,6 +249,7 @@ class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
             limit_for_parent: How many children events for each parent do we want to request.
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
+            cache: If True, all requested data from rpt-data-provider will be saved to cache.
 
         """
         super().__init__()
@@ -262,13 +264,14 @@ class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
         self._metadata_only = False
         self._attached_messages = attached_messages
         self._filters = filters
+        self._cache = cache
 
         self._grpc_decoder = AdapterGRPCObjectToDict()
         self._wrapper_deleter = AdapterDeleteEventWrappers()
 
     def handle(self, data_source: GRPCProvider5DataSource) -> Data:
         source = partial(self.__handle_stream, data_source)
-        return Data(source)
+        return Data(source, cache=self._cache)
 
     def __handle_stream(self, data_source: GRPCProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetEventsGRPCObjects(
@@ -475,6 +478,7 @@ class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
         result_count_limit: int = None,
         keep_open: bool = False,
         filters: List[Filter] = None,
+        cache: bool = False,
     ):
         """
         Args:
@@ -487,6 +491,7 @@ class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
             keep_open: If the search has reached the current moment.
                 It is need to wait further for the appearance of new data.
             filters: Filters using in search for messages.
+            cache: If True, all requested data from rpt-data-provider will be saved to cache.
 
         """
         super().__init__()
@@ -498,12 +503,13 @@ class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
         self._result_count_limit = result_count_limit
         self._keep_open = keep_open
         self._filters = filters
+        self._cache = cache
 
         self._decoder = AdapterGRPCObjectToDict()
 
     def handle(self, data_source: GRPCProvider5DataSource) -> Data:
         source = partial(self.__handle_stream, data_source)
-        return Data(source)
+        return Data(source, cache=self._cache)
 
     def __handle_stream(self, data_source: GRPCProvider5DataSource) -> Iterable[dict]:
         stream = GetMessagesGRPCObject(

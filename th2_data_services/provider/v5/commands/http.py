@@ -296,6 +296,7 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         metadata_only: bool = False,
         attached_messages: bool = False,
         filters: (Filter, List[Filter]) = None,
+        cache: bool = False,
     ):
         """
         Args:
@@ -312,6 +313,7 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
             metadata_only: Receive only metadata (true) or entire event (false) (without attached_messages).
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
+            cache: If True, all requested data from rpt-data-provider will be saved to cache.
 
         """
         super().__init__()
@@ -326,11 +328,12 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._metadata_only = metadata_only
         self._attached_messages = attached_messages
         self._filters = filters
+        self._cache = cache
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:
         source = partial(self.__handle_stream, data_source)
         adapter = AdapterSSE()
-        return Data(source).map(adapter.handle)
+        return Data(source, cache=self._cache).map(adapter.handle)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetEventsSSEEvents(
@@ -620,6 +623,7 @@ class GetMessages(IHTTPProvider5Command, IProviderAdaptableCommand):
         filters: (Filter, List[Filter]) = None,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
+        cache: bool = False,
     ):
         """
         Args:
@@ -639,6 +643,7 @@ class GetMessages(IHTTPProvider5Command, IProviderAdaptableCommand):
             filters: Filters using in search for messages.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
+            cache: If True, all requested data from rpt-data-provider will be saved to cache.
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -654,11 +659,12 @@ class GetMessages(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._filters = filters
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
+        self._cache = cache
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:
         source = partial(self.__handle_stream, data_source)
         adapter = AdapterSSE()
-        return Data(source).map(adapter.handle)
+        return Data(source, cache=self._cache).map(adapter.handle)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetMessagesSSEEvents(
