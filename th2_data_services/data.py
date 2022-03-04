@@ -60,7 +60,8 @@ class Data:
     def __delete_cache(self) -> None:
         """Removes cache file."""
         path = Path(self.__get_cache_filepath())
-        path.unlink()
+        if path.exists():
+            path.unlink()
 
     @property
     def len(self) -> int:
