@@ -186,6 +186,22 @@ def test_limit_before_cycles(general_data: List[dict]):
 
     assert res5 == [data5._limit_num, data5._limit_num ** 2, data5._limit_num ** 3, data5._limit_num ** 4]
 
+def test_new_limit_is_less(general_data: List[dict]):
+    data5 = Data(general_data).limit(5)
+    data3 = data5.limit(3)
+    res = [0 for _ in range(4)]
+
+    for _ in data3:
+        res[0] += 1
+        for __ in data3:
+            res[1] += 1
+            for ___ in data3:
+                res[2] += 1
+                for ____ in data3:
+                    res[3] += 1
+
+    assert res == [3, 9, 27, 81]
+
 def test_new_limit_is_bigger(general_data: List[dict]):
     data = Data(general_data).limit(3)
     data5 = data.limit(5)

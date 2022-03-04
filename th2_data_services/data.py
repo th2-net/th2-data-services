@@ -305,17 +305,15 @@ class Data:
         def callback(r):
             if callback.pushed < num:
                 callback.pushed += 1
-                print(f"callback.pushed += 1 | {id(callback)}, {callback.pushed}")
+                print(f"callback.pushed += 1 | {id(callback)}, {callback.pushed}, limit_num {self._limit_num}")
                 return r
             else:
                 callback.pushed = 0
-                print(f"StopIteration callback.pushed = 0 | {id(callback)}, {callback.pushed}")
+                print(f"StopIteration callback.pushed = 0 | {id(callback)}, {callback.pushed}, limit_num {self._limit_num}")
                 raise StopIteration
 
-        if self._limit_num is not None:
-            callback.limit = min(num, self._limit_num)
-        else:
-            callback.limit = num
+
+        callback.limit = num
         callback.pushed = 0
 
         print(f"\nINIT callback.pushed = 0, limit={num} | {id(callback)}, {callback.pushed}")
@@ -343,12 +341,8 @@ class Data:
         new_workflow = [*nwf, {"type": "limit", "callback": self._build_limit_callback(num)}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
-        if self._limit_num is not None:
-            data_obj._length_hint = min(self._limit_num, num)
-            data_obj._limit_num = min(self._limit_num, num)
-        else:
-            data_obj._length_hint = num
-            data_obj._limit_num = num
+        data_obj._length_hint = num
+        data_obj._limit_num = num
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
