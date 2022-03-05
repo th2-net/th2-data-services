@@ -97,7 +97,7 @@ class Data:
             if w["type"] == "limit":
                 print("limit!")
                 w["callback"] = self._build_limit_callback(self._limit_num)
-                break
+                #break
 
         return new_workflow
 
