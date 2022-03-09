@@ -25,6 +25,7 @@ from th2_data_services import Filter, Data
 from th2_data_services.provider.command import IProviderAdaptableCommand
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterGRPCObjectToDict
 from th2_data_services.provider.v5.adapters.events_adapters import AdapterDeleteEventWrappers
+from th2_data_services.provider.v5.adapters.messages_adapters import AdapterDeleteMessageWrappers
 from th2_data_services.provider.v5.command import IGRPCProvider5Command
 
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
@@ -339,6 +340,7 @@ class GetMessageById(IGRPCProvider5Command, IProviderAdaptableCommand):
         super().__init__()
         self._id = id
         self._decoder = AdapterGRPCObjectToDict()
+        self._wrapper_deleter = AdapterDeleteMessageWrappers()
         self._stub_status = False
 
     def handle(self, data_source: GRPCProvider5DataSource) -> dict:
@@ -346,6 +348,7 @@ class GetMessageById(IGRPCProvider5Command, IProviderAdaptableCommand):
         try:
             message = GetMessageByIdGRPCObject(self._id).handle(data_source)
             message = self._decoder.handle(message)
+            message = self._wrapper_deleter.handle(message)
         except _InactiveRpcError:
             if self._stub_status:
                 message = data_source.message_stub_builder.build(message)
@@ -506,6 +509,7 @@ class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
         self._cache = cache
 
         self._decoder = AdapterGRPCObjectToDict()
+        self._wrapper_deleter = AdapterDeleteMessageWrappers()
 
     def handle(self, data_source: GRPCProvider5DataSource) -> Data:
         source = partial(self.__handle_stream, data_source)
@@ -524,5 +528,6 @@ class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
         ).handle(data_source)
         for message in stream:
             message = self._decoder.handle(message)
+            message = self._wrapper_deleter.handle(message)
             message = self._handle_adapters(message)
             yield message

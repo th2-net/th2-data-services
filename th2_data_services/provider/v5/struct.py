@@ -58,6 +58,10 @@ class Provider5MessageStruct(IMessageStruct):
     DIRECTION: str
     SESSION_ID: str
     MESSAGE_TYPE: str
+    CONNECTION_ID: str
+    SESSION_ALIAS: str
+    SUBSEQUENCE: str
+    SEQUENCE: str
     TIMESTAMP: str
     BODY: str
     BODY_BASE64: str
@@ -70,6 +74,10 @@ provider5_message_struct = Provider5MessageStruct(
     DIRECTION="direction",
     SESSION_ID="sessionId",
     MESSAGE_TYPE="messageType",
+    CONNECTION_ID="connectionId",
+    SESSION_ALIAS="sessionAlias",
+    SUBSEQUENCE="subsequence",
+    SEQUENCE="sequence",
     TIMESTAMP="timestamp",
     BODY="body",
     BODY_BASE64="bodyBase64",
