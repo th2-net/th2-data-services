@@ -203,8 +203,9 @@ def test_new_limit_is_less(general_data: List[dict]):
     assert res == [3, 9, 27, 81]
 
 def test_new_limit_is_bigger(general_data: List[dict]):
-    data = Data(general_data).limit(3)
-    data5 = data.limit(5)
+    '''data = Data(general_data).limit(3)
+    data5 = data.limit(5)'''
+    data5 = Data(general_data).limit(3).limit(5)
     res = [0 for _ in range(4)]
 
     for _ in data5:

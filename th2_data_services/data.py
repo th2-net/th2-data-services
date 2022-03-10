@@ -31,7 +31,6 @@ class Data:
         self._len = None
         self._data = data
         self._workflow = [] if workflow is None else workflow
-        self._len = None
         self._length_hint = None  # The value is populated when we use limit method.
         self._cache_status = cache
         self._parents_cache = parents_cache if parents_cache else []
@@ -96,7 +95,8 @@ class Data:
         for w in new_workflow[::-1]:
             if w["type"] == "limit":
                 print("limit!")
-                w["callback"] = self._build_limit_callback(self._limit_num)
+                w["callback"] = self._build_limit_callback(w["callback"].limit)
+                #self._limit_num
                 #break
 
         return new_workflow
@@ -316,7 +316,7 @@ class Data:
         callback.limit = num
         callback.pushed = 0
 
-        print(f"\nINIT callback.pushed = 0, limit={num} | {id(callback)}, {callback.pushed}")
+        print(f"\nINIT callback.pushed = 0, limit={num} | {id(callback)}, {callback.pushed}, {callback.limit}")
 
         return callback
 
@@ -341,7 +341,15 @@ class Data:
         new_workflow = [*nwf, {"type": "limit", "callback": self._build_limit_callback(num)}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
+
+        '''if self._length_hint is not None:
+            data_obj._length_hint = min(num, self._length_hint)
+        else:'''
         data_obj._length_hint = num
+
+        '''if self._limit_num is not None:
+            data_obj._limit_num = min(num, self._limit_num)
+        else:'''
         data_obj._limit_num = num
         return data_obj
 
