@@ -7,7 +7,9 @@ from th2_data_services.events_tree.parent_events_tree import ParentEventsTree
 def test_build_tree(general_data: List[dict], test_parent_events_tree: NamedTuple):
     tree = ParentEventsTree(general_data)
 
-    assert list(tree.events.keys()) == test_parent_events_tree.events and sorted(tree.unknown_events.keys()) == sorted(test_parent_events_tree.unknown_events)
+    assert list(tree.events.keys()) == test_parent_events_tree.events and sorted(tree.unknown_events.keys()) == sorted(
+        test_parent_events_tree.unknown_events
+    )
 
 
 def test_is_in_ancestor_name_positive(general_data: List[dict]):

@@ -12,10 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
-import logging
-from logging import NullHandler
+from abc import ABC
 
-logging.getLogger(__name__).addHandler(NullHandler())
+
+class IEventStruct(ABC):
+    """Just to mark Event Struct class.
+
+    It should look like a class with constants.
+    """
+
+
+class IMessageStruct(ABC):
+    """Just to mark Message Struct class.
+
+    It should look like a class with constants.
+    """
