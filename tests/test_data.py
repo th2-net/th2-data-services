@@ -303,7 +303,6 @@ def test_cache_inheritance(general_data: List[dict]):
 
     assert output1 == 21 and output2 == 11 and output3 == 10 and output4 == output5 == 22
 
-
 def test_cache_for_source(general_data: List[dict]):
     data = Data(general_data, cache=True)
     data1 = data.filter(lambda record: record.get("isBatched"))

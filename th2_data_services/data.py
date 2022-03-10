@@ -10,7 +10,6 @@ DataSet = Union[Iterator, Callable[..., Generator[dict, None, None]]]
 WorkFlow = List[Dict[str, Union[Callable, str]]]
 DataGenerator = Generator[dict, None, None]
 
-
 class Data:
     """A wrapper for data/data_stream.
 
