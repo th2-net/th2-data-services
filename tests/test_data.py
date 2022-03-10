@@ -129,23 +129,18 @@ def test_shuffle_data(general_data: List[dict]):
 
     assert len(list(data)) == 12
 
-
-"""def test_main():
-    assert main() == [3, 9]
-"""
-
-
-def test_limit(general_data: List[dict]):
-    data = Data(general_data)
+@pytest.mark.parametrize("cache ", [True, False])
+def test_limit(general_data: List[dict], cache):
+    data = Data(general_data, cache = cache)
     data10 = data.limit(10)
     data5 = data10.limit(5)
 
     assert len(list(data10)) == 10
     assert len(list(data5)) == 5
 
-
-def test_limit_for_list_record(general_data: List[dict]):
-    data = Data(general_data).map(lambda record: [record, record])
+@pytest.mark.parametrize("cache ", [True, False])
+def test_limit_for_list_record(general_data: List[dict], cache):
+    data = Data(general_data, cache = cache).map(lambda record: [record, record])
 
     data10 = data.limit(10)
     data5 = data10.limit(5)
@@ -153,9 +148,9 @@ def test_limit_for_list_record(general_data: List[dict]):
     assert len(list(data10)) == 10
     assert len(list(data5)) == 5
 
-
-def test_limit_in_cycles(general_data: List[dict]):
-    data = Data(general_data)
+@pytest.mark.parametrize("cache ", [True, False])
+def test_limit_in_cycles(general_data: List[dict], cache):
+    data = Data(general_data, cache = cache)
     res5 = [0 for _ in range(4)]
     for _ in data.limit(4):
         res5[0] += 1
@@ -168,9 +163,9 @@ def test_limit_in_cycles(general_data: List[dict]):
 
     assert res5 == [4, 4 * 3, 4 * 3 * 2, 4 * 3 * 2 * 1]
 
-
-def test_limit_before_cycles(general_data: List[dict]):
-    data3 = Data(general_data)
+@pytest.mark.parametrize("cache ", [True, False])
+def test_limit_before_cycles(general_data: List[dict], cache):
+    data3 = Data(general_data, cache)
     data5 = data3.limit(5)
 
     res5 = [0 for _ in range(4)]
@@ -186,8 +181,9 @@ def test_limit_before_cycles(general_data: List[dict]):
 
     assert res5 == [data5._limit_num, data5._limit_num ** 2, data5._limit_num ** 3, data5._limit_num ** 4]
 
-def test_new_limit_is_less(general_data: List[dict]):
-    data5 = Data(general_data).limit(5)
+@pytest.mark.parametrize("cache ", [True, False])
+def test_new_limit_is_less(general_data: List[dict], cache):
+    data5 = Data(general_data, cache).limit(5)
     data3 = data5.limit(3)
     res = [0 for _ in range(4)]
 
@@ -202,10 +198,11 @@ def test_new_limit_is_less(general_data: List[dict]):
 
     assert res == [3, 9, 27, 81]
 
-def test_new_limit_is_bigger(general_data: List[dict]):
+@pytest.mark.parametrize("cache ", [True, False])
+def test_new_limit_is_bigger(general_data: List[dict], cache):
     '''data = Data(general_data).limit(3)
     data5 = data.limit(5)'''
-    data5 = Data(general_data).limit(3).limit(5)
+    data5 = Data(general_data, cache = cache).limit(3).limit(5)
     res = [0 for _ in range(4)]
 
     for _ in data5:
@@ -219,8 +216,9 @@ def test_new_limit_is_bigger(general_data: List[dict]):
 
     assert res == [3, 9, 27, 81]
 
-def test_limit_for_limit_in_iterations(general_data: List[dict]):
-    data = Data(general_data)
+@pytest.mark.parametrize("cache ", [True, False])
+def test_limit_for_limit_in_iterations(general_data: List[dict], cache):
+    data = Data(general_data, cache = cache)
     data5 = data.limit(5)
 
     res5 = [0 for _ in range(4)]
