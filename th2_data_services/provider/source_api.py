@@ -12,10 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
-import logging
-from logging import NullHandler
+from th2_data_services.source_api import ISourceAPI
 
-logging.getLogger(__name__).addHandler(NullHandler())
+
+class IProviderSourceAPI(ISourceAPI):
+    """Interface for Source API of rpt-data-provider."""
+
+
+class IHTTPProviderSourceAPI(IProviderSourceAPI):
+    """Interface for Source API of rpt-data-provider which works via HTTP."""
+
+
+class IGRPCProviderSourceAPI(IProviderSourceAPI):
+    """Interface for Source API of rpt-data-provider which works via GRPC."""

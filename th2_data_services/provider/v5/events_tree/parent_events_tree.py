@@ -12,11 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import defaultdict
 from typing import Union, Iterator, Generator, Optional
 
 from th2_data_services.data import Data
-from th2_data_services.events_tree import EventsTree
+from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
+from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
+from th2_data_services.provider.v5.events_tree.events_tree import EventsTree
+from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
 class ParentEventsTree(EventsTree):
@@ -27,22 +29,26 @@ class ParentEventsTree(EventsTree):
     """
 
     def __init__(
-        self, data: Union[Iterator, Generator[dict, None, None], Data] = None, preserve_body: Optional[bool] = False
+        self,
+        data: Union[Iterator, Generator[dict, None, None], Data] = None,
+        data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource] = None,
+        event_struct=provider5_event_struct,
+        preserve_body: Optional[bool] = False,
     ):
-
         """
         Args:
             data: Events.
-            preserve_body (:obj:`bool`, optional): if true keep events bodies.
+            data_source: Data Source.
+            event_struct: Event Struct.
+            preserve_body ('bool', optional): If true keep events bodies.
         """
-        if data is None:
-            data = []
-
-        self.__preserve_body = preserve_body
         self._parents_ids = set()
-        self._unknown_events = defaultdict(lambda: 0)
-        self._events = {}
-        self.build_tree(data)
+        super().__init__(
+            data=data,
+            preserve_body=preserve_body,
+            data_source=data_source,
+            event_struct=event_struct,
+        )
 
     @property
     def events(self) -> dict:
@@ -66,12 +72,14 @@ class ParentEventsTree(EventsTree):
         :param data: Events.
         """
         for event in data:
-            parent_id = event["parentEventId"]
+            parent_id = event.get(self._event_struct.PARENT_EVENT_ID)
             if parent_id is not None:
                 self._parents_ids.add(parent_id)
-
-        for event in data:
+            else:
+                event_id = event.get(self._event_struct.EVENT_ID)
+                self._parents_ids.add(event_id)
             self.append_element(event)
+
         self.search_unknown_parents()
 
     def append_element(self, event: dict) -> None:
@@ -80,10 +88,10 @@ class ParentEventsTree(EventsTree):
         Args:
             event: Event
         """
-        event_id = event["eventId"]
-        if not self.__preserve_body:
+        event_id = event[self._event_struct.EVENT_ID]
+        if not self._preserve_body:
             try:
-                event.pop("body")
+                event.pop(self._event_struct.BODY)
             except KeyError:
                 pass
 

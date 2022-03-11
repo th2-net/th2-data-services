@@ -1,6 +1,6 @@
 from typing import List
 
-from th2_data_services.adapters.adapter_provider5 import adapter_provider5
+from th2_data_services.provider.adapters import adapter_provider5
 
 
 def test_adapter_with_id(messages_before_pipeline_adapter: List[dict], messages_after_pipeline_adapter: List[dict]):
@@ -55,7 +55,11 @@ def test_find_sub_message_with_adapter(message_from_pipeline: dict):
                     "TimestampNanoseconds": {"simpleValue": "2724576"},
                 },
                 "metadata": {
-                    "id": {"connectionId": {"sessionAlias": "test-42"}, "sequence": "1632216515838617066", "subsequence": [5]},
+                    "id": {
+                        "connectionId": {"sessionAlias": "test-42"},
+                        "sequence": "1632216515838617066",
+                        "subsequence": [5],
+                    },
                     "messageType": "AddOrder",
                     "protocol": "SOUP",
                     "timestamp": "2021-09-23T12:37:38.004Z",

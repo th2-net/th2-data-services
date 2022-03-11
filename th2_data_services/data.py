@@ -1,6 +1,20 @@
+#  Copyright 2022 Exactpro (Exactpro Systems Limited)
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 import copy
 import pickle
 import pprint
+from os import rename
 from pathlib import Path
 from time import time
 from typing import Callable, Dict, Generator, Iterator, List, Optional, Union
@@ -25,7 +39,7 @@ class Data:
             data: Data source.
             workflow: Workflow.
             parents_cache: Parents chain. Works as a stack.
-            cache: Flag if you want write and read from cache.
+            cache: Flag if you want to write and read from cache.
         """
         self._cache_filename = f"{str(id(self))}:{time()}.pickle"
         self._len = None
@@ -39,10 +53,16 @@ class Data:
         self.pushed = 0
 
     def __remove(self):
-        if self.__check_cache(self._cache_filename):
-            path = Path("./").joinpath("temp").joinpath(self._cache_filename)
-            path.unlink()
+        """Data class destructor."""
+        if self.__is_cache_file_exists(self._cache_filename):
+            self.__delete_cache()
         del self._data
+
+    def __delete_cache(self) -> None:
+        """Removes cache file."""
+        path = Path(self.__get_cache_filepath())
+        if path.exists():
+            path.unlink()
 
     @property
     def len(self) -> int:
@@ -63,7 +83,6 @@ class Data:
         return True
 
     def __calc_len(self) -> int:
-        # TODO - request rpt-data-provide provide "select count"
         for _ in self:
             pass
         return self._len
@@ -80,12 +99,19 @@ class Data:
 
     def __iter__(self) -> DataSet:
         self._len = 0
+        interruption = True
         try:
             for record in self.__load_data(self._cache_status):
                 yield record
                 self._len += 1
+            else:
+                # Loop fell through ..............
+                interruption = False
         except StopIteration:
             return None
+        finally:
+            if interruption:
+                self.__delete_cache()
 
     def _build_workflow(self, workflow):
         new_workflow = copy.deepcopy(workflow)
@@ -99,13 +125,12 @@ class Data:
         """Loads data from cache or data.
 
         Args:
-            cache: Flag if you what write and read from cache.
+            cache: Flag if you what to write and read from cache.
 
         Returns:
             obj: Generator
         """
-
-        if cache and self.__check_cache(self._cache_filename):
+        if cache and self.__is_cache_file_exists(self._cache_filename):
             working_data = self.__load_file(self._cache_filename)
             yield from working_data
         else:
@@ -118,17 +143,38 @@ class Data:
                 working_data = self._data() if callable(self._data) else self._data
                 workflow = self._workflow
 
+            if self.__check_file_recording():
+                # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
+                cache = False
+
             workflow = self._build_workflow(workflow)
 
             yield from self.__change_data(working_data=working_data, workflow=workflow, cache=cache)
+
+    def __check_file_recording(self) -> bool:
+        """Checks whether there is a current recording in the file.
+
+        Returns:
+            bool: File recording status.
+        """
+        filename = f"[PENDING]{self._cache_filename}"
+        return self.__is_cache_file_exists(filename)
+
+    def __get_pending_cache_filepath(self) -> str:
+        """Gets filepath for a cache file in pending status."""
+        return f"./temp/[PENDING]{self._cache_filename}"
+
+    def __get_cache_filepath(self) -> str:
+        """Gets filepath for a cache file."""
+        return f"./temp/{self._cache_filename}"
 
     def get_last_cache(self) -> Optional[str]:
         """Returns last existing cache.
 
         Returns: Cache filename
         """
-        for cache_filename in self._parents_cache[::-1]:  # parents_cache works as a stack
-            if self.__check_cache(cache_filename):
+        for cache_filename in self._parents_cache[::-1]:  # parents_cache works like a stack.
+            if self.__is_cache_file_exists(cache_filename):
                 return cache_filename
         return None
 
@@ -157,7 +203,7 @@ class Data:
         """
         file = None
         if cache:
-            filepath = f"./temp/{self._cache_filename}"
+            filepath = self.__get_pending_cache_filepath()
             file = open(filepath, "wb")
 
         try:
@@ -182,8 +228,9 @@ class Data:
         finally:
             if file:
                 file.close()
+                rename(file.name, self.__get_cache_filepath())
 
-    def __check_cache(self, filename: str) -> bool:
+    def __is_cache_file_exists(self, filename: str) -> bool:
         """Checks whether file exist.
 
         Args:
@@ -360,7 +407,7 @@ class Data:
         """Change status cache.
 
         If True all requested data from rpt-data-provider will be saved to cache file.
-        Further actions with Data object will be consume data from the cache file.
+        Further actions with the Data object will consume data from the cache file.
 
         Args:
             status(bool): Status.

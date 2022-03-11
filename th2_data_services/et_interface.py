@@ -12,10 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
-import logging
-from logging import NullHandler
+from abc import ABC
 
-logging.getLogger(__name__).addHandler(NullHandler())
+
+class IEventsTree(ABC):
+    # TODO - TBU by Sviatoslav
+    pass

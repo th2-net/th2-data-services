@@ -12,10 +12,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .data_source import DataSource
-from .filter import Filter
-import logging
-from logging import NullHandler
+from abc import ABC, abstractmethod
+from typing import Any
 
-logging.getLogger(__name__).addHandler(NullHandler())
+
+class IAdapter(ABC):
+    """High level interface for Adapter."""
+
+    @abstractmethod
+    def handle(self, record: Any) -> Any:
+        pass
+
+
+class IMessageAdapter(IAdapter):
+    """Interface of Adapter for messages."""
+
+    @abstractmethod
+    def handle(self, message: dict) -> Any:
+        pass
+
+
+class IEventAdapter(IAdapter):
+    """Interface of Adapter for events."""
+
+    @abstractmethod
+    def handle(self, event: dict) -> Any:
+        pass
