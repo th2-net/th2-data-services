@@ -26,27 +26,26 @@ Table of Contents
 
 This repository is a library for creating th2-data-services applications.
 
-Data Services is a tool for analyzing stream data
-from ["Report Data Provider"](https://github.com/th2-net/th2-rpt-data-provider)
-via aggregate operations. The tool allows the user to manipulate the workflow to analyze the required data.
+The library used to analyze stream data using _aggregate operations_ mainly from
+the ["Report Data Provider"](https://github.com/th2-net/th2-rpt-data-provider). Data Services allows you to manipulate
+the stream data processing workflow using _pipelining_.
 
-Current capabilities:
+The library allows you:
 
-- Filtering stream data
-- Transforming stream data
+- Natively connect to ["Report Data Provider"](https://github.com/th2-net/th2-rpt-data-provider) via
+  `ProviderDataSource` class and extract TH2 Events/Messages via _commands_
+- Work with iterable objects (list, tuple, etc including files) via _Data object_ using its features
+- Manipulate the workflow to make some analysis by _Data object_ methods
+- Build Event Trees (`EventsTreeCollection` class)
 
-TODO !!!!!!!!!!!!!!!!!!!-------------
+Workflow manipulation tools allows you:
 
-The library provides tools for handling stream data.  
-It allows you:
+- Filtering stream data (`Data.filter` method)
+- Transforming stream data (`Data.map` method)
+- Limiting the number of processed streaming data (`Data.limit` method)
 
-- natively connect to ["Report Data Provider"](https://github.com/th2-net/th2-rpt-data-provider) via
-  _ProviderDataSource_ and extract th2 Events/Messages
-- manipulate the workflow to make some analysis (filter and transform stream data) by _Data object_
-- work with iterable objects (including files) via _Data objects_ using its features
-- build Event Trees
-
-Another part of the library allows you to make some analysis UTILS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+There is also another part of _data services_ - [th2-data-services-utils](https://github.com/th2-net/th2-data-services-utils). 
+It's a set of tools to perform the most common analysis tasks.
 
 # 2. Getting started
 
@@ -193,6 +192,7 @@ supports aggregate operations.
 
 ### Terms
 
+- **Workflow**: TODO !!!!!!!!!!!!.
 - **Data object**: An object of `Data` class which is wrapper under stream.
 - **Sequence of elements**:
   A _Data object_ provides an interface to a sequenced set of values of a specific element type. Stream inside the _Data
@@ -205,20 +205,20 @@ supports aggregate operations.
 - **SourceAPI**:
   Each source has its own API to retrieve data. That term/class is used for reference/describe this API.
 - **Commands**:
-  Objects that provide user-friendly interfaces for getting some data from DataSource. Commands use SourceAPI to achieve
-  it.
+  Objects that provide user-friendly interfaces for getting some data from DataSource. Commands use _SourceAPI_ to
+  achieve it.
 - **Aggregate operations**:
-  Common operations such as filter, map, find and so on.
+  Common operations such as filter, map, limit and so on.
 - **Data caching**:
   The _Data object_ provides the ability to use the cache. The cache works for each _Data object_, that is, you choose
   which _Data object_ you want to save. The _Data object_ cache is saved after the first iteration, but the iteration
   source may be different. If you don't use the cache, your source will be the data source you have in the _Data Object_
   . But if you use the cache, your source can be the data source, the parent cache, or own cache:
     * The data source:
-      If the "Data Object" doesn't have a parent cache and its cache.
+      If the _Data Object_ doesn't have a parent cache and its cache.
     * The parent cache:
-      If the "Data Object" has a parent cache. It doesn't matter what position the parent cache has in inheritance.
-      "Data Object" understands whose cache it is and executes the part of the workflow that was not executed.
+      If the _Data Object_ has a parent cache. It doesn't matter what position the parent cache has in inheritance.
+      _Data Object_ understands whose cache it is and executes the part of the workflow that was not executed.
     * The own cache:
       If it is not the first iteration of this Data object.
 
@@ -233,7 +233,7 @@ operations:
 ![Data stream pipeline](documentation/img/data_stream_pipeline.png)
 
 - **Internal iteration**: In contrast to collections, which are iterated explicitly (external iteration), stream
-  operations do the iteration behind the scenes for you. Note, it doesn’t mean you cannot iterate the _Data object_.
+  operations do the iteration behind the scenes for you. Note, it doesn't mean you cannot iterate the _Data object_.
 
 ### The main idea
 
