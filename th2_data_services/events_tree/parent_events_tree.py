@@ -11,96 +11,89 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from typing import Dict, Optional, List
 
-from collections import defaultdict
-from typing import Union, Iterator, Generator, Optional
+from treelib import Tree, Node
 
-from th2_data_services.data import Data
+from th2_data_services import Data
 from th2_data_services.events_tree import EventsTree
+from th2_data_services.events_tree.events_tree import EventsTreesCollection
+from th2_data_services.provider.data_source import IProviderDataSource
+from th2_data_services.provider.struct import IEventStruct
+from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
-class ParentEventsTree(EventsTree):
-    """
-    ParentEventsTree is a class (like an EventsTree).
+class ParentEventsTreeCollections(EventsTreesCollection):
+    """ParentEventsTreeCollections is a class like an EventsTreeCollections.
 
-    ParentEventsTree contains all parent events inside.
+    - ParentEventsTree contains all parent events that are referenced.
+    - Approximately for 1 million events will be ~23 thousand parent events.
     """
 
     def __init__(
-        self, data: Union[Iterator, Generator[dict, None, None], Data] = None, preserve_body: Optional[bool] = False
+        self,
+        data: Data,
+        data_source: IProviderDataSource = None,
+        preserve_body: bool = False,
+        event_struct: IEventStruct = provider5_event_struct,
+        event_stub_builder=None,
     ):
-
         """
         Args:
-            data: Events.
-            preserve_body (:obj:`bool`, optional): if true keep events bodies.
+            data: Data
+            data_source: Data Source
+            preserve_body: If True then save body of event.
+            event_struct: Event struct.
+            event_stub_builder: Event Stub Builder.
         """
-        if data is None:
-            data = []
+        self._preserve_body = preserve_body
+        self._event_struct = event_struct
+        self._event_stub_builder = event_stub_builder
+        self._data_source = data_source
 
-        self.__preserve_body = preserve_body
-        self._parents_ids = set()
-        self._unknown_events = defaultdict(lambda: 0)
-        self._events = {}
-        self.build_tree(data)
+        self._roots: List[ParentEventsTree] = []
+        self._detached_nodes: Dict[str, Node] = {}  # {parent_event_id: Node}
+        self._unknown_ids: List[str]
 
-    @property
-    def events(self) -> dict:
-        return self._events
+        self._build_collections(data)
 
-    def clear_events(self) -> None:
-        """Clear exist events."""
-        self._events.clear()
-
-    @property
-    def unknown_events(self):
-        return self._unknown_events
-
-    def clear_unknown_events(self) -> None:
-        """Clear unknown events."""
-        self._unknown_events.clear()
-
-    def build_tree(self, data: Union[Iterator, Generator[dict, None, None]]) -> None:
-        """Build parent events tree.
-
-        :param data: Events.
-        """
-        for event in data:
-            parent_id = event["parentEventId"]
-            if parent_id is not None:
-                self._parents_ids.add(parent_id)
-
-        for event in data:
-            self.append_element(event)
-        self.search_unknown_parents()
-
-    def append_element(self, event: dict) -> None:
-        """Append new parent event to events tree.
+    def _build_trees(self, nodes: Dict[Optional[str], List[Node]]) -> None:
+        """Builds trees and saves detached events.
 
         Args:
-            event: Event
+            nodes: Events nodes.
         """
-        event_id = event["eventId"]
-        if not self.__preserve_body:
-            try:
-                event.pop("body")
-            except KeyError:
-                pass
+        roots = []
+        for node in nodes[None]:
+            if nodes[node.identifier]:
+                tree = Tree()
+                tree.add_node(node)
+                roots.append(tree)
+                event_id: str = node.identifier
+                self._fill_tree(nodes, tree, event_id)
+        nodes.pop(None)
 
-        if event_id in self._parents_ids:
-            self._events[event_id] = event
+        self._roots = [ParentEventsTree(root) for root in roots]
+        self._detached_nodes = {id_: nodes_ for id_, nodes_ in nodes.items() if nodes_}
 
-        if event_id in self._unknown_events:
-            self._unknown_events.pop(event_id)
+    def _fill_tree(self, nodes: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:
+        """Fills tree recursively.
 
-    def search_unknown_parents(self) -> dict:
-        """Searches unknown events.
-
-        Returns:
-             dict: Unknown events.
+        Args:
+            current_tree: Tree for fill.
+            parent_id: Parent even id.
         """
-        self.clear_unknown_events()
-        for parent_id in self._parents_ids:
-            if parent_id not in self.events.keys():
-                self._unknown_events[parent_id] += 1
-        return self._unknown_events
+        for node in nodes[parent_id]:
+            event_id: str = node.identifier
+            if nodes[event_id]:
+                current_tree.add_node(node, parent=parent_id)
+                self._fill_tree(nodes, current_tree, event_id)  # recursive fill
+        nodes.pop(parent_id)
+
+
+class ParentEventsTree(EventsTree):
+    """ParentEventsTree is a class like an EventsTree.
+
+    - ParentEventsTree contains all parent events that are referenced.
+    - Approximately for 1 million events will be ~23 thousand parent events.
+    """
