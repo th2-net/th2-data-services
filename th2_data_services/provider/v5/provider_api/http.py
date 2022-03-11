@@ -19,18 +19,14 @@ from typing import List, Generator
 import requests
 from requests import Response
 from urllib3 import PoolManager, exceptions
-from sseclient import Event
-
 
 from th2_data_services.provider.source_api import IHTTPProviderSourceAPI
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
-from th2_data_services.sse_client import SSEClient
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
 
 
-# TODO - check args names
 class HTTPProvider5API(IHTTPProviderSourceAPI):
     def __init__(
         self,
@@ -202,7 +198,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
                 query += f"&{k}={v}"
         return f"{url}{query[1:]}{filters}"
 
-    def __create_stream_connection(self, url: str) -> Generator[bytes, None, None]:
+    def execute_sse_request(self, url: str) -> Generator[bytes, None, None]:
         """Create stream connection.
 
         Args:
@@ -224,19 +220,6 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             yield chunk
 
         response.release_conn()
-
-    def execute_sse_request(self, url: str) -> Generator[Event, None, None]:
-        """Creates SSE connection to server.
-
-        Args:
-            url: Url for a sse request to rpt-data-provider.
-        Yields:
-            Generator with sseclinet Events.
-        """
-        response = self.__create_stream_connection(url)
-        client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
-        for record in client.events():
-            yield record
 
     def execute_request(self, url: str) -> Response:
         """Sends a GET request to provider.

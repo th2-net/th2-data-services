@@ -35,6 +35,19 @@ class AdapterGRPCObjectToDict(IAdapter):
             Dict object.
         """
         new_record = MessageToDict(record, including_default_value_fields=True)
+
+        if isinstance(record, EventData):
+            new_record["startTimestamp"] = {
+                "epochSecond": record.start_timestamp.seconds,
+                "nano": record.start_timestamp.nanos,
+            }
+            new_record["endTimestamp"] = {
+                "epochSecond": record.end_timestamp.seconds,
+                "nano": record.end_timestamp.nanos,
+            }
+        elif isinstance(record, MessageData):
+            new_record["timestamp"] = {"epochSecond": record.timestamp.seconds, "nano": record.timestamp.nanos}
+
         try:
             new_record["body"] = json.loads(record.body)
         except (KeyError, json.JSONDecodeError):

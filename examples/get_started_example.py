@@ -1,12 +1,15 @@
 from collections import Generator
-from th2_data_services import DataSource, Data, Filter
 from datetime import datetime
 
+from th2_data_services import Data
+from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
+from th2_data_services.provider.v5.commands import http
+from th2_data_services.filter import Filter
 
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
-data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
 START_TIME = datetime(
     year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
@@ -15,24 +18,24 @@ END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, m
 
 # [2] Get events or messages from START_TIME to END_TIME.
 # [2.1] Get events.
-events: Data = data_source.get_events_from_data_provider(
-    startTimestamp=START_TIME,
-    endTimestamp=END_TIME,
-    attachedMessages=True,
-    # Use Filter class to apply rpt-data-provider filters.
-    filters=[  # Use the list to set multiple filters.
-        Filter("name", "ExecutionReport"),
-        Filter("type", "Send message"),
-    ],
+events: Data = data_source.command(
+    http.GetEvents(
+        start_timestamp=START_TIME,
+        end_timestamp=END_TIME,
+        attached_messages=True,
+        # Use Filter class to apply rpt-data-provider filters.
+        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
+    )
 )
 
 # [2.2] Get messages.
-messages: Data = data_source.get_messages_from_data_provider(
-    startTimestamp=START_TIME,
-    endTimestamp=END_TIME,
-    attachedMessages=True,
-    stream=["demo-conn2"],
-    filters=Filter("body", "195"),
+messages: Data = data_source.command(
+    http.GetMessages(
+        start_timestamp=START_TIME,
+        attached_events=True,
+        stream=["demo-conn2"],
+        filters=Filter("body", "195"),
+    )
 )
 
 # [3] Work with your Data object.
@@ -91,11 +94,11 @@ desired_messages = [
     "demo-conn1:first:1619506157132265833",
 ]
 
-data_source.find_events_by_id_from_data_provider(desired_event)  # Returns 1 event (dict).
-data_source.find_events_by_id_from_data_provider(desired_events)  # Returns 2 events list(dict).
+data_source.command(http.GetEventById(desired_event))  # Returns 1 event (dict).
+data_source.command(http.GetEventsById(desired_events))  # Returns 2 events list(dict).
 
-data_source.find_messages_by_id_from_data_provider(desired_message)  # Returns 1 message (dict).
-data_source.find_messages_by_id_from_data_provider(desired_messages)  # Returns 2 messages list(dict).
+data_source.command(http.GetMessageById(desired_message))  # Returns 1 message (dict).
+data_source.command(http.GetMessagesById(desired_messages))  # Returns 2 messages list(dict).
 
 # [3.11] The cache inheritance.
 # Creates a new Data object that will use cache from the events Data object.
