@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from collections import defaultdict
 from typing import Dict, Optional, List
 
 from treelib import Tree, Node
@@ -23,7 +24,7 @@ from th2_data_services.provider.struct import IEventStruct
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
-class ParentEventsTreeCollections(EventsTreesCollection):
+class ParentEventsTreesCollections(EventsTreesCollection):
     """ParentEventsTreeCollections is a class like an EventsTreeCollections.
 
     - ParentEventsTree contains all parent events that are referenced.
@@ -38,13 +39,12 @@ class ParentEventsTreeCollections(EventsTreesCollection):
         event_struct: IEventStruct = provider5_event_struct,
         event_stub_builder=None,
     ):
-        """
-        Args:
-            data: Data
-            data_source: Data Source
-            preserve_body: If True then save body of event.
-            event_struct: Event struct.
-            event_stub_builder: Event Stub Builder.
+        """Args:
+        data: Data
+        data_source: Data Source
+        preserve_body: If True then save body of event.
+        event_struct: Event struct.
+        event_stub_builder: Event Stub Builder.
         """
         self._preserve_body = preserve_body
         self._event_struct = event_struct
@@ -52,7 +52,7 @@ class ParentEventsTreeCollections(EventsTreesCollection):
         self._data_source = data_source
 
         self._roots: List[ParentEventsTree] = []
-        self._detached_nodes: Dict[str, Node] = {}  # {parent_event_id: Node}
+        self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: Node}
         self._unknown_ids: List[str]
 
         self._build_collections(data)
@@ -74,7 +74,7 @@ class ParentEventsTreeCollections(EventsTreesCollection):
         nodes.pop(None)
 
         self._roots = [ParentEventsTree(root) for root in roots]
-        self._detached_nodes = {id_: nodes_ for id_, nodes_ in nodes.items() if nodes_}
+        self._detached_nodes = nodes
 
     def _fill_tree(self, nodes: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:
         """Fills tree recursively.
@@ -85,7 +85,7 @@ class ParentEventsTreeCollections(EventsTreesCollection):
         """
         for node in nodes[parent_id]:
             event_id: str = node.identifier
-            if nodes[event_id]:
+            if nodes.get(event_id):
                 current_tree.add_node(node, parent=parent_id)
                 self._fill_tree(nodes, current_tree, event_id)  # recursive fill
         nodes.pop(parent_id)

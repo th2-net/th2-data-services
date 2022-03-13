@@ -111,7 +111,7 @@ def test_filter_stop(general_data: List[dict]):
 def test_subtree(general_data: List[dict]):
     tree = EventsTreesCollection(general_data).get_trees()[0]
 
-    assert len(tree.get_subtree("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e")) == 10
+    assert len(tree.get_subtree("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e")) == 11
 
 
 def test_get_all_events(general_data: List[dict]):

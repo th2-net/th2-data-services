@@ -10,7 +10,9 @@ from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSour
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 
 
-def resolver_get_event_by_id(data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource]):
+def resolver_get_event_by_id(
+    data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource]
+) -> Union[GetEventByIdFromGRPC, GetEventByIdFromHTTP]:
     if isinstance(data_source, GRPCProvider5DataSource):
         return GetEventByIdFromGRPC
     elif isinstance(data_source, HTTPProvider5DataSource):
@@ -19,10 +21,12 @@ def resolver_get_event_by_id(data_source: Union[GRPCProvider5DataSource, HTTPPro
         ValueError("Unknown DataSource Object.")
 
 
-def resolver_get_events_by_id(data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource]):
+def resolver_get_events_by_id(
+    data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource]
+) -> Union[GetEventsByIdFromHTTP, GetEventsByIdFromGRPC]:
     if isinstance(data_source, GRPCProvider5DataSource):
         return GetEventsByIdFromGRPC
     elif isinstance(data_source, HTTPProvider5DataSource):
         return GetEventsByIdFromHTTP
     else:
-        ValueError("Unknown DataSource Object.")
+        raise ValueError("Unknown DataSource Object.")

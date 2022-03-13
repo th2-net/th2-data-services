@@ -19,7 +19,6 @@ from treelib import Tree, Node
 from treelib.exceptions import NodeIDAbsentError
 
 from th2_data_services import Data
-from th2_data_services.provider.data_source import IProviderDataSource
 from th2_data_services.provider.struct import IEventStruct
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
@@ -45,9 +44,8 @@ class EventsTree:
     """
 
     def __init__(self, tree: Tree):
-        """
-        Args:
-            tree: Tree.
+        """Args:
+        tree: Tree.
         """
         self._tree = tree
 
@@ -289,29 +287,24 @@ class EventsTreesCollection:
     and storing ones.
 
     - EventsTreeCollections stores all EventsTree. You can to refer to each of them.
-    -
     """
 
     def __init__(
         self,
         data: Data,
-        data_source: IProviderDataSource = None,
         preserve_body: bool = False,
         event_struct: IEventStruct = provider5_event_struct,
-        event_stub_builder=None,
     ):
         self._preserve_body = preserve_body
         self._event_struct = event_struct
-        self._event_stub_builder = event_stub_builder
-        self._data_source = data_source
 
         self._roots: List[EventsTree] = []
-        self._detached_nodes: Dict[Optional[str], List[Node]] = {}  # {parent_event_id: Node}
+        self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: Node}
 
         self._build_collections(data)
 
     def _build_collections(self, data: Data) -> None:
-        """Builds collections. # TODO Consider How i can change this. I don't like it.
+        """Builds trees for collections.
 
         Args:
             data: Data.
@@ -353,7 +346,8 @@ class EventsTreesCollection:
         """
         for node in nodes[parent_id]:
             event_id: str = node.identifier
-            current_tree.add_node(node, parent=parent_id)
+            if event_id not in current_tree:
+                current_tree.add_node(node, parent=parent_id)
             self._fill_tree(nodes, current_tree, event_id)  # recursive fill
         nodes.pop(parent_id)
 
@@ -387,6 +381,14 @@ class EventsTreesCollection:
             yield event
 
     def _transform_to_node(self, event: dict) -> Node:
+        """Transforms event as dict into event as Node.
+
+        Args:
+            event: Event.
+
+        Returns:
+            Node.
+        """
         event_id: str = event[self._event_struct.EVENT_ID]
         event_name: str = event[self._event_struct.NAME]
 
@@ -394,6 +396,11 @@ class EventsTreesCollection:
         return node
 
     def append_element(self, event: dict) -> None:
+        """Appends event into tree.
+
+        Args:
+            event: Event.
+        """
         event: dict = self._parse_event(event)
         node: Node = self._transform_to_node(event)
         parent_event_id: str = event.get(self._event_struct.PARENT_EVENT_ID)
@@ -410,6 +417,7 @@ class EventsTreesCollection:
             tree = Tree()
             tree.add_node(node)
             self._roots.append(EventsTree(tree))
+            self._fill_tree(self._detached_nodes, tree, node.identifier)
 
     @property
     def detached_events(self) -> dict:
@@ -436,15 +444,25 @@ class EventsTreesCollection:
             if tree.get_root_id() == id:
                 return tree
 
+    def show(self):
+        """Prints all EventsTree as tree view.
+
+        For example:
+            Root
+                |___ C01
+                |    |___ C11
+                |         |___ C111
+                |         |___ C112
+                |___ C02
+                |___ C03
+                |    |___ C31
+        """
+        trees = self.get_trees()
+        for tree in trees:
+            tree.show()
+
     def __len__(self) -> int:
         return sum([len(root) for root in self._roots])
 
     def __contains__(self, event_id: str):
         return any([event_id in tree for tree in self._roots])
-
-    # def recover_missing_events(self):
-    #     if self._data_source is None:
-    #         raise ConnectionError("DataSource isn't exist.")
-    #     events_id = self._detached_nodes.keys()
-    #     instance_command = resolver_get_events_by_id(self._data_source)
-    #     self._data_source.command()
