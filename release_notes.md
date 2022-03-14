@@ -160,4 +160,5 @@ User will get original byte now.
 # v1.0.0
 
 ## BugFixes
-1. [TH2-3168] Fixed iterations in nested loops for Data object with limit 
+
+1. [TH2-3168] Fixed iterations in nested loops for Data object with limit.
