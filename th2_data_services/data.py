@@ -57,12 +57,21 @@ class Data:
         if self.__is_cache_file_exists(self._cache_filename):
             self.__delete_cache()
         del self._data
+        """Data class destructor."""
+        if self.__is_cache_file_exists(self._cache_filename):
+            self.__delete_cache()
+        del self._data
 
     def __delete_cache(self) -> None:
         """Removes cache file."""
         path = Path(self.__get_cache_filepath())
         if path.exists():
             path.unlink()
+
+    def __delete_cache(self) -> None:
+        """Removes cache file."""
+        path = Path(self.__get_cache_filepath())
+        path.unlink()
 
     @property
     def len(self) -> int:
@@ -83,6 +92,7 @@ class Data:
         return True
 
     def __calc_len(self) -> int:
+        # TODO - request rpt-data-provide provide "select count"
         for _ in self:
             pass
         return self._len
@@ -148,6 +158,10 @@ class Data:
                 cache = False
 
             workflow = self._build_workflow(workflow)
+
+            if self.__check_file_recording():
+                # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
+                cache = False
 
             yield from self.__change_data(working_data=working_data, workflow=workflow, cache=cache)
 
