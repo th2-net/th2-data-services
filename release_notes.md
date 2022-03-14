@@ -156,3 +156,8 @@ User will get original byte now.
 ## BugFixes
 
 1. [TH2-2922] Fixed infinite loop in events tree.
+
+# v0.6.3
+
+## BugFixes
+1. [TH2-3168] Fixed iterations in nested loops for Data object with limit 
