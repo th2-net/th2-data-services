@@ -37,7 +37,6 @@ class Data:
         self._cache_status = cache
         self._parents_cache = parents_cache if parents_cache else []
         self._finalizer = finalize(self, self.__remove)
-        self.pushed = 0
 
     def __remove(self):
         """Data class destructor."""
