@@ -1,3 +1,4 @@
+import copy
 import pickle
 import pprint
 from os import rename
@@ -31,8 +32,8 @@ class Data:
         self._len = None
         self._data = data
         self._workflow = [] if workflow is None else workflow
-        self._len = None
         self._length_hint = None  # The value is populated when we use limit method.
+        self._limit_num = None
         self._cache_status = cache
         self._parents_cache = parents_cache if parents_cache else []
         self._finalizer = finalize(self, self.__remove)
@@ -98,6 +99,14 @@ class Data:
             if interruption:
                 self.__delete_cache()
 
+    def _build_workflow(self, workflow):
+        new_workflow = copy.deepcopy(workflow)
+        for w in new_workflow[::-1]:
+            if w["type"] == "limit":
+                w["callback"] = self._build_limit_callback(w["callback"].limit)
+
+        return new_workflow
+
     def __load_data(self, cache: bool = False) -> DataGenerator:
         """Loads data from cache or data.
 
@@ -118,6 +127,8 @@ class Data:
             else:
                 working_data = self._data() if callable(self._data) else self._data
                 workflow = self._workflow
+
+            workflow = self._build_workflow(workflow)
 
             if self.__check_file_recording():
                 # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
@@ -295,7 +306,10 @@ class Data:
             Data: Data object.
 
         """
-        new_workflow = [*self._workflow.copy(), {"type": "filter", "callback": lambda record: record if callback(record) else None}]
+        new_workflow = [
+            *self._workflow.copy(),
+            {"type": "filter", "callback": lambda record: record if callback(record) else None},
+        ]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         return Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
 
@@ -313,6 +327,19 @@ class Data:
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         return Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
 
+    def _build_limit_callback(self, num):
+        def callback(r):
+            if callback.pushed < num:
+                callback.pushed += 1
+                return r
+            else:
+                callback.pushed = 0
+                raise StopIteration
+
+        callback.limit = num
+        callback.pushed = 0
+        return callback
+
     def limit(self, num: int) -> "Data":
         """Limits the stream to `num` entries.
 
@@ -324,20 +351,18 @@ class Data:
 
         """
 
-        def callback(r):
-            if callback.pushed < num:
-                callback.pushed += 1
-                return r
-            else:
-                callback.pushed = 0
-                raise StopIteration
+        nwf = []
+        for step in copy.deepcopy(self._workflow):
+            if step["type"] == "limit":
+                step["callback"] = self._build_limit_callback(step["callback"].limit)
 
-        callback.pushed = 0
+            nwf.append(step)
 
-        new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": callback}]
+        new_workflow = [*nwf, {"type": "limit", "callback": self._build_limit_callback(num)}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
         data_obj._length_hint = num
+        data_obj._limit_num = num
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
