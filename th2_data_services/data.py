@@ -445,6 +445,3 @@ class Data:
         for _ in self.__load_data():
             return True
         return False
-
-    def create_GUI_link_by_ID(self):
-        pass
