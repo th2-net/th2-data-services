@@ -227,3 +227,17 @@ def test_get_root_by_id(general_data: List[dict]):
     tree = collections.get_trees()[0]
 
     assert collections.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == tree
+
+
+def test_get_root(general_data: List[dict]):
+    collections = EventsTreesCollection(general_data)
+    tree = collections.get_trees()[0]
+
+    assert tree.get_root() == {
+        "batchId": None,
+        "eventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
+        "eventName": "[TS_1]Aggressive IOC vs two orders: second order's price is lower than first",
+        "eventType": "",
+        "isBatched": False,
+        "parentEventId": None,
+    }

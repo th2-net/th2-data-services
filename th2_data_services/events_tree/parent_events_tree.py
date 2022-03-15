@@ -55,7 +55,7 @@ class ParentEventsTreesCollections(EventsTreesCollection):
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: Node}
         self._unknown_ids: List[str]
 
-        self._build_collections(data)
+        self._build_event_nodes(data)
 
     def _build_trees(self, nodes: Dict[Optional[str], List[Node]]) -> None:
         """Builds trees and saves detached events.
