@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import List, Tuple, Generator, Dict, Callable, Optional, Union
 
@@ -18,8 +19,6 @@ from treelib import Tree, Node
 from treelib.exceptions import NodeIDAbsentError
 
 from th2_data_services import Data
-from th2_data_services.provider.struct import IEventStruct
-from th2_data_services.provider.v5.struct import provider5_event_struct
 
 Th2Event = dict
 
@@ -58,11 +57,6 @@ class EventsTree:
             tree (treelib.Tree): Tree.
         """
         self._tree = tree
-
-    @property
-    def tree(self) -> Tree:
-        # TODO - del it?
-        return self._tree
 
     def append_node(self, node: Node, parent_id: str) -> None:
         """Appends a node to the tree.
@@ -289,7 +283,6 @@ class EventsTree:
         """
         return self._tree.subtree(id)
 
-    # TODO - add output format class. (Slava can do it)
     def show(self) -> None:
         """Prints EventsTree as tree view.
 
@@ -313,40 +306,40 @@ class EventsTree:
         return event_id in self._tree
 
 
-# TODO - (proposal) - perhaps it's better to separate collection and tree to other modules.
+# TODO - add parentless nodes
+# TODO - perhaps it's better to separate collection and tree to other modules.
 # TODO - Collection should contains a lot of method from EventsTree. They do the same but for all trees
-# TODO - (proposal) - do you think it's ok to make it via ABC and implement methods instead of self._event_struct?
+# TODO - implement ABC
 # TODO - (question) - why do we recover_unknown_events not here?
-class EventsTreesCollection:  # (ABC):
+class EventsTreesCollection(ABC):
     """EventsTreeCollection objective is building EventsTrees and storing them.
 
     EventsTreeCollection stores all EventsTree. You can to refer to each of them.
     """
 
-    # TODO - what about headless trees ?
     # TODO - update docstring (args names)
-    def __init__(
-        self,
-        data: Data,
-        preserve_body: bool = False,
-        event_struct: IEventStruct = provider5_event_struct,
-        # event_struct: IEventStruct = None,  # TODO - if use ABC it perhaps should be deleted.
-    ):
+    def __init__(self, data: Data, preserve_body: bool = False):
         """EventsTreesCollection constructor.
 
         Args:
             data:
             preserve_body:
-            event_struct:
         """
         self._preserve_body = preserve_body
-        self._event_struct = event_struct
 
         self._roots: List[EventsTree] = []
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
+
+    # TODO
+    def get_parentless_roots(self):
+        if self._pr is not None:
+            return self._pr
+        else:
+            self._pr = []
+            return self._pr
 
     def _build_event_nodes(self, data: Data) -> Dict[Optional[str], List[Node]]:
         """Builds event nodes and group them by parent_event_id.
@@ -357,9 +350,7 @@ class EventsTreesCollection:  # (ABC):
         events_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, Node2, ..]}
 
         for event in self._parse_events(data):
-            # TODO - perhaps it's better to realise it via ABC
-            # TODO - Perhaps, it was meant to be 'event.get()'
-            parent_event_id: str = event[self._event_struct.PARENT_EVENT_ID]  # self._get_parent_event_id(event)
+            parent_event_id: str = self._get_parent_event_id(event)
             node = self._build_node(event)
             events_nodes[parent_event_id].append(node)
 
@@ -392,8 +383,7 @@ class EventsTreesCollection:  # (ABC):
             current_tree: Tree for fill.
             parent_id: Parent even id.
         """
-        # TODO - разобраться что тут и как. (It's for Slava)
-        # TODO - Не будет ли сильно расти память, не будет ли слишком много рекурсивных вызовов при большом дереве?
+        # TODO - update to delete node after adding
         for node in nodes[parent_id]:
             event_id: str = node.identifier
             if event_id not in current_tree:
@@ -440,8 +430,8 @@ class EventsTreesCollection:  # (ABC):
             Node.
         """
         # TODO - perhaps it's better to realise it via ABC
-        event_id: str = event[self._event_struct.EVENT_ID]  # self._get_event_id(event)
-        event_name: str = event[self._event_struct.NAME]  # self._get_event_name(event)
+        event_id: str = self._get_event_id(event)
+        event_name: str = self._get_event_name(event)
 
         node = Node(tag=event_name, identifier=event_id, data=event)
         return node
@@ -454,8 +444,7 @@ class EventsTreesCollection:  # (ABC):
         """
         event: dict = self._parse_event(event)
         node: Node = self._build_node(event)
-        # TODO - perhaps it's better to realise it via ABC
-        parent_event_id: str = event[self._event_struct.PARENT_EVENT_ID]  # self._get_parent_event_id(event)
+        parent_event_id: str = self._get_parent_event_id(event)
 
         if parent_event_id is not None:
             events_trees = list(filter(lambda tree: parent_event_id in tree, self._roots))
@@ -515,17 +504,17 @@ class EventsTreesCollection:  # (ABC):
         for tree in trees:
             tree.show()
 
-    # @abstractmethod
-    # def _get_parent_event_id(self, event):
-    #     pass
-    #
-    # @abstractmethod
-    # def _get_event_id(self, event):
-    #     pass
-    #
-    # @abstractmethod
-    # def _get_event_name(self, event):
-    #     pass
+    @abstractmethod
+    def _get_parent_event_id(self, event):
+        pass
+
+    @abstractmethod
+    def _get_event_id(self, event):
+        pass
+
+    @abstractmethod
+    def _get_event_name(self, event):
+        pass
 
     def __len__(self) -> int:
         return sum([len(root) for root in self._roots])
