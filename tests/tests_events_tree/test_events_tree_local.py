@@ -3,7 +3,7 @@ from datetime import datetime
 from th2_data_services import Data
 from th2_data_services.provider.v5.commands.http import GetEvents
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
-from th2_data_services.provider.v5.events_tree.events_tree import EventsTreesCollectionProvider5
+from th2_data_services.provider.v5.events_tree.events_trees_collection import EventsTreesCollectionProvider5
 
 
 def test_recover_unknown_events():
