@@ -5,7 +5,8 @@ from typing import List, NamedTuple
 import pytest
 
 from th2_data_services.data import Data
-from th2_data_services.data_source import DataSource
+from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
+from th2_data_services.provider.v5.commands import http
 from th2_data_services.filter import Filter
 
 
@@ -13,7 +14,7 @@ from th2_data_services.filter import Filter
 def demo_data_source():
     DEMO_HOST = "10.64.66.66"  # th2-kube-demo
     DEMO_PORT = "30999"  # Data-provider Node port
-    data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+    data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
     return data_source
 
 
@@ -22,75 +23,82 @@ END_TIME = datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, m
 
 
 @pytest.fixture
-def demo_get_events_with_one_filter(demo_data_source: DataSource) -> Data:
-    case = demo_data_source.get_events_from_data_provider(
-        startTimestamp=START_TIME,
-        endTimestamp=END_TIME,
-        metadataOnly=False,
-        filters=[Filter("name", "ExecutionReport")],
+def demo_get_events_with_one_filter(demo_data_source: HTTPProvider5DataSource) -> Data:
+    case = demo_data_source.command(
+        http.GetEvents(
+            start_timestamp=START_TIME,
+            end_timestamp=END_TIME,
+            filters=[Filter("name", "ExecutionReport")],
+        )
     )
 
     return case
 
 
 @pytest.fixture
-def demo_get_events_with_filters(demo_data_source: DataSource) -> Data:
-    case = demo_data_source.get_events_from_data_provider(
-        startTimestamp=START_TIME,
-        endTimestamp=END_TIME,
-        metadataOnly=False,
-        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
+def demo_get_events_with_filters(demo_data_source: HTTPProvider5DataSource) -> Data:
+    case = demo_data_source.command(
+        http.GetEvents(
+            start_timestamp=START_TIME,
+            end_timestamp=END_TIME,
+            filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
+        )
     )
 
     return case
 
 
 @pytest.fixture
-def demo_get_messages_with_one_filter(demo_data_source: DataSource) -> Data:
-    case = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=datetime(
-            year=2021,
-            month=1,
-            day=26,
-            hour=12,
-            minute=44,
-            second=41,
-            microsecond=692724,
-        ),
-        endTimestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
-        stream=["demo-conn2"],
-        filters=Filter("body", "195"),
+def demo_get_messages_with_one_filter(demo_data_source: HTTPProvider5DataSource) -> Data:
+    case = demo_data_source.command(
+        http.GetMessages(
+            start_timestamp=datetime(
+                year=2021,
+                month=1,
+                day=26,
+                hour=12,
+                minute=44,
+                second=41,
+                microsecond=692724,
+            ),
+            end_timestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
+            stream=["demo-conn2"],
+            filters=Filter("body", "195"),
+        )
     )
 
     return case
 
 
 @pytest.fixture
-def demo_get_messages_with_filters(demo_data_source: DataSource) -> Data:
-    case = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=datetime(
-            year=2021,
-            month=1,
-            day=26,
-            hour=12,
-            minute=44,
-            second=41,
-            microsecond=692724,
-        ),
-        endTimestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
-        stream=["demo-conn2"],
-        filters=[Filter("type", ""), Filter("body", "195")],
+def demo_get_messages_with_filters(demo_data_source: HTTPProvider5DataSource) -> Data:
+    case = demo_data_source.command(
+        http.GetMessages(
+            start_timestamp=datetime(
+                year=2021,
+                month=1,
+                day=26,
+                hour=12,
+                minute=44,
+                second=41,
+                microsecond=692724,
+            ),
+            end_timestamp=datetime(year=2021, month=1, day=26, hour=13, minute=45, second=49, microsecond=28579),
+            stream=["demo-conn2"],
+            filters=[Filter("type", ""), Filter("body", "195")],
+        )
     )
 
     return case
 
 
 @pytest.fixture
-def demo_events_from_data_source(demo_data_source: DataSource) -> Data:
-    events = demo_data_source.get_events_from_data_provider(
-        startTimestamp=START_TIME,
-        endTimestamp=END_TIME,
-        metadataOnly=False,
+def demo_events_from_data_source(demo_data_source: HTTPProvider5DataSource) -> Data:
+    events = demo_data_source.command(
+        http.GetEvents(
+            start_timestamp=START_TIME,
+            end_timestamp=END_TIME,
+        )
     )
     # Returns 49 events
     # Failed = 6
@@ -98,52 +106,9 @@ def demo_events_from_data_source(demo_data_source: DataSource) -> Data:
 
 
 @pytest.fixture
-def demo_events_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
-    events = demo_data_source.get_events_from_data_provider(
-        startTimestamp=START_TIME,
-        endTimestamp=END_TIME,
-        metadataOnly=True,
-    )
-    return events
-
-
-@pytest.fixture
-def demo_events_with_metadataOnly_metadata_not_set(
-    demo_data_source: DataSource,
-) -> Data:
-    events = demo_data_source.get_events_from_data_provider(
-        startTimestamp=START_TIME,
-        endTimestamp=END_TIME,
-    )
-    return events
-
-
-@pytest.fixture
-def demo_messages_with_metadataOnly_true(demo_data_source: DataSource) -> Data:
-    messages = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=START_TIME,
-        endTimestamp=END_TIME,
-        stream=["th2-hand-demo"],
-        metadataOnly=True,
-    )
-    return messages
-
-
-@pytest.fixture
-def demo_messages_with_metadataOnly_false(demo_data_source: DataSource) -> Data:
-    messages = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=START_TIME,
-        endTimestamp=END_TIME,
-        stream=["th2-hand-demo"],
-        metadataOnly=False,
-    )
-    return messages
-
-
-@pytest.fixture
-def demo_messages_from_data_source(demo_data_source: DataSource) -> Data:
-    messages = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=START_TIME, endTimestamp=END_TIME, stream=["th2-hand-demo"]
+def demo_messages_from_data_source(demo_data_source: HTTPProvider5DataSource) -> Data:
+    messages = demo_data_source.command(
+        http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME, stream=["th2-hand-demo"])
     )
     # Returns 36 messages
     return messages
@@ -151,11 +116,9 @@ def demo_messages_from_data_source(demo_data_source: DataSource) -> Data:
 
 @pytest.fixture
 def demo_events_from_data_source_with_cache_status(
-    demo_data_source: DataSource,
+    demo_data_source: HTTPProvider5DataSource,
 ) -> Data:
-    events = demo_data_source.get_events_from_data_provider(
-        startTimestamp=START_TIME, endTimestamp=END_TIME, metadataOnly=False, cache=True
-    )
+    events = demo_data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
     # Returns 49 events
     # Failed = 6
     return events
@@ -163,48 +126,50 @@ def demo_events_from_data_source_with_cache_status(
 
 @pytest.fixture
 def demo_messages_from_data_source_with_test_streams(
-    demo_data_source: DataSource,
+    demo_data_source: HTTPProvider5DataSource,
 ) -> Data:
-    messages = demo_data_source.get_messages_from_data_provider(
-        startTimestamp=START_TIME,
-        endTimestamp=END_TIME,
-        stream=[
-            "Test-123",
-            "Test-1234",
-            "Test-12345",
-            "Test-123456",
-            "Test-1234567",
-            "Test-12345678",
-            "Test-123456789",
-            "Test-1234567810",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest1",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest2",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest3",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest4",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest5",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest6",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest7",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest8",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest9",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest10",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest11",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest12",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest13",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest14",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest15",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest16",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest17",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest18",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest19",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest20",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest21",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest22",
-            "demo-dc1",
-            "demo-dc2",
-            "demo-log",
-            "th2-hand-demo",
-        ],
+    messages = demo_data_source.command(
+        http.GetMessages(
+            start_timestamp=START_TIME,
+            end_timestamp=END_TIME,
+            stream=[
+                "Test-123",
+                "Test-1234",
+                "Test-12345",
+                "Test-123456",
+                "Test-1234567",
+                "Test-12345678",
+                "Test-123456789",
+                "Test-1234567810",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest1",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest2",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest3",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest4",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest5",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest6",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest7",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest8",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest9",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest10",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest11",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest12",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest13",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest14",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest15",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest16",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest17",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest18",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest19",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest20",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest21",
+                "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest22",
+                "demo-dc1",
+                "demo-dc2",
+                "demo-log",
+                "th2-hand-demo",
+            ],
+        )
     )
     return messages
 

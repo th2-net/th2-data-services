@@ -132,7 +132,6 @@ class GetEventsSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
         result_count_limit: int = None,
         keep_open: bool = False,
         limit_for_parent: int = None,
-        metadata_only: bool = False,
         attached_messages: bool = False,
         filters: (Filter, List[Filter]) = None,
     ):
@@ -148,7 +147,6 @@ class GetEventsSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
                 It is need to wait further for the appearance of new data.
                 the one closest to the specified timestamp.
             limit_for_parent: How many children events for each parent do we want to request.
-            metadata_only: Receive only metadata (true) or entire event (false) (without attached_messages).
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
 
@@ -162,7 +160,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._result_count_limit = result_count_limit
         self._keep_open = keep_open
         self._limit_for_parent = limit_for_parent
-        self._metadata_only = metadata_only
+        self._metadata_only = False
         self._attached_messages = attached_messages
         self._filters = filters
         if isinstance(filters, Filter):
@@ -213,7 +211,6 @@ class GetEventsSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         result_count_limit: int = None,
         keep_open: bool = False,
         limit_for_parent: int = None,
-        metadata_only: bool = False,
         attached_messages: bool = False,
         filters: (Filter, List[Filter]) = None,
         char_enc: str = "utf-8",
@@ -231,7 +228,6 @@ class GetEventsSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
                 It is need to wait further for the appearance of new data.
                 the one closest to the specified timestamp.
             limit_for_parent: How many children events for each parent do we want to request.
-            metadata_only: Receive only metadata (true) or entire event (false) (without attached_messages).
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
             char_enc: Encoding for the byte stream.
@@ -247,7 +243,6 @@ class GetEventsSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._result_count_limit = result_count_limit
         self._keep_open = keep_open
         self._limit_for_parent = limit_for_parent
-        self._metadata_only = metadata_only
         self._attached_messages = attached_messages
         self._filters = filters
         self._char_enc = char_enc
@@ -263,7 +258,6 @@ class GetEventsSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
             result_count_limit=self._result_count_limit,
             keep_open=self._keep_open,
             limit_for_parent=self._limit_for_parent,
-            metadata_only=self._metadata_only,
             attached_messages=self._attached_messages,
             filters=self._filters,
         ).handle(data_source)
@@ -293,7 +287,6 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         result_count_limit: int = None,
         keep_open: bool = False,
         limit_for_parent: int = None,
-        metadata_only: bool = False,
         attached_messages: bool = False,
         filters: (Filter, List[Filter]) = None,
         cache: bool = False,
@@ -310,7 +303,6 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
                 It is need to wait further for the appearance of new data.
                 the one closest to the specified timestamp.
             limit_for_parent: How many children events for each parent do we want to request.
-            metadata_only: Receive only metadata (true) or entire event (false) (without attached_messages).
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
@@ -325,7 +317,6 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._result_count_limit = result_count_limit
         self._keep_open = keep_open
         self._limit_for_parent = limit_for_parent
-        self._metadata_only = metadata_only
         self._attached_messages = attached_messages
         self._filters = filters
         self._cache = cache
@@ -345,7 +336,6 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
             result_count_limit=self._result_count_limit,
             keep_open=self._keep_open,
             limit_for_parent=self._limit_for_parent,
-            metadata_only=self._metadata_only,
             attached_messages=self._attached_messages,
             filters=self._filters,
         ).handle(data_source)
@@ -502,7 +492,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
         url = api.get_url_search_sse_messages(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
-            stream=self._stream,
+            stream=[""],
             resume_from_id=self._resume_from_id,
             search_direction=self._search_direction,
             result_count_limit=self._result_count_limit,
@@ -510,14 +500,26 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
             attached_events=self._attached_events,
             lookup_limit_days=self._lookup_limit_days,
             filters=self._filters,
-        )
+        ).replace("&stream=", "")
 
         logger.info(url)
 
-        for response in api.execute_sse_request(url):
-            response = self._handle_adapters(response)
-            if response is not None:
-                yield response
+        fixed_part_len = len(url)
+        current_url, resulting_urls = "", []
+        for stream in self._stream:
+            stream = f"&stream={stream}"
+            if fixed_part_len + len(current_url) + len(stream) >= 2048:
+                resulting_urls.append(url + current_url)
+                current_url = ""
+            current_url += stream
+        if current_url:
+            resulting_urls.append(url + current_url)
+
+        for url in resulting_urls:
+            for response in api.execute_sse_request(url):
+                response = self._handle_adapters(response)
+                if response is not None:
+                    yield response
 
 
 class GetMessagesSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
