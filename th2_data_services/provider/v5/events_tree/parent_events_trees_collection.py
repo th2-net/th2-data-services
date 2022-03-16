@@ -14,15 +14,14 @@
 from typing import Union, Optional
 
 from th2_data_services import Data
-from th2_data_services.events_tree import ParentEventsTreesCollections
+from th2_data_services.events_tree import ParentEventsTreesCollection
 from th2_data_services.events_tree.exceptions import FieldIsNotExist
 from th2_data_services.provider.struct import IEventStruct
-from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 from th2_data_services.provider.v5.data_source import GRPCProvider5DataSource, HTTPProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
-class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollections):
+class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollection):
     """ParentsEventsTreesCollection for data-provider v5."""
 
     def __init__(
@@ -42,26 +41,6 @@ class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollections):
 
         if data_source is not None:
             self._recover_unknown_events()
-
-    def _recover_unknown_events(self) -> None:
-        """Loads missed events and recover events."""
-        instance_command = resolver_get_events_by_id(self._data_source)
-
-        previous_detached_events = list(self.detached_events.keys())
-        while previous_detached_events:
-            called_command = instance_command(self.detached_events.keys())
-            if self._stub_status:
-                called_command.use_stub()
-
-            events = self._data_source.command(called_command)
-
-            for event in events:
-                if not event.get(self._event_struct.NAME) == "Broken_Event":
-                    self.append_element(event)
-
-            if previous_detached_events == list(self.detached_events.keys()):
-                break
-            previous_detached_events = list(self.detached_events.keys())
 
     def _get_event_id(self, event) -> str:
         """Gets event id from event.

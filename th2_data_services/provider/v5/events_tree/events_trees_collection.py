@@ -17,7 +17,6 @@ from th2_data_services import Data
 from th2_data_services.events_tree import EventsTreesCollection
 from th2_data_services.events_tree.exceptions import FieldIsNotExist
 from th2_data_services.provider.struct import IEventStruct
-from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource, GRPCProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
@@ -33,37 +32,12 @@ class EventsTreesCollectionProvider5(EventsTreesCollection):
         event_struct: IEventStruct = provider5_event_struct,
         stub: bool = False,
     ):
-        super().__init__(data=data, preserve_body=preserve_body)
         self._stub_status = stub
         self._data_source = data_source
         self._event_struct = event_struct
         self._broken_events = []
 
-        events_nodes = self._build_event_nodes(data)
-        self._build_trees(events_nodes)
-
-        if data_source is not None:
-            self._recover_unknown_events()
-
-    def _recover_unknown_events(self) -> None:
-        """Loads missed events and recover events."""
-        instance_command = resolver_get_events_by_id(self._data_source)
-
-        previous_detached_events = list(self.detached_events.keys())
-        while previous_detached_events:
-            called_command = instance_command(self.detached_events.keys())
-            if self._stub_status:
-                called_command.use_stub()
-
-            events = self._data_source.command(called_command)
-
-            for event in events:
-                if not self._get_event_name(event) == "Broken_Event":
-                    self.append_element(event)
-
-            if previous_detached_events == list(self.detached_events.keys()):
-                break
-            previous_detached_events = list(self.detached_events.keys())
+        super().__init__(data=data, data_source=data_source, preserve_body=preserve_body, stub=stub)
 
     def _get_event_id(self, event) -> str:
         """Gets event id from event.
