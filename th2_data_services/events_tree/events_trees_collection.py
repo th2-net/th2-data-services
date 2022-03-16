@@ -292,7 +292,7 @@ class EventsTreesCollection(ABC):
         """Gets all trees leaves."""
         result = []
         for tree in self._roots:
-            result.append(*tree.get_leaves())
+            result += [*tree.get_leaves()]
         return tuple(result)
 
     def get_children(self, id: str) -> Tuple[Th2Event]:
@@ -320,12 +320,15 @@ class EventsTreesCollection(ABC):
         Raises:
             EventIdNotInTree: If event id not in the trees.
         """
+        is_iter = False
         for tree in self._roots:
             try:
-                yield from tree.get_children(id)
+                yield from tree.get_children_iter(id)
+                is_iter = True
             except EventIdNotInTree:
                 continue
-        raise EventIdNotInTree(id)
+        if not is_iter:
+            raise EventIdNotInTree(id)
 
     def get_parent(self, id: str) -> Th2Event:
         """Gets parent for an event.
@@ -464,7 +467,7 @@ class EventsTreesCollection(ABC):
         for tree in self._roots:
             events = tree.findall(filter=filter, stop=stop, max_count=max_count)
             if result is not None:
-                result.append(*events)
+                result += [*events]
         return result
 
     def find(self, filter: Callable, stop: Callable = None) -> Optional[Th2Event]:
@@ -501,7 +504,7 @@ class EventsTreesCollection(ABC):
         """
         for tree in self._roots:
             try:
-                tree.get_subtree(id)
+                return tree.get_subtree(id)
             except EventIdNotInTree:
                 continue
         raise EventIdNotInTree(id)
