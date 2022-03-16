@@ -17,14 +17,14 @@ from typing import List, Dict, Optional
 from treelib import Node, Tree
 
 from th2_data_services import Data
-from th2_data_services.events_tree import ParentEventsTree
+from th2_data_services.events_tree import EventsTree
 from th2_data_services.events_tree.events_trees_collection import EventsTreesCollection
 from th2_data_services.provider.data_source import IProviderDataSource
 from th2_data_services.provider.struct import IEventStruct
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
-class ParentEventsTreesCollections(EventsTreesCollection):
+class ParentEventsTreesCollection(EventsTreesCollection):
     """ParentEventsTreeCollections is a class like an EventsTreeCollections.
 
     - ParentEventsTree contains all parent events that are referenced.
@@ -51,7 +51,7 @@ class ParentEventsTreesCollections(EventsTreesCollection):
         self._event_stub_builder = event_stub_builder
         self._data_source = data_source
 
-        self._roots: List[ParentEventsTree] = []
+        self._roots: List[EventsTree] = []
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: Node}
         self._unknown_ids: List[str]
 
@@ -73,7 +73,7 @@ class ParentEventsTreesCollections(EventsTreesCollection):
                 self._fill_tree(nodes, tree, event_id)
         nodes.pop(None)
 
-        self._roots = [ParentEventsTree(root) for root in roots]
+        self._roots = [EventsTree(root) for root in roots]
         self._detached_nodes = nodes
 
     def _fill_tree(self, nodes: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:
