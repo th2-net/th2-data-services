@@ -11,7 +11,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from itertools import chain
 from typing import Generator, List
 import json
 import simplejson
@@ -515,13 +514,9 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
             current_url += stream
         if current_url:
             resulting_urls.append(url + current_url)
-        source = partial(
-            chain.from_iterable,
-            [api.execute_sse_request(res_url) for res_url in resulting_urls],
-        )
 
-        for responses in source.args[0]:
-            for response in responses:
+        for url in resulting_urls:
+            for response in api.execute_sse_request(url):
                 response = self._handle_adapters(response)
                 if response is not None:
                     yield response
