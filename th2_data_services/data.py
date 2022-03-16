@@ -56,21 +56,12 @@ class Data:
         if self.__is_cache_file_exists(self._cache_filename):
             self.__delete_cache()
         del self._data
-        """Data class destructor."""
-        if self.__is_cache_file_exists(self._cache_filename):
-            self.__delete_cache()
-        del self._data
 
     def __delete_cache(self) -> None:
         """Removes cache file."""
         path = Path(self.__get_cache_filepath())
         if path.exists():
             path.unlink()
-
-    def __delete_cache(self) -> None:
-        """Removes cache file."""
-        path = Path(self.__get_cache_filepath())
-        path.unlink()
 
     @property
     def len(self) -> int:
