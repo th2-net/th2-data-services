@@ -65,13 +65,11 @@ class DataSource:
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
     ):
-        """
-
-        Args:
-            url: HTTP data source url.
-            chunk_length: How much of the content to read in one chunk.
-            char_enc: Encoding for the byte stream.
-            decode_error_handler: Registered decode error handler.
+        """Args:
+        url: HTTP data source url.
+        chunk_length: How much of the content to read in one chunk.
+        char_enc: Encoding for the byte stream.
+        decode_error_handler: Registered decode error handler.
         """
         self.url = url
         self._char_enc = char_enc

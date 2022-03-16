@@ -20,7 +20,6 @@ repos:
         name: autoflake
         entry: autoflake
         language: system
-        exclude: ^th2_data_services/events_tree/__init__.py
         types: [ python ]
         args: [ --in-place, --remove-all-unused-imports, --ignore-init-module-imports ]
 

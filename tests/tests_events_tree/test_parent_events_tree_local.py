@@ -1,59 +1,71 @@
-from th2_data_services.data_source import DataSource
-from th2_data_services.events_tree.parent_events_tree import ParentEventsTree
+from datetime import datetime
+
+from th2_data_services import Data
+from th2_data_services.provider.v5.commands.http import GetEvents
+from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
+from th2_data_services.provider.v5.events_tree.parent_events_trees_collection import (
+    ParentsEventsTreesCollectionProvider5,
+)
 
 
-def test_recover_events_tree(demo_data_source: DataSource, demo_events_from_data_source):
-    parent_events_tree = ParentEventsTree(demo_events_from_data_source)
+def test_recover_unknown_events():
+    data_source = HTTPProvider5DataSource("http://10.64.66.66:30999/")
+    events: Data = data_source.command(
+        GetEvents(
+            start_timestamp=datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724),
+            end_timestamp=datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579),
+        )
+    )
 
-    before_recover_unknown_events = len(parent_events_tree.unknown_events)
-    # 2 Missed events
-    parent_events_tree.recover_unknown_events(demo_data_source)
-    after_recover_unknown_events = len(parent_events_tree.unknown_events)
+    before_tree = events.len
+    collections = ParentsEventsTreesCollectionProvider5(events, data_source=data_source)
+    after_tree = len(collections)
 
-    assert before_recover_unknown_events != after_recover_unknown_events and after_recover_unknown_events == 0
-
-
-def test_all_parent_events_from_stream_were_saved(demo_data_source: DataSource, demo_events_from_data_source):
-    pet = ParentEventsTree(demo_events_from_data_source)
-    pet.recover_unknown_events(demo_data_source)
-
-    for e in demo_events_from_data_source:
-        if e["parentEventId"] is not None:
-            assert pet.events[e["parentEventId"]]
+    assert not collections.detached_events and before_tree != after_tree
 
 
-def test_preserve_body_is_notset_recover(demo_data_source: DataSource, demo_events_from_data_source):
-    parent_events_tree = ParentEventsTree(demo_events_from_data_source)
-    parent_events_tree.recover_unknown_events(demo_data_source)
+def test_recover_unknown_events_with_stub_events():
+    data_source = HTTPProvider5DataSource("http://10.64.66.66:30999/")
+    events: Data = data_source.command(
+        GetEvents(
+            start_timestamp=datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724),
+            end_timestamp=datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579),
+        )
+    )
 
-    with_body = False
-    for v in parent_events_tree.events.values():
-        if v.get("body") is not None:
-            with_body = True
+    broken_event = {
+        "attachedMessageIds": [],
+        "batchId": "Broken_Event",
+        "endTimestamp": {"nano": 0, "epochSecond": 0},
+        "startTimestamp": {"nano": 0, "epochSecond": 0},
+        "type": "event",
+        "eventId": f"33499-333-111-test-03221",
+        "eventName": "Broken_Event",
+        "eventType": "Broken_Event",
+        "parentEventId": "Broken_Event",
+        "successful": None,
+        "isBatched": None,
+    }
+    events: list = [event for event in events] + [broken_event]
 
-    assert with_body is False
+    before_tree = len(events)
+    collections = ParentsEventsTreesCollectionProvider5(events, data_source=data_source, stub=True)
+    after_tree = len(collections)
+
+    assert collections.detached_events == {"Broken_Event": [broken_event]} and before_tree != after_tree
 
 
-def test_preserve_body_is_false_recover(demo_data_source: DataSource, demo_events_from_data_source):
-    parent_events_tree = ParentEventsTree(demo_events_from_data_source, preserve_body=False)
-    parent_events_tree.recover_unknown_events(demo_data_source)
+def test_preserve_body():
+    data_source = HTTPProvider5DataSource("http://10.64.66.66:30999/")
+    events: Data = data_source.command(
+        GetEvents(
+            start_timestamp=datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724),
+            end_timestamp=datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579),
+        )
+    )
 
-    with_body = False
-    for v in parent_events_tree.events.values():
-        if v.get("body") is not None:
-            with_body = True
+    collections = ParentsEventsTreesCollectionProvider5(events, data_source=data_source, preserve_body=True)
 
-    assert with_body is False
-
-
-def test_preserve_body_is_true_recover(demo_data_source: DataSource, demo_events_from_data_source):
-    parent_events_tree = ParentEventsTree(demo_events_from_data_source, preserve_body=True)
-    parent_events_tree.recover_unknown_events(demo_data_source)
-
-    with_body = True
-    for v in parent_events_tree.events.values():
-        if v.get("body") is None:
-            with_body = False
-            break
-
-    assert with_body is True
+    assert all(
+        [True if event.get("body") is not None else False for event in collections.get_trees()[0].get_all_events()]
+    )
