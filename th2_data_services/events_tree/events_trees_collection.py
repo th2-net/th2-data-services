@@ -21,6 +21,8 @@ from th2_data_services import Data
 from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
+from th2_data_services.provider.data_source import IProviderDataSource
+from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
 
 class EventsTreesCollection(ABC):
@@ -29,18 +31,30 @@ class EventsTreesCollection(ABC):
     EventsTreeCollection stores all EventsTree. You can to refer to each of them.
     """
 
-    def __init__(self, data: Data, preserve_body: bool = False):
+    def __init__(
+        self, data: Data, data_source: IProviderDataSource = None, preserve_body: bool = False, stub: bool = False
+    ):
         """EventsTreesCollection constructor.
 
         Args:
             data: Data
+            data_source: Data Source.
             preserve_body: True if you want to save 'body' field.
+            stub: True if you want to use stub when event is broken.
         """
         self._preserve_body = preserve_body
 
         self._roots: List[EventsTree] = []
         self._parentless: Optional[List[EventsTree]] = None
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
+        self._stub_status = stub
+        self._data_source = data_source
+
+        events_nodes = self._build_event_nodes(data)
+        self._build_trees(events_nodes)
+
+        if data_source is not None:
+            self._recover_unknown_events()
 
     def get_parentless_trees(self) -> List[EventsTree]:
         """Gets parentless trees.
@@ -252,10 +266,6 @@ class EventsTreesCollection(ABC):
     @abstractmethod
     def _get_event_name(self, event):
         """Gets event name from the event."""
-
-    @abstractmethod
-    def _recover_unknown_events(self):
-        """Load referenced events and recover the tree."""
 
     def __len__(self) -> int:
         return sum([len(root) for root in self._roots])
@@ -508,3 +518,23 @@ class EventsTreesCollection(ABC):
             except EventIdNotInTree:
                 continue
         raise EventIdNotInTree(id)
+
+    def _recover_unknown_events(self) -> None:
+        """Loads missed events and recover events."""
+        instance_command = resolver_get_events_by_id(self._data_source)
+
+        previous_detached_events = list(self.detached_events.keys())
+        while previous_detached_events:
+            called_command = instance_command(self.detached_events.keys())
+            if self._stub_status:
+                called_command.use_stub()
+
+            events = self._data_source.command(called_command)
+
+            for event in events:
+                if not self._get_event_name(event) == "Broken_Event":
+                    self.append_element(event)
+
+            if previous_detached_events == list(self.detached_events.keys()):
+                break
+            previous_detached_events = list(self.detached_events.keys())
