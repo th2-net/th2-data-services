@@ -19,13 +19,13 @@ from grpc._channel import _InactiveRpcError
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from th2_data_services.provider.v5.command import IGRPCProvider5Command
+    from th2_data_services.provider.v5.interfaces.command import IGRPCProvider5Command
 
-from th2_data_services.provider.data_source import IGRPCProviderDataSource
+from th2_data_services.provider.interfaces.data_source import IGRPCProviderDataSource
 
 import logging
 
-from th2_data_services.provider.stub_builder import IEventStub, IMessageStub
+from th2_data_services.provider.interfaces.stub_builder import IEventStub, IMessageStub
 from th2_data_services.provider.v5.provider_api import GRPCProvider5API
 from th2_data_services.provider.v5.struct import (
     provider5_event_struct,
@@ -57,7 +57,8 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
         event_stub_builder: IEventStub = provider5_event_stub_builder,
         message_stub_builder: IMessageStub = provider5_message_stub_builder,
     ):
-        """
+        """GRPCProvider5DataSource constructor.
+
         Args:
             url: Url of rpt-data-provider.
             event_struct: Event structure that is supplied by rpt-data-provider.

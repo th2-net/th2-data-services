@@ -19,9 +19,9 @@ from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from th2_data_services.provider.v5.command import IHTTPProvider5Command
+    from th2_data_services.provider.v5.interfaces.command import IHTTPProvider5Command
 
-from th2_data_services.provider.data_source import IHTTPProviderDataSource
+from th2_data_services.provider.interfaces.data_source import IHTTPProviderDataSource
 from th2_data_services.provider.v5.struct import (
     provider5_event_struct,
     provider5_message_struct,
@@ -37,6 +37,12 @@ logger.setLevel(logging.DEBUG)
 
 
 class HTTPProvider5DataSource(IHTTPProviderDataSource):
+    """DataSource class which provide work with rpt-data-provider.
+
+    Rpt-data-provider version: 5.x.y
+    Protocol: HTTP
+    """
+
     def __init__(
         self,
         url: str,
@@ -49,7 +55,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         message_stub_builder=provider5_message_stub_builder,
         check_connect_timeout: (int, float) = 5,
     ):
-        """
+        """HTTPProvider5DataSource constructor.
 
         Args:
             url: HTTP data source url.
@@ -77,6 +83,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
 
         Args:
             cmd: The command of data source to execute.
+
         Returns:
             Data source command result.
         """

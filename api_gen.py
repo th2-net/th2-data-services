@@ -5,6 +5,6 @@ generate_docs(
     ["th2_data_services"],
     output_path="./documentation/api",
     overview_file="index.md",
-    validate=True,
+    validate=False,
     remove_package_prefix=True,
 )

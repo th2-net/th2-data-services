@@ -1,3 +1,5 @@
+fail_fast: true  # pre-commit will stop running hooks after the first failure.
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
@@ -23,12 +25,22 @@ repos:
         types: [ python ]
         args: [ --in-place, --remove-all-unused-imports, --ignore-init-module-imports ]
 
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.1.1  # pick a git hash / tag to point to
+    hooks:
+      - id: pydocstyle
+        args:
+          - th2_data_services
+          - --convention=google
+          - --add-ignore=D100,D101,D104,D105,D403,  D102,   # http://www.pydocstyle.org/en/stable/error_codes.html
+
   - repo: local
     hooks:
       - id: docgen
         name: docgen
         language: script
         entry: doc_gen.sh
+        require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
 
 
 default_stages: [ commit, push ]

@@ -3,6 +3,14 @@ from typing import Union, List
 
 
 def adapter_provider5(record: dict) -> Union[List[dict], dict]:
+    """Provider 5 adapter.
+
+    Args:
+        record: Th2Message dict.
+
+    Returns:
+        Th2Message dict.
+    """
     msg_type = record.get("messageType")
     if not msg_type:
         warn(

@@ -22,17 +22,17 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
 )
 
 from th2_data_services import Filter, Data
-from th2_data_services.provider.command import IProviderAdaptableCommand
+from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterGRPCObjectToDict
 from th2_data_services.provider.v5.adapters.events_adapters import AdapterDeleteEventWrappers
 from th2_data_services.provider.v5.adapters.messages_adapters import AdapterDeleteMessageWrappers
-from th2_data_services.provider.v5.command import IGRPCProvider5Command
+from th2_data_services.provider.v5.interfaces.command import IGRPCProvider5Command
 
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
 from th2_data_services.provider.v5.provider_api import GRPCProvider5API
 
 
-class GetEventByIdGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetEventByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id as GRPC object.
@@ -42,7 +42,8 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
     """
 
     def __init__(self, id: str):
-        """
+        """GetEventByIdGRPCObject constructor.
+
         Args:
             id: Event id.
 
@@ -58,7 +59,7 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
         return event
 
 
-class GetEventById(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetEventById(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id.
@@ -71,7 +72,8 @@ class GetEventById(IGRPCProvider5Command, IProviderAdaptableCommand):
     """
 
     def __init__(self, id: str):
-        """
+        """GetEventById constructor.
+
         Args:
             id: Event id.
 
@@ -102,7 +104,7 @@ class GetEventById(IGRPCProvider5Command, IProviderAdaptableCommand):
         return self
 
 
-class GetEventsById(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetEventsById(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the events by id.
@@ -115,7 +117,8 @@ class GetEventsById(IGRPCProvider5Command, IProviderAdaptableCommand):
     """
 
     def __init__(self, ids: List[str]):
-        """
+        """GetEventsById constructor.
+
         Args:
             ids: Events ids.
 
@@ -137,7 +140,7 @@ class GetEventsById(IGRPCProvider5Command, IProviderAdaptableCommand):
         return self
 
 
-class GetEventsGRPCObjects(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream as GRPC object by options.
@@ -159,7 +162,8 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IProviderAdaptableCommand):
         attached_messages: bool = False,
         filters: List[Filter] = None,
     ):
-        """
+        """GetEventsGRPCObjects constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
@@ -213,7 +217,7 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, IProviderAdaptableCommand):
                 yield response.event
 
 
-class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetEvents(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
@@ -236,7 +240,8 @@ class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
         filters: List[Filter] = None,
         cache: bool = False,
     ):
-        """
+        """GetEvents constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
@@ -294,7 +299,7 @@ class GetEvents(IGRPCProvider5Command, IProviderAdaptableCommand):
             yield event
 
 
-class GetMessageByIdGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetMessageByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id as GRPC Object.
@@ -304,7 +309,8 @@ class GetMessageByIdGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand)
     """
 
     def __init__(self, id: str):
-        """
+        """GetMessageByIdGRPCObject constructor.
+
         Args:
             id: Message id.
 
@@ -319,7 +325,7 @@ class GetMessageByIdGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand)
         return response
 
 
-class GetMessageById(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id.
@@ -332,7 +338,8 @@ class GetMessageById(IGRPCProvider5Command, IProviderAdaptableCommand):
     """
 
     def __init__(self, id: str):
-        """
+        """GetMessageById constructor.
+
         Args:
             id: Message id.
 
@@ -362,7 +369,7 @@ class GetMessageById(IGRPCProvider5Command, IProviderAdaptableCommand):
         return self
 
 
-class GetMessagesById(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetMessagesById(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the messages by id.
@@ -375,7 +382,8 @@ class GetMessagesById(IGRPCProvider5Command, IProviderAdaptableCommand):
     """
 
     def __init__(self, ids: List[str]):
-        """
+        """GetMessagesById constructor.
+
         Args:
             ids: Messages id.
 
@@ -397,7 +405,7 @@ class GetMessagesById(IGRPCProvider5Command, IProviderAdaptableCommand):
         return self
 
 
-class GetMessagesGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream as GRPC object by options.
@@ -417,7 +425,8 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
         keep_open: bool = False,
         filters: List[Filter] = None,
     ):
-        """
+        """GetMessagesGRPCObject constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
@@ -462,7 +471,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, IProviderAdaptableCommand):
                 yield response.message
 
 
-class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
+class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.
@@ -483,7 +492,8 @@ class GetMessages(IGRPCProvider5Command, IProviderAdaptableCommand):
         filters: List[Filter] = None,
         cache: bool = False,
     ):
-        """
+        """GetMessages constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.

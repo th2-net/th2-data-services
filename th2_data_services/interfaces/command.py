@@ -12,14 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from codecs import register_error
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from th2_data_services.interfaces.data_source import IDataSource
 
 
-def handler(err: UnicodeDecodeError):
-    """Decode error handler that tries change utf-8 character to Unicode."""
-    return chr(err.object[err.start]), err.end
+class ICommand(ABC):
+    """High level interface for Command."""
 
-
-UNICODE_REPLACE_HANDLER = "unicode_replace"
-
-register_error(UNICODE_REPLACE_HANDLER, handler)
+    @abstractmethod
+    def handle(self, data_source: IDataSource):
+        pass

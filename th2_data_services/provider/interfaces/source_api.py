@@ -12,14 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from codecs import register_error
+from th2_data_services.interfaces.source_api import ISourceAPI
 
 
-def handler(err: UnicodeDecodeError):
-    """Decode error handler that tries change utf-8 character to Unicode."""
-    return chr(err.object[err.start]), err.end
+class IProviderSourceAPI(ISourceAPI):
+    """Interface for Source API of rpt-data-provider."""
 
 
-UNICODE_REPLACE_HANDLER = "unicode_replace"
+class IHTTPProviderSourceAPI(IProviderSourceAPI):
+    """Interface for Source API of rpt-data-provider which works via HTTP."""
 
-register_error(UNICODE_REPLACE_HANDLER, handler)
+
+class IGRPCProviderSourceAPI(IProviderSourceAPI):
+    """Interface for Source API of rpt-data-provider which works via GRPC."""

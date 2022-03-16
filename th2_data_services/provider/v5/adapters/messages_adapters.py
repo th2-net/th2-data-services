@@ -1,15 +1,16 @@
-from th2_data_services.adapter import IMessageAdapter
+from th2_data_services.interfaces.adapter import IMessageAdapter
 from th2_data_services.provider.v5.struct import Provider5MessageStruct, provider5_message_struct
 
 
 class AdapterDeleteMessageWrappers(IMessageAdapter):
     """Adapter that delete unnecessary wrappers in events.
 
-    It use for message to which an AdaptorGRPCObjectToDict has been applied.
+    It used for message to which an AdaptorGRPCObjectToDict has been applied.
     """
 
     def __init__(self, message_struct: Provider5MessageStruct = provider5_message_struct):
-        """
+        """AdapterDeleteMessageWrappers constructor.
+
         Args:
             message_struct: Message struct.
         """

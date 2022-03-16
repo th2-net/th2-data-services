@@ -20,7 +20,7 @@ import requests
 from requests import Response
 from urllib3 import PoolManager, exceptions
 
-from th2_data_services.provider.source_api import IHTTPProviderSourceAPI
+from th2_data_services.provider.interfaces.source_api import IHTTPProviderSourceAPI
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 logger = logging.getLogger("th2_data_services")
@@ -57,8 +57,9 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         return f"{self._url}/event/{event_id}"
 
     def get_url_find_events_by_id(self, *ids) -> str:
-        """REST-API `events` call returns a list of events
-        with the specified ids (at a time you can request no more eventSearchChunkSize).
+        """REST-API `events` call returns a list of events with the specified ids.
+
+        Note, at a time you can request no more eventSearchChunkSize.
 
         Deprecated, use `get_url_find_event_by_id` instead.
         """
@@ -101,6 +102,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
     def get_url_match_event_by_id(self, event_id: str, filters: str = "") -> str:
         """REST-API `match/event/{id}` call returns boolean value.
+
         Checks that event with the specified id is matched by filter.
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
@@ -109,6 +111,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
     def get_url_match_message_by_id(self, message_id: str, filters: str = "") -> str:
         """REST-API `match/message/{id}` call returns boolean value.
+
         Checks that message with the specified id is matched by filter.
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
@@ -203,6 +206,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
         Args:
             url: Url.
+
         Yields:
              str: Response stream data.
         """
@@ -226,6 +230,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
         Args:
             url: Url for a get request to rpt-data-provider.
+
         Returns:
             requests.Response: Response data.
         """

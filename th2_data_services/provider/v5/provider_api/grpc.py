@@ -37,7 +37,7 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
     Filter,
 )
 from grpc import Channel, insecure_channel
-from th2_data_services.provider.source_api import IGRPCProviderSourceAPI
+from th2_data_services.provider.interfaces.source_api import IGRPCProviderSourceAPI
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
@@ -154,6 +154,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         filters: Optional[List[Filter]] = None,
     ) -> Iterable[StreamResponse]:
         """GRPC-API `searchMessages` call creates a message stream that matches the filter.
+
         Args:
             start_timestamp: Sets the search starting point. Expected in nanoseconds. One of the 'start_timestamp'
                 or 'resume_from_id' must not absent.
