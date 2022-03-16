@@ -24,7 +24,7 @@ from th2_data_services.provider.struct import IEventStruct
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
-class ParentEventsTreesCollections(EventsTreesCollection):
+class ParentEventsTreesCollection(EventsTreesCollection):
     """ParentEventsTreeCollections is a class like an EventsTreeCollections.
 
     - ParentEventsTree contains all parent events that are referenced.
