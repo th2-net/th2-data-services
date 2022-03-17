@@ -1,8 +1,13 @@
 class Th2GUIReport:
+    """Class for create gui link by event ID or message ID."""
+
     def __init__(self, link_provider):
+        """Th2GUIReport constructor.
+
+        Args:
+            link_provider: str
+        """
         self._link_provider = link_provider
-        self._event_id = None
-        self._message_id = None
 
     def get_event_link(self, event_id):
         return f"{self._link_provider}?eventId={event_id}"

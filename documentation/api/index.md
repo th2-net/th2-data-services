@@ -50,6 +50,7 @@
 - [`provider.v5.provider_api.http`](./provider.v5.provider_api.http.md#module-providerv5provider_apihttp)
 - [`provider.v5.stub_builder`](./provider.v5.stub_builder.md#module-providerv5stub_builder)
 - [`sse_client`](./sse_client.md#module-sse_client)
+- [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 
 ## Classes
 
@@ -117,6 +118,7 @@
 - [`stub_builder.Provider5EventStubBuilder`](./provider.v5.stub_builder.md#class-provider5eventstubbuilder)
 - [`stub_builder.Provider5MessageStubBuilder`](./provider.v5.stub_builder.md#class-provider5messagestubbuilder)
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
+- [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for create gui link by event ID or message ID.
 
 ## Functions
 
