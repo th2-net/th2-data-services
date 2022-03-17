@@ -11,16 +11,14 @@
 
 ---
 
-<a href="../../th2_data_services/events_tree/parent_events_trees_collection.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/parent_events_trees_collection.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ParentEventsTreesCollection`
 ParentEventsTreeCollections is a class like an EventsTreeCollections. 
 
+ParentEventsTree contains all parent events that are referenced. 
 
-- ParentEventsTree contains all parent events that are referenced. 
-- Approximately for 1 million events will be ~23 thousand parent events. 
-
-<a href="../../th2_data_services/events_tree/parent_events_trees_collection.py#L32"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/parent_events_trees_collection.py#L30"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -29,7 +27,7 @@ __init__(
     data: Data,
     data_source: IProviderDataSource = None,
     preserve_body: bool = False,
-    event_stub_builder=None
+    stub: bool = False
 )
 ```
 
@@ -42,7 +40,7 @@ ParentEventsTreesCollection constructor.
  - <b>`data`</b>:  Data object. 
  - <b>`data_source`</b>:  Data Source object. 
  - <b>`preserve_body`</b>:  If True then save body of event. 
- - <b>`event_stub_builder`</b>:  Event Stub Builder. 
+ - <b>`stub`</b>:  If True it will create stub when event is broken. 
 
 
 ---

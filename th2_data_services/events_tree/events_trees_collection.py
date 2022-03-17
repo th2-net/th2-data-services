@@ -43,7 +43,6 @@ class EventsTreesCollection(ABC):
             stub: If True it will create stub when event is broken.
         """
         self._preserve_body = preserve_body
-
         self._roots: List[EventsTree] = []
         self._parentless: Optional[List[EventsTree]] = None
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}

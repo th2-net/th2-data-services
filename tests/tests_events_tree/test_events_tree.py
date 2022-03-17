@@ -5,16 +5,16 @@ from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
 def test_build_tree(general_data: List[dict], test_events_tree: NamedTuple):
-    collections = EventsTreesCollectionProvider5(general_data)
-    tree = collections.get_trees()[0]
+    collection = EventsTreesCollectionProvider5(general_data)
+    tree = collection.get_trees()[0]
 
     assert [
         event[provider5_event_struct.EVENT_ID] for event in tree.get_all_events()
-    ] == test_events_tree.events and list(collections.detached_events.keys()) == test_events_tree.unknown_events
+    ] == test_events_tree.events and list(collection.detached_events.keys()) == test_events_tree.unknown_events
 
 
 def test_append_unknown_element(general_data: List[dict]):
-    collections = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreesCollectionProvider5(general_data)
     parent_event_id = "122111-2112-3333-445544"
     event_id = "111111-2222-3333-444444"
     new_event = {
@@ -22,15 +22,15 @@ def test_append_unknown_element(general_data: List[dict]):
         "parentEventId": parent_event_id,
         "eventName": "testName",
     }
-    collections.append_element(new_event)
+    collection.append_element(new_event)
 
-    assert parent_event_id in collections.detached_events and event_id in [
-        event["eventId"] for event in collections.detached_events[parent_event_id]
+    assert parent_event_id in collection.detached_events and event_id in [
+        event["eventId"] for event in collection.detached_events[parent_event_id]
     ]
 
 
 def test_append_new_element(general_data: List[dict]):
-    collections = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreesCollectionProvider5(general_data)
     parent_event_id = "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e"
     event_id = "1111-3333-4444-5555"
     new_event = {
@@ -38,9 +38,9 @@ def test_append_new_element(general_data: List[dict]):
         "parentEventId": parent_event_id,
         "eventName": "testName",
     }
-    collections.append_element(new_event)
+    collection.append_element(new_event)
 
-    assert event_id in collections
+    assert event_id in collection
 
 
 def test_build_parentless_trees(general_data: List[dict]):
@@ -52,27 +52,27 @@ def test_build_parentless_trees(general_data: List[dict]):
         }
     ]
 
-    collections = EventsTreesCollectionProvider5(general_data)
-    trees = collections.get_parentless_trees()
+    collection = EventsTreesCollectionProvider5(general_data)
+    trees = collection.get_parentless_trees()
 
-    assert trees[1]._tree.get_node("a3779b94-d051-11eb-986f-1e8d42132387") and not collections.detached_events
+    assert trees[1]._tree.get_node("a3779b94-d051-11eb-986f-1e8d42132387") and not collection.detached_events
 
 
 def test_contain_element(general_data: List[dict]):
-    collections = EventsTreesCollectionProvider5(general_data)
-    tree = collections.get_trees()[0]
+    collection = EventsTreesCollectionProvider5(general_data)
+    tree = collection.get_trees()[0]
     event_id = "84db48fc-d1b4-11eb-b0fb-199708acc7bc"
 
-    assert event_id in collections and event_id in tree
+    assert event_id in collection and event_id in tree
 
 
 def test_append_new_tree(general_data: List[dict]):
-    collections = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreesCollectionProvider5(general_data)
     event_id = "1111-3333-4444-5555"
     new_event = {"eventId": event_id, "eventName": "testName"}
-    collections.append_element(new_event)
+    collection.append_element(new_event)
 
-    assert event_id in collections and event_id in collections.get_roots_ids()
+    assert event_id in collection and event_id in collection.get_roots_ids()
 
 
 def test_filter_all(general_data: List[dict]):
@@ -247,15 +247,15 @@ def test_find_ancestor(general_data: List[dict]):
 
 
 def test_get_root_by_id(general_data: List[dict]):
-    collections = EventsTreesCollectionProvider5(general_data)
-    tree = collections.get_trees()[0]
+    collection = EventsTreesCollectionProvider5(general_data)
+    tree = collection.get_trees()[0]
 
-    assert collections.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == tree
+    assert collection.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == tree
 
 
 def test_get_root(general_data: List[dict]):
-    collections = EventsTreesCollectionProvider5(general_data)
-    tree = collections.get_trees()[0]
+    collection = EventsTreesCollectionProvider5(general_data)
+    tree = collection.get_trees()[0]
 
     assert tree.get_root() == {
         "batchId": None,

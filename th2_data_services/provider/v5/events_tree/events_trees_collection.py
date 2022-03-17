@@ -42,10 +42,7 @@ class EventsTreesCollectionProvider5(EventsTreesCollection):
             event_struct: Event struct object.
             stub: If True it will create stub when event is broken.
         """
-        self._stub_status = stub
-        self._data_source = data_source
-        self._event_struct = event_struct
-        self._broken_events = []
+        self._event_struct = event_struct  # Should be placed before super!
 
         super().__init__(data=data, data_source=data_source, preserve_body=preserve_body, stub=stub)
 

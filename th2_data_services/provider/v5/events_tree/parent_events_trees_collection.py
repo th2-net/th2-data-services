@@ -42,16 +42,14 @@ class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollection):
             event_struct: Event struct object.
             stub: If True it will create stub when event is broken.
         """
-        super().__init__(data=data, preserve_body=preserve_body)
-        self._stub_status = stub
-        self._data_source = data_source
-        self._event_struct = event_struct
+        self._event_struct = event_struct  # Should be placed before super!
 
-        events_nodes = self._build_event_nodes(data)
-        self._build_trees(events_nodes)
-
-        if data_source is not None:
-            self._recover_unknown_events()
+        super().__init__(
+            data=data,
+            data_source=data_source,
+            preserve_body=preserve_body,
+            stub=stub,
+        )
 
     def _get_event_id(self, event) -> str:
         """Gets event id from event.
