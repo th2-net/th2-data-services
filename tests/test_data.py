@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from typing import List
+from th2_data_services.th2_gui_report import Th2GUIReport
 
 import pytest
 
@@ -356,3 +357,14 @@ def test_break_cycle(general_data: List[dict]):
         second_cycle += 1
 
     assert second_cycle == 21
+
+
+def test_link_gui():
+    gui = Th2GUIReport("http://th2-qa:30000/th2-commonv3/")
+    result_event_link = gui.get_event_link("fcace9a4-8fd8-11ec-98fc-038f439375a0")
+    result_message_link = gui.get_message_link("fix01:first:1600854429908302153")
+
+    assert (
+        result_event_link == "http://th2-qa:30000/th2-commonv3/?eventId=fcace9a4-8fd8-11ec-98fc-038f439375a0"
+        and result_message_link == "http://th2-qa:30000/th2-commonv3/?messageId=fix01:first:1600854429908302153"
+    )
