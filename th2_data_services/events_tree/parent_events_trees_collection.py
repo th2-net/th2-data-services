@@ -11,7 +11,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from collections import defaultdict
 from typing import List, Dict, Optional
 
 from treelib import Node, Tree
@@ -19,43 +18,27 @@ from treelib import Node, Tree
 from th2_data_services import Data
 from th2_data_services.events_tree import EventsTree
 from th2_data_services.events_tree.events_trees_collection import EventsTreesCollection
-from th2_data_services.provider.data_source import IProviderDataSource
-from th2_data_services.provider.struct import IEventStruct
-from th2_data_services.provider.v5.struct import provider5_event_struct
+from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 
 
 class ParentEventsTreesCollection(EventsTreesCollection):
     """ParentEventsTreeCollections is a class like an EventsTreeCollections.
 
-    - ParentEventsTree contains all parent events that are referenced.
-    - Approximately for 1 million events will be ~23 thousand parent events.
+    ParentEventsTree contains all parent events that are referenced.
     """
 
     def __init__(
-        self,
-        data: Data,
-        data_source: IProviderDataSource = None,
-        preserve_body: bool = False,
-        event_struct: IEventStruct = provider5_event_struct,
-        event_stub_builder=None,
+        self, data: Data, data_source: IProviderDataSource = None, preserve_body: bool = False, stub: bool = False
     ):
-        """Args:
-        data: Data
-        data_source: Data Source
-        preserve_body: If True then save body of event.
-        event_struct: Event struct.
-        event_stub_builder: Event Stub Builder.
+        """ParentEventsTreesCollection constructor.
+
+        Args:
+            data: Data object.
+            data_source: Data Source object.
+            preserve_body: If True then save body of event.
+            stub: If True it will create stub when event is broken.
         """
-        self._preserve_body = preserve_body
-        self._event_struct = event_struct
-        self._event_stub_builder = event_stub_builder
-        self._data_source = data_source
-
-        self._roots: List[EventsTree] = []
-        self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: Node}
-        self._unknown_ids: List[str]
-
-        self._build_event_nodes(data)
+        super().__init__(data, data_source, preserve_body, stub)
 
     def _build_trees(self, nodes: Dict[Optional[str], List[Node]]) -> None:
         """Builds trees and saves detached events.
@@ -64,7 +47,7 @@ class ParentEventsTreesCollection(EventsTreesCollection):
             nodes: Events nodes.
         """
         roots = []
-        for node in nodes[None]:
+        for node in nodes[None]:  # None - is parent_event_id for root events.
             if nodes[node.identifier]:
                 tree = Tree()
                 tree.add_node(node)
@@ -80,6 +63,7 @@ class ParentEventsTreesCollection(EventsTreesCollection):
         """Fills tree recursively.
 
         Args:
+            nodes: Events nodes.
             current_tree: Tree for fill.
             parent_id: Parent even id.
         """

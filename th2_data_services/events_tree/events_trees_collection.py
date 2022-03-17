@@ -21,12 +21,12 @@ from th2_data_services import Data
 from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
-from th2_data_services.provider.data_source import IProviderDataSource
+from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
 
 class EventsTreesCollection(ABC):
-    """EventsTreeCollection objective is building EventsTrees and storing them.
+    """EventsTreeCollection objective is building 'EventsTree's and storing them.
 
     EventsTreeCollection stores all EventsTree. You can to refer to each of them.
     """
@@ -37,13 +37,12 @@ class EventsTreesCollection(ABC):
         """EventsTreesCollection constructor.
 
         Args:
-            data: Data
-            data_source: Data Source.
-            preserve_body: True if you want to save 'body' field.
-            stub: True if you want to use stub when event is broken.
+            data: Data object.
+            data_source: Data Source object.
+            preserve_body: If True it will preserve 'body' field in the Events.
+            stub: If True it will create stub when event is broken.
         """
         self._preserve_body = preserve_body
-
         self._roots: List[EventsTree] = []
         self._parentless: Optional[List[EventsTree]] = None
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
@@ -114,7 +113,6 @@ class EventsTreesCollection(ABC):
         Args:
             nodes: Events nodes.
         """
-
         roots = []
         for root_node in nodes[None]:  # None - is parent_event_id for root events.
             tree = Tree()
@@ -213,7 +211,7 @@ class EventsTreesCollection(ABC):
 
     @property
     def detached_events(self) -> dict:
-        """Gets detached events as dict with a view {'parent_id': ['referenced event', ...]}"""
+        """Gets detached events as dict with a view {'parent_id': ['referenced event', ...]}."""
         return {id_: [node.data for node in nodes] for id_, nodes in self._detached_nodes.items()}
 
     def get_roots_ids(self) -> List[str]:

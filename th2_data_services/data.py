@@ -34,11 +34,13 @@ class Data:
     """
 
     def __init__(self, data: DataSet, cache: bool = False, workflow: WorkFlow = None, parents_cache: List[str] = None):
-        """Args:
-        data: Data source.
-        workflow: Workflow.
-        parents_cache: Parents chain. Works as a stack.
-        cache: Flag if you want to write and read from cache.
+        """Data constructor.
+
+        Args:
+            data: Data source.
+            workflow: Workflow.
+            parents_cache: Parents chain. Works as a stack.
+            cache: Flag if you want to write and read from cache.
         """
         self._cache_filename = f"{str(id(self))}:{time()}.pickle"
         self._len = None
@@ -366,9 +368,7 @@ class Data:
 
         Returns:
             Data: Data object.
-
         """
-
         nwf = []
         for step in copy.deepcopy(self._workflow):
             if step["type"] == "limit":

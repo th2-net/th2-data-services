@@ -11,12 +11,13 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from typing import Union, Optional
 
 from th2_data_services import Data
 from th2_data_services.events_tree import ParentEventsTreesCollection
 from th2_data_services.events_tree.exceptions import FieldIsNotExist
-from th2_data_services.provider.struct import IEventStruct
+from th2_data_services.provider.interfaces.struct import IEventStruct
 from th2_data_services.provider.v5.data_source import GRPCProvider5DataSource, HTTPProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
@@ -32,15 +33,23 @@ class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollection):
         event_struct: IEventStruct = provider5_event_struct,
         stub: bool = False,
     ):
-        super().__init__(data=data, preserve_body=preserve_body, event_struct=event_struct)
-        self._stub_status = stub
-        self._data_source = data_source
+        """ParentsEventsTreesCollectionProvider5 constructor.
 
-        events_nodes = self._build_event_nodes(data)
-        self._build_trees(events_nodes)
+        Args:
+            data: Data object.
+            data_source: Data Source object.
+            preserve_body: If True it will preserve 'body' field in the Events.
+            event_struct: Event struct object.
+            stub: If True it will create stub when event is broken.
+        """
+        self._event_struct = event_struct  # Should be placed before super!
 
-        if data_source is not None:
-            self._recover_unknown_events()
+        super().__init__(
+            data=data,
+            data_source=data_source,
+            preserve_body=preserve_body,
+            stub=stub,
+        )
 
     def _get_event_id(self, event) -> str:
         """Gets event id from event.

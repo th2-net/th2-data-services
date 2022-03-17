@@ -12,10 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 class EventIdNotInTree(Exception):
-    """Exception for the case when the tree hasn't the event."""
-
     def __init__(self, id_):
-        """
+        """Exception for the case when the tree hasn't the event.
+
         Args:
             id_: Event id.
         """
@@ -26,10 +25,9 @@ class EventIdNotInTree(Exception):
 
 
 class FieldIsNotExist(Exception):
-    """Exception for the case when event as dict hasn't field"""
-
     def __init__(self, field_name):
-        """
+        """Exception for the case when event as dict hasn't field.
+
         Args:
             field_name: Field name.
         """

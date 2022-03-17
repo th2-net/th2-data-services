@@ -142,3 +142,19 @@ cython_debug/
 .idea/
 
 gh-md-toc
+
+# Documentation due to problems in generator
+# Ignore module level (__init__)
+documentation/api/events_tree.md
+documentation/api/interfaces.md
+documentation/api/provider.adapters.md
+documentation/api/provider.interfaces.md
+documentation/api/provider.md
+documentation/api/provider.v5.adapters.md
+documentation/api/provider.v5.commands.md
+documentation/api/provider.v5.data_source.md
+documentation/api/provider.v5.events_tree.md
+documentation/api/provider.v5.interfaces.md
+documentation/api/provider.v5.md
+documentation/api/provider.v5.provider_api.md
+documentation/api/source_api.md

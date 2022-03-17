@@ -12,16 +12,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from th2_data_services.source_api import ISourceAPI
-
-
-class IProviderSourceAPI(ISourceAPI):
-    """Interface for Source API of rpt-data-provider."""
-
-
-class IHTTPProviderSourceAPI(IProviderSourceAPI):
-    """Interface for Source API of rpt-data-provider which works via HTTP."""
-
-
-class IGRPCProviderSourceAPI(IProviderSourceAPI):
-    """Interface for Source API of rpt-data-provider which works via GRPC."""
+from .command import *

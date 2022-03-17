@@ -12,18 +12,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from th2_data_services.adapter import IEventAdapter
+from th2_data_services.interfaces.adapter import IEventAdapter
 from th2_data_services.provider.v5.struct import Provider5EventStruct, provider5_event_struct
 
 
 class AdapterDeleteEventWrappers(IEventAdapter):
     """Adapter that delete unnecessary wrappers in events.
 
-    It use for events to which an AdaptorGRPCObjectToDict has been applied.
+    It used for events to which an AdaptorGRPCObjectToDict has been applied.
     """
 
     def __init__(self, event_struct: Provider5EventStruct = provider5_event_struct):
-        """
+        """AdapterDeleteEventWrappers constructor.
+
         Args:
             event_struct: Event struct.
         """
