@@ -10,7 +10,7 @@
 
 ---
 
-<a href="../../th2_data_services/provider/v5/command_resolver.py#L13"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/command_resolver.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `resolver_get_event_by_id`
 
@@ -36,7 +36,7 @@ Resolves what 'GetEventById' command you need to use based Data Source.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/command_resolver.py#L32"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/command_resolver.py#L46"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `resolver_get_events_by_id`
 

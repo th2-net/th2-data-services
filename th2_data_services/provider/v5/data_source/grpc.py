@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from __future__ import annotations
 from typing import Any
 
@@ -33,10 +34,7 @@ from th2_data_services.provider.v5.struct import (
     Provider5EventStruct,
     Provider5MessageStruct,
 )
-from th2_data_services.provider.v5.stub_builder import (
-    provider5_event_stub_builder,
-    provider5_message_stub_builder,
-)
+from th2_data_services.provider.v5.stub_builder import Provider5EventStubBuilder, Provider5MessageStubBuilder
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
@@ -54,8 +52,8 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
         url: str,
         event_struct: Provider5EventStruct = provider5_event_struct,
         message_struct: Provider5MessageStruct = provider5_message_struct,
-        event_stub_builder: IEventStub = provider5_event_stub_builder,
-        message_stub_builder: IMessageStub = provider5_message_stub_builder,
+        event_stub_builder: IEventStub = None,
+        message_stub_builder: IMessageStub = None,
     ):
         """GRPCProvider5DataSource constructor.
 
@@ -63,15 +61,17 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
             url: Url of rpt-data-provider.
             event_struct: Event structure that is supplied by rpt-data-provider.
             message_struct: Message structure that is supplied by rpt-data-provider.
-            event_stub_builder: Stub builder for broken events.
-            message_stub_builder: Stub builder for broken messages.
+            event_stub_builder: Stub builder for broken events. Provider5EventStubBuilder by default.
+            message_stub_builder: Stub builder for broken messages. Provider5MessageStubBuilder by default.
         """
         super().__init__(
             url=url,
             event_struct=event_struct,
             message_struct=message_struct,
-            event_stub_builder=event_stub_builder,
-            message_stub_builder=message_stub_builder,
+            event_stub_builder=Provider5EventStubBuilder() if event_stub_builder is None else event_stub_builder,
+            message_stub_builder=Provider5MessageStubBuilder()
+            if message_stub_builder is None
+            else message_stub_builder,
         )
 
         self.__provider_api = GRPCProvider5API(url)

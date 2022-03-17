@@ -14,14 +14,14 @@
 
 ---
 
-<a href="../../th2_data_services/provider/v5/data_source/grpc.py#L45"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/grpc.py#L43"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GRPCProvider5DataSource`
 DataSource class which provide work with rpt-data-provider. 
 
 Rpt-data-provider version: 5.x.y Protocol: GRPC 
 
-<a href="../../th2_data_services/provider/v5/data_source/grpc.py#L52"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/grpc.py#L50"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -30,8 +30,8 @@ __init__(
     url: 'str',
     event_struct: 'Provider5EventStruct' = Provider5EventStruct(EVENT_ID='eventId', PARENT_EVENT_ID='parentEventId', STATUS='successful', NAME='eventName', TYPE='type', BATCH_ID='batchId', IS_BATCHED='isBatched', EVENT_TYPE='eventType', END_TIMESTAMP='endTimestamp', START_TIMESTAMP='startTimestamp', ATTACHED_MESSAGES_IDS='attachedMessageIds', BODY='body'),
     message_struct: 'Provider5MessageStruct' = Provider5MessageStruct(DIRECTION='direction', SESSION_ID='sessionId', MESSAGE_TYPE='messageType', CONNECTION_ID='connectionId', SESSION_ALIAS='sessionAlias', SUBSEQUENCE='subsequence', SEQUENCE='sequence', TIMESTAMP='timestamp', BODY='body', BODY_BASE64='bodyBase64', TYPE='type', MESSAGE_ID='messageId', ATTACHED_EVENT_IDS='attachedEventIds'),
-    event_stub_builder: 'IEventStub' = <th2_data_services.provider.v5.stub_builder.Provider5EventStubBuilder object at 0x7f160cd28a60>,
-    message_stub_builder: 'IMessageStub' = <th2_data_services.provider.v5.stub_builder.Provider5MessageStubBuilder object at 0x7f160cd28ac0>
+    event_stub_builder: 'IEventStub' = None,
+    message_stub_builder: 'IMessageStub' = None
 )
 ```
 
@@ -44,8 +44,8 @@ GRPCProvider5DataSource constructor.
  - <b>`url`</b>:  Url of rpt-data-provider. 
  - <b>`event_struct`</b>:  Event structure that is supplied by rpt-data-provider. 
  - <b>`message_struct`</b>:  Message structure that is supplied by rpt-data-provider. 
- - <b>`event_stub_builder`</b>:  Stub builder for broken events. 
- - <b>`message_stub_builder`</b>:  Stub builder for broken messages. 
+ - <b>`event_stub_builder`</b>:  Stub builder for broken events. Provider5EventStubBuilder by default. 
+ - <b>`message_stub_builder`</b>:  Stub builder for broken messages. Provider5MessageStubBuilder by default. 
 
 
 ---

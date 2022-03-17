@@ -11,12 +11,15 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from __future__ import annotations
 
 import logging
 
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 from typing import TYPE_CHECKING
+
+from th2_data_services.provider.interfaces import IEventStub, IMessageStub
 
 if TYPE_CHECKING:
     from th2_data_services.provider.v5.interfaces.command import IHTTPProvider5Command
@@ -25,12 +28,11 @@ from th2_data_services.provider.interfaces.data_source import IHTTPProviderDataS
 from th2_data_services.provider.v5.struct import (
     provider5_event_struct,
     provider5_message_struct,
-)
-from th2_data_services.provider.v5.stub_builder import (
-    provider5_event_stub_builder,
-    provider5_message_stub_builder,
+    Provider5EventStruct,
+    Provider5MessageStruct,
 )
 from th2_data_services.provider.v5.provider_api.http import HTTPProvider5API
+from th2_data_services.provider.v5.stub_builder import Provider5EventStubBuilder, Provider5MessageStubBuilder
 
 logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
@@ -49,10 +51,10 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         chunk_length: int = 65536,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
-        event_struct=provider5_event_struct,
-        message_struct=provider5_message_struct,
-        event_stub_builder=provider5_event_stub_builder,
-        message_stub_builder=provider5_message_stub_builder,
+        event_struct: Provider5EventStruct = provider5_event_struct,
+        message_struct: Provider5MessageStruct = provider5_message_struct,
+        event_stub_builder: IEventStub = None,
+        message_stub_builder: IMessageStub = None,
         check_connect_timeout: (int, float) = 5,
     ):
         """HTTPProvider5DataSource constructor.
@@ -63,12 +65,20 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
             chunk_length: How much of the content to read in one chunk.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
-            event_struct: Struct of event from rpt-data-provider.
-            message_struct: Struct of message from rpt-data-provider.
-            event_stub_builder: Stub for event.
-            message_stub_builder: Stub for message.
+            event_struct: Event structure that is supplied by rpt-data-provider.
+            message_struct: Message structure that is supplied by rpt-data-provider.
+            event_stub_builder: Stub builder for broken events. Provider5EventStubBuilder by default.
+            message_stub_builder: Stub builder for broken messages. Provider5MessageStubBuilder by default.
         """
-        super().__init__(url, event_struct, message_struct, event_stub_builder, message_stub_builder)
+        super().__init__(
+            url=url,
+            event_struct=event_struct,
+            message_struct=message_struct,
+            event_stub_builder=Provider5EventStubBuilder() if event_stub_builder is None else event_stub_builder,
+            message_stub_builder=Provider5MessageStubBuilder()
+            if message_stub_builder is None
+            else message_stub_builder,
+        )
 
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler

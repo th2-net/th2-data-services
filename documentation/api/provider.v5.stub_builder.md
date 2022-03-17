@@ -7,10 +7,6 @@
 
 
 
-**Global Variables**
----------------
-- **provider5_event_stub_builder**
-- **provider5_message_stub_builder**
 
 
 ---

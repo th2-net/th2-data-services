@@ -11,14 +11,14 @@
 
 ---
 
-<a href="../../th2_data_services/provider/v5/adapters/messages_adapters.py#L5"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/adapters/messages_adapters.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `AdapterDeleteMessageWrappers`
 Adapter that delete unnecessary wrappers in events. 
 
 It used for message to which an AdaptorGRPCObjectToDict has been applied. 
 
-<a href="../../th2_data_services/provider/v5/adapters/messages_adapters.py#L11"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/adapters/messages_adapters.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -41,7 +41,7 @@ AdapterDeleteMessageWrappers constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/adapters/messages_adapters.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/adapters/messages_adapters.py#L33"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
