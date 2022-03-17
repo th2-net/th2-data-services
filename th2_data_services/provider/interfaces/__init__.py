@@ -12,18 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import annotations
-
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from th2_data_services.data_source import IDataSource
-
-
-class ICommand(ABC):
-    """High level interface for Command."""
-
-    @abstractmethod
-    def handle(self, data_source: IDataSource):
-        pass
+from .command import *
+from .data_source import *
+from .source_api import *
+from .struct import *
+from .stub_builder import *

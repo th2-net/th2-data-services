@@ -10,7 +10,8 @@ class Filter:
     def __init__(
         self, name: str, values: Union[List[str], Tuple[str], str], negative: bool = False, conjunct: bool = False
     ):
-        """
+        """Filter constructor.
+
         Args:
             name (str): Filter name.
             values (Union[List[str], Tuple[str], str]): One string with filter value or list of filter values.
@@ -19,7 +20,6 @@ class Filter:
             conjunct (bool): If true, each of the specific filter values should be applied
                 If false, at least one of the specific filter values must be applied.
         """
-
         self.name = name
 
         if isinstance(values, (list, tuple)):

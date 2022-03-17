@@ -20,10 +20,17 @@ class SSEClient(sseclient.SSEClient):
     """Patch for sseclient-py to get availability to configure decode error handler."""
 
     def __init__(self, event_source, char_enc="utf-8", decode_errors_handler="strict"):
+        """Initialize the SSE client over an existing, ready to consume event source.
+
+        The event source is expected to be a binary stream and have a close()
+        method. That would usually be something that implements
+        io.BinaryIOBase, like an httplib or urllib3 HTTPResponse object.
+        """
         super(SSEClient, self).__init__(event_source, char_enc)
         self._decode_errors_handler = decode_errors_handler
 
     def events(self):
+        """Returns events in generator style."""
         for chunk in self._read():
             event = sseclient.Event()
             # Split before decoding so splitlines() only uses \r and \n

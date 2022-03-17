@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from th2_data_services.provider.stub_builder import IEventStub, IMessageStub
+from th2_data_services.provider.interfaces.stub_builder import IEventStub, IMessageStub
 from th2_data_services.provider.v5.struct import (
     provider5_event_struct,
     provider5_message_struct,
@@ -21,11 +21,21 @@ from th2_data_services.provider.v5.struct import (
 
 class Provider5EventStubBuilder(IEventStub):
     def __init__(self, event_struct=provider5_event_struct):
+        """Event stub builder for Provider v5.
+
+        Args:
+            event_struct: Event struct class.
+        """
         self.event_fields = event_struct
         super().__init__()  # Requirement to define fields for the template earlier.
 
     @property
     def template(self) -> dict:
+        """Event stub template.
+
+        Returns:
+            (dict) Event stub template.
+        """
         return {
             self.event_fields.ATTACHED_MESSAGES_IDS: [],
             self.event_fields.BATCH_ID: "Broken_Event",
@@ -43,11 +53,21 @@ class Provider5EventStubBuilder(IEventStub):
 
 class Provider5MessageStubBuilder(IMessageStub):
     def __init__(self, message_struct=provider5_message_struct):
+        """Event stub builder for Provider v5.
+
+        Args:
+            message_struct: Message struct class.
+        """
         self.message_fields = message_struct
         super().__init__()  # Requirement to define fields for the template earlier.
 
     @property
     def template(self) -> dict:
+        """Message stub template.
+
+        Returns:
+            (dict) Message stub template.
+        """
         return {
             self.message_fields.DIRECTION: None,
             self.message_fields.SESSION_ID: "Broken_Message",

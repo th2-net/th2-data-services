@@ -23,6 +23,7 @@ class IStub(ABC):
     REQUIRED_FIELD = RequiredField()
 
     def __init__(self):
+        """Stab interface."""
         self._required_fields: list = self._define_required_fields()
 
     def _define_required_fields(self) -> List[str]:
@@ -58,6 +59,12 @@ class IStub(ABC):
 class IEventStub(IStub):
     """Just to mark Event Stub class."""
 
+    def __repr__(self):
+        return self.__class__.__name__
+
 
 class IMessageStub(IStub):
     """Just to mark Message Stub class."""
+
+    def __repr__(self):
+        return self.__class__.__name__

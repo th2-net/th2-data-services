@@ -16,6 +16,7 @@ from codecs import register_error
 
 
 def handler(err: UnicodeDecodeError):
+    """Decode error handler that tries change utf-8 character to Unicode."""
     return chr(err.object[err.start]), err.end
 
 

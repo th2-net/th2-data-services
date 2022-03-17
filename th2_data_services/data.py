@@ -11,7 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import copy
 import pickle
 import pprint
 from os import rename
@@ -34,7 +34,8 @@ class Data:
     """
 
     def __init__(self, data: DataSet, cache: bool = False, workflow: WorkFlow = None, parents_cache: List[str] = None):
-        """
+        """Data constructor.
+
         Args:
             data: Data source.
             workflow: Workflow.
@@ -45,8 +46,8 @@ class Data:
         self._len = None
         self._data = data
         self._workflow = [] if workflow is None else workflow
-        self._len = None
         self._length_hint = None  # The value is populated when we use limit method.
+        self._limit_num = None
         self._cache_status = cache
         self._parents_cache = parents_cache if parents_cache else []
         self._finalizer = finalize(self, self.__remove)
@@ -82,6 +83,7 @@ class Data:
         return True
 
     def __calc_len(self) -> int:
+        # TODO - request rpt-data-provide provide "select count"
         for _ in self:
             pass
         return self._len
@@ -112,6 +114,14 @@ class Data:
             if interruption:
                 self.__delete_cache()
 
+    def _build_workflow(self, workflow):
+        new_workflow = copy.deepcopy(workflow)
+        for w in new_workflow[::-1]:
+            if w["type"] == "limit":
+                w["callback"] = self._build_limit_callback(w["callback"].limit)
+
+        return new_workflow
+
     def __load_data(self, cache: bool = False) -> DataGenerator:
         """Loads data from cache or data.
 
@@ -129,9 +139,16 @@ class Data:
             if cache_filename:
                 working_data = self.__load_file(cache_filename)
                 workflow = self.__get_unapplied_workflow(cache_filename)
+
             else:
                 working_data = self._data() if callable(self._data) else self._data
                 workflow = self._workflow
+
+            if self.__check_file_recording():
+                # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
+                cache = False
+
+            workflow = self._build_workflow(workflow)
 
             if self.__check_file_recording():
                 # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
@@ -330,17 +347,7 @@ class Data:
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         return Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
 
-    def limit(self, num: int) -> "Data":
-        """Limits the stream to `num` entries.
-
-        Args:
-            num: How many records will be provided.
-
-        Returns:
-            Data: Data object.
-
-        """
-
+    def _build_limit_callback(self, num):
         def callback(r):
             if callback.pushed < num:
                 callback.pushed += 1
@@ -349,12 +356,31 @@ class Data:
                 callback.pushed = 0
                 raise StopIteration
 
+        callback.limit = num
         callback.pushed = 0
+        return callback
 
-        new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": callback}]
+    def limit(self, num: int) -> "Data":
+        """Limits the stream to `num` entries.
+
+        Args:
+            num: How many records will be provided.
+
+        Returns:
+            Data: Data object.
+        """
+        nwf = []
+        for step in copy.deepcopy(self._workflow):
+            if step["type"] == "limit":
+                step["callback"] = self._build_limit_callback(step["callback"].limit)
+
+            nwf.append(step)
+
+        new_workflow = [*nwf, {"type": "limit", "callback": self._build_limit_callback(num)}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
         data_obj._length_hint = num
+        data_obj._limit_num = num
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
