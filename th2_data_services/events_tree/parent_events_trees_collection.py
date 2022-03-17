@@ -19,9 +19,7 @@ from treelib import Node, Tree
 from th2_data_services import Data
 from th2_data_services.events_tree import EventsTree
 from th2_data_services.events_tree.events_trees_collection import EventsTreesCollection
-from th2_data_services.provider.data_source import IProviderDataSource
-from th2_data_services.provider.struct import IEventStruct
-from th2_data_services.provider.v5.struct import provider5_event_struct
+from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 
 
 class ParentEventsTreesCollection(EventsTreesCollection):
@@ -36,18 +34,17 @@ class ParentEventsTreesCollection(EventsTreesCollection):
         data: Data,
         data_source: IProviderDataSource = None,
         preserve_body: bool = False,
-        event_struct: IEventStruct = provider5_event_struct,
         event_stub_builder=None,
     ):
-        """Args:
-        data: Data
-        data_source: Data Source
-        preserve_body: If True then save body of event.
-        event_struct: Event struct.
-        event_stub_builder: Event Stub Builder.
+        """ParentEventsTreesCollection constructor.
+
+        Args:
+            data: Data object.
+            data_source: Data Source object.
+            preserve_body: If True then save body of event.
+            event_stub_builder: Event Stub Builder.
         """
         self._preserve_body = preserve_body
-        self._event_struct = event_struct
         self._event_stub_builder = event_stub_builder
         self._data_source = data_source
 
@@ -80,6 +77,7 @@ class ParentEventsTreesCollection(EventsTreesCollection):
         """Fills tree recursively.
 
         Args:
+            nodes: Events nodes.
             current_tree: Tree for fill.
             parent_id: Parent even id.
         """

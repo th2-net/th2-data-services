@@ -97,7 +97,7 @@ class EventsTree:
         return self._tree.root
 
     def get_root(self) -> Th2Event:
-        """Gets root event"""
+        """Gets root event."""
         return self.get_event(self._tree.root)
 
     def get_leaves(self) -> Tuple[Th2Event]:

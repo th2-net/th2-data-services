@@ -16,7 +16,7 @@ from typing import Union, Optional
 from th2_data_services import Data
 from th2_data_services.events_tree import ParentEventsTreesCollection
 from th2_data_services.events_tree.exceptions import FieldIsNotExist
-from th2_data_services.provider.struct import IEventStruct
+from th2_data_services.provider.interfaces.struct import IEventStruct
 from th2_data_services.provider.v5.data_source import GRPCProvider5DataSource, HTTPProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
@@ -32,9 +32,19 @@ class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollection):
         event_struct: IEventStruct = provider5_event_struct,
         stub: bool = False,
     ):
-        super().__init__(data=data, preserve_body=preserve_body, event_struct=event_struct)
+        """ParentsEventsTreesCollectionProvider5 constructor.
+
+        Args:
+            data: Data object.
+            data_source: Data Source object.
+            preserve_body: If True it will preserve 'body' field in the Events.
+            event_struct: Event struct object.
+            stub: If True it will create stub when event is broken.
+        """
+        super().__init__(data=data, preserve_body=preserve_body)
         self._stub_status = stub
         self._data_source = data_source
+        self._event_struct = event_struct
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
