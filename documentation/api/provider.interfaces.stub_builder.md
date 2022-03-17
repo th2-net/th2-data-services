@@ -99,7 +99,7 @@ build(fields: dict)
 
 ---
 
-<a href="../../th2_data_services/provider/interfaces/stub_builder.py#L63"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/interfaces/stub_builder.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IMessageStub`
 Just to mark Message Stub class. 

@@ -79,3 +79,7 @@ class Provider5MessageStubBuilder(IMessageStub):
             self.message_fields.MESSAGE_ID: self.REQUIRED_FIELD,
             self.message_fields.ATTACHED_EVENT_IDS: [],
         }
+
+
+provider5_event_stub_builder = Provider5EventStubBuilder()
+provider5_message_stub_builder = Provider5MessageStubBuilder()

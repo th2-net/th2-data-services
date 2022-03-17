@@ -59,6 +59,12 @@ class IStub(ABC):
 class IEventStub(IStub):
     """Just to mark Event Stub class."""
 
+    def __repr__(self):
+        return self.__class__.__name__
+
 
 class IMessageStub(IStub):
     """Just to mark Message Stub class."""
+
+    def __repr__(self):
+        return self.__class__.__name__
