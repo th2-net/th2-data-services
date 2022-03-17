@@ -16,7 +16,7 @@ from typing import List, Tuple, Generator, Callable, Optional, Union
 from treelib import Tree, Node
 from treelib.exceptions import NodeIDAbsentError
 
-from th2_data_services.events_tree.exceptions import EventIdNotInTree
+from th2_data_services.interfaces.events_tree.exceptions import EventIdNotInTree
 
 Th2Event = dict
 

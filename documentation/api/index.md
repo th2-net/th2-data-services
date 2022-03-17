@@ -6,16 +6,16 @@
 
 - [`data`](./data.md#module-data)
 - [`decode_error_handler`](./decode_error_handler.md#module-decode_error_handler)
-- [`events_tree`](./events_tree.md#module-events_tree)
-- [`events_tree.events_tree`](./events_tree.events_tree.md#module-events_treeevents_tree)
-- [`events_tree.events_trees_collection`](./events_tree.events_trees_collection.md#module-events_treeevents_trees_collection)
-- [`events_tree.exceptions`](./events_tree.exceptions.md#module-events_treeexceptions)
-- [`events_tree.parent_events_trees_collection`](./events_tree.parent_events_trees_collection.md#module-events_treeparent_events_trees_collection)
 - [`filter`](./filter.md#module-filter)
 - [`interfaces`](./interfaces.md#module-interfaces)
 - [`interfaces.adapter`](./interfaces.adapter.md#module-interfacesadapter)
 - [`interfaces.command`](./interfaces.command.md#module-interfacescommand)
 - [`interfaces.data_source`](./interfaces.data_source.md#module-interfacesdata_source)
+- [`interfaces.events_tree`](./interfaces.events_tree.md#module-interfacesevents_tree)
+- [`interfaces.events_tree.events_tree`](./interfaces.events_tree.events_tree.md#module-interfacesevents_treeevents_tree)
+- [`interfaces.events_tree.events_trees_collection`](./interfaces.events_tree.events_trees_collection.md#module-interfacesevents_treeevents_trees_collection)
+- [`interfaces.events_tree.exceptions`](./interfaces.events_tree.exceptions.md#module-interfacesevents_treeexceptions)
+- [`interfaces.events_tree.parent_events_trees_collection`](./interfaces.events_tree.parent_events_trees_collection.md#module-interfacesevents_treeparent_events_trees_collection)
 - [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
 - [`provider`](./provider.md#module-provider)
 - [`provider.adapters`](./provider.adapters.md#module-provideradapters)
@@ -54,17 +54,17 @@
 ## Classes
 
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
-- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree - is a useful wrapper for your retrieved data.
-- [`events_trees_collection.EventsTreesCollection`](./events_tree.events_trees_collection.md#class-eventstreescollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
-- [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
-- [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
-- [`parent_events_trees_collection.ParentEventsTreesCollection`](./events_tree.parent_events_trees_collection.md#class-parenteventstreescollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`filter.Filter`](./filter.md#class-filter): The class for using rpt-data-provider filters API.
 - [`adapter.IAdapter`](./interfaces.adapter.md#class-iadapter): High level interface for Adapter.
 - [`adapter.IEventAdapter`](./interfaces.adapter.md#class-ieventadapter): Interface of Adapter for events.
 - [`adapter.IMessageAdapter`](./interfaces.adapter.md#class-imessageadapter): Interface of Adapter for messages.
 - [`command.ICommand`](./interfaces.command.md#class-icommand): High level interface for Command.
 - [`data_source.IDataSource`](./interfaces.data_source.md#class-idatasource)
+- [`events_tree.EventsTree`](./interfaces.events_tree.events_tree.md#class-eventstree): EventsTree - is a useful wrapper for your retrieved data.
+- [`events_trees_collection.EventsTreesCollection`](./interfaces.events_tree.events_trees_collection.md#class-eventstreescollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
+- [`exceptions.EventIdNotInTree`](./interfaces.events_tree.exceptions.md#class-eventidnotintree)
+- [`exceptions.FieldIsNotExist`](./interfaces.events_tree.exceptions.md#class-fieldisnotexist)
+- [`parent_events_trees_collection.ParentEventsTreesCollection`](./interfaces.events_tree.parent_events_trees_collection.md#class-parenteventstreescollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
 - [`command.IGRPCProviderCommand`](./provider.interfaces.command.md#class-igrpcprovidercommand): Interface of command for rpt-data-provider which works via GRPC.

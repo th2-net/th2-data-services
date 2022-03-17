@@ -16,8 +16,8 @@ from typing import List, Dict, Optional
 from treelib import Node, Tree
 
 from th2_data_services import Data
-from th2_data_services.events_tree import EventsTree
-from th2_data_services.events_tree.events_trees_collection import EventsTreesCollection
+from th2_data_services.interfaces.events_tree import EventsTree
+from th2_data_services.interfaces.events_tree.events_trees_collection import EventsTreesCollection
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 
 

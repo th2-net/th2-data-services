@@ -15,8 +15,8 @@
 from typing import Union, Optional
 
 from th2_data_services import Data
-from th2_data_services.events_tree import ParentEventsTreesCollection
-from th2_data_services.events_tree.exceptions import FieldIsNotExist
+from th2_data_services.interfaces.events_tree import ParentEventsTreesCollection
+from th2_data_services.interfaces.events_tree.exceptions import FieldIsNotExist
 from th2_data_services.provider.interfaces.struct import IEventStruct
 from th2_data_services.provider.v5.data_source import GRPCProvider5DataSource, HTTPProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct

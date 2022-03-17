@@ -18,9 +18,9 @@ from typing import List, Dict, Optional, Union, Generator, Tuple, Callable
 from treelib import Node, Tree
 
 from th2_data_services import Data
-from th2_data_services.events_tree.events_tree import EventsTree
-from th2_data_services.events_tree.events_tree import Th2Event
-from th2_data_services.events_tree.exceptions import EventIdNotInTree
+from th2_data_services.interfaces.events_tree.events_tree import EventsTree
+from th2_data_services.interfaces.events_tree.events_tree import Th2Event
+from th2_data_services.interfaces.events_tree.exceptions import EventIdNotInTree
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
