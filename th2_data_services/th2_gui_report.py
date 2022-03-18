@@ -8,40 +8,31 @@ class Th2GUIReport:
             link_provider (str): link to provider.
 
         """
-        self._link_provider = self.add_http(self.add_slash(link_provider))
+        self._link_provider = self.__normalize_link(link_provider)
 
-    def add_http(self, link: str):
-        """Bringing links to a single form: add 'http://' to the beginning of the link.
+    def __normalize_link(self, link: str) -> str:
+        """Bringing links to a single form.
+
+        Add 'http://' to the beginning of the link.
+        Add slash to the ending of link.
 
         Args:
             link (str): link for editing.
 
         Returns:
-            link (str): link with 'http://' in beginning.
+            Normalize link.
 
         """
-        index_http = link.find("http", 0)
-        if index_http == -1:
+        find_http = link.startswith("http", 0)
+        if find_http == False:
             link = "http://" + link
 
-        return link
-
-    def add_slash(self, link):
-        """Bringing links to a single form: add '/' to the ending of the link.
-
-        Args:
-            link (str): link for editing.
-
-        Returns:
-            link (str): link with '/' in ending.
-
-        """
         if link[-1] != "/":
             link = link + "/"
 
         return link
 
-    def get_event_link(self, event_id):
+    def get_event_link(self, event_id) -> str:
         """Create link with event id.
 
         Args:
@@ -51,9 +42,12 @@ class Th2GUIReport:
             Link with event id.
 
         """
-        return f"{self._link_provider}?eventId={self.add_slash(event_id)}"
+        if event_id[-1] == "/":
+            event_id = event_id[:-1:]
 
-    def get_message_link(self, message_id):
+        return f"{self._link_provider}?eventId={event_id}"
+
+    def get_message_link(self, message_id) -> str:
         """Create link with message id.
 
         Args:
@@ -63,4 +57,7 @@ class Th2GUIReport:
             Link with message id.
 
         """
-        return f"{self._link_provider}?messageId={self.add_slash(message_id)}"
+        if message_id[-1] == "/":
+            message_id = message_id[:-1:]
+
+        return f"{self._link_provider}?messageId={message_id}"
