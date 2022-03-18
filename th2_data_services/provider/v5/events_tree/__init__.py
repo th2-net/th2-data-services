@@ -13,4 +13,4 @@
 #  limitations under the License.
 
 from .events_tree_collection import EventsTreeCollectionProvider5
-from .parent_events_tree_collection import ParentsEventsTreesCollectionProvider5
+from .parent_events_tree_collection import ParentEventsTreeCollectionProvider5

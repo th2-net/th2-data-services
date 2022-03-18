@@ -7,10 +7,7 @@ from th2_data_services.events_tree import EventsTree
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
 from th2_data_services.filter import Filter
-from th2_data_services.provider.v5.events_tree import (
-    EventsTreesCollectionProvider5,
-    ParentsEventsTreesCollectionProvider5,
-)
+from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5, ParentEventsTreeCollectionProvider5
 
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
@@ -125,12 +122,12 @@ events_without_types_with_batch.use_cache(True)
 # [4.1] Building the EventsTreesCollection.
 
 # If you don't specify data_source for the tree then it doesn't recover referenced events.
-collection = EventsTreesCollectionProvider5(events)
+collection = EventsTreeCollectionProvider5(events)
 
 # Detached events isn't empty.
 assert collection.detached_events
 
-collection = EventsTreesCollectionProvider5(events, data_source=data_source)
+collection = EventsTreeCollectionProvider5(events, data_source=data_source)
 # Detached events is empty because the tree recover referenced events.
 assert not collection.detached_events
 
@@ -195,6 +192,6 @@ parentless_trees: List[EventsTree] = collection.get_parentless_trees()
 
 # [4.4] Working with ParentEventsTreesCollection.
 # ParentEventsTreesCollection is tree like EventsTreesCollection but it has only events that have references.
-collection = ParentsEventsTreesCollectionProvider5(events, data_source=data_source)
+collection = ParentEventsTreeCollectionProvider5(events, data_source=data_source)
 
 collection.show()

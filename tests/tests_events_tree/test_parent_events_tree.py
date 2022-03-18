@@ -1,11 +1,11 @@
 from typing import List, NamedTuple
 
-from th2_data_services.provider.v5.events_tree import ParentsEventsTreesCollectionProvider5
+from th2_data_services.provider.v5.events_tree import ParentEventsTreeCollectionProvider5
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
 def test_build_tree(general_data: List[dict], test_parent_events_tree: NamedTuple):
-    collection = ParentsEventsTreesCollectionProvider5(general_data)
+    collection = ParentEventsTreeCollectionProvider5(general_data)
     tree = collection.get_trees()[0]
 
     assert [
