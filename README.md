@@ -14,7 +14,7 @@ Table of Contents
    * [2.2. Example](#22-example)
    * [2.3. Short theory](#23-short-theory)
       * [Terms](#terms)
-      * [The main idea](#the-main-idea)
+      * [Concept](#concept)
    * [2.4. Links](#24-links)
 * [3. API](#3-api)
 * [4. Examples](#4-examples)
@@ -44,8 +44,10 @@ Workflow manipulation tools allows you:
 - Transforming stream data (`Data.map` method)
 - Limiting the number of processed streaming data (`Data.limit` method)
 
-There is also another part of _data services_ - [th2-data-services-utils](https://github.com/th2-net/th2-data-services-utils). 
-It's a set of tools to perform the most common analysis tasks.
+There is also another part of _data services_
+
+- [th2-data-services-utils](https://github.com/th2-net/th2-data-services-utils). It's a set of tools to perform the most
+  common analysis tasks.
 
 # 2. Getting started
 
@@ -192,8 +194,7 @@ supports aggregate operations.
 
 ### Terms
 
-- **Workflow**: TODO !!!!!!!!!!!!.
-- **Data object**: An object of `Data` class which is wrapper under stream.
+- **Data object**: An instance of `Data` class which is wrapper under stream.
 - **Sequence of elements**:
   A _Data object_ provides an interface to a sequenced set of values of a specific element type. Stream inside the _Data
   object_ **don’t actually store** elements; they are computed on demand.
@@ -209,6 +210,7 @@ supports aggregate operations.
   achieve it.
 - **Aggregate operations**:
   Common operations such as filter, map, limit and so on.
+- **Workflow**: An ordered set of _Aggregate operations_.
 - **Data caching**:
   The _Data object_ provides the ability to use the cache. The cache works for each _Data object_, that is, you choose
   which _Data object_ you want to save. The _Data object_ cache is saved after the first iteration, but the iteration
@@ -235,9 +237,26 @@ operations:
 - **Internal iteration**: In contrast to collections, which are iterated explicitly (external iteration), stream
   operations do the iteration behind the scenes for you. Note, it doesn't mean you cannot iterate the _Data object_.
 
-### The main idea
+### Concept
 
-We use TODO IMAGE
+The library describes the high-level interfaces `ISourceAPI`, `IDataSource` and `ICommand`.
+
+Any data source must be described by the `IDataSource` abstract class. These can be _FileDataSource_, _CSVDataSource_, _
+DBDataSource_ and other.
+
+Usually, data sources have some kind of API. Databases - provide SQL language, when working with a file, you can read
+line by line, etc. This API is described by the `ISourceAPI` class. Because different versions of the same data source
+may have different API, it is better to create a class for each version.
+
+Generally, data source APIs are hidden behind convenient interfaces. The role of these interfaces is played
+by `ICommand`
+classes.
+
+Thus, the native `ProviderDataSource` and the set of commands for it are described. This approach provides great
+opportunities for extension. You can easily create your own unique commands for _ProviderDataSource_, as well as entire
+_DataSource_ classes.
+
+![Data stream pipeline](documentation/img/concept.png)
 
 ## 2.4. Links
 
