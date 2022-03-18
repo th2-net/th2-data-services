@@ -113,10 +113,10 @@ class EventsTree:
         Raises:
             EventIdNotInTree: If event id not in the tree.
         """
-        children: List[Node] = self._tree.children(id)
-        if not children:
+        try:
+            return tuple(child.data for child in self._tree.children(id))
+        except NodeIDAbsentError:
             raise EventIdNotInTree(id)
-        return tuple(child.data for child in children)
 
     def get_children_iter(self, id: str) -> Generator[Th2Event, None, None]:
         """Gets children as iterator for an event.

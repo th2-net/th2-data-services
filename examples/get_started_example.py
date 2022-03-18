@@ -1,10 +1,16 @@
 from collections import Generator
 from datetime import datetime
+from typing import Tuple, List, Optional
 
 from th2_data_services import Data
+from th2_data_services.events_tree import EventsTree
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
 from th2_data_services.filter import Filter
+from th2_data_services.provider.v5.events_tree import (
+    EventsTreesCollectionProvider5,
+    ParentsEventsTreesCollectionProvider5,
+)
 
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
@@ -114,3 +120,81 @@ events_types_with_batch = events_with_batch.map(lambda record: {"eventType": rec
 
 events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
 events_without_types_with_batch.use_cache(True)
+
+# [4] Working with a EventsTree and EventsTreesCollections.
+# [4.1] Building the EventsTreesCollection.
+
+# If you don't specify data_source for the tree then it doesn't recover referenced events.
+collection = EventsTreesCollectionProvider5(events)
+
+# Detached events isn't empty.
+assert collection.detached_events
+
+collection = EventsTreesCollectionProvider5(events, data_source=data_source)
+# Detached events is empty because the tree recover referenced events.
+assert not collection.detached_events
+
+# The collection has EventsTrees each with an tree of events.
+# Using Collection and EventsTrees, you can work flexibly with events.
+
+# [4.1.1] Get leaves of all trees.
+leaves: Tuple[dict] = collection.get_leaves()
+
+# [4.1.2] Get roots of all trees.
+roots: List[str] = collection.get_roots_ids()
+
+# [4.1.3] Find event in all trees.
+find_event: Optional[dict] = collection.find(lambda event: "Send message" in event["eventType"])
+
+# [4.1.4] Find all events in all trees.
+find_events: List[dict] = collection.findall(lambda event: event["successful"] is True)
+
+# [4.1.5] Find ancestor of event.
+ancestor: Optional[dict] = collection.find_ancestor(
+    "8bbe3717-cf59-11eb-a3f7-094f904c3a62", filter=lambda event: "RootEvent" in event["eventName"]
+)
+
+# [4.1.6] Get children of event.
+children: Tuple[dict] = collection.get_children("814422e1-9c68-11eb-8598-691ebd7f413d")
+
+# [4.1.7] Get subtree for specified event.
+subtree: EventsTree = collection.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
+
+# [4.1.8] Get full path to the event.
+# View as [ancestor_root, ancestor_level1, ancestor_level2, event]
+event_path: List[dict] = collection.get_full_path("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
+
+# [4.1.9] Get parent of the event.
+parent = collection.get_parent("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
+
+# [4.1.10] Append new event for the collection.
+collection.append_element(
+    event={
+        "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
+        "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",
+        "eventName": "StubEvent",
+    }
+)
+
+# [4.1.11] Show entire collection.
+collection.show()
+
+# [4.2] Working with the EventsTree.
+# EventsTree has the same methods as EventsTreeCollection, but only for its own tree.
+
+# [4.2.1] Gets trees of collection.
+trees: List[EventsTree] = collection.get_trees()
+tree: EventsTree = trees[0]
+
+# But EventsTree provides a work with the tree, but does not modify it.
+# If you want to modify the tree, use EventsTreeCollections.
+
+# [4.3] Working with ParentlessTree.
+# ParentlessTree is EventsTree which has detached events with stubs.
+parentless_trees: List[EventsTree] = collection.get_parentless_trees()
+
+# [4.4] Working with ParentEventsTreesCollection.
+# ParentEventsTreesCollection is tree like EventsTreesCollection but it has only events that have references.
+collection = ParentsEventsTreesCollectionProvider5(events, data_source=data_source)
+
+collection.show()
