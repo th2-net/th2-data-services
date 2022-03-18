@@ -159,6 +159,10 @@ User will get original byte now.
 
 # v1.0.0
 
+### Features
+
+1. Add module th2_gui_report for create link by event id or message id
+
 ## BugFixes
 
 1. [TH2-3168] Fixed iterations in nested loops for Data object with limit.

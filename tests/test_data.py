@@ -451,12 +451,37 @@ def test_break_cycle(general_data: List[dict]):
     assert second_cycle == 21
 
 
-def test_link_gui():
-    gui = Th2GUIReport("http://th2-qa:30000/th2-commonv3/")
-    result_event_link = gui.get_event_link("fcace9a4-8fd8-11ec-98fc-038f439375a0")
-    result_message_link = gui.get_message_link("fix01:first:1600854429908302153")
+def test_link_provider():
+    link_gui1 = Th2GUIReport("th2-qa:30000/th2-commonv3/")
+    link_gui2 = Th2GUIReport("th2-qa:30000/th2-commonv3")
+    link_gui3 = Th2GUIReport("http://th2-qa:30000/th2-commonv3/")
+    link_gui4 = Th2GUIReport("http://th2-qa:30000/th2-commonv3")
+
+    result = "http://th2-qa:30000/th2-commonv3/"
 
     assert (
-        result_event_link == "http://th2-qa:30000/th2-commonv3/?eventId=fcace9a4-8fd8-11ec-98fc-038f439375a0"
-        and result_message_link == "http://th2-qa:30000/th2-commonv3/?messageId=fix01:first:1600854429908302153"
+        link_gui1._link_provider == result
+        and link_gui2._link_provider == result
+        and link_gui3._link_provider == result
+        and link_gui4._link_provider == result
     )
+
+
+def test_link_gui_with_event_id():
+    gui = Th2GUIReport("th2-qa:30000/th2-commonv3/")
+    link_event_id1 = gui.get_event_link("fcace9a4-8fd8-11ec-98fc-038f439375a0")
+    link_event_id2 = gui.get_event_link("fcace9a4-8fd8-11ec-98fc-038f439375a0/")
+
+    result = f"http://th2-qa:30000/th2-commonv3/?eventId=fcace9a4-8fd8-11ec-98fc-038f439375a0/"
+
+    assert link_event_id1 == result and link_event_id2 == result
+
+
+def test_link_gui_with_message_id():
+    gui = Th2GUIReport("th2-qa:30000/th2-commonv3/")
+    link_message_id1 = gui.get_message_link("fix01:first:1600854429908302153")
+    link_message_id2 = gui.get_message_link("fix01:first:1600854429908302153/")
+
+    result = f"http://th2-qa:30000/th2-commonv3/?messageId=fix01:first:1600854429908302153/"
+
+    assert link_message_id1 == result and link_message_id2 == result
