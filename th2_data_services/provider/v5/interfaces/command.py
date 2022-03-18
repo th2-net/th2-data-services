@@ -11,9 +11,10 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from abc import abstractmethod
 
-from th2_data_services.provider.command import IHTTPProviderCommand, IGRPCProviderCommand
+from th2_data_services.provider.interfaces.command import IHTTPProviderCommand, IGRPCProviderCommand
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 

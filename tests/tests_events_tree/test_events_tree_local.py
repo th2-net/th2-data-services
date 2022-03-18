@@ -3,7 +3,7 @@ from datetime import datetime
 from th2_data_services import Data
 from th2_data_services.provider.v5.commands.http import GetEvents
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
-from th2_data_services.provider.v5.events_tree.events_trees_collection import EventsTreesCollectionProvider5
+from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 
 
 def test_recover_unknown_events():
@@ -16,10 +16,10 @@ def test_recover_unknown_events():
     )
 
     before_tree = events.len
-    collections = EventsTreesCollectionProvider5(events, data_source=data_source)
-    after_tree = len(collections)
+    collection = EventsTreeCollectionProvider5(events, data_source=data_source)
+    after_tree = len(collection)
 
-    assert not collections.detached_events and before_tree != after_tree
+    assert not collection.detached_events and before_tree != after_tree
 
 
 def test_recover_unknown_events_with_stub_events():
@@ -47,10 +47,10 @@ def test_recover_unknown_events_with_stub_events():
     events: list = [event for event in events] + [broken_event]
 
     before_tree = len(events)
-    collections = EventsTreesCollectionProvider5(events, data_source=data_source, stub=True)
-    after_tree = len(collections)
+    collection = EventsTreeCollectionProvider5(events, data_source=data_source, stub=True)
+    after_tree = len(collection)
 
-    assert collections.detached_events == {"Broken_Event": [broken_event]} and before_tree != after_tree
+    assert collection.detached_events == {"Broken_Event": [broken_event]} and before_tree != after_tree
 
 
 def test_preserve_body():
@@ -62,8 +62,8 @@ def test_preserve_body():
         )
     )
 
-    collections = EventsTreesCollectionProvider5(events, data_source=data_source, preserve_body=True)
+    collection = EventsTreeCollectionProvider5(events, data_source=data_source, preserve_body=True)
 
     assert all(
-        [True if event.get("body") is not None else False for event in collections.get_trees()[0].get_all_events()]
+        [True if event.get("body") is not None else False for event in collection.get_trees()[0].get_all_events()]
     )

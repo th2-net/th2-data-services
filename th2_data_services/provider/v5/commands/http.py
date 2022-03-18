@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from typing import Generator, List
 import json
 import simplejson
@@ -18,10 +19,10 @@ from datetime import datetime, timezone
 from functools import partial
 
 from th2_data_services import Filter, Data
-from th2_data_services.provider.v5.command import IHTTPProvider5Command
+from th2_data_services.provider.v5.interfaces.command import IHTTPProvider5Command
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
-from th2_data_services.provider.command import IProviderAdaptableCommand
+from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.sse_client import SSEClient
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterSSE
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
@@ -32,7 +33,7 @@ logger = logging.getLogger("th2_data_services")
 logger.setLevel(logging.DEBUG)
 
 
-class GetEventById(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id.
@@ -42,7 +43,8 @@ class GetEventById(IHTTPProvider5Command, IProviderAdaptableCommand):
     """
 
     def __init__(self, id: str):
-        """
+        """GetEventById constructor.
+
         Args:
             id: Event id.
 
@@ -51,7 +53,7 @@ class GetEventById(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._id = id
         self._stub_status = False
 
-    def handle(self, data_source: HTTPProvider5DataSource) -> dict:
+    def handle(self, data_source: HTTPProvider5DataSource) -> dict:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
         url = api.get_url_find_event_by_id(self._id)
 
@@ -74,7 +76,7 @@ class GetEventById(IHTTPProvider5Command, IProviderAdaptableCommand):
         return self
 
 
-class GetEventsById(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the events by ids.
@@ -84,7 +86,8 @@ class GetEventsById(IHTTPProvider5Command, IProviderAdaptableCommand):
     """
 
     def __init__(self, ids: List[str]):
-        """
+        """GetEventsById constructor.
+
         Args:
             ids: Event id list.
 
@@ -93,7 +96,7 @@ class GetEventsById(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._ids: ids = ids
         self._stub_status = False
 
-    def handle(self, data_source: HTTPProvider5DataSource):
+    def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         result = []
         for event_id in self._ids:
             try:
@@ -113,7 +116,7 @@ class GetEventsById(IHTTPProvider5Command, IProviderAdaptableCommand):
         return self
 
 
-class GetEventsSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
@@ -135,7 +138,8 @@ class GetEventsSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
         attached_messages: bool = False,
         filters: (Filter, List[Filter]) = None,
     ):
-        """
+        """GetEventsSSEBytes constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
@@ -168,7 +172,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
         elif isinstance(filters, (tuple, list)):
             self._filters = "".join([filter_.url() for filter_ in filters])
 
-    def handle(self, data_source: HTTPProvider5DataSource):
+    def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
         url = api.get_url_search_sse_events(
             start_timestamp=self._start_timestamp,
@@ -192,7 +196,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
                 yield response
 
 
-class GetEventsSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetEventsSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
@@ -216,7 +220,8 @@ class GetEventsSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
     ):
-        """
+        """GetEventsSSEEvents constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
@@ -248,7 +253,7 @@ class GetEventsSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
 
-    def handle(self, data_source: HTTPProvider5DataSource):
+    def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         response = GetEventsSSEBytes(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
@@ -268,7 +273,7 @@ class GetEventsSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
                 yield record
 
 
-class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
@@ -291,7 +296,8 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         filters: (Filter, List[Filter]) = None,
         cache: bool = False,
     ):
-        """
+        """GetEvents constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
@@ -321,7 +327,7 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._filters = filters
         self._cache = cache
 
-    def handle(self, data_source: HTTPProvider5DataSource) -> Data:
+    def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
         adapter = AdapterSSE()
         return Data(source, cache=self._cache).map(adapter.handle)
@@ -345,7 +351,7 @@ class GetEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
             yield event
 
 
-class GetMessageById(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id.
@@ -355,7 +361,8 @@ class GetMessageById(IHTTPProvider5Command, IProviderAdaptableCommand):
     """
 
     def __init__(self, id: str):
-        """
+        """GetMessageById constructor.
+
         Args:
             id: Message id.
 
@@ -364,7 +371,7 @@ class GetMessageById(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._id = id
         self._stub_status = False
 
-    def handle(self, data_source: HTTPProvider5DataSource):
+    def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
         url = api.get_url_find_message_by_id(self._id)
 
@@ -387,7 +394,7 @@ class GetMessageById(IHTTPProvider5Command, IProviderAdaptableCommand):
         return self
 
 
-class GetMessagesById(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the messages by ids.
@@ -397,7 +404,8 @@ class GetMessagesById(IHTTPProvider5Command, IProviderAdaptableCommand):
     """
 
     def __init__(self, ids: List[str]):
-        """
+        """GetMessagesById constructor.
+
         Args:
             ids: Message id list.
 
@@ -406,7 +414,7 @@ class GetMessagesById(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._ids: ids = ids
         self._stub_status = False
 
-    def handle(self, data_source: HTTPProvider5DataSource):
+    def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         result = []
         for message_id in self._ids:
             try:
@@ -426,7 +434,7 @@ class GetMessagesById(IHTTPProvider5Command, IProviderAdaptableCommand):
         return self
 
 
-class GetMessagesSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.
@@ -449,7 +457,8 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
         lookup_limit_days: int = None,
         filters: (Filter, List[Filter]) = None,
     ):
-        """
+        """GetMessagesSSEBytes constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
@@ -487,7 +496,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
         elif isinstance(filters, (tuple, list)):
             self._filters = "".join([filter_.url() for filter_ in filters])
 
-    def handle(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
+    def handle(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
         url = api.get_url_search_sse_messages(
             start_timestamp=self._start_timestamp,
@@ -522,7 +531,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, IProviderAdaptableCommand):
                     yield response
 
 
-class GetMessagesSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.
@@ -547,7 +556,8 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
     ):
-        """
+        """GetMessagesSSEEvents constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
@@ -563,6 +573,8 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
             lookup_limit_days: The number of days that will be viewed on
                 the first request to get the one closest to the specified timestamp.
             filters: Filters using in search for messages.
+            char_enc: Character encode that will use SSEClient.
+            decode_error_handler: Decode error handler.
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -579,7 +591,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
 
-    def handle(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
+    def handle(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:  # noqa: D102
         response = GetMessagesSSEBytes(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
@@ -601,7 +613,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, IProviderAdaptableCommand):
                 yield record
 
 
-class GetMessages(IHTTPProvider5Command, IProviderAdaptableCommand):
+class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.
@@ -627,7 +639,8 @@ class GetMessages(IHTTPProvider5Command, IProviderAdaptableCommand):
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         cache: bool = False,
     ):
-        """
+        """GetMessages constructor.
+
         Args:
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
@@ -663,7 +676,7 @@ class GetMessages(IHTTPProvider5Command, IProviderAdaptableCommand):
         self._decode_error_handler = decode_error_handler
         self._cache = cache
 
-    def handle(self, data_source: HTTPProvider5DataSource) -> Data:
+    def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
         adapter = AdapterSSE()
         return Data(source, cache=self._cache).map(adapter.handle)

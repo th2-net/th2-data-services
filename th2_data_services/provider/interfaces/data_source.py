@@ -11,6 +11,18 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 
 
 """Interfaces for Provider Data Source."""
@@ -20,16 +32,18 @@ from abc import abstractmethod
 import requests
 import urllib3
 
-from th2_data_services.provider.command import IGRPCProviderCommand, IHTTPProviderCommand, IProviderCommand
-from th2_data_services.data_source import IDataSource
-from th2_data_services.provider.source_api import IHTTPProviderSourceAPI, IGRPCProviderSourceAPI, IProviderSourceAPI
-from th2_data_services.provider.struct import IEventStruct, IMessageStruct
-from th2_data_services.provider.stub_builder import IEventStub, IMessageStub
+from th2_data_services.provider.interfaces.command import IGRPCProviderCommand, IHTTPProviderCommand, IProviderCommand
+from th2_data_services.interfaces.data_source import IDataSource
+from th2_data_services.provider.interfaces.source_api import (
+    IHTTPProviderSourceAPI,
+    IGRPCProviderSourceAPI,
+    IProviderSourceAPI,
+)
+from th2_data_services.provider.interfaces.struct import IEventStruct, IMessageStruct
+from th2_data_services.provider.interfaces.stub_builder import IEventStub, IMessageStub
 
 
 class IProviderDataSource(IDataSource):
-    """Interface of DataSource that provides work with rpt-data-provider."""
-
     def __init__(
         self,
         url: str,
@@ -38,6 +52,15 @@ class IProviderDataSource(IDataSource):
         event_stub_builder: IEventStub,
         message_stub_builder: IMessageStub,
     ):
+        """Interface of DataSource that provides work with rpt-data-provider.
+
+        Args:
+            url: Url address to data provider.
+            event_struct: Event struct class.
+            message_struct: Message struct class.
+            event_stub_builder: Event stub builder class.
+            message_stub_builder: Message stub builder class.
+        """
         if url[-1] == "/":
             url = url[:-1]
         self._url = url

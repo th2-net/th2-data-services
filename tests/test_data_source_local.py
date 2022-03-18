@@ -646,7 +646,7 @@ def test_get_messages_with_multiple_url(
     demo_messages_from_data_source_with_test_streams: Data,
     demo_messages_from_data_source: Data,
 ):
-    messages = demo_messages_from_data_source_with_test_streams
+    messages = demo_messages_from_data_source_with_test_streams.use_cache(True)
 
     messages_hand_demo_expected = demo_messages_from_data_source
     messages_hand_demo_actual = messages.filter(lambda record: record.get("sessionId") == "th2-hand-demo")
@@ -655,15 +655,6 @@ def test_get_messages_with_multiple_url(
         len(list(messages)) == 84
         and len(list(messages_hand_demo_actual)) == len(list(messages_hand_demo_expected)) == 36
     )
-
-
-def test_get_messages_with_multiple_url_double_start(
-    demo_messages_from_data_source_with_test_streams: Data,
-):
-    messages1 = len(list(demo_messages_from_data_source_with_test_streams))
-    messages2 = len(list(demo_messages_from_data_source_with_test_streams))
-
-    assert messages1 == messages2
 
 
 def test_unprintable_character(demo_data_source: HTTPProvider5DataSource):

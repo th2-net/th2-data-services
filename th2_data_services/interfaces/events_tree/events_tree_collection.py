@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import List, Dict, Optional, Union, Generator, Tuple, Callable
@@ -21,12 +22,12 @@ from th2_data_services import Data
 from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
-from th2_data_services.provider.data_source import IProviderDataSource
+from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
 
-class EventsTreesCollection(ABC):
-    """EventsTreeCollection objective is building EventsTrees and storing them.
+class EventsTreeCollection(ABC):
+    """EventsTreeCollection objective is building 'EventsTree's and storing them.
 
     EventsTreeCollection stores all EventsTree. You can to refer to each of them.
     """
@@ -34,16 +35,15 @@ class EventsTreesCollection(ABC):
     def __init__(
         self, data: Data, data_source: IProviderDataSource = None, preserve_body: bool = False, stub: bool = False
     ):
-        """EventsTreesCollection constructor.
+        """EventsTreeCollection constructor.
 
         Args:
-            data: Data
-            data_source: Data Source.
-            preserve_body: True if you want to save 'body' field.
-            stub: True if you want to use stub when event is broken.
+            data: Data object.
+            data_source: Data Source object.
+            preserve_body: If True it will preserve 'body' field in the Events.
+            stub: If True it will create stub when event is broken.
         """
         self._preserve_body = preserve_body
-
         self._roots: List[EventsTree] = []
         self._parentless: Optional[List[EventsTree]] = None
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
@@ -114,7 +114,6 @@ class EventsTreesCollection(ABC):
         Args:
             nodes: Events nodes.
         """
-
         roots = []
         for root_node in nodes[None]:  # None - is parent_event_id for root events.
             tree = Tree()
@@ -213,7 +212,7 @@ class EventsTreesCollection(ABC):
 
     @property
     def detached_events(self) -> dict:
-        """Gets detached events as dict with a view {'parent_id': ['referenced event', ...]}"""
+        """Gets detached events as dict with a view {'parent_id': ['referenced event', ...]}."""
         return {id_: [node.data for node in nodes] for id_, nodes in self._detached_nodes.items()}
 
     def get_roots_ids(self) -> List[str]:
@@ -232,6 +231,9 @@ class EventsTreesCollection(ABC):
 
         Returns:
             Root tree.
+
+        Raises:
+            EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
             if tree.get_root_id() == id:
@@ -242,14 +244,17 @@ class EventsTreesCollection(ABC):
         """Prints all EventsTree as tree view.
 
         For example:
-            Root
-                |___ C01
-                |    |___ C11
-                |         |___ C111
-                |         |___ C112
-                |___ C02
-                |___ C03
-                |    |___ C31
+
+        ```
+        Root
+            |___ C01
+            |    |___ C11
+            |         |___ C111
+            |         |___ C112
+            |___ C02
+            |___ C03
+            |    |___ C31
+        ```
         """
         trees = self.get_trees()
         for tree in trees:
@@ -289,7 +294,7 @@ class EventsTreesCollection(ABC):
             id: Event id.
 
         Raises:
-            EventIdNotInTree: If event id not in the trees.
+            EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
             try:
@@ -312,7 +317,7 @@ class EventsTreesCollection(ABC):
             id: Event id.
 
         Raises:
-            EventIdNotInTree: If event id not in the trees.
+            EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
             try:
@@ -328,7 +333,7 @@ class EventsTreesCollection(ABC):
             id: Event id.
 
         Raises:
-            EventIdNotInTree: If event id not in the trees.
+            EventIdNotInTree: If event id is not in the trees.
         """
         is_iter = False
         for tree in self._roots:
@@ -347,7 +352,7 @@ class EventsTreesCollection(ABC):
             id: Event id.
 
         Raises:
-            NodeIDAbsentError: If event id not in the trees.
+            NodeIDAbsentError: If event id is not in the trees.
         """
         for tree in self._roots:
             try:
@@ -356,25 +361,32 @@ class EventsTreesCollection(ABC):
                 continue
         raise EventIdNotInTree(id)
 
-    def get_full_path(self, id: str, field: str = None) -> List[Union[str, Th2Event]]:
+    def get_full_path(self, id: str, field: str = None) -> List[Union[str, Th2Event]]:  # noqa: D412
         """Returns full path for an event in right order.
 
+        Examples:
+
+        Imagine we have the following tree.
+
+        ```
         Harry
         ├── Bill
         └── Jane
             ├── Diane
             │   └── Mary
             └── Mark
+        ```
 
-        Examples:
-            collection.get_full_path('Jane', id)
-            ['Harry-event-id', 'Jane-event-id']
+        ```
+        collection.get_full_path('Jane', id)
+        ['Harry-event-id', 'Jane-event-id']
 
-            collection.get_full_path('Jane', name)
-            ['Harry-event-name', 'Jane-event-name']
+        collection.get_full_path('Jane', name)
+        ['Harry-event-name', 'Jane-event-name']
 
-            collection.get_full_path('Jane', event)
-            ['Harry-event', 'Jane-event']
+        collection.get_full_path('Jane')
+        ['Harry-event', 'Jane-event']
+        ```
 
         Args:
             id: Event id.
@@ -384,7 +396,7 @@ class EventsTreesCollection(ABC):
             Full path of event.
 
         Raises:
-            EventIdNotInTree: If event id not in the trees.
+            EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
             try:
@@ -403,7 +415,7 @@ class EventsTreesCollection(ABC):
             All event's ancestors.
 
         Raises:
-            EventIdNotInTree: If event id not in the trees.
+            EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
             try:
@@ -510,7 +522,7 @@ class EventsTreesCollection(ABC):
             Subtree.
 
         Raises:
-            EventIdNotInTree: If event id not in the trees.
+            EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
             try:

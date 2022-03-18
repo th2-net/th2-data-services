@@ -16,7 +16,7 @@ from typing import Union
 from sseclient import Event as SSEEvent
 from urllib3.exceptions import HTTPError
 
-from th2_data_services.adapter import IAdapter
+from th2_data_services.interfaces.adapter import IAdapter
 
 from google.protobuf.json_format import MessageToDict
 from th2_grpc_data_provider.data_provider_template_pb2 import EventData, MessageData
