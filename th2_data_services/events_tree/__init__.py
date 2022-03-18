@@ -12,5 +12,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .events_tree_collection import EventsTreeCollection
-from .parent_events_tree_collection import ParentEventsTreeCollection
+from .events_tree import EventsTree

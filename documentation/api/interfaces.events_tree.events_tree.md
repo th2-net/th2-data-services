@@ -11,19 +11,29 @@
 
 ---
 
-<a href="../../th2_data_services/interfaces/events_tree/events_tree.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `EventsTree`
 EventsTree - is a useful wrapper for your retrieved data. 
 
 
+- get_x methods raise Exceptions if no result is found. 
+- find_x methods return None if no result is found. 
+- EventsTree stores events as Nodes and interacts with them using an internal tree. 
+- EventsTree removes the 'body' field by default to save memory, but you can keep it. 
+- Note that EventsTree stores only one tree.  If you want to store all trees, use EventsTreeCollections. 
+- EventsTree contains all events in memory. 
 
-**Note:**
+Take a look at the following HTML tree to understand some important terms. 
 
-> get_x methods raise Exceptions if no result is found. find_x methods return None if no result is found. 
->- EventsTree stores events as Nodes and interacts with them using an internal tree. - EventsTree removes the 'body' field by default to save memory, but you can keep it. - Note that EventsTree stores only one tree. If you want to store all trees, use EventsTreeCollections. - EventTree contains all events inside, so it takes ~2.5Gb for 1 million events. 
->Take a look at the following HTML tree to understand some important terms. 
-><body> <!-- ancestor (grandparent), but not parent --> <div> <!-- parent & ancestor --> <p>Hello, world!</p> <!-- child --> <p>Goodbye!</p> <!-- sibling --> </div> </body> 
+```
+<body> <!-- ancestor (grandparent), but not parent -->
+     <div> <!-- parent & ancestor -->
+         <p>Hello, world!</p> <!-- child -->
+         <p>Goodbye!</p> <!-- sibling -->
+     </div>
+</body>
+``` 
 
 <a href="../../th2_data_services/interfaces/events_tree/events_tree.py#L48"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
@@ -450,7 +460,18 @@ show() → None
 
 Prints EventsTree as tree view. 
 
-For example:  Root  |___ C01  |    |___ C11  |         |___ C111  |         |___ C112  |___ C02  |___ C03  |    |___ C31 
+For example: 
+
+```
+Root
+     |___ C01
+     |    |___ C11
+     |         |___ C111
+     |         |___ C112
+     |___ C02
+     |___ C03
+     |    |___ C31
+``` 
 
 
 

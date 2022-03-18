@@ -11,6 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
+
 class EventIdNotInTree(Exception):
     def __init__(self, id_):
         """Exception for the case when the tree hasn't the event.

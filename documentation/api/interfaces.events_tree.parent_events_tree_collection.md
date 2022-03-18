@@ -1,8 +1,8 @@
 <!-- markdownlint-disable -->
 
-<a href="../../th2_data_services/events_tree/parent_events_trees_collection.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/parent_events_tree_collection.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-# <kbd>module</kbd> `events_tree.parent_events_trees_collection`
+# <kbd>module</kbd> `interfaces.events_tree.parent_events_tree_collection`
 
 
 
@@ -11,14 +11,14 @@
 
 ---
 
-<a href="../../th2_data_services/events_tree/parent_events_trees_collection.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/parent_events_tree_collection.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `ParentEventsTreesCollection`
+## <kbd>class</kbd> `ParentEventsTreeCollection`
 ParentEventsTreeCollections is a class like an EventsTreeCollections. 
 
 ParentEventsTree contains all parent events that are referenced. 
 
-<a href="../../th2_data_services/events_tree/parent_events_trees_collection.py#L30"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/parent_events_tree_collection.py#L31"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -31,7 +31,7 @@ __init__(
 )
 ```
 
-ParentEventsTreesCollection constructor. 
+ParentEventsTreeCollection constructor. 
 
 
 
