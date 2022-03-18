@@ -1,8 +1,8 @@
 <!-- markdownlint-disable -->
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-# <kbd>module</kbd> `events_tree.events_trees_collection`
+# <kbd>module</kbd> `interfaces.events_tree.events_tree_collection`
 
 
 
@@ -11,14 +11,14 @@
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L28"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L29"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `EventsTreesCollection`
+## <kbd>class</kbd> `EventsTreeCollection`
 EventsTreeCollection objective is building 'EventsTree's and storing them. 
 
 EventsTreeCollection stores all EventsTree. You can to refer to each of them. 
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L34"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -31,7 +31,7 @@ __init__(
 )
 ```
 
-EventsTreesCollection constructor. 
+EventsTreeCollection constructor. 
 
 
 
@@ -53,7 +53,7 @@ Gets detached events as dict with a view {'parent_id': ['referenced event', ...]
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L188"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L189"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `append_element`
 
@@ -71,7 +71,7 @@ Appends event into tree.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L481"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L495"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find`
 
@@ -99,7 +99,7 @@ Searches the first event match.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L413"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L427"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_ancestor`
 
@@ -123,7 +123,7 @@ Finds the ancestor of an event.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L453"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L467"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `findall`
 
@@ -157,7 +157,7 @@ Searches events matches.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L429"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L443"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `findall_iter`
 
@@ -191,7 +191,7 @@ Searches events matches as iterator.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L279"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L286"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_all_events`
 
@@ -203,7 +203,7 @@ Gets all events from the trees.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L274"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L281"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_all_events_iter`
 
@@ -215,7 +215,7 @@ Gets all events from the trees as iterator.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L394"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L408"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_ancestors`
 
@@ -240,11 +240,11 @@ Returns all event's ancestors in right order.
 
 **Raises:**
  
- - <b>`EventIdNotInTree`</b>:  If event id not in the trees. 
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L306"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L313"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_children`
 
@@ -264,11 +264,11 @@ Gets children for an event.
 
 **Raises:**
  
- - <b>`EventIdNotInTree`</b>:  If event id not in the trees. 
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L322"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L329"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_children_iter`
 
@@ -288,11 +288,11 @@ Gets children as iterator for an event.
 
 **Raises:**
  
- - <b>`EventIdNotInTree`</b>:  If event id not in the trees. 
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L283"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L290"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event`
 
@@ -312,11 +312,11 @@ Gets event by id.
 
 **Raises:**
  
- - <b>`EventIdNotInTree`</b>:  If event id not in the trees. 
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L357"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L364"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_full_path`
 
@@ -326,16 +326,32 @@ get_full_path(id: str, field: str = None) → List[Union[str, dict]]
 
 Returns full path for an event in right order. 
 
-Harry ├── Bill └── Jane  ├── Diane  │   └── Mary  └── Mark 
-
 
 
 **Examples:**
-  collection.get_full_path('Jane', id)  ['Harry-event-id', 'Jane-event-id'] 
+ 
 
- collection.get_full_path('Jane', name)  ['Harry-event-name', 'Jane-event-name'] 
+Imagine we have the following tree. 
 
- collection.get_full_path('Jane', event)  ['Harry-event', 'Jane-event'] 
+```
+Harry
+├── Bill
+└── Jane
+     ├── Diane
+     │   └── Mary
+     └── Mark
+``` 
+
+```
+collection.get_full_path('Jane', id)
+['Harry-event-id', 'Jane-event-id']
+
+collection.get_full_path('Jane', name)
+['Harry-event-name', 'Jane-event-name']
+
+collection.get_full_path('Jane')
+['Harry-event', 'Jane-event']
+``` 
 
 
 
@@ -353,11 +369,11 @@ Harry ├── Bill └── Jane  ├── Diane  │   └── Mary  └�
 
 **Raises:**
  
- - <b>`EventIdNotInTree`</b>:  If event id not in the trees. 
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L299"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L306"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_leaves`
 
@@ -369,7 +385,7 @@ Gets all trees leaves.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L341"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L348"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_parent`
 
@@ -389,11 +405,11 @@ Gets parent for an event.
 
 **Raises:**
  
- - <b>`NodeIDAbsentError`</b>:  If event id not in the trees. 
+ - <b>`NodeIDAbsentError`</b>:  If event id is not in the trees. 
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L58"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L59"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_parentless_trees`
 
@@ -410,7 +426,7 @@ Gets parentless trees.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L225"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L226"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_root_by_id`
 
@@ -431,9 +447,15 @@ Gets root tree by id as EventsTree class.
 **Returns:**
  Root tree. 
 
+
+
+**Raises:**
+ 
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
+
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L217"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L218"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_roots_ids`
 
@@ -445,7 +467,7 @@ Gets roots ids.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L501"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L515"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subtree`
 
@@ -470,11 +492,11 @@ Gets subtree of event by id.
 
 **Raises:**
  
- - <b>`EventIdNotInTree`</b>:  If event id not in the trees. 
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L221"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L222"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_trees`
 
@@ -486,7 +508,7 @@ Gets trees as EventsTree class.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_trees_collection.py#L239"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L243"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `show`
 
@@ -496,7 +518,18 @@ show()
 
 Prints all EventsTree as tree view. 
 
-For example:  Root  |___ C01  |    |___ C11  |         |___ C111  |         |___ C112  |___ C02  |___ C03  |    |___ C31 
+For example: 
+
+```
+Root
+     |___ C01
+     |    |___ C11
+     |         |___ C111
+     |         |___ C112
+     |___ C02
+     |___ C03
+     |    |___ C31
+``` 
 
 
 

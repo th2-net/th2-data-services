@@ -15,15 +15,15 @@
 from typing import Union, Optional
 
 from th2_data_services import Data
-from th2_data_services.events_tree import ParentEventsTreesCollection
+from th2_data_services.interfaces.events_tree import EventsTreeCollection
 from th2_data_services.events_tree.exceptions import FieldIsNotExist
 from th2_data_services.provider.interfaces.struct import IEventStruct
-from th2_data_services.provider.v5.data_source import GRPCProvider5DataSource, HTTPProvider5DataSource
+from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource, GRPCProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
-class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollection):
-    """ParentsEventsTreesCollection for data-provider v5."""
+class EventsTreeCollectionProvider5(EventsTreeCollection):
+    """EventsTreesCollections for data-provider v5."""
 
     def __init__(
         self,
@@ -33,7 +33,7 @@ class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollection):
         event_struct: IEventStruct = provider5_event_struct,
         stub: bool = False,
     ):
-        """ParentsEventsTreesCollectionProvider5 constructor.
+        """EventsTreeCollectionProvider5 constructor.
 
         Args:
             data: Data object.
@@ -44,21 +44,16 @@ class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollection):
         """
         self._event_struct = event_struct  # Should be placed before super!
 
-        super().__init__(
-            data=data,
-            data_source=data_source,
-            preserve_body=preserve_body,
-            stub=stub,
-        )
+        super().__init__(data=data, data_source=data_source, preserve_body=preserve_body, stub=stub)
 
     def _get_event_id(self, event) -> str:
-        """Gets event id from event.
+        """Gets event id from the event.
 
         Returns:
             Event id.
 
         Raises:
-            FieldIsNotExist: If event hasn't event id field.
+            FieldIsNotExist: If the event doesn't have an 'event id' field.
         """
         try:
             return event[self._event_struct.EVENT_ID]
@@ -66,13 +61,13 @@ class ParentsEventsTreesCollectionProvider5(ParentEventsTreesCollection):
             raise FieldIsNotExist(self._event_struct.EVENT_ID)
 
     def _get_event_name(self, event) -> str:
-        """Gets event name from event.
+        """Gets event name from the event.
 
         Returns:
             Event name.
 
         Raises:
-            FieldIsNotExist: If event hasn't event name field.
+            FieldIsNotExist: If the event doesn't have an 'event name' field.
         """
         try:
             return event[self._event_struct.NAME]

@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from typing import List, Tuple, Generator, Callable, Optional, Union
 
 from treelib import Tree, Node
@@ -24,25 +25,24 @@ Th2Event = dict
 class EventsTree:
     """EventsTree - is a useful wrapper for your retrieved data.
 
-    Note:
-        get_x methods raise Exceptions if no result is found.
-        find_x methods return None if no result is found.
-
+    - get_x methods raise Exceptions if no result is found.
+    - find_x methods return None if no result is found.
     - EventsTree stores events as Nodes and interacts with them using an internal tree.
     - EventsTree removes the 'body' field by default to save memory, but you can keep it.
     - Note that EventsTree stores only one tree.
         If you want to store all trees, use EventsTreeCollections.
-    - EventTree contains all events inside, so it takes
-        ~2.5Gb for 1 million events.
+    - EventsTree contains all events in memory.
 
     Take a look at the following HTML tree to understand some important terms.
 
-        <body> <!-- ancestor (grandparent), but not parent -->
-            <div> <!-- parent & ancestor -->
-                <p>Hello, world!</p> <!-- child -->
-                <p>Goodbye!</p> <!-- sibling -->
-            </div>
-        </body>
+    ```
+    <body> <!-- ancestor (grandparent), but not parent -->
+        <div> <!-- parent & ancestor -->
+            <p>Hello, world!</p> <!-- child -->
+            <p>Goodbye!</p> <!-- sibling -->
+        </div>
+    </body>
+    ```
     """
 
     def __init__(self, tree: Tree):
@@ -81,7 +81,7 @@ class EventsTree:
             id: Event id.
 
         Raises:
-            EventIdNotInTree: If event id not in the tree.
+            EventIdNotInTree: If event id is not in the tree.
         """
         node: Node = self._tree.get_node(id)
         if node is None:
@@ -111,7 +111,7 @@ class EventsTree:
             id: Event id.
 
         Raises:
-            EventIdNotInTree: If event id not in the tree.
+            EventIdNotInTree: If event id is not in the tree.
         """
         children: List[Node] = self._tree.children(id)
         if not children:
@@ -125,7 +125,7 @@ class EventsTree:
             id: Event id.
 
         Raises:
-            EventIdNotInTree: If event id not in the tree.
+            EventIdNotInTree: If event id is not in the tree.
         """
         try:
             for child in self._tree.children(id):
@@ -140,32 +140,39 @@ class EventsTree:
             id: Event id.
 
         Raises:
-            EventIdNotInTree: If event id not in the tree.
+            EventIdNotInTree: If event id is not in the tree.
         """
         try:
             return self._tree.parent(id).data
         except NodeIDAbsentError:
             raise EventIdNotInTree(id)
 
-    def get_full_path(self, id: str, field: str = None) -> List[Union[str, Th2Event]]:
+    def get_full_path(self, id: str, field: str = None) -> List[Union[str, Th2Event]]:  # noqa: D412
         """Returns full path for an event in right order.
 
+        Examples:
+
+        Imagine we have the following tree.
+
+        ```
         Harry
         ├── Bill
         └── Jane
             ├── Diane
             │   └── Mary
             └── Mark
+        ```
 
-        Examples:
-            tree.get_full_path('Jane', id)
-            ['Harry-event-id', 'Jane-event-id']
+        ```
+        tree.get_full_path('Jane', id)
+        ['Harry-event-id', 'Jane-event-id']
 
-            tree.get_full_path('Jane', name)
-            ['Harry-event-name', 'Jane-event-name']
+        tree.get_full_path('Jane', name)
+        ['Harry-event-name', 'Jane-event-name']
 
-            tree.get_full_path('Jane', event)
-            ['Harry-event', 'Jane-event']
+        tree.get_full_path('Jane')
+        ['Harry-event', 'Jane-event']
+        ```
 
         Args:
             id: Event id.
@@ -175,7 +182,7 @@ class EventsTree:
             Full path of event.
 
         Raises:
-            EventIdNotInTree: If event id not in the tree.
+            EventIdNotInTree: If event id is not in the tree.
         """
         result = []
 
@@ -197,7 +204,7 @@ class EventsTree:
             All event's ancestors.
 
         Raises:
-            EventIdNotInTree: If event id not in the tree.
+            EventIdNotInTree: If event id is not in the tree.
         """
         result = [e for e in self._iter_ancestors(id)]
         result.reverse()
@@ -215,7 +222,7 @@ class EventsTree:
             Ancestor of event.
 
         Raises:
-            EventIdNotInTree: If event id not in the tree.
+            EventIdNotInTree: If event id is not in the tree.
         """
         try:
             ancestor: Node = self._tree.parent(id)
@@ -331,7 +338,7 @@ class EventsTree:
             Subtree.
 
         Raises:
-            EventIdNotInTree: If event id not in the tree.
+            EventIdNotInTree: If event id is not in the tree.
         """
         subtree = self._tree.subtree(id)
         if not subtree:
@@ -342,14 +349,17 @@ class EventsTree:
         """Prints EventsTree as tree view.
 
         For example:
-            Root
-                |___ C01
-                |    |___ C11
-                |         |___ C111
-                |         |___ C112
-                |___ C02
-                |___ C03
-                |    |___ C31
+
+        ```
+        Root
+            |___ C01
+            |    |___ C11
+            |         |___ C111
+            |         |___ C112
+            |___ C02
+            |___ C03
+            |    |___ C31
+        ```
         """
         self._tree.show()
 
