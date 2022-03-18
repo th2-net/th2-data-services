@@ -186,7 +186,7 @@ class EventsTreeCollection(ABC):
         node = Node(tag=event_name, identifier=event_id, data=event)
         return node
 
-    def append_element(self, event: dict) -> None:
+    def append_event(self, event: dict) -> None:
         """Appends event into tree.
 
         Args:
@@ -545,7 +545,7 @@ class EventsTreeCollection(ABC):
 
             for event in events:
                 if not self._get_event_name(event) == "Broken_Event":
-                    self.append_element(event)
+                    self.append_event(event)
 
             if previous_detached_events == list(self.detached_events.keys()):
                 break

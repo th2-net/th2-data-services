@@ -65,8 +65,8 @@ from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSour
 from th2_data_services.provider.v5.commands import http
 from th2_data_services.filter import Filter
 from th2_data_services.provider.v5.events_tree import (
-    EventsTreeCollectionProvider5,
-    ParentEventsTreeCollectionProvider5
+  EventsTreeCollectionProvider5,
+  ParentEventsTreeCollectionProvider5
 )
 
 # [1] Create DataSource object to connect to rpt-data-provider.
@@ -75,30 +75,30 @@ DEMO_PORT = "30999"  # Node port of rpt-data-provider.
 data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
 START_TIME = datetime(
-    year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
+  year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
 )  # object given in utc format
 END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
 
 # [2] Get events or messages from START_TIME to END_TIME.
 # [2.1] Get events.
 events: Data = data_source.command(
-    http.GetEvents(
-        start_timestamp=START_TIME,
-        end_timestamp=END_TIME,
-        attached_messages=True,
-        # Use Filter class to apply rpt-data-provider filters.
-        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
-    )
+  http.GetEvents(
+    start_timestamp=START_TIME,
+    end_timestamp=END_TIME,
+    attached_messages=True,
+    # Use Filter class to apply rpt-data-provider filters.
+    filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
+  )
 )
 
 # [2.2] Get messages.
 messages: Data = data_source.command(
-    http.GetMessages(
-        start_timestamp=START_TIME,
-        attached_events=True,
-        stream=["demo-conn2"],
-        filters=Filter("body", "195"),
-    )
+  http.GetMessages(
+    start_timestamp=START_TIME,
+    attached_events=True,
+    stream=["demo-conn2"],
+    filters=Filter("body", "195"),
+  )
 )
 
 # [3] Work with your Data object.
@@ -108,7 +108,7 @@ filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter event
 
 # [3.2] Map.
 def transform_function(record):
-    return {"eventName": record["eventName"], "successful": record["successful"]}
+  return {"eventName": record["eventName"], "successful": record["successful"]}
 
 
 filtered_and_mapped_events = filtered_events.map(transform_function)
@@ -129,8 +129,8 @@ events.use_cache(True)
 
 # [3.6] Walk through data.
 for event in events:
-    # Do something with event (event is a dict).
-    print(event)
+  # Do something with event (event is a dict).
+  print(event)
 # After first iteration the events has a cache file.
 # Now they will be used the cache in following iteration.
 
@@ -148,13 +148,13 @@ events_list = list(events)
 # [3.10] Get event/message by id.
 desired_event = "9ce8a2ff-d600-4366-9aba-2082cfc69901:ef1d722e-cf5e-11eb-bcd0-ced60009573f"
 desired_events = [
-    "deea079b-4235-4421-abf6-6a3ac1d04c76:ef1d3a20-cf5e-11eb-bcd0-ced60009573f",
-    "a34e3cb4-c635-4a90-8f42-37dd984209cb:ef1c5cea-cf5e-11eb-bcd0-ced60009573f",
+  "deea079b-4235-4421-abf6-6a3ac1d04c76:ef1d3a20-cf5e-11eb-bcd0-ced60009573f",
+  "a34e3cb4-c635-4a90-8f42-37dd984209cb:ef1c5cea-cf5e-11eb-bcd0-ced60009573f",
 ]
 desired_message = "demo-conn1:first:1619506157132265837"
 desired_messages = [
-    "demo-conn1:first:1619506157132265836",
-    "demo-conn1:first:1619506157132265833",
+  "demo-conn1:first:1619506157132265836",
+  "demo-conn1:first:1619506157132265833",
 ]
 
 data_source.command(http.GetEventById(desired_event))  # Returns 1 event (dict).
@@ -208,7 +208,7 @@ find_events: List[dict] = collection.findall(lambda event: event["successful"] i
 
 # [4.1.5] Find ancestor of event.
 ancestor: Optional[dict] = collection.find_ancestor(
-    "8bbe3717-cf59-11eb-a3f7-094f904c3a62", filter=lambda event: "RootEvent" in event["eventName"]
+  "8bbe3717-cf59-11eb-a3f7-094f904c3a62", filter=lambda event: "RootEvent" in event["eventName"]
 )
 
 # [4.1.6] Get children of event.
@@ -225,12 +225,12 @@ event_path: List[dict] = collection.get_full_path("8e2524fa-cf59-11eb-a3f7-094f9
 parent = collection.get_parent("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
 
 # [4.1.10] Append new event for the collection.
-collection.append_element(
-    event={
-        "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
-        "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",
-        "eventName": "StubEvent",
-    }
+collection.append_event(
+  event={
+    "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
+    "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",
+    "eventName": "StubEvent",
+  }
 )
 
 # [4.1.11] Show entire collection.
