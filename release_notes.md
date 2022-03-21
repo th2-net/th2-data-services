@@ -153,7 +153,7 @@ User will get original byte now.
 
 # v0.6.2
 
-## BugFixes~~~~
+## BugFixes
 
 1. [TH2-2922] Fixed infinite loop in events tree.
 
@@ -161,7 +161,7 @@ User will get original byte now.
 
 ### Features
 
-1. Add module th2_gui_report for create link by event id or message id
+1. [TH2-2465] Add module th2_gui_report to create a link by event id or message id
 
 ## BugFixes
 
