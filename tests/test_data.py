@@ -456,32 +456,32 @@ def test_link_provider():
     link_gui2 = Th2GUIReport("host:port/th2-common")
     link_gui3 = Th2GUIReport("http://host:port/th2-common/")
     link_gui4 = Th2GUIReport("http://host:port/th2-common")
+    link_gui5 = Th2GUIReport("host:port/th2-commonhttp")
 
     result = "http://host:port/th2-common/"
 
     assert (
-        link_gui1._link_provider == result
-        and link_gui2._link_provider == result
-        and link_gui3._link_provider == result
-        and link_gui4._link_provider == result
+        link_gui1._provider_link == result
+        and link_gui2._provider_link == result
+        and link_gui3._provider_link == result
+        and link_gui4._provider_link == result
+        and link_gui5._provider_link == "http://host:port/th2-commonhttp/"
     )
 
 
 def test_link_gui_with_event_id():
     gui = Th2GUIReport("host:port/th2-common/")
     link_event_id1 = gui.get_event_link("fcace9a4-8fd8-11ec-98fc-038f439375a0")
-    link_event_id2 = gui.get_event_link("fcace9a4-8fd8-11ec-98fc-038f439375a0/")
 
-    result = f"http://host:port/th2-common/?eventId=fcace9a4-8fd8-11ec-98fc-038f439375a0"
+    result = "http://host:port/th2-common/?eventId=fcace9a4-8fd8-11ec-98fc-038f439375a0"
 
-    assert link_event_id1 == result and link_event_id2 == result
+    assert link_event_id1 == result
 
 
 def test_link_gui_with_message_id():
     gui = Th2GUIReport("host:port/th2-common/")
     link_message_id1 = gui.get_message_link("fix01:first:1600854429908302153")
-    link_message_id2 = gui.get_message_link("fix01:first:1600854429908302153/")
 
-    result = f"http://host:port/th2-common/?messageId=fix01:first:1600854429908302153"
+    result = "http://host:port/th2-common/?messageId=fix01:first:1600854429908302153"
 
-    assert link_message_id1 == result and link_message_id2 == result
+    assert link_message_id1 == result

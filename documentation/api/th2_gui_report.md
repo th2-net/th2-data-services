@@ -14,14 +14,14 @@
 <a href="../../th2_data_services/th2_gui_report.py#L1"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Th2GUIReport`
-Class for create gui link by event ID or message ID. 
+Class for creating gui link by event ID or message ID. 
 
 <a href="../../th2_data_services/th2_gui_report.py#L4"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
-__init__(link_provider: str)
+__init__(provider_link: str)
 ```
 
 Th2GUIReport constructor. 
@@ -30,22 +30,22 @@ Th2GUIReport constructor.
 
 **Args:**
  
- - <b>`link_provider`</b> (str):  link to provider. 
+ - <b>`provider_link`</b> (str):  link to provider. 
 
 
 
 
 ---
 
-<a href="../../th2_data_services/th2_gui_report.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/th2_gui_report.py#L33"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event_link`
 
 ```python
-get_event_link(event_id) → str
+get_event_link(event_id: str) → str
 ```
 
-Create link with event id. 
+Creates the link with event id. 
 
 
 
@@ -56,19 +56,19 @@ Create link with event id.
 
 
 **Returns:**
- Link with event id. 
+ GUI link to event. 
 
 ---
 
-<a href="../../th2_data_services/th2_gui_report.py#L50"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/th2_gui_report.py#L44"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_message_link`
 
 ```python
-get_message_link(message_id) → str
+get_message_link(message_id: str) → str
 ```
 
-Create link with message id. 
+Creates the link with message id. 
 
 
 
@@ -79,7 +79,7 @@ Create link with message id.
 
 
 **Returns:**
- Link with message id. 
+ GUI link to message. 
 
 
 
