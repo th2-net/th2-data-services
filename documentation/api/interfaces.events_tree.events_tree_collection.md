@@ -55,10 +55,10 @@ Gets detached events as dict with a view {'parent_id': ['referenced event', ...]
 
 <a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L189"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-### <kbd>method</kbd> `append_element`
+### <kbd>method</kbd> `append_event`
 
 ```python
-append_element(event: dict) → None
+append_event(event: dict) → None
 ```
 
 Appends event into tree. 

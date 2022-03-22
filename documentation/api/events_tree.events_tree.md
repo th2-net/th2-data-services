@@ -56,25 +56,6 @@ EventsTree constructor.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L56"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `append_node`
-
-```python
-append_node(node: Node, parent_id: str) → None
-```
-
-Appends a node to the tree. 
-
-
-
-**Args:**
- 
- - <b>`node`</b>:  Node. 
- - <b>`parent_id`</b>:  Parent event id. 
-
----
-
 <a href="../../th2_data_services/events_tree/events_tree.py#L309"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find`

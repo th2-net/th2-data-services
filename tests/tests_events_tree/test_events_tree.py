@@ -22,7 +22,7 @@ def test_append_unknown_element(general_data: List[dict]):
         "parentEventId": parent_event_id,
         "eventName": "testName",
     }
-    collection.append_element(new_event)
+    collection.append_event(new_event)
 
     assert parent_event_id in collection.detached_events and event_id in [
         event["eventId"] for event in collection.detached_events[parent_event_id]
@@ -38,7 +38,7 @@ def test_append_new_element(general_data: List[dict]):
         "parentEventId": parent_event_id,
         "eventName": "testName",
     }
-    collection.append_element(new_event)
+    collection.append_event(new_event)
 
     assert event_id in collection
 
@@ -70,7 +70,7 @@ def test_append_new_tree(general_data: List[dict]):
     collection = EventsTreeCollectionProvider5(general_data)
     event_id = "1111-3333-4444-5555"
     new_event = {"eventId": event_id, "eventName": "testName"}
-    collection.append_element(new_event)
+    collection.append_event(new_event)
 
     assert event_id in collection and event_id in collection.get_roots_ids()
 

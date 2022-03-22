@@ -231,7 +231,7 @@ event_path: List[dict] = collection.get_full_path("8e2524fa-cf59-11eb-a3f7-094f9
 parent = collection.get_parent("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
 
 # [4.1.10] Append new event to the collection.
-collection.append_element(
+collection.append_event(
     event={
         "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
         "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",

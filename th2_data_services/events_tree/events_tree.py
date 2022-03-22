@@ -53,7 +53,7 @@ class EventsTree:
         """
         self._tree = tree
 
-    def append_node(self, node: Node, parent_id: str) -> None:
+    def _append_node(self, node: Node, parent_id: str) -> None:
         """Appends a node to the tree.
 
         Args:
