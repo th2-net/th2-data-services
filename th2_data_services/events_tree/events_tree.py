@@ -23,7 +23,7 @@ Th2Event = dict
 
 
 class EventsTree:
-    """EventsTree - is a useful wrapper for your retrieved data.
+    """EventsTree is a tree-based data structure of events.
 
     - get_x methods raise Exceptions if no result is found.
     - find_x methods return None if no result is found.

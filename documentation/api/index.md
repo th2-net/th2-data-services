@@ -55,7 +55,7 @@
 ## Classes
 
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
-- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree - is a useful wrapper for your retrieved data.
+- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree is a tree-based data structure of events.
 - [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
 - [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
 - [`filter.Filter`](./filter.md#class-filter): The class for using rpt-data-provider filters API.
