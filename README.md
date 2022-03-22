@@ -67,13 +67,13 @@ This example works with **Events**, but you also can do the same actions with **
 from collections import Generator
 from datetime import datetime
 from typing import Tuple, List, Optional
-
 from th2_data_services import Data
 from th2_data_services.events_tree import EventsTree
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
 from th2_data_services.filter import Filter
 from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5, ParentEventsTreeCollectionProvider5
+
 
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
