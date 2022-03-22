@@ -22,8 +22,8 @@ from th2_data_services.provider.v5.data_source import GRPCProvider5DataSource, H
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
-class ParentsEventsTreesCollectionProvider5(ParentEventsTreeCollection):
-    """ParentsEventsTreesCollection for data-provider v5."""
+class ParentEventsTreeCollectionProvider5(ParentEventsTreeCollection):
+    """ParentEventsTreeCollection for data-provider v5."""
 
     def __init__(
         self,
@@ -33,7 +33,7 @@ class ParentsEventsTreesCollectionProvider5(ParentEventsTreeCollection):
         event_struct: IEventStruct = provider5_event_struct,
         stub: bool = False,
     ):
-        """ParentsEventsTreesCollectionProvider5 constructor.
+        """ParentEventsTreeCollectionProvider5 constructor.
 
         Args:
             data: Data object.

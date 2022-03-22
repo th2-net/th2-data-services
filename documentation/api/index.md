@@ -56,7 +56,7 @@
 ## Classes
 
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
-- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree - is a useful wrapper for your retrieved data.
+- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree is a tree-based data structure of events.
 - [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
 - [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
 - [`filter.Filter`](./filter.md#class-filter): The class for using rpt-data-provider filters API.
@@ -110,7 +110,7 @@
 - [`grpc.GRPCProvider5DataSource`](./provider.v5.data_source.grpc.md#class-grpcprovider5datasource): DataSource class which provide work with rpt-data-provider.
 - [`http.HTTPProvider5DataSource`](./provider.v5.data_source.http.md#class-httpprovider5datasource): DataSource class which provide work with rpt-data-provider.
 - [`events_tree_collection.EventsTreeCollectionProvider5`](./provider.v5.events_tree.events_tree_collection.md#class-eventstreecollectionprovider5): EventsTreesCollections for data-provider v5.
-- [`parent_events_tree_collection.ParentsEventsTreesCollectionProvider5`](./provider.v5.events_tree.parent_events_tree_collection.md#class-parentseventstreescollectionprovider5): ParentsEventsTreesCollection for data-provider v5.
+- [`parent_events_tree_collection.ParentEventsTreeCollectionProvider5`](./provider.v5.events_tree.parent_events_tree_collection.md#class-parenteventstreecollectionprovider5): ParentEventsTreeCollection for data-provider v5.
 - [`command.IGRPCProvider5Command`](./provider.v5.interfaces.command.md#class-igrpcprovider5command): Interface of command for rpt-data-provider.
 - [`command.IHTTPProvider5Command`](./provider.v5.interfaces.command.md#class-ihttpprovider5command): Interface of command for rpt-data-provider.
 - [`grpc.BasicRequest`](./provider.v5.provider_api.grpc.md#class-basicrequest): BasicRequest(start_timestamp, end_timestamp, result_count_limit, keep_open, search_direction, filters)

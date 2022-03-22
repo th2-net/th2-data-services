@@ -14,7 +14,7 @@
 <a href="../../th2_data_services/events_tree/events_tree.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `EventsTree`
-EventsTree - is a useful wrapper for your retrieved data. 
+EventsTree is a tree-based data structure of events. 
 
 
 - get_x methods raise Exceptions if no result is found. 
@@ -53,25 +53,6 @@ EventsTree constructor.
 
 
 
-
----
-
-<a href="../../th2_data_services/events_tree/events_tree.py#L56"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `append_node`
-
-```python
-append_node(node: Node, parent_id: str) → None
-```
-
-Appends a node to the tree. 
-
-
-
-**Args:**
- 
- - <b>`node`</b>:  Node. 
- - <b>`parent_id`</b>:  Parent event id. 
 
 ---
 

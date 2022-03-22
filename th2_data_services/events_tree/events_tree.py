@@ -23,7 +23,7 @@ Th2Event = dict
 
 
 class EventsTree:
-    """EventsTree - is a useful wrapper for your retrieved data.
+    """EventsTree is a tree-based data structure of events.
 
     - get_x methods raise Exceptions if no result is found.
     - find_x methods return None if no result is found.
@@ -53,7 +53,7 @@ class EventsTree:
         """
         self._tree = tree
 
-    def append_node(self, node: Node, parent_id: str) -> None:
+    def _append_node(self, node: Node, parent_id: str) -> None:
         """Appends a node to the tree.
 
         Args:
@@ -113,10 +113,10 @@ class EventsTree:
         Raises:
             EventIdNotInTree: If event id is not in the tree.
         """
-        children: List[Node] = self._tree.children(id)
-        if not children:
+        try:
+            return tuple(child.data for child in self._tree.children(id))
+        except NodeIDAbsentError:
             raise EventIdNotInTree(id)
-        return tuple(child.data for child in children)
 
     def get_children_iter(self, id: str) -> Generator[Th2Event, None, None]:
         """Gets children as iterator for an event.
