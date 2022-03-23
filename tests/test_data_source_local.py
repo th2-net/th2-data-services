@@ -1,7 +1,10 @@
+from datetime import datetime
+
 import pytest
 import requests
 
 from th2_data_services.data import Data
+from th2_data_services.provider.v5.commands.http import GetEvents
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
 
@@ -661,3 +664,15 @@ def test_unprintable_character(demo_data_source: HTTPProvider5DataSource):
     event = demo_data_source.command(http.GetEventById(("b85d9dca-6236-11ec-bc58-1b1c943c5c0d")))
 
     assert "\x80" in event["body"][0]["value"] and event["body"][0]["value"] == "nobJjpBJkTuQMmscc4R\x80"
+
+
+def test_attached_messages(demo_data_source: HTTPProvider5DataSource):
+    events = demo_data_source.command(
+        GetEvents(
+            start_timestamp=datetime(year=2021, month=6, day=20, hour=10, minute=44, second=41, microsecond=692724),
+            end_timestamp=datetime(year=2021, month=6, day=20, hour=10, minute=45, second=49, microsecond=28579),
+            attached_messages=True,
+        )
+    )
+
+    assert events.filter(lambda event: event.get("attachedMessageIds")).len

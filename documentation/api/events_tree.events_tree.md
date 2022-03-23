@@ -56,7 +56,7 @@ EventsTree constructor.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L309"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L312"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find`
 
@@ -108,7 +108,7 @@ Finds the ancestor of an event.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L283"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L286"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `findall`
 
@@ -142,7 +142,7 @@ Searches events matches.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L251"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L254"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `findall_iter`
 
@@ -418,7 +418,7 @@ Gets root id.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L331"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L334"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subtree`
 
@@ -447,7 +447,7 @@ Gets subtree of event by id.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L348"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L351"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `show`
 
