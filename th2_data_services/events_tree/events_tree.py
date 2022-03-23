@@ -243,9 +243,12 @@ class EventsTree:
         Returns:
             Ancestor of Event.
         """
-        for ancestor in self._iter_ancestors(id):
-            if filter(ancestor):
-                return ancestor
+        try:
+            for ancestor in self._iter_ancestors(id):
+                if filter(ancestor):
+                    return ancestor
+        except EventIdNotInTree:
+            return None
         return None
 
     def findall_iter(
