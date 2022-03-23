@@ -13,8 +13,6 @@
 #  limitations under the License.
 import json
 from typing import Union
-from sseclient import Event as SSEEvent
-from urllib3.exceptions import HTTPError
 
 from th2_data_services.interfaces.adapter import IAdapter
 
@@ -53,24 +51,3 @@ class AdapterGRPCObjectToDict(IAdapter):
         except (KeyError, json.JSONDecodeError):
             return new_record
         return new_record
-
-
-class AdapterSSE(IAdapter):
-    """SSE Adapter handle bytes from sse-stream into Dict object."""
-
-    def handle(self, record: SSEEvent) -> dict:
-        """SSE adapter.
-
-        Args:
-            record: SSE Event
-
-        Returns:
-            Dict object.
-        """
-        if record.event == "error":
-            raise HTTPError(record.data)
-        if record.event not in ["close", "keep_alive", "message_ids"]:
-            try:
-                return json.loads(record.data)
-            except json.JSONDecodeError as e:
-                raise ValueError(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{record.data}")

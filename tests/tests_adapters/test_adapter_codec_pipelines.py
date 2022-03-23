@@ -1,12 +1,20 @@
 from typing import List
+from th2_data_services.provider.v5.adapters.message_adapters import AdapterCodecPipelines
 
-from th2_data_services.provider.adapters import adapter_provider5
+
+def create_adapter_with_ignore_errors():
+    return AdapterCodecPipelines(ignore_errors=True)
+
+
+def create_adapter_wo_ignore_errors():
+    return AdapterCodecPipelines(ignore_errors=False)
 
 
 def test_adapter_with_id(messages_before_pipeline_adapter: List[dict], messages_after_pipeline_adapter: List[dict]):
+    adapter = create_adapter_with_ignore_errors()
     output = []
     for message in messages_before_pipeline_adapter:
-        messages = adapter_provider5(message)
+        messages = adapter.handle(message)
         if isinstance(messages, dict):
             messages = [messages]
         output.extend(messages)
@@ -15,8 +23,9 @@ def test_adapter_with_id(messages_before_pipeline_adapter: List[dict], messages_
 
 
 def test_find_sub_message_with_adapter(message_from_pipeline: dict):
+    adapter = create_adapter_with_ignore_errors()
     msg_id = message_from_pipeline.get("messageId") + ".5"
-    message_from_pipeline = adapter_provider5(message_from_pipeline)
+    message_from_pipeline = adapter.handle(message_from_pipeline)
 
     index = None
     if msg_id.find(".") != -1:
@@ -76,8 +85,9 @@ def test_find_sub_message_with_adapter(message_from_pipeline: dict):
 
 
 def test_find_messages_with_adapter(message_from_pipeline: dict):
+    adapter = create_adapter_with_ignore_errors()
     msg_id = message_from_pipeline.get("messageId")
-    message_from_pipeline = adapter_provider5(message_from_pipeline)
+    message_from_pipeline = adapter.handle(message_from_pipeline)
 
     index = None
     if msg_id.find(".") != -1:
@@ -99,6 +109,7 @@ def test_find_messages_with_adapter(message_from_pipeline: dict):
 
 
 def test_message_with_empty_body(message_from_pipeline_empty_body, messages_from_after_pipeline_empty_body):
-    messages = adapter_provider5(message_from_pipeline_empty_body)
+    adapter = create_adapter_with_ignore_errors()
+    messages = adapter.handle(message_from_pipeline_empty_body)
 
     assert messages_from_after_pipeline_empty_body == messages

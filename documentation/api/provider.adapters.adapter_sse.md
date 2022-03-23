@@ -8,28 +8,39 @@
 
 
 
+
 ---
 
-<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L22"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>function</kbd> `adapter_sse`
+## <kbd>class</kbd> `AdapterSSE`
+SSE Adapter handle bytes from sse-stream into Dict object. 
+
+
+
+
+---
+
+<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `handle`
 
 ```python
-adapter_sse(record: Event) → dict
+handle(record: Event) → dict
 ```
 
-SSE adapter. 
+Adapter handler. 
 
 
 
 **Args:**
  
- - <b>`record`</b>:  SSE Event 
+ - <b>`record`</b>:  SSE Event. 
 
 
 
 **Returns:**
- data dict 
+ Dict object. 
 
 
 

@@ -25,7 +25,7 @@ from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSour
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.sse_client import SSEClient
-from th2_data_services.provider.v5.adapters.basic_adapters import AdapterSSE
+from th2_data_services.provider.adapters.adapter_sse import AdapterSSE
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 import logging

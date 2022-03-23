@@ -26,8 +26,8 @@ from th2_data_services import Filter, Data
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterGRPCObjectToDict
-from th2_data_services.provider.v5.adapters.events_adapters import AdapterDeleteEventWrappers
-from th2_data_services.provider.v5.adapters.messages_adapters import AdapterDeleteMessageWrappers
+from th2_data_services.provider.v5.adapters.event_adapters import AdapterDeleteEventWrappers
+from th2_data_services.provider.v5.adapters.message_adapters import AdapterDeleteMessageWrappers
 from th2_data_services.provider.v5.interfaces.command import IGRPCProvider5Command
 
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
