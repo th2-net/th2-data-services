@@ -73,4 +73,4 @@ class AdapterSSE(IAdapter):
             try:
                 return json.loads(record.data)
             except json.JSONDecodeError as e:
-                raise Exception(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{record.data}")
+                raise ValueError(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{record.data}")

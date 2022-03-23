@@ -262,13 +262,13 @@ class Data:
         """
         path = Path("./").joinpath("temp").joinpath(filename)
         if not path.exists():
-            raise ValueError(f"{filename} doesn't exist.")
+            raise FileNotFoundError(f"{filename} doesn't exist")
 
         if not path.is_file():
-            raise ValueError(f"{filename} isn't file.")
+            raise FileExistsError(f"{filename} isn't file")
 
         if path.suffix != ".pickle":
-            raise ValueError(f"File hasn't pickle extension.")
+            raise FileNotFoundError(f"File hasn't pickle extension")
 
         with open(path.resolve(), "rb") as file:
             while True:

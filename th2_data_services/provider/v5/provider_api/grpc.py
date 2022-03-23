@@ -172,7 +172,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             Iterable object which return messages as parts of streaming response.
         """
         if stream is None:
-            raise ValueError("Argument 'stream' is required.")
+            raise TypeError("Argument 'stream' is required.")
         self.__search_basic_checks(
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
@@ -212,10 +212,10 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         result_count_limit: Optional[int],
     ):
         if start_timestamp is None and resume_from_ids is None:
-            raise ValueError("One of the 'startTimestamp' or 'resumeFromId(s)' must not be null.")
+            raise ValueError("One of the 'startTimestamp' or 'resumeFromId(s)' must not be None.")
 
         if end_timestamp is None and result_count_limit is None:
-            raise ValueError("One of the 'end_timestamp' or 'result_count_limit' must not be null.")
+            raise ValueError("One of the 'end_timestamp' or 'result_count_limit' must not be None.")
 
         if (
             start_timestamp is not None

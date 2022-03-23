@@ -46,17 +46,26 @@ Stab interface.
 ### <kbd>method</kbd> `build`
 
 ```python
-build(fields: dict)
+build(fields: dict) → dict
 ```
 
+Builds a stub. 
 
 
 
+**Args:**
+  fields: 
+
+
+
+**Returns:**
+ 
+ - <b>`TypeError`</b>:  If required fields is absent in changed fields list. 
 
 
 ---
 
-<a href="../../th2_data_services/provider/interfaces/stub_builder.py#L59"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/interfaces/stub_builder.py#L67"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IEventStub`
 Just to mark Event Stub class. 
@@ -89,17 +98,26 @@ Stab interface.
 ### <kbd>method</kbd> `build`
 
 ```python
-build(fields: dict)
+build(fields: dict) → dict
 ```
 
+Builds a stub. 
 
 
 
+**Args:**
+  fields: 
+
+
+
+**Returns:**
+ 
+ - <b>`TypeError`</b>:  If required fields is absent in changed fields list. 
 
 
 ---
 
-<a href="../../th2_data_services/provider/interfaces/stub_builder.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/interfaces/stub_builder.py#L74"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IMessageStub`
 Just to mark Message Stub class. 
@@ -132,12 +150,21 @@ Stab interface.
 ### <kbd>method</kbd> `build`
 
 ```python
-build(fields: dict)
+build(fields: dict) → dict
 ```
 
+Builds a stub. 
 
 
 
+**Args:**
+  fields: 
+
+
+
+**Returns:**
+ 
+ - <b>`TypeError`</b>:  If required fields is absent in changed fields list. 
 
 
 

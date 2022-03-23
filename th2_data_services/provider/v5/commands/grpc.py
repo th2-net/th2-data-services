@@ -24,6 +24,7 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
 
 from th2_data_services import Filter, Data
 from th2_data_services.provider.command import ProviderAdaptableCommand
+from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v5.adapters.basic_adapters import AdapterGRPCObjectToDict
 from th2_data_services.provider.v5.adapters.events_adapters import AdapterDeleteEventWrappers
 from th2_data_services.provider.v5.adapters.messages_adapters import AdapterDeleteMessageWrappers
@@ -31,6 +32,11 @@ from th2_data_services.provider.v5.interfaces.command import IGRPCProvider5Comma
 
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
 from th2_data_services.provider.v5.provider_api import GRPCProvider5API
+
+import logging
+
+logger = logging.getLogger("th2_data_services")
+logger.setLevel(logging.DEBUG)
 
 
 class GetEventByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
@@ -52,7 +58,7 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         super().__init__()
         self._id = id
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> EventData:
+    def handle(self, data_source: GRPCProvider5DataSource) -> EventData:  # noqa: D102
         api: GRPCProvider5API = data_source.source_api
         event = api.get_event(self._id)
 
@@ -69,40 +75,37 @@ class GetEventById(IGRPCProvider5Command, ProviderAdaptableCommand):
         dict: Th2 event.
 
     Raises:
-        ValueError: If event by Id wasn't found.
+        EventNotFound: If event by Id wasn't found.
     """
 
-    def __init__(self, id: str):
+    def __init__(self, id: str, use_stub=False):
         """GetEventById constructor.
 
         Args:
             id: Event id.
+            use_stub: If True the command returns stub instead of exception.
 
         """
         super().__init__()
         self._id = id
         self._grpc_decoder = AdapterGRPCObjectToDict()
         self._wrapper_deleter = AdapterDeleteEventWrappers()
-        self._stub_status = False
+        self._stub_status = use_stub
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> dict:
-        event = {data_source.event_struct.EVENT_ID: self._id}
+    def handle(self, data_source: GRPCProvider5DataSource) -> dict:  # noqa: D102
         try:
             event = GetEventByIdGRPCObject(self._id).handle(data_source)
             event = self._grpc_decoder.handle(event)
             event = self._wrapper_deleter.handle(event)
         except _InactiveRpcError:
             if self._stub_status:
-                event = data_source.event_stub_builder.build(event)
+                event = data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
             else:
-                raise ValueError(f"Unable to find the event. Id: {self._id}")
+                logger.error(f"Unable to find the event. Id: {self._id}")
+                raise EventNotFound(self._id)
 
         event = self._handle_adapters(event)
         return event
-
-    def use_stub(self):
-        self._stub_status = True
-        return self
 
 
 class GetEventsById(IGRPCProvider5Command, ProviderAdaptableCommand):
@@ -114,31 +117,29 @@ class GetEventsById(IGRPCProvider5Command, ProviderAdaptableCommand):
         List[dict]: Th2 events.
 
     Raises:
-        ValueError: If any event by Id wasn't found.
+        EventNotFound: If any event by Id wasn't found.
     """
 
-    def __init__(self, ids: List[str]):
+    def __init__(self, ids: List[str], use_stub=False):
         """GetEventsById constructor.
 
         Args:
             ids: Events ids.
+            use_stub: If True the command returns stub instead of exception.
 
         """
         super().__init__()
         self.ids = ids
-        self._stub_status = False
+        self._stub_status = use_stub
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> List[EventData]:
+    def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:  # noqa: D102
         response = []
         for event_id in self.ids:
-            event = GetEventById(event_id).handle(data_source=data_source)
+            event = GetEventById(event_id, use_stub=self._stub_status).handle(data_source=data_source)
             event = self._handle_adapters(event)
             response.append(event)
-        return response
 
-    def use_stub(self):
-        self._stub_status = True
-        return self
+        return response
 
 
 class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
@@ -193,7 +194,7 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._attached_messages = attached_messages
         self._filters = filters
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[EventData]:
+    def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[EventData]:  # noqa: D102
         api: GRPCProvider5API = data_source.source_api
 
         start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)
@@ -276,7 +277,7 @@ class GetEvents(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._grpc_decoder = AdapterGRPCObjectToDict()
         self._wrapper_deleter = AdapterDeleteEventWrappers()
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> Data:
+    def handle(self, data_source: GRPCProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
         return Data(source, cache=self._cache)
 
@@ -300,7 +301,7 @@ class GetEvents(IGRPCProvider5Command, ProviderAdaptableCommand):
             yield event
 
 
-class GetMessageByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetMessageByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):  # noqa: D102
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id as GRPC Object.
@@ -326,7 +327,7 @@ class GetMessageByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         return response
 
 
-class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):  # noqa: D102
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id.
@@ -335,39 +336,36 @@ class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):
         dict: Th2 message.
 
     Raises:
-        ValueError: If message by id wasn't found.
+        MessageNotFound: If message by id wasn't found.
     """
 
-    def __init__(self, id: str):
+    def __init__(self, id: str, use_stub=False):
         """GetMessageById constructor.
 
         Args:
             id: Message id.
+            use_stub: If True the command returns stub instead of exception.
 
         """
         super().__init__()
         self._id = id
         self._decoder = AdapterGRPCObjectToDict()
         self._wrapper_deleter = AdapterDeleteMessageWrappers()
-        self._stub_status = False
+        self._stub_status = use_stub
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> dict:
-        message = {data_source.message_struct.MESSAGE_ID: self._id}
+    def handle(self, data_source: GRPCProvider5DataSource) -> dict:  # noqa: D102
         try:
             message = GetMessageByIdGRPCObject(self._id).handle(data_source)
             message = self._decoder.handle(message)
             message = self._wrapper_deleter.handle(message)
         except _InactiveRpcError:
             if self._stub_status:
-                message = data_source.message_stub_builder.build(message)
+                message = data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
             else:
-                raise ValueError(f"Unable to find the message. Id: {self._id}")
+                logger.error(f"Unable to find the message. Id: {self._id}")
+                raise MessageNotFound(self._id)
         message = self._handle_adapters(message)
         return message
-
-    def use_stub(self):
-        self._stub_status = True
-        return self
 
 
 class GetMessagesById(IGRPCProvider5Command, ProviderAdaptableCommand):
@@ -379,31 +377,29 @@ class GetMessagesById(IGRPCProvider5Command, ProviderAdaptableCommand):
         List[dict]: Th2 messages.
 
     Raises:
-        ValueError: If any message by id wasn't found.
+        MessageNotFound: If any message by id wasn't found.
     """
 
-    def __init__(self, ids: List[str]):
+    def __init__(self, ids: List[str], use_stub=False):
         """GetMessagesById constructor.
 
         Args:
             ids: Messages id.
+            use_stub: If True the command returns stub instead of exception.
 
         """
         super().__init__()
         self._ids = ids
-        self._stub_status = False
+        self._stub_status = use_stub
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:
+    def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:  # noqa: D102
         response = []
         for id_ in self._ids:
-            message = GetMessageById(id_).handle(data_source)
+            message = GetMessageById(id_, use_stub=self._stub_status).handle(data_source)
             message = self._handle_adapters(message)
             response.append(message)
-        return response
 
-    def use_stub(self):
-        self._stub_status = True
-        return self
+        return response
 
 
 class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
