@@ -14,7 +14,7 @@
 
 import logging
 from http import HTTPStatus
-from typing import List, Generator
+from typing import List, Generator, Optional, Union
 
 import requests
 from requests import Response
@@ -121,16 +121,16 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
     def get_url_search_sse_events(
         self,
         start_timestamp: int,
-        end_timestamp: int = None,
-        parent_event: str = None,
-        resume_from_id: str = None,
-        search_direction: str = "NEXT",
-        result_count_limit: (int, float) = None,
-        keep_open: bool = False,
-        limit_for_parent: (int, float) = None,
-        metadata_only: bool = True,
-        attached_messages: bool = False,
-        filters: str = "",
+        end_timestamp: Optional[int] = None,
+        parent_event: Optional[str] = None,
+        resume_from_id: Optional[str] = None,
+        search_direction: Optional[str] = "next",
+        result_count_limit: Union[int, float] = None,
+        keep_open: Optional[bool] = False,
+        limit_for_parent: Union[int, float] = None,
+        metadata_only: Optional[bool] = True,
+        attached_messages: Optional[bool] = False,
+        filters: Optional[str] = None,
     ) -> str:
         """REST-API `search/sse/events` call create a sse channel of event metadata that matches the filter.
 
@@ -156,21 +156,24 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
                 continue
             else:
                 query += f"&{k}={v}"
-        return f"{url}{query[1:]}{filters}"
+        url = f"{url}{query[1:]}"
+        if filters is not None:
+            url += filters
+        return url
 
     def get_url_search_sse_messages(
         self,
         start_timestamp: int,
         stream: List[str],
-        end_timestamp: int = None,
-        resume_from_id: str = None,
-        search_direction: str = "NEXT",
-        result_count_limit: (int, float) = None,
+        end_timestamp: Optional[int] = None,
+        resume_from_id: Optional[str] = None,
+        search_direction: Optional[str] = "next",
+        result_count_limit: Union[int, float] = None,
         keep_open: bool = False,
-        message_id: List[str] = None,
+        message_id: Optional[List[str]] = None,
         attached_events: bool = False,
-        lookup_limit_days: (int, float) = None,
-        filters: str = "",
+        lookup_limit_days: Union[int, float] = None,
+        filters: Optional[str] = None,
     ) -> str:
         """REST-API `search/sse/messages` call create a sse channel of messages that matches the filter.
 
@@ -199,7 +202,10 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
                     query += f"&{k}={s}"
             else:
                 query += f"&{k}={v}"
-        return f"{url}{query[1:]}{filters}"
+        url = f"{url}{query[1:]}"
+        if filters is not None:
+            url += filters
+        return url
 
     def execute_sse_request(self, url: str) -> Generator[bytes, None, None]:
         """Create stream connection.
