@@ -20,7 +20,6 @@
 - [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
 - [`provider`](./provider.md#module-provider)
 - [`provider.adapters`](./provider.adapters.md#module-provideradapters)
-- [`provider.adapters.adapter_provider5`](./provider.adapters.adapter_provider5.md#module-provideradaptersadapter_provider5)
 - [`provider.adapters.adapter_sse`](./provider.adapters.adapter_sse.md#module-provideradaptersadapter_sse)
 - [`provider.command`](./provider.command.md#module-providercommand)
 - [`provider.exceptions`](./provider.exceptions.md#module-providerexceptions)
@@ -33,8 +32,8 @@
 - [`provider.v5`](./provider.v5.md#module-providerv5)
 - [`provider.v5.adapters`](./provider.v5.adapters.md#module-providerv5adapters)
 - [`provider.v5.adapters.basic_adapters`](./provider.v5.adapters.basic_adapters.md#module-providerv5adaptersbasic_adapters)
-- [`provider.v5.adapters.events_adapters`](./provider.v5.adapters.events_adapters.md#module-providerv5adaptersevents_adapters)
-- [`provider.v5.adapters.messages_adapters`](./provider.v5.adapters.messages_adapters.md#module-providerv5adaptersmessages_adapters)
+- [`provider.v5.adapters.event_adapters`](./provider.v5.adapters.event_adapters.md#module-providerv5adaptersevent_adapters)
+- [`provider.v5.adapters.message_adapters`](./provider.v5.adapters.message_adapters.md#module-providerv5adaptersmessage_adapters)
 - [`provider.v5.command_resolver`](./provider.v5.command_resolver.md#module-providerv5command_resolver)
 - [`provider.v5.commands`](./provider.v5.commands.md#module-providerv5commands)
 - [`provider.v5.commands.grpc`](./provider.v5.commands.grpc.md#module-providerv5commandsgrpc)
@@ -69,6 +68,7 @@
 - [`events_tree_collection.EventsTreeCollection`](./interfaces.events_tree.events_tree_collection.md#class-eventstreecollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
 - [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
+- [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
 - [`exceptions.CommandError`](./provider.exceptions.md#class-commanderror): Exception raised for errors in the command.
 - [`exceptions.EventNotFound`](./provider.exceptions.md#class-eventnotfound)
@@ -87,10 +87,10 @@
 - [`stub_builder.IEventStub`](./provider.interfaces.stub_builder.md#class-ieventstub): Just to mark Event Stub class.
 - [`stub_builder.IMessageStub`](./provider.interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
 - [`stub_builder.IStub`](./provider.interfaces.stub_builder.md#class-istub)
-- [`basic_adapters.AdapterGRPCObjectToDict`](./provider.v5.adapters.basic_adapters.md#class-adaptergrpcobjecttodict): GRPC Adapter decodes a GRPC object into a Dict object.
-- [`basic_adapters.AdapterSSE`](./provider.v5.adapters.basic_adapters.md#class-adaptersse): SSE Adapter handle bytes from sse-stream into Dict object.
-- [`events_adapters.AdapterDeleteEventWrappers`](./provider.v5.adapters.events_adapters.md#class-adapterdeleteeventwrappers): Adapter that delete unnecessary wrappers in events.
-- [`messages_adapters.AdapterDeleteMessageWrappers`](./provider.v5.adapters.messages_adapters.md#class-adapterdeletemessagewrappers): Adapter that delete unnecessary wrappers in events.
+- [`basic_adapters.GRPCObjectToDictAdapter`](./provider.v5.adapters.basic_adapters.md#class-grpcobjecttodictadapter): GRPC Adapter decodes a GRPC object into a Dict object.
+- [`event_adapters.DeleteEventWrappersAdapter`](./provider.v5.adapters.event_adapters.md#class-deleteeventwrappersadapter): Adapter that deletes unnecessary wrappers in events.
+- [`message_adapters.CodecPipelinesAdapter`](./provider.v5.adapters.message_adapters.md#class-codecpipelinesadapter): Adapter for codec-pipeline messages from provider v5.
+- [`message_adapters.DeleteMessageWrappersAdapter`](./provider.v5.adapters.message_adapters.md#class-deletemessagewrappersadapter): Adapter that deletes unnecessary wrappers in messages.
 - [`grpc.GetEventById`](./provider.v5.commands.grpc.md#class-geteventbyid): A Class-Command for request to rpt-data-provider.
 - [`grpc.GetEventByIdGRPCObject`](./provider.v5.commands.grpc.md#class-geteventbyidgrpcobject): A Class-Command for request to rpt-data-provider.
 - [`grpc.GetEvents`](./provider.v5.commands.grpc.md#class-getevents): A Class-Command for request to rpt-data-provider.
@@ -128,8 +128,6 @@
 ## Functions
 
 - [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
-- [`adapter_provider5.adapter_provider5`](./provider.adapters.adapter_provider5.md#function-adapter_provider5): Provider 5 adapter.
-- [`adapter_sse.adapter_sse`](./provider.adapters.adapter_sse.md#function-adapter_sse): SSE adapter.
 - [`command_resolver.resolver_get_event_by_id`](./provider.v5.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
 - [`command_resolver.resolver_get_events_by_id`](./provider.v5.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
 

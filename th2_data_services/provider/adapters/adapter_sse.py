@@ -12,24 +12,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from sseclient import Event
+from sseclient import Event as SSEEvent
 from urllib3.exceptions import HTTPError
 import json
 
+from th2_data_services.interfaces import IAdapter
 
-def adapter_sse(record: Event) -> dict:
-    """SSE adapter.
 
-    Args:
-        record: SSE Event
+class SSEAdapter(IAdapter):
+    """SSE Adapter handles bytes from sse-stream into Dict object."""
 
-    Returns:
-        data dict
-    """
-    if record.event == "error":
-        raise HTTPError(record.data)
-    if record.event not in ["close", "keep_alive", "message_ids"]:
-        try:
-            return json.loads(record.data)
-        except json.JSONDecodeError as e:
-            raise ValueError(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{record.data}")
+    def handle(self, record: SSEEvent) -> dict:
+        """Adapter handler.
+
+        Args:
+            record: SSE Event.
+
+        Returns:
+            Dict object.
+        """
+        if record.event == "error":
+            raise HTTPError(record.data)
+        if record.event not in ["close", "keep_alive", "message_ids"]:
+            try:
+                return json.loads(record.data)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{record.data}")
