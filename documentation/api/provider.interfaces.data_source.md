@@ -184,6 +184,12 @@ Checks whether url is working.
  
  - <b>`timeout`</b>:  How many seconds to wait for the server to send data before giving up. 
 
+
+
+**Raises:**
+ 
+ - <b>`urllib3.exceptions.HTTPError`</b>:  If unable to connect to host. 
+
 ---
 
 <a href="../../th2_data_services/provider/interfaces/data_source.py#L110"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
@@ -199,7 +205,7 @@ Execute the transmitted HTTP command.
 
 ---
 
-<a href="../../th2_data_services/provider/interfaces/data_source.py#L131"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/interfaces/data_source.py#L134"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IGRPCProviderDataSource`
 Interface of DataSource that provides work with rpt-data-provider via GRPC. 
@@ -271,7 +277,7 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/provider/interfaces/data_source.py#L134"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/interfaces/data_source.py#L137"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `command`
 

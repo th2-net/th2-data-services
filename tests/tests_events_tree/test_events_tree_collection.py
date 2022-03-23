@@ -1,22 +1,22 @@
 from typing import List
 
-from th2_data_services.provider.v5.events_tree.events_trees_collection import EventsTreesCollectionProvider5
+from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 
 
 def test_filter_all(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert len(collection.findall(lambda event: "Checkpoint" in event["eventName"])) == 11
 
 
 def test_filter_all_max_count(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert len(collection.findall(lambda event: "Checkpoint" in event["eventName"], max_count=5)) == 5
 
 
 def test_filter_stop_function(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert (
         len(
@@ -30,7 +30,7 @@ def test_filter_stop_function(general_data: List[dict]):
 
 
 def test_filter_one(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert collection.find(lambda event: "Checkpoint" in event["eventName"]) == {
         "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
@@ -43,7 +43,7 @@ def test_filter_one(general_data: List[dict]):
 
 
 def test_filter_stop(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert not collection.find(
         lambda event: "Checkpoint" in event["eventName"],
@@ -52,7 +52,7 @@ def test_filter_stop(general_data: List[dict]):
 
 
 def test_subtree(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert (
         len(collection.get_subtree("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e")) == 11
@@ -60,25 +60,25 @@ def test_subtree(general_data: List[dict]):
 
 
 def test_get_all_events(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert len(collection.get_all_events()) == 18
 
 
 def test_get_all_events_iter(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert len(list(collection.get_all_events_iter())) == 18
 
 
 def test_get_event(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert collection.get_event("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e")
 
 
 def test_get_full_path(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert collection.get_full_path("8c3fec4f-d1b4-11eb-bae5-57b0c4472880") == [
         {
@@ -117,7 +117,7 @@ def test_get_full_path(general_data: List[dict]):
 
 
 def test_get_full_path_with_field(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert collection.get_full_path("8c3fec4f-d1b4-11eb-bae5-57b0c4472880", field="eventName") == [
         "[TS_1]Aggressive IOC vs two orders: second order's price is lower than first",
@@ -128,13 +128,13 @@ def test_get_full_path_with_field(general_data: List[dict]):
 
 
 def test_get_leaves(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert len(collection.get_leaves()) == 14
 
 
 def test_get_children(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert (
         len(collection.get_children("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e")) == 10
@@ -142,7 +142,7 @@ def test_get_children(general_data: List[dict]):
 
 
 def test_get_children_iter(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert (
         len(
@@ -157,7 +157,7 @@ def test_get_children_iter(general_data: List[dict]):
 
 
 def test_get_parent(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert collection.get_parent("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e") == {
         "batchId": None,
@@ -170,7 +170,7 @@ def test_get_parent(general_data: List[dict]):
 
 
 def test_find_ancestor(general_data: List[dict]):
-    collection = EventsTreesCollectionProvider5(general_data)
+    collection = EventsTreeCollectionProvider5(general_data)
 
     assert collection.find_ancestor(
         "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a4-d1b4-11eb-9278-591e568ad66e",

@@ -11,17 +11,18 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from typing import List, Dict, Optional
 
 from treelib import Node, Tree
 
 from th2_data_services import Data
 from th2_data_services.events_tree import EventsTree
-from th2_data_services.events_tree.events_trees_collection import EventsTreesCollection
+from th2_data_services.interfaces.events_tree.events_tree_collection import EventsTreeCollection
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 
 
-class ParentEventsTreesCollection(EventsTreesCollection):
+class ParentEventsTreeCollection(EventsTreeCollection):
     """ParentEventsTreeCollections is a class like an EventsTreeCollections.
 
     ParentEventsTree contains all parent events that are referenced.
@@ -30,7 +31,7 @@ class ParentEventsTreesCollection(EventsTreesCollection):
     def __init__(
         self, data: Data, data_source: IProviderDataSource = None, preserve_body: bool = False, stub: bool = False
     ):
-        """ParentEventsTreesCollection constructor.
+        """ParentEventsTreeCollection constructor.
 
         Args:
             data: Data object.

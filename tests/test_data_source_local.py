@@ -1,7 +1,11 @@
+from datetime import datetime
+
 import pytest
 import requests
 
 from th2_data_services.data import Data
+from th2_data_services.provider.exceptions import CommandError
+from th2_data_services.provider.v5.commands.http import GetEvents
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
 
@@ -78,8 +82,8 @@ def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProvider5Dat
     for event_ in events:
         event_["attachedMessageIds"].sort()
 
-    broken_event: dict = data_source.command(http.GetEventById("id").use_stub())
-    broken_events: list = data_source.command(http.GetEventsById(["id", "ids"]).use_stub())
+    broken_event: dict = data_source.command(http.GetEventById("id", use_stub=True))
+    broken_events: list = data_source.command(http.GetEventsById(["id", "ids"], use_stub=True))
 
     plug_for_broken_event: dict = {
         "attachedMessageIds": [],
@@ -116,11 +120,11 @@ def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProvider5Dat
     assert broken_event == plug_for_broken_event
     assert broken_events == plug_for_broken_events
     assert [event, broken_event] == data_source.command(
-        http.GetEventsById(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"]).use_stub()
+        http.GetEventsById(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"], use_stub=True)
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(CommandError):
         data_source.command(http.GetEventsById(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"]))
-    with pytest.raises(ValueError):
+    with pytest.raises(CommandError):
         data_source.command(http.GetEventById("id"))
 
 
@@ -585,13 +589,8 @@ def test_get_x_with_filters(
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: HTTPProvider5DataSource):
     data_source = demo_data_source
 
-    with pytest.raises(ValueError) as exc_info:
+    with pytest.raises(CommandError) as exc_info:
         data_source.command(http.GetMessageById("demo-conn_not_exist:first:1624005448022245399"))
-
-    assert (
-        "A command has broken. Details of error:\\"
-        "nUnable to find the message. Id: demo-conn_not_exist:first:1624005448022245399" in str(exc_info)
-    )
 
 
 def test_get_events_from_data_provider_with_error(demo_data_source: HTTPProvider5DataSource):
@@ -646,7 +645,7 @@ def test_get_messages_with_multiple_url(
     demo_messages_from_data_source_with_test_streams: Data,
     demo_messages_from_data_source: Data,
 ):
-    messages = demo_messages_from_data_source_with_test_streams
+    messages = demo_messages_from_data_source_with_test_streams.use_cache(True)
 
     messages_hand_demo_expected = demo_messages_from_data_source
     messages_hand_demo_actual = messages.filter(lambda record: record.get("sessionId") == "th2-hand-demo")
@@ -657,16 +656,19 @@ def test_get_messages_with_multiple_url(
     )
 
 
-def test_get_messages_with_multiple_url_double_start(
-    demo_messages_from_data_source_with_test_streams: Data,
-):
-    messages1 = len(list(demo_messages_from_data_source_with_test_streams))
-    messages2 = len(list(demo_messages_from_data_source_with_test_streams))
-
-    assert messages1 == messages2
-
-
 def test_unprintable_character(demo_data_source: HTTPProvider5DataSource):
     event = demo_data_source.command(http.GetEventById(("b85d9dca-6236-11ec-bc58-1b1c943c5c0d")))
 
     assert "\x80" in event["body"][0]["value"] and event["body"][0]["value"] == "nobJjpBJkTuQMmscc4R\x80"
+
+
+def test_attached_messages(demo_data_source: HTTPProvider5DataSource):
+    events = demo_data_source.command(
+        GetEvents(
+            start_timestamp=datetime(year=2021, month=6, day=20, hour=10, minute=44, second=41, microsecond=692724),
+            end_timestamp=datetime(year=2021, month=6, day=20, hour=10, minute=45, second=49, microsecond=28579),
+            attached_messages=True,
+        )
+    )
+
+    assert events.filter(lambda event: event.get("attachedMessageIds")).len

@@ -18,6 +18,9 @@ from grpc._channel import _InactiveRpcError
 
 from typing import TYPE_CHECKING
 
+from th2_data_services.provider.exceptions import CommandError
+from th2_data_services.provider.interfaces import IEventStruct, IMessageStruct
+
 if TYPE_CHECKING:
     from th2_data_services.provider.v5.interfaces.command import IGRPCProvider5Command
 
@@ -52,8 +55,8 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
     def __init__(
         self,
         url: str,
-        event_struct: Provider5EventStruct = provider5_event_struct,
-        message_struct: Provider5MessageStruct = provider5_message_struct,
+        event_struct: IEventStruct = provider5_event_struct,
+        message_struct: IMessageStruct = provider5_message_struct,
         event_stub_builder: IEventStub = provider5_event_stub_builder,
         message_stub_builder: IMessageStub = provider5_message_stub_builder,
     ):
@@ -88,14 +91,26 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
             Any: Command response.
 
         Raises:
-            ValueError: If command has broken.
+            CommandError: If the command was broken.
         """
         try:
             return cmd.handle(data_source=self)
         except _InactiveRpcError as info:
-            raise ValueError(f"A command has broken. Details of error:\n{info.details()}")
+            raise CommandError(
+                f"The command '{cmd.__class__.__name__}' was broken. Details of error:\n{info.details()}"
+            )
 
     @property
     def source_api(self) -> GRPCProvider5API:
         """Returns Provider API."""
         return self.__provider_api
+
+    @property
+    def event_struct(self) -> Provider5EventStruct:
+        """Returns event structure class."""
+        return self._event_struct
+
+    @property
+    def message_struct(self) -> Provider5MessageStruct:
+        """Returns message structure class."""
+        return self._message_struct

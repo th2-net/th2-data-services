@@ -37,7 +37,7 @@ class IStub(ABC):
     def _check_req_fields(self, fields):
         for rf in self._required_fields:
             if rf not in fields:
-                raise Exception(f"Required field '{rf}' is absent in changed fields list ({fields}).")
+                raise TypeError(f"Required field '{rf}' is absent in changed fields list ({fields})")
 
     def _build_by_template(self, fields) -> dict:
         template = self.template.copy()
@@ -46,7 +46,15 @@ class IStub(ABC):
                 template[k] = v
         return template
 
-    def build(self, fields: dict):
+    def build(self, fields: dict) -> dict:
+        """Builds a stub.
+
+        Args:
+            fields:
+
+        Returns:
+            TypeError: If required fields is absent in changed fields list.
+        """
         self._check_req_fields(fields)
         return self._build_by_template(fields)
 

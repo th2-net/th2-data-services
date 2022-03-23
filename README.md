@@ -14,6 +14,14 @@ Table of Contents
    * [2.2. Example](#22-example)
    * [2.3. Short theory](#23-short-theory)
       * [Terms](#terms)
+      * [Data caching](#data-caching)
+      * [Stream operations](#stream-operations)
+         * [Pipelining](#pipelining)
+         * [Internal iteration](#internal-iteration)
+      * [EventsTree and collections](#eventstree-and-collections)
+         * [EventsTree](#eventstree)
+         * [Collections](#collections)
+         * [Hints](#hints)
       * [Concept](#concept)
    * [2.4. Links](#24-links)
 * [3. API](#3-api)
@@ -75,38 +83,46 @@ This example works with **Events**, but you also can do the same actions with **
 
 ```python
 from collections import Generator
-from th2_data_services import DataSource, Data, Filter
 from datetime import datetime
+from typing import Tuple, List, Optional
+from th2_data_services import Data
+from th2_data_services.events_tree import EventsTree
+from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
+from th2_data_services.provider.v5.commands import http
+from th2_data_services.filter import Filter
+from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5, ParentEventsTreeCollectionProvider5
+
 
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
-data_source = DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
-START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41,
-                      microsecond=692724)  # object given in utc format
+START_TIME = datetime(
+    year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
+)  # object given in utc format
 END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
 
 # [2] Get events or messages from START_TIME to END_TIME.
 # [2.1] Get events.
-events: Data = data_source.get_events_from_data_provider(
-    startTimestamp=START_TIME,
-    endTimestamp=END_TIME,
-    attachedMessages=True,
-    # Use Filter class to apply rpt-data-provider filters.
-    filters=[  # Use the list to set multiple filters.
-        Filter("name", "ExecutionReport"),
-        Filter("type", "Send message")
-    ],
+events: Data = data_source.command(
+    http.GetEvents(
+        start_timestamp=START_TIME,
+        end_timestamp=END_TIME,
+        attached_messages=True,
+        # Use Filter class to apply rpt-data-provider filters.
+        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
+    )
 )
 
 # [2.2] Get messages.
-messages: Data = data_source.get_messages_from_data_provider(
-    startTimestamp=START_TIME,
-    endTimestamp=END_TIME,
-    attachedMessages=True,
-    stream=["demo-conn2"],
-    filters=Filter("body", "195"),
+messages: Data = data_source.command(
+    http.GetMessages(
+        start_timestamp=START_TIME,
+        attached_events=True,
+        stream=["demo-conn2"],
+        filters=Filter("body", "195"),
+    )
 )
 
 # [3] Work with your Data object.
@@ -165,11 +181,11 @@ desired_messages = [
     "demo-conn1:first:1619506157132265833",
 ]
 
-data_source.find_events_by_id_from_data_provider(desired_event)  # Returns 1 event (dict).
-data_source.find_events_by_id_from_data_provider(desired_events)  # Returns 2 events list(dict).
+data_source.command(http.GetEventById(desired_event))  # Returns 1 event (dict).
+data_source.command(http.GetEventsById(desired_events))  # Returns 2 events list(dict).
 
-data_source.find_messages_by_id_from_data_provider(desired_message)  # Returns 1 message (dict).
-data_source.find_messages_by_id_from_data_provider(desired_messages)  # Returns 2 messages list(dict).
+data_source.command(http.GetMessageById(desired_message))  # Returns 1 message (dict).
+data_source.command(http.GetMessagesById(desired_messages))  # Returns 2 messages list(dict).
 
 # [3.11] The cache inheritance.
 # Creates a new Data object that will use cache from the events Data object.
@@ -185,6 +201,84 @@ events_types_with_batch = events_with_batch.map(lambda record: {"eventType": rec
 
 events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
 events_without_types_with_batch.use_cache(True)
+
+# [4] Working with EventsTree and EventsTreeCollection.
+# [4.1] Building the EventsTreeCollection.
+
+# If you don't specify data_source for the tree then it won't recover detached events.
+collection = EventsTreeCollectionProvider5(events)
+
+# Detached events isn't empty.
+assert collection.detached_events
+
+collection = EventsTreeCollectionProvider5(events, data_source=data_source)
+# Detached events are empty because they were recovered.
+assert not collection.detached_events
+
+# The collection has EventsTrees each with a tree of events.
+# Using Collection and EventsTrees, you can work flexibly with events.
+
+# [4.1.1] Get leaves of all trees.
+leaves: Tuple[dict] = collection.get_leaves()
+
+# [4.1.2] Get roots ids of all trees.
+roots: List[str] = collection.get_roots_ids()
+
+# [4.1.3] Find an event in all trees.
+find_event: Optional[dict] = collection.find(lambda event: "Send message" in event["eventType"])
+
+# [4.1.4] Find all events in all trees. There is also iterable version 'findall_iter'.
+find_events: List[dict] = collection.findall(lambda event: event["successful"] is True)
+
+# [4.1.5] Find an ancestor of the event.
+ancestor: Optional[dict] = collection.find_ancestor(
+    "8bbe3717-cf59-11eb-a3f7-094f904c3a62", filter=lambda event: "RootEvent" in event["eventName"]
+)
+
+# [4.1.6] Get children of the event. There is also iterable version 'get_children_iter'.
+children: Tuple[dict] = collection.get_children("814422e1-9c68-11eb-8598-691ebd7f413d")
+
+# [4.1.7] Get subtree for specified event.
+subtree: EventsTree = collection.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
+
+# [4.1.8] Get full path to the event.
+# Looks like [ancestor_root, ancestor_level1, ancestor_level2, event]
+event_path: List[dict] = collection.get_full_path("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
+
+# [4.1.9] Get parent of the event.
+parent = collection.get_parent("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
+
+# [4.1.10] Append new event to the collection.
+collection.append_event(
+    event={
+        "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
+        "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",
+        "eventName": "StubEvent",
+    }
+)
+
+# [4.1.11] Show the entire collection.
+collection.show()
+
+# [4.2] Working with the EventsTree.
+# EventsTree has the same methods as EventsTreeCollection, but only for its own tree.
+
+# [4.2.1] Get collection trees.
+trees: List[EventsTree] = collection.get_trees()
+tree: EventsTree = trees[0]
+
+# But EventsTree provides a work with the tree, but does not modify it.
+# If you want to modify the tree, use EventsTreeCollections.
+
+# [4.3] Working with ParentlessTree.
+# ParentlessTree is EventsTree which has detached events with stubs.
+parentless_trees: List[EventsTree] = collection.get_parentless_trees()
+
+# [4.4] Working with ParentEventsTreeCollection.
+# ParentEventsTreeCollection is a tree like EventsTreeCollection but it has only events that have references.
+collection = ParentEventsTreeCollectionProvider5(events, data_source=data_source)
+
+collection.show()
 ```
 
 ## 2.3. Short theory
@@ -196,9 +290,9 @@ supports aggregate operations.
 
 - **Data object**: An instance of `Data` class which is wrapper under stream.
 - **Sequence of elements**:
-  A _Data object_ provides an interface to a sequenced set of values of a specific element type. Stream inside the _Data
-  object_ **don’t actually store** elements; they are computed on demand.
-- **DataSource**:
+  A _Data object_ provides an interface to a sequenced set of values of a specific element type. 
+  Stream inside the _Data object_ **don’t actually store** elements; they are computed on demand.
+- **DataSource**: 
   Any source of data. E.g. [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider), collections,
   arrays, or I/O resources.
 - **ProviderDataSource**:
@@ -208,10 +302,11 @@ supports aggregate operations.
 - **Commands**:
   Objects that provide user-friendly interfaces for getting some data from DataSource. Commands use _SourceAPI_ to
   achieve it.
-- **Aggregate operations**:
+- **Aggregate operations**: 
   Common operations such as filter, map, limit and so on.
 - **Workflow**: An ordered set of _Aggregate operations_.
-- **Data caching**:
+
+### Data caching 
   The _Data object_ provides the ability to use the cache. The cache works for each _Data object_, that is, you choose
   which _Data object_ you want to save. The _Data object_ cache is saved after the first iteration, but the iteration
   source may be different. If you don't use the cache, your source will be the data source you have in the _Data Object_
@@ -226,16 +321,75 @@ supports aggregate operations.
 
   Note that the cache state of the Data object is not inherited.
 
-Furthermore, stream operations have two fundamental characteristics that make them very different from collection
-operations:
+### Stream operations
+Furthermore, stream operations have two fundamental characteristics that make them very different 
+from collection operations: _Pipelining_ and _Internal iteration_.
 
-- **Pipelining**: Many stream operations return a stream themselves. This allows operations to be chained to form a
-  larger pipeline.
+#### Pipelining
+Many stream operations return a stream themselves. 
+This allows operations to be chained to form a larger pipeline.
 
 ![Data stream pipeline](documentation/img/data_stream_pipeline.png)
 
-- **Internal iteration**: In contrast to collections, which are iterated explicitly (external iteration), stream
-  operations do the iteration behind the scenes for you. Note, it doesn't mean you cannot iterate the _Data object_.
+#### Internal iteration
+In contrast to collections, which are iterated explicitly (external iteration), 
+stream operations do the iteration behind the scenes for you. Note, it doesn't mean you cannot iterate 
+the _Data object_.
+
+### EventsTree and collections
+
+#### EventsTree
+EventsTree is a tree-based data structure of events.
+It allows you get children and parents of event, display tree, get full path to event etc.
+
+Details:
+  * EventsTree contains all events in memory.
+  * To reduce memory usage an EventsTreeCollection delete the 'body' field from events, but you 
+  can preserve it specify 'preserve_body'.
+  * Tree has some important terms:
+    1. _Ancestor_ is any relative of the event up the tree (grandparent, parent etc.).
+    2. _Parent_ is only the first relative of the event up the tree.
+    3. _Child_ is the first relative of the event down the tree.
+
+Take a look at the following HTML tree to understand them.
+   ```
+    <body> <!-- ancestor (grandparent), but not parent -->
+        <div> <!-- parent & ancestor -->
+            <p>Hello, world!</p> <!-- child -->
+            <p>Goodbye!</p> <!-- sibling -->
+        </div>
+    </body>
+   ```
+
+#### Collections
+
+**EventsTreeCollection** is a collection of EventsTrees. The collection builds a few _EventsTree_ by passed _Data object_.
+Although you can change the tree directly, it's better to do it through collections because they are aware of 
+`detached_events` and can solve some events dependencies.
+The collection has similar features like a single _EventsTree_ but applying them for all EventsTrees.
+
+**ParentEventsTreeCollection** is a collection similar to EventsTreeCollection but containing only parent events that are referenced in the data stream.
+It will be working data in the collection and trees of collection.
+The collection has features similar to EventsTreeCollection.
+  
+Details:
+  * The collection has a feature to recover events. All events that are not in the received data stream,
+  but which are referenced will be loaded from the data source.
+  * If you haven't passed a _DataSource object_ then the recovery of events will not occur.
+  * You can take `detached_events` to see which events are missing. It looks like `{parent_id: [events are referenced]}`
+  * If you want, you can build parentless trees where the missing events are stubbed instead. Just use `get_parentless_trees()`.
+  
+Requirements:
+  1. Events have to have `event_name`, `event_id`, `parent_event_id` fields, which are described in the passed `event_struct` object.
+  
+
+#### Hints
+  * Remove all unnecessary fields from events before passing to a _collection_ to reduce memory usage.
+  * Use `show()` method to print the tree in tree-like view.
+  * Note that the `get_x` methods will raise an exception if you pass an unknown event id, unlike the `find_x` methods (they return None).
+  * If you want to know that specified event exists, use the python `in` keyword (e.g. `'event-id' in events_tree`).
+  * Use the python `len` keyword to get events number in the tree. 
+  
 
 ### Concept
 

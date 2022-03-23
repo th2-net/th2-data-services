@@ -16,8 +16,8 @@ from th2_data_services.interfaces.adapter import IEventAdapter
 from th2_data_services.provider.v5.struct import Provider5EventStruct, provider5_event_struct
 
 
-class AdapterDeleteEventWrappers(IEventAdapter):
-    """Adapter that delete unnecessary wrappers in events.
+class DeleteEventWrappersAdapter(IEventAdapter):
+    """Adapter that deletes unnecessary wrappers in events.
 
     It used for events to which an AdaptorGRPCObjectToDict has been applied.
     """

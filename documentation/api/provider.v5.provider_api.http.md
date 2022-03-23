@@ -50,7 +50,7 @@ HTTP Provider5 API.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L228"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L234"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `execute_request`
 
@@ -74,7 +74,7 @@ Sends a GET request to provider.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L204"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L210"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `execute_sse_request`
 
@@ -245,16 +245,16 @@ https://github.com/th2-net/th2-rpt-data-provider#filters-api
 ```python
 get_url_search_sse_events(
     start_timestamp: int,
-    end_timestamp: int = None,
-    parent_event: str = None,
-    resume_from_id: str = None,
-    search_direction: str = 'NEXT',
-    result_count_limit: (<class 'int'>, <class 'float'>) = None,
-    keep_open: bool = False,
-    limit_for_parent: (<class 'int'>, <class 'float'>) = None,
-    metadata_only: bool = True,
-    attached_messages: bool = False,
-    filters: str = ''
+    end_timestamp: Optional[int] = None,
+    parent_event: Optional[str] = None,
+    resume_from_id: Optional[str] = None,
+    search_direction: Optional[str] = 'next',
+    result_count_limit: Union[int, float] = None,
+    keep_open: Optional[bool] = False,
+    limit_for_parent: Union[int, float] = None,
+    metadata_only: Optional[bool] = True,
+    attached_messages: Optional[bool] = False,
+    filters: Optional[str] = None
 ) → str
 ```
 
@@ -264,7 +264,7 @@ https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L161"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L164"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_url_search_sse_messages`
 
@@ -272,15 +272,15 @@ https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
 get_url_search_sse_messages(
     start_timestamp: int,
     stream: List[str],
-    end_timestamp: int = None,
-    resume_from_id: str = None,
-    search_direction: str = 'NEXT',
-    result_count_limit: (<class 'int'>, <class 'float'>) = None,
+    end_timestamp: Optional[int] = None,
+    resume_from_id: Optional[str] = None,
+    search_direction: Optional[str] = 'next',
+    result_count_limit: Union[int, float] = None,
     keep_open: bool = False,
-    message_id: List[str] = None,
+    message_id: Optional[List[str]] = None,
     attached_events: bool = False,
-    lookup_limit_days: (<class 'int'>, <class 'float'>) = None,
-    filters: str = ''
+    lookup_limit_days: Union[int, float] = None,
+    filters: Optional[str] = None
 ) → str
 ```
 

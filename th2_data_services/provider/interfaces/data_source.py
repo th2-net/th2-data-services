@@ -116,6 +116,9 @@ class IHTTPProviderDataSource(IProviderDataSource):
 
         Args:
             timeout: How many seconds to wait for the server to send data before giving up.
+
+        Raises:
+            urllib3.exceptions.HTTPError: If unable to connect to host.
         """
         try:
             requests.get(self.url, timeout=timeout)
