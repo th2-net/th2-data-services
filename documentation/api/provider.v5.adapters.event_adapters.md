@@ -13,7 +13,7 @@
 
 <a href="../../th2_data_services/provider/v5/adapters/event_adapters.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `AdapterDeleteEventWrappers`
+## <kbd>class</kbd> `DeleteEventWrappersAdapter`
 Adapter that deletes unnecessary wrappers in events. 
 
 It used for events to which an AdaptorGRPCObjectToDict has been applied. 

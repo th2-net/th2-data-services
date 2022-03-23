@@ -1,3 +1,3 @@
-from .basic_adapters import AdapterGRPCObjectToDict
-from .event_adapters import AdapterDeleteEventWrappers
-from .message_adapters import AdapterCodecPipelines, AdapterDeleteMessageWrappers
+from .basic_adapters import GRPCObjectToDictAdapter
+from .event_adapters import DeleteEventWrappersAdapter
+from .message_adapters import CodecPipelinesAdapter, DeleteMessageWrappersAdapter

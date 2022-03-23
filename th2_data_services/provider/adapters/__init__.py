@@ -1,1 +1,1 @@
-from .adapter_sse import AdapterSSE
+from .adapter_sse import SSEAdapter

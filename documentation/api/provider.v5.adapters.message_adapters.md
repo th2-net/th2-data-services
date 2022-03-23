@@ -13,7 +13,7 @@
 
 <a href="../../th2_data_services/provider/v5/adapters/message_adapters.py#L22"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `AdapterDeleteMessageWrappers`
+## <kbd>class</kbd> `DeleteMessageWrappersAdapter`
 Adapter that deletes unnecessary wrappers in messages. 
 
 It used for the message to which an AdaptorGRPCObjectToDict has been applied. 
@@ -67,7 +67,7 @@ Deletes unnecessary wrappers for field message_id.
 
 <a href="../../th2_data_services/provider/v5/adapters/message_adapters.py#L59"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `AdapterCodecPipelines`
+## <kbd>class</kbd> `CodecPipelinesAdapter`
 Adapter for codec-pipeline messages from provider v5. 
 
 Codec-pipeline messages have sub-messages in the body. This adapter used for split codec-pipeline message to separate messages. 

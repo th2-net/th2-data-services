@@ -1,13 +1,13 @@
 from typing import List
-from th2_data_services.provider.v5.adapters.message_adapters import AdapterCodecPipelines
+from th2_data_services.provider.v5.adapters.message_adapters import CodecPipelinesAdapter
 
 
 def create_adapter_with_ignore_errors():
-    return AdapterCodecPipelines(ignore_errors=True)
+    return CodecPipelinesAdapter(ignore_errors=True)
 
 
 def create_adapter_wo_ignore_errors():
-    return AdapterCodecPipelines(ignore_errors=False)
+    return CodecPipelinesAdapter(ignore_errors=False)
 
 
 def test_adapter_with_id(messages_before_pipeline_adapter: List[dict], messages_after_pipeline_adapter: List[dict]):

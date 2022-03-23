@@ -19,7 +19,7 @@ from th2_data_services.interfaces.adapter import IMessageAdapter
 from th2_data_services.provider.v5.struct import Provider5MessageStruct, provider5_message_struct
 
 
-class AdapterDeleteMessageWrappers(IMessageAdapter):
+class DeleteMessageWrappersAdapter(IMessageAdapter):
     """Adapter that deletes unnecessary wrappers in messages.
 
     It used for the message to which an AdaptorGRPCObjectToDict has been applied.
@@ -56,7 +56,7 @@ class AdapterDeleteMessageWrappers(IMessageAdapter):
         return message
 
 
-class AdapterCodecPipelines(IMessageAdapter):
+class CodecPipelinesAdapter(IMessageAdapter):
     """Adapter for codec-pipeline messages from provider v5.
 
     Codec-pipeline messages have sub-messages in the body.

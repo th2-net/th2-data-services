@@ -13,7 +13,7 @@
 
 <a href="../../th2_data_services/provider/v5/adapters/basic_adapters.py#L23"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `AdapterGRPCObjectToDict`
+## <kbd>class</kbd> `GRPCObjectToDictAdapter`
 GRPC Adapter decodes a GRPC object into a Dict object. 
 
 

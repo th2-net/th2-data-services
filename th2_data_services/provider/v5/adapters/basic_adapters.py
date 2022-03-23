@@ -20,7 +20,7 @@ from google.protobuf.json_format import MessageToDict
 from th2_grpc_data_provider.data_provider_template_pb2 import EventData, MessageData
 
 
-class AdapterGRPCObjectToDict(IAdapter):
+class GRPCObjectToDictAdapter(IAdapter):
     """GRPC Adapter decodes a GRPC object into a Dict object."""
 
     def handle(self, record: Union[MessageData, EventData]) -> dict:

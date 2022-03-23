@@ -25,7 +25,7 @@ from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSour
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.sse_client import SSEClient
-from th2_data_services.provider.adapters.adapter_sse import AdapterSSE
+from th2_data_services.provider.adapters.adapter_sse import SSEAdapter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 import logging
@@ -322,7 +322,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
-        adapter = AdapterSSE()
+        adapter = SSEAdapter()
         return Data(source, cache=self._cache).map(adapter.handle)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
@@ -664,7 +664,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
-        adapter = AdapterSSE()
+        adapter = SSEAdapter()
         return Data(source, cache=self._cache).map(adapter.handle)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:

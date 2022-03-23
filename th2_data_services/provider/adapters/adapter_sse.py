@@ -19,8 +19,8 @@ import json
 from th2_data_services.interfaces import IAdapter
 
 
-class AdapterSSE(IAdapter):
-    """SSE Adapter handle bytes from sse-stream into Dict object."""
+class SSEAdapter(IAdapter):
+    """SSE Adapter handles bytes from sse-stream into Dict object."""
 
     def handle(self, record: SSEEvent) -> dict:
         """Adapter handler.

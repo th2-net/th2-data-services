@@ -25,9 +25,9 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
 from th2_data_services import Filter, Data
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
-from th2_data_services.provider.v5.adapters.basic_adapters import AdapterGRPCObjectToDict
-from th2_data_services.provider.v5.adapters.event_adapters import AdapterDeleteEventWrappers
-from th2_data_services.provider.v5.adapters.message_adapters import AdapterDeleteMessageWrappers
+from th2_data_services.provider.v5.adapters.basic_adapters import GRPCObjectToDictAdapter
+from th2_data_services.provider.v5.adapters.event_adapters import DeleteEventWrappersAdapter
+from th2_data_services.provider.v5.adapters.message_adapters import DeleteMessageWrappersAdapter
 from th2_data_services.provider.v5.interfaces.command import IGRPCProvider5Command
 
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
@@ -88,8 +88,8 @@ class GetEventById(IGRPCProvider5Command, ProviderAdaptableCommand):
         """
         super().__init__()
         self._id = id
-        self._grpc_decoder = AdapterGRPCObjectToDict()
-        self._wrapper_deleter = AdapterDeleteEventWrappers()
+        self._grpc_decoder = GRPCObjectToDictAdapter()
+        self._wrapper_deleter = DeleteEventWrappersAdapter()
         self._stub_status = use_stub
 
     def handle(self, data_source: GRPCProvider5DataSource) -> dict:  # noqa: D102
@@ -274,8 +274,8 @@ class GetEvents(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._filters = filters
         self._cache = cache
 
-        self._grpc_decoder = AdapterGRPCObjectToDict()
-        self._wrapper_deleter = AdapterDeleteEventWrappers()
+        self._grpc_decoder = GRPCObjectToDictAdapter()
+        self._wrapper_deleter = DeleteEventWrappersAdapter()
 
     def handle(self, data_source: GRPCProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
@@ -349,8 +349,8 @@ class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):  # noqa: 
         """
         super().__init__()
         self._id = id
-        self._decoder = AdapterGRPCObjectToDict()
-        self._wrapper_deleter = AdapterDeleteMessageWrappers()
+        self._decoder = GRPCObjectToDictAdapter()
+        self._wrapper_deleter = DeleteMessageWrappersAdapter()
         self._stub_status = use_stub
 
     def handle(self, data_source: GRPCProvider5DataSource) -> dict:  # noqa: D102
@@ -515,8 +515,8 @@ class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._filters = filters
         self._cache = cache
 
-        self._decoder = AdapterGRPCObjectToDict()
-        self._wrapper_deleter = AdapterDeleteMessageWrappers()
+        self._decoder = GRPCObjectToDictAdapter()
+        self._wrapper_deleter = DeleteMessageWrappersAdapter()
 
     def handle(self, data_source: GRPCProvider5DataSource) -> Data:
         source = partial(self.__handle_stream, data_source)

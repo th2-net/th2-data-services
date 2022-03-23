@@ -68,7 +68,7 @@
 - [`events_tree_collection.EventsTreeCollection`](./interfaces.events_tree.events_tree_collection.md#class-eventstreecollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
 - [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
-- [`adapter_sse.AdapterSSE`](./provider.adapters.adapter_sse.md#class-adaptersse): SSE Adapter handle bytes from sse-stream into Dict object.
+- [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
 - [`exceptions.CommandError`](./provider.exceptions.md#class-commanderror): Exception raised for errors in the command.
 - [`exceptions.EventNotFound`](./provider.exceptions.md#class-eventnotfound)
@@ -87,10 +87,10 @@
 - [`stub_builder.IEventStub`](./provider.interfaces.stub_builder.md#class-ieventstub): Just to mark Event Stub class.
 - [`stub_builder.IMessageStub`](./provider.interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
 - [`stub_builder.IStub`](./provider.interfaces.stub_builder.md#class-istub)
-- [`basic_adapters.AdapterGRPCObjectToDict`](./provider.v5.adapters.basic_adapters.md#class-adaptergrpcobjecttodict): GRPC Adapter decodes a GRPC object into a Dict object.
-- [`event_adapters.AdapterDeleteEventWrappers`](./provider.v5.adapters.event_adapters.md#class-adapterdeleteeventwrappers): Adapter that deletes unnecessary wrappers in events.
-- [`message_adapters.AdapterCodecPipelines`](./provider.v5.adapters.message_adapters.md#class-adaptercodecpipelines): Adapter for codec-pipeline messages from provider v5.
-- [`message_adapters.AdapterDeleteMessageWrappers`](./provider.v5.adapters.message_adapters.md#class-adapterdeletemessagewrappers): Adapter that deletes unnecessary wrappers in messages.
+- [`basic_adapters.GRPCObjectToDictAdapter`](./provider.v5.adapters.basic_adapters.md#class-grpcobjecttodictadapter): GRPC Adapter decodes a GRPC object into a Dict object.
+- [`event_adapters.DeleteEventWrappersAdapter`](./provider.v5.adapters.event_adapters.md#class-deleteeventwrappersadapter): Adapter that deletes unnecessary wrappers in events.
+- [`message_adapters.CodecPipelinesAdapter`](./provider.v5.adapters.message_adapters.md#class-codecpipelinesadapter): Adapter for codec-pipeline messages from provider v5.
+- [`message_adapters.DeleteMessageWrappersAdapter`](./provider.v5.adapters.message_adapters.md#class-deletemessagewrappersadapter): Adapter that deletes unnecessary wrappers in messages.
 - [`grpc.GetEventById`](./provider.v5.commands.grpc.md#class-geteventbyid): A Class-Command for request to rpt-data-provider.
 - [`grpc.GetEventByIdGRPCObject`](./provider.v5.commands.grpc.md#class-geteventbyidgrpcobject): A Class-Command for request to rpt-data-provider.
 - [`grpc.GetEvents`](./provider.v5.commands.grpc.md#class-getevents): A Class-Command for request to rpt-data-provider.
