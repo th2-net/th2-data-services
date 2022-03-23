@@ -10,14 +10,14 @@
 
 ---
 
-<a href="../../th2_data_services/provider/v5/command_resolver.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/command_resolver.py#L28"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `resolver_get_event_by_id`
 
 ```python
 resolver_get_event_by_id(
-    data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource]
-) → Union[GetEventById, GetEventById]
+    data_source: IProviderDataSource
+) → Union[Type[GetEventById], Type[GetEventById]]
 ```
 
 Resolves what 'GetEventById' command you need to use based Data Source. 
@@ -36,14 +36,14 @@ Resolves what 'GetEventById' command you need to use based Data Source.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/command_resolver.py#L46"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/command_resolver.py#L47"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `resolver_get_events_by_id`
 
 ```python
 resolver_get_events_by_id(
-    data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource]
-) → Union[GetEventsById, GetEventsById]
+    data_source: IProviderDataSource
+) → Union[Type[GetEventsById], Type[GetEventsById]]
 ```
 
 Resolves what 'GetEventsById' command you need to use based Data Source. 

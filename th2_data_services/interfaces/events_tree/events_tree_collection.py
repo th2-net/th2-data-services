@@ -537,10 +537,7 @@ class EventsTreeCollection(ABC):
 
         previous_detached_events = list(self.detached_events.keys())
         while previous_detached_events:
-            called_command = instance_command(self.detached_events.keys())
-            if self._stub_status:
-                called_command.use_stub()
-
+            called_command = instance_command(self.detached_events.keys(), use_stub=self._stub_status)
             events = self._data_source.command(called_command)
 
             for event in events:

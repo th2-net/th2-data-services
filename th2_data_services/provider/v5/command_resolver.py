@@ -12,8 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Union
+from typing import Union, Type
 
+from th2_data_services.provider.interfaces import IProviderDataSource
 from th2_data_services.provider.v5.commands.grpc import GetEventsById as GetEventsByIdFromGRPC
 from th2_data_services.provider.v5.commands.http import GetEventsById as GetEventsByIdFromHTTP
 
@@ -25,8 +26,8 @@ from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSour
 
 
 def resolver_get_event_by_id(
-    data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource]
-) -> Union[GetEventByIdFromGRPC, GetEventByIdFromHTTP]:
+    data_source: IProviderDataSource,
+) -> Union[Type[GetEventByIdFromHTTP], Type[GetEventByIdFromGRPC]]:
     """Resolves what 'GetEventById' command you need to use based Data Source.
 
     Args:
@@ -44,8 +45,8 @@ def resolver_get_event_by_id(
 
 
 def resolver_get_events_by_id(
-    data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource]
-) -> Union[GetEventsByIdFromHTTP, GetEventsByIdFromGRPC]:
+    data_source: IProviderDataSource,
+) -> Union[Type[GetEventsByIdFromHTTP], Type[GetEventsByIdFromGRPC]]:
     """Resolves what 'GetEventsById' command you need to use based Data Source.
 
     Args:
