@@ -13,9 +13,9 @@
 #  limitations under the License.
 
 
-class EventIdNotInTree(Exception):
+class EventNotFound(Exception):
     def __init__(self, id_):
-        """Exception for the case when the tree hasn't the event.
+        """Exception for the case when the the event was not found in data source.
 
         Args:
             id_: Event id.
@@ -23,17 +23,21 @@ class EventIdNotInTree(Exception):
         self._id = id_
 
     def __str__(self):
-        return f"Event with the id '{self._id}' doesn't exist in the tree"
+        return f"Unable to find the event with id '{self._id}'"
 
 
-class FieldIsNotExist(Exception):
-    def __init__(self, field_name):
-        """Exception for the case when event as dict hasn't field.
+class MessageNotFound(Exception):
+    def __init__(self, id_):
+        """Exception for the case when the the message was not found in data source.
 
         Args:
-            field_name: Field name.
+            id_: Event id.
         """
-        self._field_name = field_name
+        self._id = id_
 
     def __str__(self):
-        return f"Event doesn't have '{self._field_name}' field"
+        return f"Unable to find the message with id '{self._id}'"
+
+
+class CommandError(Exception):
+    """Exception raised for errors in the command."""

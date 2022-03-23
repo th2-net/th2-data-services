@@ -15,14 +15,14 @@
 
 ---
 
-<a href="../../th2_data_services/provider/v5/data_source/http.py#L39"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/http.py#L44"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `HTTPProvider5DataSource`
 DataSource class which provide work with rpt-data-provider. 
 
 Rpt-data-provider version: 5.x.y Protocol: HTTP 
 
-<a href="../../th2_data_services/provider/v5/data_source/http.py#L46"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/http.py#L51"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -32,10 +32,10 @@ __init__(
     chunk_length: 'int' = 65536,
     char_enc: 'str' = 'utf-8',
     decode_error_handler: 'str' = 'unicode_replace',
-    event_struct=Provider5EventStruct(EVENT_ID='eventId', PARENT_EVENT_ID='parentEventId', STATUS='successful', NAME='eventName', TYPE='type', BATCH_ID='batchId', IS_BATCHED='isBatched', EVENT_TYPE='eventType', END_TIMESTAMP='endTimestamp', START_TIMESTAMP='startTimestamp', ATTACHED_MESSAGES_IDS='attachedMessageIds', BODY='body'),
-    message_struct=Provider5MessageStruct(DIRECTION='direction', SESSION_ID='sessionId', MESSAGE_TYPE='messageType', CONNECTION_ID='connectionId', SESSION_ALIAS='sessionAlias', SUBSEQUENCE='subsequence', SEQUENCE='sequence', TIMESTAMP='timestamp', BODY='body', BODY_BASE64='bodyBase64', TYPE='type', MESSAGE_ID='messageId', ATTACHED_EVENT_IDS='attachedEventIds'),
-    event_stub_builder=Provider5EventStubBuilder,
-    message_stub_builder=Provider5MessageStubBuilder,
+    event_struct: 'IEventStruct' = Provider5EventStruct(EVENT_ID='eventId', PARENT_EVENT_ID='parentEventId', STATUS='successful', NAME='eventName', TYPE='type', BATCH_ID='batchId', IS_BATCHED='isBatched', EVENT_TYPE='eventType', END_TIMESTAMP='endTimestamp', START_TIMESTAMP='startTimestamp', ATTACHED_MESSAGES_IDS='attachedMessageIds', BODY='body'),
+    message_struct: 'IMessageStruct' = Provider5MessageStruct(DIRECTION='direction', SESSION_ID='sessionId', MESSAGE_TYPE='messageType', CONNECTION_ID='connectionId', SESSION_ALIAS='sessionAlias', SUBSEQUENCE='subsequence', SEQUENCE='sequence', TIMESTAMP='timestamp', BODY='body', BODY_BASE64='bodyBase64', TYPE='type', MESSAGE_ID='messageId', ATTACHED_EVENT_IDS='attachedEventIds'),
+    event_stub_builder: 'IEventStub' = Provider5EventStubBuilder,
+    message_stub_builder: 'IMessageStub' = Provider5MessageStubBuilder,
     check_connect_timeout: '(int, float)' = 5
 )
 ```
@@ -97,7 +97,7 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/data_source/http.py#L81"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/http.py#L86"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `command`
 
@@ -117,6 +117,12 @@ HTTP Provider5 command processor.
 
 **Returns:**
  Data source command result. 
+
+
+
+**Raises:**
+ 
+ - <b>`CommandError`</b>:  If the command was broken. 
 
 
 

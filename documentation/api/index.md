@@ -23,6 +23,7 @@
 - [`provider.adapters.adapter_provider5`](./provider.adapters.adapter_provider5.md#module-provideradaptersadapter_provider5)
 - [`provider.adapters.adapter_sse`](./provider.adapters.adapter_sse.md#module-provideradaptersadapter_sse)
 - [`provider.command`](./provider.command.md#module-providercommand)
+- [`provider.exceptions`](./provider.exceptions.md#module-providerexceptions)
 - [`provider.interfaces`](./provider.interfaces.md#module-providerinterfaces)
 - [`provider.interfaces.command`](./provider.interfaces.command.md#module-providerinterfacescommand): Interfaces for Provider Commands.
 - [`provider.interfaces.data_source`](./provider.interfaces.data_source.md#module-providerinterfacesdata_source): Interfaces for Provider Data Source.
@@ -69,6 +70,9 @@
 - [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
+- [`exceptions.CommandError`](./provider.exceptions.md#class-commanderror): Exception raised for errors in the command.
+- [`exceptions.EventNotFound`](./provider.exceptions.md#class-eventnotfound)
+- [`exceptions.MessageNotFound`](./provider.exceptions.md#class-messagenotfound)
 - [`command.IGRPCProviderCommand`](./provider.interfaces.command.md#class-igrpcprovidercommand): Interface of command for rpt-data-provider which works via GRPC.
 - [`command.IHTTPProviderCommand`](./provider.interfaces.command.md#class-ihttpprovidercommand): Interface of command for rpt-data-provider which works via HTTP.
 - [`command.IProviderCommand`](./provider.interfaces.command.md#class-iprovidercommand): Interface of command for rpt-data-provider.

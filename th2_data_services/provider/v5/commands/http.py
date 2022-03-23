@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 from functools import partial
 
 from th2_data_services import Filter, Data
+from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v5.interfaces.command import IHTTPProvider5Command
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
@@ -40,18 +41,22 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     Returns:
         dict: Th2 event.
+
+    Raises:
+        EventNotFound: If event by Id wasn't found.
     """
 
-    def __init__(self, id: str):
+    def __init__(self, id: str, use_stub=False):
         """GetEventById constructor.
 
         Args:
             id: Event id.
+            use_stub: If True the command returns stub instead of exception.
 
         """
         super().__init__()
         self._id = id
-        self._stub_status = False
+        self._stub_status = use_stub
 
     def handle(self, data_source: HTTPProvider5DataSource) -> dict:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
@@ -66,14 +71,9 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
             if self._stub_status:
                 return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
             else:
-                exception_msg = f"Unable to find the message. Id: {self._id}"
-                logger.error(exception_msg)
-                raise ValueError(exception_msg)
+                logger.error(f"Unable to find the message. Id: {self._id}")
+                raise EventNotFound(self._id)
         return self._handle_adapters(event)
-
-    def use_stub(self):
-        self._stub_status = True
-        return self
 
 
 class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
@@ -83,37 +83,30 @@ class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     Returns:
         List[dict]: Th2 events.
+
+    Raises:
+        EventNotFound: If any event by Id wasn't found.
     """
 
-    def __init__(self, ids: List[str]):
+    def __init__(self, ids: List[str], use_stub=False):
         """GetEventsById constructor.
 
         Args:
             ids: Event id list.
+            use_stub: If True the command returns stub instead of exception.
 
         """
         super().__init__()
         self._ids: ids = ids
-        self._stub_status = False
+        self._stub_status = use_stub
 
     def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         result = []
         for event_id in self._ids:
-            try:
-                if self._stub_status:
-                    event = GetEventById(event_id).use_stub().handle(data_source)
-                else:
-                    event = GetEventById(event_id).handle(data_source)
-            except (json.JSONDecodeError, simplejson.JSONDecodeError):
-                exception_msg = f"Unable to find the message. Id: {event_id}"
-                logger.error(exception_msg)
-                raise ValueError(exception_msg)
+            event = GetEventById(event_id, use_stub=self._stub_status).handle(data_source)
             result.append(self._handle_adapters(event))
-        return result
 
-    def use_stub(self):
-        self._stub_status = True
-        return self
+        return result
 
 
 class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
@@ -358,20 +351,24 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     Returns:
         dict: Th2 message.
+
+    Raises:
+        MessageNotFound: If message by id wasn't found.
     """
 
-    def __init__(self, id: str):
+    def __init__(self, id: str, use_stub=False):
         """GetMessageById constructor.
 
         Args:
             id: Message id.
+            use_stub: If True the command returns stub instead of exception.
 
         """
         super().__init__()
         self._id = id
-        self._stub_status = False
+        self._stub_status = use_stub
 
-    def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
+    def handle(self, data_source: HTTPProvider5DataSource) -> dict:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
         url = api.get_url_find_message_by_id(self._id)
 
@@ -386,12 +383,8 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
             else:
                 exception_msg = f"Unable to find the message. Id: {self._id}"
                 logger.error(exception_msg)
-                raise ValueError(exception_msg)
+                raise MessageNotFound(self._id)
         return self._handle_adapters(message)
-
-    def use_stub(self):
-        self._stub_status = True
-        return self
 
 
 class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
@@ -401,37 +394,30 @@ class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     Returns:
         List[dict]: Th2 messages.
+
+    Raises:
+        MessageNotFound: If any message by id wasn't found.
     """
 
-    def __init__(self, ids: List[str]):
+    def __init__(self, ids: List[str], use_stub=False):
         """GetMessagesById constructor.
 
         Args:
             ids: Message id list.
+            use_stub: If True the command returns stub instead of exception.
 
         """
         super().__init__()
         self._ids: ids = ids
-        self._stub_status = False
+        self._stub_status = use_stub
 
-    def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
+    def handle(self, data_source: HTTPProvider5DataSource) -> List[dict]:  # noqa: D102
         result = []
         for message_id in self._ids:
-            try:
-                if self._stub_status:
-                    message = GetMessageById(message_id).use_stub().handle(data_source)
-                else:
-                    message = GetMessageById(message_id).handle(data_source)
-            except (json.JSONDecodeError, simplejson.JSONDecodeError):
-                exception_msg = f"Unable to find the message. Id: {message_id}"
-                logger.error(exception_msg)
-                raise ValueError(exception_msg)
+            message = GetMessageById(message_id, use_stub=self._stub_status).handle(data_source)
             result.append(self._handle_adapters(message))
-        return result
 
-    def use_stub(self):
-        self._stub_status = True
-        return self
+        return result
 
 
 class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):

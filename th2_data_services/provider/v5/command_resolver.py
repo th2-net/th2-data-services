@@ -40,7 +40,7 @@ def resolver_get_event_by_id(
     elif isinstance(data_source, HTTPProvider5DataSource):
         return GetEventByIdFromHTTP
     else:
-        raise ValueError("Unknown DataSource Object.")
+        raise ValueError("Unknown DataSource Object")
 
 
 def resolver_get_events_by_id(
@@ -59,4 +59,4 @@ def resolver_get_events_by_id(
     elif isinstance(data_source, HTTPProvider5DataSource):
         return GetEventsByIdFromHTTP
     else:
-        raise ValueError("Unknown DataSource Object.")
+        raise ValueError("Unknown DataSource Object")
