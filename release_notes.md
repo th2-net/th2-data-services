@@ -187,10 +187,11 @@ use `CodecPipelinesAdapter` manually.
    [M] You need to change some import paths.
 4. [I] All class constructors/methods have got explicit arguments.  
    [M] Change old args names to new if required.
-5. [I] Set of classes to create EventsTree representation was significantly changed.
-   [M] Use EventsTreesCollection instead of EventsTree. EventsTree is a real tree structure now.
-6. [I] EventsTree2 was removed.  
-   [M] Use EventsTreesCollection instead.
+5. [I] Set of classes to create `EventsTree` representation was significantly changed.
+   [M] Use `EventsTreesCollection` instead of `EventsTree`. `EventsTree` is a real tree structure now. 
+   Note, `EventsTreesCollection` has other methods, see the example to understand how to work with it.
+6. [I] `EventsTree2` was removed.  
+   [M] Use `EventsTreesCollection` instead.
 7. [I] Exceptions were updated.  
    [M] Update your try-except statements
 
@@ -204,7 +205,8 @@ use `CodecPipelinesAdapter` manually.
 
 1. [TH2-2465] Added the module `th2_gui_report` to create a link by event id or message id.
 2. [TH2-2274] rpt-data-provider GRPC interface was implemented.
-3. [TH2-3194] New `EventsTree` solution implemented. It includes the best parts from previous trees.
+3. [TH2-3194] New `EventsTree` solution implemented. It includes the best parts from previous trees. 
+   The tree also got a lot of useful methods to work with it ([see doc](documentation/api/events_tree.events_tree.md)). 
 4. [TH2-2942] Pure Provider v5 APIs implemented: `GRPCProvider5API`, `HTTPProvider5API`.
 5. [TH2-2944] Developed commands for http and grpc instead of `data_source` get/find methods.
 6. [TH2-2994] Provider v5 data source classes implemented: `GRPCProvider5DataSource`, `HTTPProvider5DataSource`.
