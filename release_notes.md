@@ -148,8 +148,8 @@
 ## BugFixes
 
 1. [TH2-2858] Resolved HTTP error 414 on a client side.
-2. [TH2-2851] UnicodeDecodeError is raised during events extracting if not utf-8 character in the byte stream. 
-User will get original byte now.
+2. [TH2-2851] UnicodeDecodeError is raised during events extracting if not utf-8 character in the byte stream. User will
+   get original byte now.
 
 # v0.6.2
 
@@ -159,10 +159,59 @@ User will get original byte now.
 
 # v1.0.0
 
-### Features
+The main goal of the release 1.0.0 is to implement new architecture that solves many of extension's problems. 
+It also allows you to create your own Commands/DataSources/SourceAPIs.
 
-1. [TH2-2465] Add module th2_gui_report to create a link by event id or message id
+## Attention
+
+The new version has raised the major version. It means the users should update their code to work with the new DS lib.
+
+Version 0.6.x won't have new features but will have bug fixes.
+
+Version 1.x.y doesn't use any adapters by default, 0.6.x does. If you need the save behavior as previous,
+use `CodecPipelinesAdapter` manually.
+
+## User impact and migration instructions
+
+1. [I] There is no more old-style DataSource class.  
+   [M] Use a specific class for your purposes (HTTPDataSource or GRPCDataSource).
+2. [I] There are no more `get_x` methods in the DataSource classes. Instead, it has the command method. This method
+   takes an object of the Command class.  
+   [M] So if you used `data_source.get_events_from_data_provider` use `data_source.command(GetEvents(ARGS))` instead.  
+   from `data_source.get_messages_from_data_provider` to `data_source.command(GetMessages(ARGS).apply_adapter(
+   codec_pipeline_adapter))`  
+   from `find_messages_by_id_from_data_provider` to `GetMessagesById` or `GetMessageById`  
+   from `find_events_by_id_from_data_provider` to `GetEventsById` or `GetEventById`  
+   if you used broken_events parameter initialize the command with use_stub=True parameter.
+3. [I] Modules structure was changed.  
+   [M] You need to change some import paths.
+4. [I] All class constructors/methods have got explicit arguments.  
+   [M] Change old args names to new if required.
+5. [I] Set of classes to create EventsTree representation was significantly changed.
+   [M] Use EventsTreesCollection instead of EventsTree. EventsTree is a real tree structure now.
+6. [I] EventsTree2 was removed.  
+   [M] Use EventsTreesCollection instead.
+7. [I] Exceptions were updated.  
+   [M] Update your try-except statements
+
+## Improvements
+
+1. [TH2-3247] Move DS version 1.0.0 to python 3.7+
+2. [TH2-3404] Exceptions were updated. Implemented library-based exceptions.
+3. [TH2-3213] Old `data_source` module was removed.
+
+## Features
+
+1. [TH2-2465] Added the module `th2_gui_report` to create a link by event id or message id.
+2. [TH2-2274] rpt-data-provider GRPC interface was implemented.
+3. [TH2-3194] New `EventsTree` solution implemented. It includes the best parts from previous trees.
+4. [TH2-2942] Pure Provider v5 APIs implemented: `GRPCProvider5API`, `HTTPProvider5API`.
+5. [TH2-2944] Developed commands for http and grpc instead of `data_source` get/find methods.
+6. [TH2-2994] Provider v5 data source classes implemented: `GRPCProvider5DataSource`, `HTTPProvider5DataSource`.
+7. [TH2-2941] Interface classes implemented:  `ISourceAPI`, `IDataSource`, `ICommand`, `IAdapter`.
 
 ## BugFixes
 
 1. [TH2-3168] Fixed iterations in nested loops for Data object with limit.
+2. [TH2-3354] API Doc generator issue fixed.
+3. [TH2-3216] Incorrect work of Data object with multi-looping with cache enabled fixed.
