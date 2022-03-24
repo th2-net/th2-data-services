@@ -11,38 +11,32 @@
 
 ---
 
-<a href="../../th2_data_services/data.py#L28"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L12"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Data`
 A wrapper for data/data_stream. 
 
 The class provides methods for working with data as a stream. 
 
-Such approach to data analysis called streaming transformation. 
+Such approach to data analysis called........................................................ 
 
-<a href="../../th2_data_services/data.py#L36"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
 __init__(
-    data: Optional[Iterator, Callable[, Generator[dict, NoneType]]],
-    cache: bool = False,
-    workflow: List[Dict[str, Union[Callable, str]]] = None,
-    parents_cache: List[str] = None
+    data:Optional[Iterator, Callable[, Generator[dict, NoneType]]],
+    workflow:List[Dict[str, Union[Callable, str]]]=None,
+    parents_cache:List[str]=None,
+    instance_cache:bool=False,
+    stream_cache:bool=False
 )
 ```
 
-Data constructor. 
 
 
 
-**Args:**
- 
- - <b>`data`</b>:  Data source. 
- - <b>`workflow`</b>:  Workflow. 
- - <b>`parents_cache`</b>:  Parents chain. Works as a stack. 
- - <b>`cache`</b>:  Flag if you want to write and read from cache. 
 
 
 ---
@@ -68,12 +62,12 @@ int: How many records in the Data stream.
 
 ---
 
-<a href="../../th2_data_services/data.py#L317"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L231"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `filter`
 
 ```python
-filter(callback: Callable) → Data
+filter(callback:Callable) → Data
 ```
 
 Append `filter` to workflow. 
@@ -92,7 +86,7 @@ Append `filter` to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L425"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L333"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_by`
 
@@ -119,7 +113,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L176"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L101"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_last_cache`
 
@@ -133,12 +127,12 @@ Returns: Cache filename
 
 ---
 
-<a href="../../th2_data_services/data.py#L363"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L265"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `limit`
 
 ```python
-limit(num: int) → Data
+limit(num:int) → Data
 ```
 
 Limits the stream to `num` entries. 
@@ -157,12 +151,12 @@ Limits the stream to `num` entries.
 
 ---
 
-<a href="../../th2_data_services/data.py#L336"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L249"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
 ```python
-map(callback: Callable) → Data
+map(callback:Callable) → Data
 ```
 
 Append `transform` function to workflow. 
@@ -181,12 +175,12 @@ Append `transform` function to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L386"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L294"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sift`
 
 ```python
-sift(limit: int = None, skip: int = None) → Generator[dict, NoneType, NoneType]
+sift(limit:int=None, skip:int=None) → Generator[dict, NoneType, NoneType]
 ```
 
 Skips and limits records. 
@@ -205,17 +199,17 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L409"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L317"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `use_cache`
 
 ```python
-use_cache(status: bool) → Data
+use_cache(status:bool) → Data
 ```
 
-Change status cache. 
+Change status instance_cache. 
 
-If True all requested data from rpt-data-provider will be saved to cache file. Further actions with the Data object will consume data from the cache file. 
+If True all requested data from rpt-data-provider will be saved to instance_cache file. Further actions with Data object will be consume data from the instance_cache file. 
 
 
 
@@ -231,12 +225,12 @@ If True all requested data from rpt-data-provider will be saved to cache file. F
 
 ---
 
-<a href="../../th2_data_services/data.py#L451"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L359"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `write_to_file`
 
 ```python
-write_to_file(file: str) → None
+write_to_file(file:str) → None
 ```
 
 Writes the stream data to txt file. 

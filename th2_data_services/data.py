@@ -1,20 +1,5 @@
-#  Copyright 2022 Exactpro (Exactpro Systems Limited)
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-import copy
 import pickle
 import pprint
-from os import rename
 from pathlib import Path
 from time import time
 from typing import Callable, Dict, Generator, Iterator, List, Optional, Union
@@ -34,35 +19,28 @@ class Data:
     """
 
     def __init__(self, data: DataSet, cache: bool = False, workflow: WorkFlow = None, parents_cache: List[str] = None):
-        """Data constructor.
-
+        """
         Args:
             data: Data source.
             workflow: Workflow.
             parents_cache: Parents chain. Works as a stack.
-            cache: Flag if you want to write and read from cache.
+            cache: Flag if you want write and read from cache.
         """
         self._cache_filename = f"{str(id(self))}:{time()}.pickle"
         self._len = None
         self._data = data
         self._workflow = [] if workflow is None else workflow
+        self._len = None
         self._length_hint = None  # The value is populated when we use limit method.
-        self._limit_num = None
         self._cache_status = cache
         self._parents_cache = parents_cache if parents_cache else []
         self._finalizer = finalize(self, self.__remove)
 
     def __remove(self):
-        """Data class destructor."""
-        if self.__is_cache_file_exists(self._cache_filename):
-            self.__delete_cache()
-        del self._data
-
-    def __delete_cache(self) -> None:
-        """Removes cache file."""
-        path = Path(self.__get_cache_filepath())
-        if path.exists():
+        if self.__check_cache(self._cache_filename):
+            path = Path("./").joinpath("temp").joinpath(self._cache_filename)
             path.unlink()
+        del self._data
 
     @property
     def len(self) -> int:
@@ -100,38 +78,23 @@ class Data:
 
     def __iter__(self) -> DataSet:
         self._len = 0
-        interruption = True
         try:
             for record in self.__load_data(self._cache_status):
                 yield record
                 self._len += 1
-            else:
-                # Loop fell through ..............
-                interruption = False
         except StopIteration:
             return None
-        finally:
-            if interruption:
-                self.__delete_cache()
-
-    def _build_workflow(self, workflow):
-        new_workflow = copy.deepcopy(workflow)
-        for w in new_workflow[::-1]:
-            if w["type"] == "limit":
-                w["callback"] = self._build_limit_callback(w["callback"].limit)
-
-        return new_workflow
 
     def __load_data(self, cache: bool = False) -> DataGenerator:
         """Loads data from cache or data.
 
         Args:
-            cache: Flag if you what to write and read from cache.
+            cache: Flag if you what write and read from cache.
 
         Returns:
             obj: Generator
         """
-        if cache and self.__is_cache_file_exists(self._cache_filename):
+        if cache and self.__check_cache(self._cache_filename):
             working_data = self.__load_file(self._cache_filename)
             yield from working_data
         else:
@@ -139,47 +102,19 @@ class Data:
             if cache_filename:
                 working_data = self.__load_file(cache_filename)
                 workflow = self.__get_unapplied_workflow(cache_filename)
-
             else:
                 working_data = self._data() if callable(self._data) else self._data
                 workflow = self._workflow
 
-            if self.__check_file_recording():
-                # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
-                cache = False
-
-            workflow = self._build_workflow(workflow)
-
-            if self.__check_file_recording():
-                # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
-                cache = False
-
             yield from self.__change_data(working_data=working_data, workflow=workflow, cache=cache)
-
-    def __check_file_recording(self) -> bool:
-        """Checks whether there is a current recording in the file.
-
-        Returns:
-            bool: File recording status.
-        """
-        filename = f"[PENDING]{self._cache_filename}"
-        return self.__is_cache_file_exists(filename)
-
-    def __get_pending_cache_filepath(self) -> str:
-        """Gets filepath for a cache file in pending status."""
-        return f"./temp/[PENDING]{self._cache_filename}"
-
-    def __get_cache_filepath(self) -> str:
-        """Gets filepath for a cache file."""
-        return f"./temp/{self._cache_filename}"
 
     def get_last_cache(self) -> Optional[str]:
         """Returns last existing cache.
 
         Returns: Cache filename
         """
-        for cache_filename in self._parents_cache[::-1]:  # parents_cache works like a stack.
-            if self.__is_cache_file_exists(cache_filename):
+        for cache_filename in self._parents_cache[::-1]:  # parents_cache works as a stack
+            if self.__check_cache(cache_filename):
                 return cache_filename
         return None
 
@@ -208,7 +143,7 @@ class Data:
         """
         file = None
         if cache:
-            filepath = self.__get_pending_cache_filepath()
+            filepath = f"./temp/{self._cache_filename}"
             file = open(filepath, "wb")
 
         try:
@@ -233,9 +168,8 @@ class Data:
         finally:
             if file:
                 file.close()
-                rename(file.name, self.__get_cache_filepath())
 
-    def __is_cache_file_exists(self, filename: str) -> bool:
+    def __check_cache(self, filename: str) -> bool:
         """Checks whether file exist.
 
         Args:
@@ -262,13 +196,13 @@ class Data:
         """
         path = Path("./").joinpath("temp").joinpath(filename)
         if not path.exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
+            raise ValueError(f"{filename} doesn't exist.")
 
         if not path.is_file():
-            raise FileExistsError(f"{filename} isn't file")
+            raise ValueError(f"{filename} isn't file.")
 
         if path.suffix != ".pickle":
-            raise FileNotFoundError(f"File hasn't pickle extension")
+            raise ValueError(f"File hasn't pickle extension.")
 
         with open(path.resolve(), "rb") as file:
             while True:
@@ -326,10 +260,7 @@ class Data:
             Data: Data object.
 
         """
-        new_workflow = [
-            *self._workflow.copy(),
-            {"type": "filter", "callback": lambda record: record if callback(record) else None},
-        ]
+        new_workflow = [*self._workflow.copy(), {"type": "filter", "callback": lambda record: record if callback(record) else None}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         return Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
 
@@ -347,19 +278,6 @@ class Data:
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         return Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
 
-    def _build_limit_callback(self, num):
-        def callback(r):
-            if callback.pushed < num:
-                callback.pushed += 1
-                return r
-            else:
-                callback.pushed = 0
-                raise StopIteration
-
-        callback.limit = num
-        callback.pushed = 0
-        return callback
-
     def limit(self, num: int) -> "Data":
         """Limits the stream to `num` entries.
 
@@ -368,19 +286,23 @@ class Data:
 
         Returns:
             Data: Data object.
+
         """
-        nwf = []
-        for step in copy.deepcopy(self._workflow):
-            if step["type"] == "limit":
-                step["callback"] = self._build_limit_callback(step["callback"].limit)
 
-            nwf.append(step)
+        def callback(r):
+            if callback.pushed < num:
+                callback.pushed += 1
+                return r
+            else:
+                callback.pushed = 0
+                raise StopIteration
 
-        new_workflow = [*nwf, {"type": "limit", "callback": self._build_limit_callback(num)}]
+        callback.pushed = 0
+
+        new_workflow = [*self._workflow.copy(), {"type": "limit", "callback": callback}]
         new_parents_cache = [*self._parents_cache, self._cache_filename]
         data_obj = Data(data=self._data, workflow=new_workflow, parents_cache=new_parents_cache)
         data_obj._length_hint = num
-        data_obj._limit_num = num
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
@@ -410,7 +332,7 @@ class Data:
         """Change status cache.
 
         If True all requested data from rpt-data-provider will be saved to cache file.
-        Further actions with the Data object will consume data from the cache file.
+        Further actions with Data object will be consume data from the cache file.
 
         Args:
             status(bool): Status.

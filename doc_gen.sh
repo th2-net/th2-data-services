@@ -11,14 +11,7 @@ function install_toc_generator() {
 
 function main() {
     echo 'Generate API docs'
-
-    if python3 $API_GEN_FILE ; then
-        echo "Docs generation succeeded"
-    else
-        echo "Docs generation was failed"
-        exit 1
-    fi
-
+    python3 $API_GEN_FILE
 
     echo
     echo 'Add TOC to README.md'
