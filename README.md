@@ -295,9 +295,9 @@ supports aggregate operations.
   Any source of data. E.g. [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider), collections,
   arrays, or I/O resources.
 - **ProviderDataSource**:
-  DataSource object the source of which is [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider).
+  The DataSource object whose source is [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider).
 - **SourceAPI**:
-  Each source has its own API to retrieve data. That term/class is used for reference/describe this API.
+  Each source has its own API to retrieve data. SourceAPI is a class that provide API for some data source.
 - **Commands**:
   Objects that provide user-friendly interfaces for getting some data from DataSource. Commands use _SourceAPI_ to
   achieve it.
