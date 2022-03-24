@@ -1,16 +1,11 @@
-from datetime import datetime
-
 import pytest
-import requests
+from urllib3.exceptions import HTTPError
 
 from th2_data_services.data import Data
-from th2_data_services.provider.exceptions import CommandError
-from th2_data_services.provider.v5.commands.http import GetEvents
-from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.commands import http
+from th2_data_services.data_source import DataSource
 
 
-def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProvider5DataSource):
+def test_find_events_by_id_from_data_provider(demo_data_source: DataSource):
     data_source = demo_data_source
 
     expected_event = {
@@ -63,28 +58,23 @@ def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProvider5Dat
         }
     )
 
-    event = data_source.command(http.GetEventById("88a3ee80-d1b4-11eb-b0fb-199708acc7bc"))
-    events = data_source.command(
-        http.GetEventsById(
-            [
-                "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
-                "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
-            ]
-        )
+    event = data_source.find_events_by_id_from_data_provider("88a3ee80-d1b4-11eb-b0fb-199708acc7bc")
+    events = data_source.find_events_by_id_from_data_provider(
+        [
+            "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
+            "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        ]
     )
-    events_with_one_element = data_source.command(
-        http.GetEventsById(
-            [
-                "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
-            ]
-        )
+    events_with_one_element = data_source.find_events_by_id_from_data_provider(
+        [
+            "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
+        ]
     )
     for event_ in events:
         event_["attachedMessageIds"].sort()
 
-    broken_event: dict = data_source.command(http.GetEventById("id", use_stub=True))
-    broken_events: list = data_source.command(http.GetEventsById(["id", "ids"], use_stub=True))
-
+    broken_event: dict = data_source.find_events_by_id_from_data_provider("id", True)
+    broken_events: list = data_source.find_events_by_id_from_data_provider(["id", "ids"], True)
     plug_for_broken_event: dict = {
         "attachedMessageIds": [],
         "batchId": "Broken_Event",
@@ -119,16 +109,16 @@ def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProvider5Dat
     # Check Broken_Events
     assert broken_event == plug_for_broken_event
     assert broken_events == plug_for_broken_events
-    assert [event, broken_event] == data_source.command(
-        http.GetEventsById(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"], use_stub=True)
+    assert [event, broken_event] == data_source.find_events_by_id_from_data_provider(
+        ["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"], True
     )
-    with pytest.raises(CommandError):
-        data_source.command(http.GetEventsById(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"]))
-    with pytest.raises(CommandError):
-        data_source.command(http.GetEventById("id"))
+    with pytest.raises(ValueError):
+        data_source.find_events_by_id_from_data_provider(["88a3ee80-d1b4-11eb-b0fb-199708acc7bc", "id"])
+    with pytest.raises(ValueError):
+        data_source.find_events_by_id_from_data_provider("id")
 
 
-def test_find_messages_by_id_from_data_provider(demo_data_source: HTTPProvider5DataSource):
+def test_find_messages_by_id_from_data_provider(demo_data_source: DataSource):
     data_source = demo_data_source
 
     expected_message = {
@@ -408,11 +398,13 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: HTTPProvider5D
         }
     )
 
-    message = data_source.command(http.GetMessageById("demo-conn2:first:1624005448022245399"))
-    messages = data_source.command(
-        http.GetMessagesById(["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"])
+    message = data_source.find_messages_by_id_from_data_provider("demo-conn2:first:1624005448022245399")
+    messages = data_source.find_messages_by_id_from_data_provider(
+        ["demo-conn2:first:1624005448022245399", "demo-log:first:1624029363623063053"]
     )
-    messages_with_one_element = data_source.command(http.GetMessagesById(["demo-conn2:first:1624005448022245399"]))
+    messages_with_one_element = data_source.find_messages_by_id_from_data_provider(
+        ["demo-conn2:first:1624005448022245399"]
+    )
     # Check types
     assert isinstance(message, dict)
     assert isinstance(messages, list)
@@ -586,35 +578,43 @@ def test_get_x_with_filters(
     assert list(demo_get_events_with_filters) == case1 and len(case1) is 2
 
 
-def test_find_message_by_id_from_data_provider_with_error(demo_data_source: HTTPProvider5DataSource):
+def test_find_message_by_id_from_data_provider_with_error(demo_data_source: DataSource):
     data_source = demo_data_source
 
-    with pytest.raises(CommandError) as exc_info:
-        data_source.command(http.GetMessageById("demo-conn_not_exist:first:1624005448022245399"))
+    with pytest.raises(ValueError) as exc_info:
+        data_source.find_messages_by_id_from_data_provider("demo-conn_not_exist:first:1624005448022245399")
+
+    assert "Sorry, but the answer rpt-data-provider doesn't match the json format." in str(exc_info)
 
 
-def test_get_events_from_data_provider_with_error(demo_data_source: HTTPProvider5DataSource):
+def test_get_events_from_data_provider_with_error(demo_data_source: DataSource):
     data_source = demo_data_source
 
-    events = data_source.command(http.GetEvents(start_timestamp="test", end_timestamp="test"))
-    with pytest.raises(TypeError) as exc_info:
+    events = data_source.get_events_from_data_provider(startTimestamp="test", endTimestamp="test")
+    with pytest.raises(HTTPError) as exc_info:
         list(events)
-    assert "replace() takes no keyword arguments" in str(exc_info)
+    assert (
+        r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}'
+        in str(exc_info)
+    )
 
 
-def test_get_messages_from_data_provider_with_error(demo_data_source: HTTPProvider5DataSource):
+def test_get_messages_from_data_provider_with_error(demo_data_source: DataSource):
     data_source = demo_data_source
 
-    events = data_source.command(http.GetMessages(start_timestamp="test", end_timestamp="test", stream="test"))
-    with pytest.raises(TypeError) as exc_info:
+    events = data_source.get_messages_from_data_provider(startTimestamp="test", endTimestamp="test", stream="test")
+    with pytest.raises(HTTPError) as exc_info:
         list(events)
-    assert "replace() takes no keyword arguments" in str(exc_info)
+    assert (
+        r'{"exceptionName":"java.lang.NumberFormatException","exceptionCause":"For input string: \\"test\\""}'
+        in str(exc_info)
+    )
 
 
 def test_check_url_for_data_source():
-    with pytest.raises(requests.exceptions.ConnectionError) as exc_info:
-        data_source = HTTPProvider5DataSource("http://test_test:8080/")
-    assert "Max retries exceeded with url" in str(exc_info)
+    with pytest.raises(HTTPError) as exc_info:
+        data_source = DataSource("http://test_test:8080/")
+    assert "Unable to connect to host 'http://test_test:8080'\\nReason:" in str(exc_info)
 
 
 def test_data_cache(demo_events_from_data_source: Data):
@@ -641,34 +641,90 @@ def test_messageIds_not_in_last_msg(demo_messages_from_data_source: Data):
     assert "messageIds" not in last_msg
 
 
+def test_get_events_from_data_provider_with_metadata_true(
+    demo_events_with_metadataOnly_true: Data,
+    demo_events_from_data_source: Data,
+    demo_events_with_metadataOnly_metadata_not_set: Data,
+):
+    events = list(demo_events_with_metadataOnly_true)
+    events0 = list(demo_events_from_data_source)
+    events1 = list(demo_events_with_metadataOnly_metadata_not_set)
+    assert events == events0 == events1
+
+
+def test_get_messages_from_data_provider_with_metadata_true(
+    demo_messages_with_metadataOnly_true: Data,
+    demo_messages_from_data_source: Data,
+    demo_messages_with_metadataOnly_false: Data,
+):
+    messages = list(demo_messages_with_metadataOnly_true)
+    messages0 = list(demo_messages_from_data_source)
+    messages1 = list(demo_messages_with_metadataOnly_false)
+    assert messages == messages0 == messages1
+
+
+def test_get_messages_streams_many_symbols(
+    demo_messages_from_data_source_with_test_streams: Data,
+):
+    messages = demo_messages_from_data_source_with_test_streams
+    sources = messages._data.args[0]
+    url1, url2 = sources[0]._data.args[0], sources[1]._data.args[0]
+
+    assert (
+        url1 == "http://10.64.66.66:30999/search/sse/messages?startTimestamp=1623750281692&endTimestamp=1623761149028"
+        "&stream=Test-123&stream=Test-1234&stream=Test-12345&stream=Test-123456&stream=Test-1234567&stream"
+        "=Test-12345678&stream=Test-123456789&stream=Test-1234567810&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest1&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest2&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest3&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest4&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest5&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest6&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest7&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest8&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest9&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest10&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest11&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest12&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest13&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest14&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest15&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest16&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest17&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest18&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest19"
+        and url2
+        == "http://10.64.66.66:30999/search/sse/messages?startTimestamp=1623750281692&endTimestamp=1623761149028"
+        "&stream=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest20&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest21&stream"
+        "=TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest22&stream=demo-dc1"
+        "&stream=demo-dc2&stream=demo-log&stream=th2-hand-demo"
+    )
+
+
 def test_get_messages_with_multiple_url(
     demo_messages_from_data_source_with_test_streams: Data,
     demo_messages_from_data_source: Data,
 ):
-    messages = demo_messages_from_data_source_with_test_streams.use_cache(True)
+    messages = demo_messages_from_data_source_with_test_streams
 
     messages_hand_demo_expected = demo_messages_from_data_source
     messages_hand_demo_actual = messages.filter(lambda record: record.get("sessionId") == "th2-hand-demo")
 
-    assert (
-        len(list(messages)) == 84
-        and len(list(messages_hand_demo_actual)) == len(list(messages_hand_demo_expected)) == 36
-    )
+    assert len(list(messages)) == 138 and len(list(messages_hand_demo_actual)) == len(list(messages_hand_demo_expected))
 
 
-def test_unprintable_character(demo_data_source: HTTPProvider5DataSource):
-    event = demo_data_source.command(http.GetEventById(("b85d9dca-6236-11ec-bc58-1b1c943c5c0d")))
+def test_get_messages_with_multiple_url_double_start(
+    demo_messages_from_data_source_with_test_streams: Data,
+):
+    messages1 = len(list(demo_messages_from_data_source_with_test_streams))
+    messages2 = len(list(demo_messages_from_data_source_with_test_streams))
+
+    assert messages1 == messages2
+
+
+def test_unprintable_character(demo_data_source: DataSource):
+    event = demo_data_source.find_events_by_id_from_data_provider("b85d9dca-6236-11ec-bc58-1b1c943c5c0d")
 
     assert "\x80" in event["body"][0]["value"] and event["body"][0]["value"] == "nobJjpBJkTuQMmscc4R\x80"
-
-
-def test_attached_messages(demo_data_source: HTTPProvider5DataSource):
-    events = demo_data_source.command(
-        GetEvents(
-            start_timestamp=datetime(year=2021, month=6, day=20, hour=10, minute=44, second=41, microsecond=692724),
-            end_timestamp=datetime(year=2021, month=6, day=20, hour=10, minute=45, second=49, microsecond=28579),
-            attached_messages=True,
-        )
-    )
-
-    assert events.filter(lambda event: event.get("attachedMessageIds")).len

@@ -26,7 +26,9 @@ with open("README.md", "r") as file:
     long_description = file.read()
 
 with open("requirements.txt", "r") as file:
-    requirements = [line.strip() for line in file.readlines() if not line.startswith("#") and line != "\n"]
+    requirements = [
+        l.strip() for l in file.readlines() if not l.startswith("#") and l != "\n"
+    ]
 
 setup(
     name=package_name,
@@ -38,7 +40,7 @@ setup(
     author_email="th2-devs@exactprosystems.com",
     url="https://github.com/th2-net/th2-data-services",
     license="Apache License 2.0",
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=requirements,
     packages=find_packages(include=["th2_data_services", "th2_data_services.*"]),
     include_package_data=True,

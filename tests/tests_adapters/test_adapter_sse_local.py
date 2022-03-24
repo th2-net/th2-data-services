@@ -1,25 +1,15 @@
 from sseclient import Event
 import pytest
 
-from th2_data_services import Data
+from th2_data_services import Data, DataSource
 from tests.conftest import START_TIME, END_TIME
-from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.commands import http
 
 
 def get_data_obj(rtype, ds, params_dict):
     if rtype == "events":
-        return ds.command(
-            http.GetEvents(start_timestamp=params_dict["startTimestamp"], end_timestamp=params_dict["endTimestamp"])
-        )
+        return ds.get_events_from_data_provider(**params_dict)
     elif rtype == "messages":
-        return ds.command(
-            http.GetMessages(
-                start_timestamp=params_dict["startTimestamp"],
-                end_timestamp=params_dict["endTimestamp"],
-                stream=params_dict["stream"],
-            )
-        )
+        return ds.get_messages_from_data_provider(**params_dict)
     else:
         raise Exception("Not events or messages")
 
@@ -47,7 +37,7 @@ class TestSSEFlagTrue:
             ),
         ],
     )
-    def test_x_flag_true_or_default(self, demo_data_source: HTTPProvider5DataSource, params):
+    def test_x_flag_true_or_default(self, demo_data_source: DataSource, params):
         ds = demo_data_source
         data: Data = get_data_obj(params[0], ds, dict(startTimestamp=START_TIME, endTimestamp=END_TIME, **params[1]))
 
@@ -57,26 +47,37 @@ class TestSSEFlagTrue:
 
 class TestSSEFlagFalse:
     # @pytest.mark.parametrize("rtype", ['events', 'messages'])
-    def test_events(self, demo_data_source: HTTPProvider5DataSource):
+    def test_events(self, demo_data_source: DataSource):
         ds = demo_data_source
-        data: Data = ds.command(
-            http.GetEventsSSEEvents(
-                start_timestamp=START_TIME,
-                end_timestamp=END_TIME,
-            )
+        data: Data = ds.get_events_from_data_provider(
+            startTimestamp=START_TIME,
+            endTimestamp=END_TIME,
+            sse_adapter=False,
         )
 
         for e in data:
             assert isinstance(e, Event)
 
-    def test_messages_provider_none(self, demo_data_source: HTTPProvider5DataSource):
+    def test_messages_provider_not_none(self, demo_data_source: DataSource):
         ds = demo_data_source
-        data: Data = ds.command(
-            http.GetMessages(
-                start_timestamp=START_TIME,
-                end_timestamp=END_TIME,
+        with pytest.raises(Exception) as exc_info:
+            ds.get_messages_from_data_provider(
+                startTimestamp=START_TIME,
+                endTimestamp=END_TIME,
                 stream=["demo-conn2"],
+                sse_adapter=False,
             )
+
+        assert "Provider adapter expected to get dict but SSE adapter is turned off" in str(exc_info)
+
+    def test_messages_provider_none(self, demo_data_source: DataSource):
+        ds = demo_data_source
+        data: Data = ds.get_messages_from_data_provider(
+            startTimestamp=START_TIME,
+            endTimestamp=END_TIME,
+            sse_adapter=False,
+            stream=["demo-conn2"],
+            provider_adapter=None,
         )
 
         for e in data:
