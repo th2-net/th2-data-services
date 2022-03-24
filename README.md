@@ -14,15 +14,15 @@ Table of Contents
    * [2.2. Example](#22-example)
    * [2.3. Short theory](#23-short-theory)
       * [Terms](#terms)
-      * [Data caching](#data-caching)
+      * [Concept](#concept)
       * [Stream operations](#stream-operations)
          * [Pipelining](#pipelining)
          * [Internal iteration](#internal-iteration)
+      * [Data caching](#data-caching)
       * [EventsTree and collections](#eventstree-and-collections)
          * [EventsTree](#eventstree)
          * [Collections](#collections)
          * [Hints](#hints)
-      * [Concept](#concept)
    * [2.4. Links](#24-links)
 * [3. API](#3-api)
 * [4. Examples](#4-examples)
@@ -91,7 +91,6 @@ from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSour
 from th2_data_services.provider.v5.commands import http
 from th2_data_services.filter import Filter
 from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5, ParentEventsTreeCollectionProvider5
-
 
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
@@ -290,9 +289,9 @@ supports aggregate operations.
 
 - **Data object**: An instance of `Data` class which is wrapper under stream.
 - **Sequence of elements**:
-  A _Data object_ provides an interface to a sequenced set of values of a specific element type. 
-  Stream inside the _Data object_ **don’t actually store** elements; they are computed on demand.
-- **DataSource**: 
+  A _Data object_ provides an interface to a sequenced set of values of a specific element type. Stream inside the _Data
+  object_ **don’t actually store** elements; they are computed on demand.
+- **DataSource**:
   Any source of data. E.g. [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider), collections,
   arrays, or I/O resources.
 - **ProviderDataSource**:
@@ -302,56 +301,89 @@ supports aggregate operations.
 - **Commands**:
   Objects that provide user-friendly interfaces for getting some data from DataSource. Commands use _SourceAPI_ to
   achieve it.
-- **Aggregate operations**: 
+- **Adapters**:
+  It's similar to function for `Data.map` method. Adoptable commands used it to update the data stream.
+- **Aggregate operations**:
   Common operations such as filter, map, limit and so on.
 - **Workflow**: An ordered set of _Aggregate operations_.
 
-### Data caching 
-  The _Data object_ provides the ability to use the cache. The cache works for each _Data object_, that is, you choose
-  which _Data object_ you want to save. The _Data object_ cache is saved after the first iteration, but the iteration
-  source may be different. If you don't use the cache, your source will be the data source you have in the _Data Object_
-  . But if you use the cache, your source can be the data source, the parent cache, or own cache:
-    * The data source:
-      If the _Data Object_ doesn't have a parent cache and its cache.
-    * The parent cache:
-      If the _Data Object_ has a parent cache. It doesn't matter what position the parent cache has in inheritance.
-      _Data Object_ understands whose cache it is and executes the part of the workflow that was not executed.
-    * The own cache:
-      If it is not the first iteration of this Data object.
+### Concept
 
-  Note that the cache state of the Data object is not inherited.
+The library describes the high-level interfaces `ISourceAPI`, `IDataSource`, `ICommand`, `IAdapter`.
+
+Any data source must be described by the `IDataSource` abstract class. These can be _FileDataSource_, _CSVDataSource_, _
+DBDataSource_ and other.
+
+Usually, data sources have some kind of API. Databases - provide SQL language, when working with a file, you can read
+line by line, etc. This API is described by the `ISourceAPI` class. Because different versions of the same data source
+may have different API, it is better to create a class for each version.
+
+Generally, data source APIs are hidden behind convenient interfaces. The role of these interfaces is played
+by `ICommand` classes.
+
+`IAdapter` classes transform data stream like functions for `Data.map` method. Essentially it's the same thing but more
+flexible.
+
+Thus, the native `ProviderDataSource` and the set of commands for it are described. This approach provides great
+opportunities for extension. You can easily create your own unique commands for _ProviderDataSource_, as well as entire
+_DataSource_ classes.
+
+![Data stream pipeline](documentation/img/concept.png)
 
 ### Stream operations
-Furthermore, stream operations have two fundamental characteristics that make them very different 
-from collection operations: _Pipelining_ and _Internal iteration_.
+
+Furthermore, stream operations have two fundamental characteristics that make them very different from collection
+operations: _Pipelining_ and _Internal iteration_.
 
 #### Pipelining
-Many stream operations return a stream themselves. 
-This allows operations to be chained to form a larger pipeline.
+
+Many stream operations return a stream themselves. This allows operations to be chained to form a larger pipeline.
 
 ![Data stream pipeline](documentation/img/data_stream_pipeline.png)
 
 #### Internal iteration
-In contrast to collections, which are iterated explicitly (external iteration), 
-stream operations do the iteration behind the scenes for you. Note, it doesn't mean you cannot iterate 
-the _Data object_.
+
+In contrast to collections, which are iterated explicitly (external iteration), stream operations do the iteration
+behind the scenes for you. Note, it doesn't mean you cannot iterate the _Data object_.
+
+### Data caching
+
+The _Data object_ provides the ability to use the cache. The cache works for each _Data object_, that is, you choose
+which _Data object_ you want to save. The _Data object_ cache is saved after the first iteration, but the iteration
+source may be different.
+
+If you don't use the cache, your source will be the data source you have in the _Data Object_. But if you use the cache,
+your source can be the data source, the parent cache, or own cache:
+
+* The data source:
+  If the _Data Object_ doesn't have a parent cache and its cache.
+* The parent cache:
+  If the _Data Object_ has a parent cache. It doesn't matter what position the parent cache has in inheritance.
+  _Data Object_ understands whose cache it is and executes the part of the workflow that was not executed.
+* The own cache:
+  If it is not the first iteration of this Data object.
+
+Note that the cache state of the Data object is not inherited.
 
 ### EventsTree and collections
 
 #### EventsTree
-EventsTree is a tree-based data structure of events.
-It allows you get children and parents of event, display tree, get full path to event etc.
+
+EventsTree is a tree-based data structure of events. It allows you get children and parents of event, display tree, get
+full path to event etc.
 
 Details:
-  * EventsTree contains all events in memory.
-  * To reduce memory usage an EventsTreeCollection delete the 'body' field from events, but you 
-  can preserve it specify 'preserve_body'.
-  * Tree has some important terms:
+
+* EventsTree contains all events in memory.
+* To reduce memory usage an EventsTreeCollection delete the 'body' field from events, but you can preserve it specify '
+  preserve_body'.
+* Tree has some important terms:
     1. _Ancestor_ is any relative of the event up the tree (grandparent, parent etc.).
     2. _Parent_ is only the first relative of the event up the tree.
     3. _Child_ is the first relative of the event down the tree.
 
 Take a look at the following HTML tree to understand them.
+
    ```
     <body> <!-- ancestor (grandparent), but not parent -->
         <div> <!-- parent & ancestor -->
@@ -363,54 +395,37 @@ Take a look at the following HTML tree to understand them.
 
 #### Collections
 
-**EventsTreeCollection** is a collection of EventsTrees. The collection builds a few _EventsTree_ by passed _Data object_.
-Although you can change the tree directly, it's better to do it through collections because they are aware of 
-`detached_events` and can solve some events dependencies.
-The collection has similar features like a single _EventsTree_ but applying them for all EventsTrees.
+**EventsTreeCollection** is a collection of EventsTrees. The collection builds a few _EventsTree_ by passed _Data
+object_. Although you can change the tree directly, it's better to do it through collections because they are aware of
+`detached_events` and can solve some events dependencies. The collection has similar features like a single _EventsTree_
+but applying them for all EventsTrees.
 
-**ParentEventsTreeCollection** is a collection similar to EventsTreeCollection but containing only parent events that are referenced in the data stream.
-It will be working data in the collection and trees of collection.
-The collection has features similar to EventsTreeCollection.
-  
+**ParentEventsTreeCollection** is a collection similar to EventsTreeCollection but containing only parent events that
+are referenced in the data stream. It will be working data in the collection and trees of collection. The collection has
+features similar to EventsTreeCollection.
+
 Details:
-  * The collection has a feature to recover events. All events that are not in the received data stream,
-  but which are referenced will be loaded from the data source.
-  * If you haven't passed a _DataSource object_ then the recovery of events will not occur.
-  * You can take `detached_events` to see which events are missing. It looks like `{parent_id: [events are referenced]}`
-  * If you want, you can build parentless trees where the missing events are stubbed instead. Just use `get_parentless_trees()`.
-  
+
+* The collection has a feature to recover events. All events that are not in the received data stream, but which are
+  referenced will be loaded from the data source.
+* If you haven't passed a _DataSource object_ then the recovery of events will not occur.
+* You can take `detached_events` to see which events are missing. It looks like `{parent_id: [events are referenced]}`
+* If you want, you can build parentless trees where the missing events are stubbed instead. Just
+  use `get_parentless_trees()`.
+
 Requirements:
-  1. Events have to have `event_name`, `event_id`, `parent_event_id` fields, which are described in the passed `event_struct` object.
-  
+
+1. Events have to have `event_name`, `event_id`, `parent_event_id` fields, which are described in the
+   passed `event_struct` object.
 
 #### Hints
-  * Remove all unnecessary fields from events before passing to a _collection_ to reduce memory usage.
-  * Use `show()` method to print the tree in tree-like view.
-  * Note that the `get_x` methods will raise an exception if you pass an unknown event id, unlike the `find_x` methods (they return None).
-  * If you want to know that specified event exists, use the python `in` keyword (e.g. `'event-id' in events_tree`).
-  * Use the python `len` keyword to get events number in the tree. 
-  
 
-### Concept
-
-The library describes the high-level interfaces `ISourceAPI`, `IDataSource` and `ICommand`.
-
-Any data source must be described by the `IDataSource` abstract class. These can be _FileDataSource_, _CSVDataSource_, _
-DBDataSource_ and other.
-
-Usually, data sources have some kind of API. Databases - provide SQL language, when working with a file, you can read
-line by line, etc. This API is described by the `ISourceAPI` class. Because different versions of the same data source
-may have different API, it is better to create a class for each version.
-
-Generally, data source APIs are hidden behind convenient interfaces. The role of these interfaces is played
-by `ICommand`
-classes.
-
-Thus, the native `ProviderDataSource` and the set of commands for it are described. This approach provides great
-opportunities for extension. You can easily create your own unique commands for _ProviderDataSource_, as well as entire
-_DataSource_ classes.
-
-![Data stream pipeline](documentation/img/concept.png)
+* Remove all unnecessary fields from events before passing to a _collection_ to reduce memory usage.
+* Use `show()` method to print the tree in tree-like view.
+* Note that the `get_x` methods will raise an exception if you pass an unknown event id, unlike the `find_x` methods (
+  they return None).
+* If you want to know that specified event exists, use the python `in` keyword (e.g. `'event-id' in events_tree`).
+* Use the python `len` keyword to get events number in the tree.
 
 ## 2.4. Links
 
