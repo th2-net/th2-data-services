@@ -48,7 +48,7 @@ repos:
       - id: unit_tests
         name: unit_tests
         stages: [ push ]
-        entry: pytest
+        entry: pytest -n auto
         language: system
         pass_filenames: false
         always_run: true
