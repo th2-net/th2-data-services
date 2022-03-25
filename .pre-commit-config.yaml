@@ -42,5 +42,15 @@ repos:
         entry: doc_gen.sh
         require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
 
+  - repo: local
+    hooks:
+      - id: unit_tests
+        name: unit_tests
+        stages: [push]
+        types: [python]
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
 
 default_stages: [ commit, push ]
