@@ -1,4 +1,5 @@
 fail_fast: true  # pre-commit will stop running hooks after the first failure.
+default_stages: [ commit, push ]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -46,10 +47,8 @@ repos:
     hooks:
       - id: unit_tests
         name: unit_tests
-        stages: [push]
+        stages: [ push ]
         entry: pytest
         language: system
         pass_filenames: false
         always_run: true
-
-default_stages: [ commit, push ]
