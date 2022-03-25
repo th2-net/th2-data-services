@@ -47,7 +47,6 @@ repos:
       - id: unit_tests
         name: unit_tests
         stages: [push]
-        types: [python]
         entry: pytest
         language: system
         pass_filenames: false
