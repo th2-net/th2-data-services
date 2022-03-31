@@ -42,5 +42,13 @@ repos:
         entry: doc_gen.sh
         require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
 
+      - id: attach
+        name: attach
+        language: script
+        entry: attach.sh
+        args:
+          - get_started_example.py
+          - README.md
+        require_serial: true
 
 default_stages: [ commit, push ]
