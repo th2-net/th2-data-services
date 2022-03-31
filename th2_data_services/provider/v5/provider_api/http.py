@@ -15,6 +15,7 @@
 import logging
 from http import HTTPStatus
 from typing import List, Generator, Optional, Union
+from urllib.parse import quote
 
 import requests
 from requests import Response
@@ -216,6 +217,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         Yields:
              str: Response stream data.
         """
+        url = quote(url.encode("utf-8"), "/:&?=")
         headers = {"Accept": "text/event-stream"}
         http = PoolManager()
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
@@ -240,4 +242,4 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         Returns:
             requests.Response: Response data.
         """
-        return requests.get(url)
+        return requests.get(quote(url.encode("utf-8"), "/:&?="))
