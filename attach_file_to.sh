@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -euo pipefail
-chmod a+x attach.sh
 
 attachable_file=$1
 attachable_file_path=$(find "$PWD" -name "$attachable_file")

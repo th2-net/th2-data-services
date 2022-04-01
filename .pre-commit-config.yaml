@@ -42,10 +42,10 @@ repos:
         entry: doc_gen.sh
         require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
 
-      - id: attach
-        name: attach
+      - id: update_get_started_example_in_readme
+        name: update_get_started_example_in_readme
         language: script
-        entry: attach.sh
+        entry: attach_file_to.sh
         args:
           - get_started_example.py
           - README.md
