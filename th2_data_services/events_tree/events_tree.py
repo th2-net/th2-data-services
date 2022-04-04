@@ -66,16 +66,16 @@ class EventsTree:
         self._tree.add_node(node, parent_id)
 
     def get_all_events_iter(self) -> Generator[Th2Event, None, None]:
-        """Gets all events from the tree as iterator."""
+        """Returns all events from the tree as iterator."""
         for node in self._tree.all_nodes_itr():
             yield node.data
 
     def get_all_events(self) -> List[Th2Event]:
-        """Gets all events from the tree."""
+        """Returns all events from the tree."""
         return [node.data for node in self._tree.all_nodes()]
 
     def get_event(self, id: str) -> Th2Event:
-        """Gets event by id.
+        """Returns an event by id.
 
         Args:
             id: Event id.
@@ -93,19 +93,29 @@ class EventsTree:
     #     pass
 
     def get_root_id(self) -> str:
-        """Gets root id."""
+        """Returns the root id."""
         return self._tree.root
 
+    def get_root_name(self) -> str:
+        """Returns the root name."""
+        return self._tree.get_node(self.get_root_id()).tag
+
     def get_root(self) -> Th2Event:
-        """Gets root event."""
+        """Returns the root event."""
         return self.get_event(self._tree.root)
 
     def get_leaves(self) -> Tuple[Th2Event]:
-        """Gets all tree leaves."""
-        return tuple(leaf.data for leaf in self._tree.leaves())
+        """Returns all tree leaves."""
+        # Do not use self.get_leaves_iter here because it takes more time.
+        return tuple(self.get_leaves_iter())
+
+    def get_leaves_iter(self) -> Generator[Th2Event, None, None]:
+        """Returns all tree leaves as iterator."""
+        for leaf in self._tree.leaves():
+            yield leaf.data
 
     def get_children(self, id: str) -> Tuple[Th2Event]:
-        """Gets children for an event.
+        """Returns children for the event by its id.
 
         Args:
             id: Event id.
@@ -119,7 +129,7 @@ class EventsTree:
             raise EventIdNotInTree(id)
 
     def get_children_iter(self, id: str) -> Generator[Th2Event, None, None]:
-        """Gets children as iterator for an event.
+        """Returns children as iterator for the event by its id.
 
         Args:
             id: Event id.
@@ -134,7 +144,7 @@ class EventsTree:
             raise EventIdNotInTree(id)
 
     def get_parent(self, id: str) -> Th2Event:
-        """Gets parent for an event.
+        """Returns a parent for the event by its id.
 
         Args:
             id: Event id.
@@ -148,7 +158,7 @@ class EventsTree:
             raise EventIdNotInTree(id)
 
     def get_full_path(self, id: str, field: str = None) -> List[Union[str, Th2Event]]:  # noqa: D412
-        """Returns full path for an event in right order.
+        """Returns the full path for the event by its id in right order.
 
         Examples:
 
@@ -332,7 +342,7 @@ class EventsTree:
         return None
 
     def get_subtree(self, id: str) -> "EventsTree":
-        """Gets subtree of event by id.
+        """Returns subtree of the event by its id.
 
         Args:
             id: Event id.
@@ -349,7 +359,7 @@ class EventsTree:
         return subtree
 
     def show(self) -> None:
-        """Prints EventsTree as tree view.
+        """Prints the EventsTree as tree view.
 
         For example:
 
@@ -371,3 +381,10 @@ class EventsTree:
 
     def __contains__(self, event_id: str):
         return event_id in self._tree
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(name='{self.get_root_name()}', root_id='{self.get_root_id()}', events={len(self)})"
+
+    def summary(self) -> str:
+        """Returns the tree summary."""
+        return self.__repr__()

@@ -57,10 +57,12 @@ class EventsTreeCollection(ABC):
             self._recover_unknown_events()
 
     def get_parentless_trees(self) -> List[EventsTree]:
-        """Gets parentless trees.
+        """Builds and returns parentless trees by detached events.
+
+        Detached events will be removed from the tree.
 
         Returns:
-            Parentlees trees.
+            List of parentless trees if they exist, otherwise empty list.
         """
         if self._parentless is not None:
             return self._parentless
@@ -212,19 +214,19 @@ class EventsTreeCollection(ABC):
 
     @property
     def detached_events(self) -> dict:
-        """Gets detached events as dict with a view {'parent_id': ['referenced event', ...]}."""
+        """Returns detached events as a dict with a view {'parent_id': ['referenced event', ...]}."""
         return {id_: [node.data for node in nodes] for id_, nodes in self._detached_nodes.items()}
 
     def get_roots_ids(self) -> List[str]:
-        """Gets roots ids."""
+        """Returns roots ids."""
         return [tree.get_root_id() for tree in self._roots]
 
     def get_trees(self) -> List[EventsTree]:
-        """Gets trees as EventsTree class."""
+        """Returns the list of trees inside the collection."""
         return self._roots
 
     def get_root_by_id(self, id) -> EventsTree:
-        """Gets root tree by id as EventsTree class.
+        """Returns a root tree by id as EventsTree class.
 
         Args:
             id: Root id.
@@ -241,7 +243,7 @@ class EventsTreeCollection(ABC):
         raise EventIdNotInTree(id)
 
     def show(self):
-        """Prints all EventsTree as tree view.
+        """Prints all EventsTrees as tree view.
 
         For example:
 
@@ -273,22 +275,43 @@ class EventsTreeCollection(ABC):
         """Gets event name from the event."""
 
     def __len__(self) -> int:
-        return sum([len(root) for root in self._roots])
+        """Returns the number of all events, including detached events."""
+        return self.len_trees + self.len_detached_events
 
     def __contains__(self, event_id: str):
         return any([event_id in tree for tree in self._roots])
 
+    def __repr__(self) -> str:
+        return (
+            f"{self.__class__.__name__}(trees={len(self.get_roots_ids())}, "
+            f"events={len(self)}[trees={self.len_trees}, detached={self.len_detached_events}])"
+        )
+
+    def summary(self) -> str:
+        """Returns the collection summary."""
+        return self.__repr__()
+
+    @property
+    def len_trees(self) -> int:
+        """Returns number of events in the trees inside the collection."""
+        return sum([len(root) for root in self._roots])
+
+    @property
+    def len_detached_events(self) -> int:
+        """Returns number of detached events in the collection."""
+        return sum([len(de_lst) for de_lst in self.detached_events.values()])
+
     def get_all_events_iter(self) -> Generator[Th2Event, None, None]:
-        """Gets all events from the trees as iterator."""
+        """Returns all events from the trees as iterator."""
         for tree in self._roots:
             yield from tree.get_all_events()
 
     def get_all_events(self) -> List[Th2Event]:
-        """Gets all events from the trees."""
+        """Returns all events from the trees."""
         return [event for tree in self._roots for event in tree.get_all_events()]
 
     def get_event(self, id: str) -> Optional[Th2Event]:
-        """Gets event by id.
+        """Returns an event by id.
 
         Args:
             id: Event id.
@@ -304,14 +327,16 @@ class EventsTreeCollection(ABC):
         raise EventIdNotInTree(id)
 
     def get_leaves(self) -> Tuple[Th2Event]:
-        """Gets all trees leaves."""
-        result = []
+        """Returns all trees leaves."""
+        return tuple(self.get_leaves_iter())
+
+    def get_leaves_iter(self) -> Generator[Th2Event, None, None]:
+        """Returns all trees leaves as iterator."""
         for tree in self._roots:
-            result += [*tree.get_leaves()]
-        return tuple(result)
+            yield from tree.get_leaves_iter()
 
     def get_children(self, id: str) -> Tuple[Th2Event]:
-        """Gets children for an event.
+        """Returns children for the event by its id.
 
         Args:
             id: Event id.
@@ -327,7 +352,7 @@ class EventsTreeCollection(ABC):
         raise EventIdNotInTree(id)
 
     def get_children_iter(self, id: str) -> Generator[Th2Event, None, None]:
-        """Gets children as iterator for an event.
+        """Returns children as iterator for the event by its id.
 
         Args:
             id: Event id.
@@ -346,7 +371,7 @@ class EventsTreeCollection(ABC):
             raise EventIdNotInTree(id)
 
     def get_parent(self, id: str) -> Th2Event:
-        """Gets parent for an event.
+        """Returns a parent for the event by its id.
 
         Args:
             id: Event id.
@@ -362,7 +387,7 @@ class EventsTreeCollection(ABC):
         raise EventIdNotInTree(id)
 
     def get_full_path(self, id: str, field: str = None) -> List[Union[str, Th2Event]]:  # noqa: D412
-        """Returns full path for an event in right order.
+        """Returns the full path for the event by its id in the right order.
 
         Examples:
 
@@ -513,7 +538,7 @@ class EventsTreeCollection(ABC):
         return None
 
     def get_subtree(self, id: str) -> "EventsTree":
-        """Gets subtree of event by id.
+        """Returns subtree of the event by its id.
 
         Args:
             id: Event id.
