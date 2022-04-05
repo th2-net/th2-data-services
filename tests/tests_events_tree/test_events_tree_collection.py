@@ -3,6 +3,27 @@ from typing import List
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 
 
+def test_get_parentless_trees():
+    """It checks that parentless trees were created, added to roots and detached events removed."""
+    # TODO
+
+
+def test_len_trees(general_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(general_data)
+    assert etc.len_trees == 18
+
+
+def test_len_detached_events(general_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(general_data)
+    assert etc.len_detached_events == 3
+
+
+def test_len(general_data: List[dict]):
+    """Total events in whole collection."""
+    etc = EventsTreeCollectionProvider5(general_data)
+    assert len(etc) == len(general_data)
+
+
 def test_filter_all(general_data: List[dict]):
     collection = EventsTreeCollectionProvider5(general_data)
 
