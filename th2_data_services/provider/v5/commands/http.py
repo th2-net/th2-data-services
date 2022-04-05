@@ -323,7 +323,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
         adapter = SSEAdapter()
-        return Data(source, cache=self._cache).map(adapter.handle)
+        return Data(source).map(adapter.handle).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetEventsSSEEvents(
@@ -665,7 +665,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
         adapter = SSEAdapter()
-        return Data(source, cache=self._cache).map(adapter.handle)
+        return Data(source).map(adapter.handle).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetMessagesSSEEvents(
