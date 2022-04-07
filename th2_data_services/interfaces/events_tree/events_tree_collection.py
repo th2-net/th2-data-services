@@ -55,7 +55,7 @@ class EventsTreeCollection(ABC):
         self._build_trees(events_nodes)
 
         if data_source is not None:
-            self._recover_unknown_events()
+            self.recover_unknown_events()
 
     def get_parentless_trees(self) -> List[EventsTree]:
         """Gets parentless trees.
