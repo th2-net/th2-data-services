@@ -22,7 +22,6 @@ from th2_data_services import Data
 from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
-from th2_data_services.provider.exceptions import DataSourceNotFound
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
@@ -30,7 +29,10 @@ from th2_data_services.provider.v5.command_resolver import resolver_get_events_b
 class EventsTreeCollection(ABC):
     """EventsTreeCollection objective is building 'EventsTree's and storing them.
 
-    EventsTreeCollection stores all EventsTree. You can to refer to each of them.
+    - EventsTreeCollection stores all EventsTree. You can to refer to each of them.
+    - Recovery of missing events occurs when you have passed DataSource class.
+    Otherwise you should execute the method 'recover_unknown_events'.
+    Note that there is no point in the method if the list of detached events is empty.
     """
 
     def __init__(
@@ -55,7 +57,7 @@ class EventsTreeCollection(ABC):
         self._build_trees(events_nodes)
 
         if data_source is not None:
-            self.recover_unknown_events()
+            self.recover_unknown_events(self._data_source)
 
     def get_parentless_trees(self) -> List[EventsTree]:
         """Gets parentless trees.
@@ -532,20 +534,12 @@ class EventsTreeCollection(ABC):
                 continue
         raise EventIdNotInTree(id)
 
-    def recover_unknown_events(self, data_source: IProviderDataSource = None) -> None:
+    def recover_unknown_events(self, data_source: IProviderDataSource) -> None:
         """Loads missed events and recover events.
 
         Args:
             data_source: Data Source.
-
-        Raises:
-            DataSourceNotFound: If EventsTree doesn't have data_source in class and it hasn't been passed into method.
         """
-        if data_source is None:
-            if self._data_source is None:
-                raise DataSourceNotFound()
-            data_source = self._data_source
-
         instance_command = resolver_get_events_by_id(data_source)
 
         previous_detached_events = list(self.detached_events.keys())

@@ -41,10 +41,3 @@ class MessageNotFound(Exception):
 
 class CommandError(Exception):
     """Exception raised for errors in the command."""
-
-
-class DataSourceNotFound(Exception):
-    """Exception raised for errors when EventsTree need DataSource for execution."""
-
-    def __str__(self):
-        return "DataSource class hasn't been passed and hasn't been defined."
