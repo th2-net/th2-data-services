@@ -223,3 +223,7 @@ use `CodecPipelinesAdapter` manually.
 ## BugFixes
 
 1. [TH2-3470] Fixed cache in commands GetEvents and GetMessages for http-provider.
+
+## Improvements
+
+1. [TH2-3493] The method recover_unknown_events has become public.
