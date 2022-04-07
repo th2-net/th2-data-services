@@ -1,6 +1,9 @@
 from datetime import datetime
 
+import pytest
+
 from th2_data_services import Data
+from th2_data_services.provider.exceptions import DataSourceNotFound
 from th2_data_services.provider.v5.commands.http import GetEvents
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
@@ -20,6 +23,55 @@ def test_recover_unknown_events():
     after_tree = len(collection)
 
     assert not collection.detached_events and before_tree != after_tree
+
+
+def test_recover_unknown_events_ds_passed_into_method():
+    data_source = HTTPProvider5DataSource("http://10.64.66.66:30999/")
+    events: Data = data_source.command(
+        GetEvents(
+            start_timestamp=datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724),
+            end_timestamp=datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579),
+        )
+    )
+
+    before_tree = events.len
+    collection = EventsTreeCollectionProvider5(events)
+    collection.recover_unknown_events(data_source=data_source)
+    after_tree = len(collection)
+
+    assert not collection.detached_events and before_tree != after_tree
+
+
+def test_recover_unknown_events_using_method():
+    data_source = HTTPProvider5DataSource("http://10.64.66.66:30999/")
+    events: Data = data_source.command(
+        GetEvents(
+            start_timestamp=datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724),
+            end_timestamp=datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579),
+        )
+    )
+
+    before_tree = events.len
+    collection = EventsTreeCollectionProvider5(events)
+    collection._data_source = data_source
+    collection.recover_unknown_events()
+    after_tree = len(collection)
+
+    assert not collection.detached_events and before_tree != after_tree
+
+
+def test_recover_unknown_events_exception():
+    data_source = HTTPProvider5DataSource("http://10.64.66.66:30999/")
+    events: Data = data_source.command(
+        GetEvents(
+            start_timestamp=datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724),
+            end_timestamp=datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579),
+        )
+    )
+    collection = EventsTreeCollectionProvider5(events)
+    with pytest.raises(DataSourceNotFound) as exc:
+        collection.recover_unknown_events()
+    assert exc
 
 
 def test_recover_unknown_events_with_stub_events():

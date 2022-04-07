@@ -22,6 +22,7 @@ from th2_data_services import Data
 from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
+from th2_data_services.provider.exceptions import DataSourceNotFound
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
@@ -531,14 +532,26 @@ class EventsTreeCollection(ABC):
                 continue
         raise EventIdNotInTree(id)
 
-    def _recover_unknown_events(self) -> None:
-        """Loads missed events and recover events."""
-        instance_command = resolver_get_events_by_id(self._data_source)
+    def recover_unknown_events(self, data_source: IProviderDataSource = None) -> None:
+        """Loads missed events and recover events.
+
+        Args:
+            data_source: Data Source.
+
+        Raises:
+            DataSourceNotFound: If EventsTree doesn't have data_source in class and it hasn't been passed into method.
+        """
+        if data_source is None:
+            if self._data_source is None:
+                raise DataSourceNotFound()
+            data_source = self._data_source
+
+        instance_command = resolver_get_events_by_id(data_source)
 
         previous_detached_events = list(self.detached_events.keys())
         while previous_detached_events:
             called_command = instance_command(self.detached_events.keys(), use_stub=self._stub_status)
-            events = self._data_source.command(called_command)
+            events = data_source.command(called_command)
 
             for event in events:
                 if not self._get_event_name(event) == "Broken_Event":

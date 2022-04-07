@@ -71,6 +71,7 @@
 - [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
 - [`exceptions.CommandError`](./provider.exceptions.md#class-commanderror): Exception raised for errors in the command.
+- [`exceptions.DataSourceNotFound`](./provider.exceptions.md#class-datasourcenotfound): Exception raised for errors when EventsTree need DataSource for execution.
 - [`exceptions.EventNotFound`](./provider.exceptions.md#class-eventnotfound)
 - [`exceptions.MessageNotFound`](./provider.exceptions.md#class-messagenotfound)
 - [`command.IGRPCProviderCommand`](./provider.interfaces.command.md#class-igrpcprovidercommand): Interface of command for rpt-data-provider which works via GRPC.
