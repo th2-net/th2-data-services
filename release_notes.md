@@ -231,3 +231,6 @@ use `CodecPipelinesAdapter` manually.
 1. [TH2-3497] EventsTreeCollection got `get_leaves_iter` method.
 2. [TH2-3497] EventsTreeCollection got `len_trees` and `len_detached_events` properties.
 3. [TH2-3497] EventsTree and EventsTreeCollection got representation(`__repr__`) and `summary` methods. 
+
+## Improvements
+1. [TH2-3003] Added automatic attachment of example.py code in readme.md.
