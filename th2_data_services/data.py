@@ -47,7 +47,7 @@ class Data:
     def __delete_cache(self) -> None:
         """Removes cache file."""
         path = Path(self.__get_cache_filepath())
-        path.unlink(missing_ok=True)
+        path.unlink()
 
     @property
     def len(self) -> int:
@@ -97,7 +97,8 @@ class Data:
             return None
         finally:
             if interruption:
-                self.__delete_cache()
+                if self.__is_cache_file_exists(self._cache_filename):
+                    self.__delete_cache()
 
     def _build_workflow(self, workflow):
         new_workflow = copy.deepcopy(workflow)
