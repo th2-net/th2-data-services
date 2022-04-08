@@ -81,6 +81,7 @@ This example works with **Events**, but you also can do the same actions with **
 
 [The following example as a file](examples/get_started_example.py).
 
+<!-- start get_started_example.py -->
 ```python
 from collections import Generator
 from datetime import datetime
@@ -279,6 +280,7 @@ collection = ParentEventsTreeCollectionProvider5(events, data_source=data_source
 
 collection.show()
 ```
+<!-- end get_started_example.py -->
 
 ## 2.3. Short theory
 
