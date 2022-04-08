@@ -217,3 +217,17 @@ use `CodecPipelinesAdapter` manually.
 1. [TH2-3168] Fixed iterations in nested loops for Data object with limit.
 2. [TH2-3354] API Doc generator issue fixed.
 3. [TH2-3216] Incorrect work of Data object with multi-looping with cache enabled fixed.
+
+# v1.0.1
+
+## BugFixes
+
+1. [TH2-3470] Fixed cache in commands GetEvents and GetMessages for http-provider.
+
+
+# v1.1.0
+
+## Features
+1. [TH2-3497] EventsTreeCollection got `get_leaves_iter` method.
+2. [TH2-3497] EventsTreeCollection got `len_trees` and `len_detached_events` properties.
+3. [TH2-3497] EventsTree and EventsTreeCollection got representation(`__repr__`) and `summary` methods. 
