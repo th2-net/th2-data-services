@@ -32,6 +32,7 @@ class EventsTreeCollectionProvider5(EventsTreeCollection):
         preserve_body: bool = False,
         event_struct: IEventStruct = provider5_event_struct,
         stub: bool = False,
+        cache: bool = False,
     ):
         """EventsTreeCollectionProvider5 constructor.
 
@@ -44,7 +45,7 @@ class EventsTreeCollectionProvider5(EventsTreeCollection):
         """
         self._event_struct = event_struct  # Should be placed before super!
 
-        super().__init__(data=data, data_source=data_source, preserve_body=preserve_body, stub=stub)
+        super().__init__(data=data, data_source=data_source, preserve_body=preserve_body, stub=stub, cache=cache)
 
     def _get_event_id(self, event) -> str:
         """Gets event id from the event.
