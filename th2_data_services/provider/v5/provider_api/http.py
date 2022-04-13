@@ -19,6 +19,7 @@ from typing import List, Generator, Optional, Union
 import requests
 from requests import Response
 from urllib3 import PoolManager, exceptions
+from urllib.parse import quote
 
 from th2_data_services.provider.interfaces.source_api import IHTTPProviderSourceAPI
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
@@ -50,11 +51,11 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
     def get_url_message_streams(self) -> str:
         """REST-API `messageStreams` call returns a list of message stream names."""
-        return f"{self._url}/messageStreams"
+        return quote(f"{self._url}/messageStreams".encode(), "/:&?=")
 
     def get_url_find_event_by_id(self, event_id: str) -> str:
         """REST-API `event` call returns a single event with the specified id."""
-        return f"{self._url}/event/{event_id}"
+        return quote(f"{self._url}/event/{event_id}".encode(), "/:&?=")
 
     def get_url_find_events_by_id(self, *ids) -> str:
         """REST-API `events` call returns a list of events with the specified ids.
@@ -66,39 +67,39 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         query = ""
         for id in ids:
             query += f"ids={id}&"
-        return f"{self._url}/events/?{query[:-1]}"
+        return quote(f"{self._url}/events/?{query[:-1]}".encode(), "/:&?=")
 
     def get_url_find_message_by_id(self, message_id: str) -> str:
         """REST-API `message` call returns a single message with the specified id."""
-        return f"{self._url}/message/{message_id}"
+        return quote(f"{self._url}/message/{message_id}".encode(), "/:&?=")
 
     def get_url_messages_filters(self) -> str:
         """SSE-API `filters/sse-messages` call returns all names of sse message filters.
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
         """
-        return f"{self._url}/filters/sse-messages"
+        return quote(f"{self._url}/filters/sse-messages".encode(), "/:&?=")
 
     def get_url_events_filters(self) -> str:
         """SSE-API `/filters/sse-events` call returns all names of sse event filters.
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
         """
-        return f"{self._url}/filters/sse-events"
+        return quote(f"{self._url}/filters/sse-events".encode(), "/:&?=")
 
     def get_url_message_filter_info(self, filter_name: str) -> str:
         """SSE-API `filters/sse-messages/{filter name}` call returns filter info.
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
         """
-        return f"{self._url}/filters/sse-messages/{filter_name}"
+        return quote(f"{self._url}/filters/sse-messages/{filter_name}".encode(), "/:&?=")
 
     def get_url_event_filter_info(self, filter_name: str) -> str:
         """SSE-API `filters/sse-events/{filter_name}` call returns filter info.
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
         """
-        return f"{self._url}/filters/sse-events/{filter_name}"
+        return quote(f"{self._url}/filters/sse-events/{filter_name}".encode(), "/:&?=")
 
     def get_url_match_event_by_id(self, event_id: str, filters: str = "") -> str:
         """REST-API `match/event/{id}` call returns boolean value.
@@ -107,7 +108,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
         """
-        return f"{self._url}/match/event/{event_id}{filters}"
+        return quote(f"{self._url}/match/event/{event_id}{filters}".encode(), "/:&?=")
 
     def get_url_match_message_by_id(self, message_id: str, filters: str = "") -> str:
         """REST-API `match/message/{id}` call returns boolean value.
@@ -116,7 +117,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
         https://github.com/th2-net/th2-rpt-data-provider#filters-api
         """
-        return f"{self._url}/match/message/{message_id}{filters}"
+        return quote(f"{self._url}/match/message/{message_id}{filters}".encode(), "/:&?=")
 
     def get_url_search_sse_events(
         self,
@@ -159,7 +160,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         url = f"{url}{query[1:]}"
         if filters is not None:
             url += filters
-        return url
+        return quote(url.encode(), "/:&?=")
 
     def get_url_search_sse_messages(
         self,
@@ -205,7 +206,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         url = f"{url}{query[1:]}"
         if filters is not None:
             url += filters
-        return url
+        return quote(url.encode(), "/:&?=")
 
     def execute_sse_request(self, url: str) -> Generator[bytes, None, None]:
         """Create stream connection.

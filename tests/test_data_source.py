@@ -82,3 +82,24 @@ def test_generate_url_search_sse_messages_with_filters():
         f"&stream={stream[0]}&stream={stream[1]}&searchDirection=next&keepOpen={True}&attachedEvents=False"
         f"&filters={filter_name}&{filter_name}-values={filter_value}&{filter_name}-negative=False"
     )
+
+
+def test_encoding_url():
+    api = HTTPProvider5API(url="http://host:port")
+
+    start_time = int(datetime.now().timestamp() * 1000)
+    end_time = int(datetime.now().timestamp() * 1000)
+    filter_name, filter_value = "test0 test1", "test2 test3"
+
+    url = api.get_url_search_sse_events(
+        start_timestamp=start_time, end_timestamp=end_time, filters=Filter(filter_name, filter_value).url()
+    )
+    filter_name = filter_name.split()
+    filter_value = filter_value.split()
+    assert (
+        url == f"http://host:port/search/sse/events/?startTimestamp={start_time}&endTimestamp={end_time}"
+        f"&searchDirection=next&keepOpen=False&metadataOnly=True&attachedMessages=False&filters="
+        f"{filter_name[0] + '%20' + filter_name[1]}"
+        f"&{filter_name[0] + '%20' + filter_name[1]}-values={filter_value[0] + '%20' + filter_value[1]}&"
+        f"{filter_name[0] + '%20' + filter_name[1]}-negative=False"
+    )
