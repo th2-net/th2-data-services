@@ -162,3 +162,4 @@ User will get original byte now.
 ## BugFixes
 
 1. [TH2-3168] Fixed iterations in nested loops for Data object with limit.
+2. [TH2-3336] Url now use the utf-8 encoding.
