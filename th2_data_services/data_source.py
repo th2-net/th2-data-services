@@ -5,6 +5,7 @@ import urllib3.exceptions
 from itertools import chain
 from requests.exceptions import ConnectionError
 from urllib3 import PoolManager
+from urllib.parse import quote
 from functools import partial
 from datetime import datetime, timezone
 from csv import DictReader
@@ -177,7 +178,8 @@ class DataSource:
                     result += "".join([filter_.url() for filter_ in v])
             else:
                 result += f"&{k}={v}"
-        return result[1:] if result[0] == "&" else result
+        url = result[1:] if result[0] == "&" else result
+        return quote(url.encode(), "/:&?=")
 
     def get_messages_from_data_provider(
         self,
