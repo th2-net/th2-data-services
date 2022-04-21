@@ -223,6 +223,7 @@ use `CodecPipelinesAdapter` manually.
 ## BugFixes
 
 1. [TH2-3470] Fixed cache in commands GetEvents and GetMessages for http-provider.
+2. [TH2-3337] Url now use utf-8 encoding.
 
 ## Improvements
 
