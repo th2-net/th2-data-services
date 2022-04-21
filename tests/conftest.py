@@ -1,9 +1,11 @@
+import logging
 from collections import namedtuple
 from datetime import datetime
 from typing import List, NamedTuple
 
 import pytest
 
+from tests.utils import LogsChecker
 from th2_data_services.data import Data
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
@@ -1794,3 +1796,15 @@ def messages_from_after_pipeline_empty_body():
         },
     ]
     return messages
+
+
+@pytest.fixture(params=[True, False])
+def cache(request):
+    return request.param
+
+
+@pytest.fixture
+def log_checker(caplog) -> LogsChecker:
+    """Activates DS lib logging and returns Log checker class."""
+    caplog.set_level(logging.DEBUG, logger="th2_data_services")
+    return LogsChecker(caplog)
