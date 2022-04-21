@@ -13,8 +13,6 @@
 #  limitations under the License.
 
 from typing import Generator, List
-import json
-import simplejson
 from datetime import datetime, timezone
 from functools import partial
 
@@ -66,8 +64,9 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
 
         response = api.execute_request(url)
         try:
+            response.raise_for_status()
             event = response.json()
-        except (json.JSONDecodeError, simplejson.JSONDecodeError):
+        except Exception:
             if self._stub_status:
                 return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
             else:
@@ -376,8 +375,9 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
 
         response = api.execute_request(url)
         try:
+            response.raise_for_status()
             message = response.json()
-        except (json.JSONDecodeError, simplejson.JSONDecodeError):
+        except Exception:
             if self._stub_status:
                 return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
             else:
