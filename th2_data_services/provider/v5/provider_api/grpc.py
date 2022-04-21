@@ -39,8 +39,7 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
 from grpc import Channel, insecure_channel
 from th2_data_services.provider.interfaces.source_api import IGRPCProviderSourceAPI
 
-logger = logging.getLogger("th2_data_services")
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 BasicRequest = namedtuple(
     "BasicRequest",

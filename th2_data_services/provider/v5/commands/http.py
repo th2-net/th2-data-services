@@ -30,8 +30,7 @@ from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 import logging
 
-logger = logging.getLogger("th2_data_services")
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
