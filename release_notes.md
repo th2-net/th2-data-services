@@ -234,3 +234,6 @@ use `CodecPipelinesAdapter` manually.
 
 ## Improvements
 1. [TH2-3003] Added automatic attachment of example.py code in readme.md.
+
+## BugFixes
+1. [TH2-3389] GetXById in http-provider now handle 404 error status.
