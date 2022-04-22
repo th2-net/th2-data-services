@@ -617,23 +617,6 @@ def test_check_url_for_data_source():
     assert "Max retries exceeded with url" in str(exc_info)
 
 
-def test_data_cache(demo_events_from_data_source: Data):
-    data = demo_events_from_data_source
-    data.use_cache(True)
-    output1 = list(data)
-
-    data.use_cache(False)
-    data._data = []
-    output2 = list(data)
-
-    data.use_cache(True)
-    output3 = list(data)
-
-    output4 = list(data)
-
-    assert output1 == output3 == output4 and output2 == []
-
-
 def test_messageIds_not_in_last_msg(demo_messages_from_data_source: Data):
     data = demo_messages_from_data_source
     data_lst = list(data)

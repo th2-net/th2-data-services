@@ -231,9 +231,18 @@ use `CodecPipelinesAdapter` manually.
 1. [TH2-3497] EventsTreeCollection got `get_leaves_iter` method.
 2. [TH2-3497] EventsTreeCollection got `len_trees` and `len_detached_events` properties.
 3. [TH2-3497] EventsTree and EventsTreeCollection got representation(`__repr__`) and `summary` methods. 
+4. [TH2-3558] Added module-level functions `add_stderr_logger` and `add_file_logger` to easily enable logging.
+5. [TH2-3546][TH2-3583] `INTERACTIVE_MODE` - global parameter was introduced.
+6. `Data.use_cache()` <- True by default.
+7. Added data methods to get cache files paths `Data.get_cache_filepath()` and `Data.get_pending_cache_filepath()`.
 
 ## Improvements
 1. [TH2-3003] Added automatic attachment of example.py code in readme.md.
+2. [TH2-3558] Added more debug info about Data cache using.
 
-## BugFixes
-1. [TH2-3389] GetXById in http-provider now handle 404 error status.
+## Bugs
+1. [TH2-3557][TH2-3560] Parent Data cache file will be created if you iterate a child Data object now.
+2. [TH2-3545][TH2-3580] The Data object now uses an absolute path, so it doesn't lose its cache file if you change the working directory.
+3. [TH2-3546][TH2-3583] Data cache file will not be removed if you use `INTERACTIVE_MODE` and the file is being read.
+4. [TH2-3487][TH2-3585] `data = Data(source_data, cache=True).map(func)` Data object didn't write the cache in such case before. Fixed.
+5. [TH2-3558] Used loggers name fixed. Changed to __name__.

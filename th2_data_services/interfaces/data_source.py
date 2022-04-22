@@ -15,15 +15,12 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
-
 from th2_data_services.interfaces.command import ICommand
 from th2_data_services.interfaces.source_api import ISourceAPI
 
 import logging
 
-
-logger = logging.getLogger("th2_data_services")
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class IDataSource(ABC):
