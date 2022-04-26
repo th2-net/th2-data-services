@@ -87,11 +87,19 @@ class EventsTreeCollection(ABC):
 
         for id_ in stub_roots:
             tree = Tree()
-            tree.create_node(tag="Stub", identifier=id_, data={})
+            tree.create_node(tag="Stub", identifier=id_, data=self._build_stub_event(id_))
             self._fill_tree(self._detached_nodes, tree, id_)
             self._parentless.append(EventsTree(tree))
 
         return self._parentless
+
+    @abstractmethod
+    def _build_stub_event(self, id_: str) -> dict:
+        """Builds stub event.
+
+        Args:
+            id_: Event Id.
+        """
 
     def _build_event_nodes(self, data: Data) -> Dict[Optional[str], List[Node]]:
         """Builds event nodes and group them by parent_event_id.

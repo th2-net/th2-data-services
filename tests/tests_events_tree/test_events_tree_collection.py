@@ -176,3 +176,51 @@ def test_find_ancestor(general_data: List[dict]):
         "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a4-d1b4-11eb-9278-591e568ad66e",
         lambda event: "placeOrderFIX" in event["eventName"],
     )
+
+
+def test_build_parentless_tree(general_data: List[dict]):
+    collections = EventsTreeCollectionProvider5(general_data)
+    trees = collections.get_parentless_trees()
+
+    template = {
+        "attachedMessageIds": [],
+        "batchId": "Broken_Event",
+        "endTimestamp": {"nano": 0, "epochSecond": 0},
+        "startTimestamp": {"nano": 0, "epochSecond": 0},
+        "type": "event",
+        "eventName": "Broken_Event",
+        "eventType": "Broken_Event",
+        "parentEventId": "Broken_Event",
+        "successful": None,
+        "isBatched": None,
+    }
+
+    assert trees[0].get_all_events() == [
+        {"eventId": "a3779b94-d051-11eb-986f-1e8d42132387", **template},
+        {
+            "batchId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf",
+            "eventId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf:8ca20288-d1b4-11eb-986f-1e8d42132387",
+            "eventName": "Remove 'NewOrderSingle' id='demo-conn1:SECOND:1624005455622135205' Hash='7009491514226292581' Group='NOS_CONN' Hash['SecondaryClOrdID': 11111, 'SecurityID': INSTR1]",
+            "isBatched": True,
+            "eventType": "",
+            "parentEventId": "a3779b94-d051-11eb-986f-1e8d42132387",
+        },
+    ] and trees[1].get_all_events() == [
+        {"eventId": "845d70d2-9c68-11eb-8598-691ebd7f413d", **template},
+        {
+            "batchId": None,
+            "eventId": "8ceb47f6-d1b4-11eb-a9ed-ffb57363e013",
+            "eventName": "Send 'ExecutionReport' message",
+            "isBatched": False,
+            "eventType": "Send message",
+            "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d",
+        },
+        {
+            "batchId": None,
+            "eventId": "8ced1c93-d1b4-11eb-a9f4-b12655548efc",
+            "eventName": "Send 'ExecutionReport' message",
+            "isBatched": False,
+            "eventType": "Send message",
+            "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d",
+        },
+    ]
