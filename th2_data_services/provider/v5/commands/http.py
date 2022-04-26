@@ -13,8 +13,6 @@
 #  limitations under the License.
 
 from typing import Generator, List
-import json
-import simplejson
 from datetime import datetime, timezone
 from functools import partial
 
@@ -64,15 +62,14 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
         logger.info(url)
 
         response = api.execute_request(url)
-        try:
-            event = response.json()
-        except (json.JSONDecodeError, simplejson.JSONDecodeError):
-            if self._stub_status:
-                return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
-            else:
-                logger.error(f"Unable to find the message. Id: {self._id}")
-                raise EventNotFound(self._id)
-        return self._handle_adapters(event)
+
+        if response.status_code == 404 and self._stub_status:
+            return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+        elif response.status_code == 404:
+            logger.error(f"Unable to find the message. Id: {self._id}")
+            raise EventNotFound(self._id)
+        else:
+            return self._handle_adapters(response.json())
 
 
 class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
@@ -374,16 +371,14 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         logger.info(url)
 
         response = api.execute_request(url)
-        try:
-            message = response.json()
-        except (json.JSONDecodeError, simplejson.JSONDecodeError):
-            if self._stub_status:
-                return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
-            else:
-                exception_msg = f"Unable to find the message. Id: {self._id}"
-                logger.error(exception_msg)
-                raise MessageNotFound(self._id)
-        return self._handle_adapters(message)
+
+        if response.status_code == 404 and self._stub_status:
+            return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+        elif response.status_code == 404:
+            logger.error(f"Unable to find the message. Id: {self._id}")
+            raise MessageNotFound(self._id)
+        else:
+            return self._handle_adapters(response.json())
 
 
 class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
