@@ -29,7 +29,10 @@ from th2_data_services.provider.v5.command_resolver import resolver_get_events_b
 class EventsTreeCollection(ABC):
     """EventsTreeCollection objective is building 'EventsTree's and storing them.
 
-    EventsTreeCollection stores all EventsTree. You can to refer to each of them.
+    - EventsTreeCollection stores all EventsTree. You can to refer to each of them.
+    - Recovery of missing events occurs when you have passed DataSource class.
+    Otherwise you should execute the method 'recover_unknown_events'.
+    Note that there is no point in the method if the list of detached events is empty.
     """
 
     def __init__(
@@ -54,7 +57,7 @@ class EventsTreeCollection(ABC):
         self._build_trees(events_nodes)
 
         if data_source is not None:
-            self._recover_unknown_events()
+            self.recover_unknown_events(self._data_source)
 
     def get_parentless_trees(self) -> List[EventsTree]:
         """Gets parentless trees.
@@ -84,11 +87,19 @@ class EventsTreeCollection(ABC):
 
         for id_ in stub_roots:
             tree = Tree()
-            tree.create_node(tag="Stub", identifier=id_, data={})
+            tree.create_node(tag="Stub", identifier=id_, data=self._build_stub_event(id_))
             self._fill_tree(self._detached_nodes, tree, id_)
             self._parentless.append(EventsTree(tree))
 
         return self._parentless
+
+    @abstractmethod
+    def _build_stub_event(self, id_: str) -> dict:
+        """Builds stub event.
+
+        Args:
+            id_: Event Id.
+        """
 
     def _build_event_nodes(self, data: Data) -> Dict[Optional[str], List[Node]]:
         """Builds event nodes and group them by parent_event_id.
@@ -531,14 +542,18 @@ class EventsTreeCollection(ABC):
                 continue
         raise EventIdNotInTree(id)
 
-    def _recover_unknown_events(self) -> None:
-        """Loads missed events and recover events."""
-        instance_command = resolver_get_events_by_id(self._data_source)
+    def recover_unknown_events(self, data_source: IProviderDataSource) -> None:
+        """Loads missed events and recover events.
+
+        Args:
+            data_source: Data Source.
+        """
+        instance_command = resolver_get_events_by_id(data_source)
 
         previous_detached_events = list(self.detached_events.keys())
         while previous_detached_events:
             called_command = instance_command(self.detached_events.keys(), use_stub=self._stub_status)
-            events = self._data_source.command(called_command)
+            events = data_source.command(called_command)
 
             for event in events:
                 if not self._get_event_name(event) == "Broken_Event":

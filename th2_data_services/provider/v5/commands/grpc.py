@@ -69,7 +69,7 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
 class GetEventById(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
-    It retrieves the event by id.
+    It retrieves the event by id with `attachedMessageIds` list.
 
     Returns:
         dict: Th2 event.
@@ -111,7 +111,7 @@ class GetEventById(IGRPCProvider5Command, ProviderAdaptableCommand):
 class GetEventsById(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
-    It retrieves the events by id.
+    It retrieves the events by ids with `attachedMessageIds` list.
 
     Returns:
         List[dict]: Th2 events.
@@ -332,6 +332,9 @@ class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):  # noqa: 
 
     It retrieves the message by id.
 
+    Please note, Provider5 doesn't return `attachedEventIds`. It will be == [].
+    It's expected that Provider7 will be support it.
+
     Returns:
         dict: Th2 message.
 
@@ -372,6 +375,9 @@ class GetMessagesById(IGRPCProvider5Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the messages by id.
+
+    Please note, Provider5 doesn't return `attachedEventIds`. It will be == [].
+    It's expected that Provider7 will be support it.
 
     Returns:
         List[dict]: Th2 messages.
