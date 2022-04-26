@@ -20,6 +20,7 @@ from th2_data_services.events_tree.exceptions import FieldIsNotExist
 from th2_data_services.provider.interfaces.struct import IEventStruct
 from th2_data_services.provider.v5.data_source import GRPCProvider5DataSource, HTTPProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct
+from th2_data_services.provider.v5.stub_builder import provider5_event_stub_builder
 
 
 class ParentEventsTreeCollectionProvider5(ParentEventsTreeCollection):
@@ -86,3 +87,14 @@ class ParentEventsTreeCollectionProvider5(ParentEventsTreeCollection):
             Parent event id.
         """
         return event.get(self._event_struct.PARENT_EVENT_ID)
+
+    def _build_stub_event(self, id_: str):
+        """Builds stub event.
+
+        Args:
+            id_: Event Id.
+
+        Returns:
+            Stub event.
+        """
+        return provider5_event_stub_builder.build({self._event_struct.EVENT_ID: id_})

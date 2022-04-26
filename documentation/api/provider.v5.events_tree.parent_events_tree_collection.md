@@ -11,12 +11,12 @@
 
 ---
 
-<a href="../../th2_data_services/provider/v5/events_tree/parent_events_tree_collection.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/events_tree/parent_events_tree_collection.py#L26"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ParentEventsTreeCollectionProvider5`
 ParentEventsTreeCollection for data-provider v5. 
 
-<a href="../../th2_data_services/provider/v5/events_tree/parent_events_tree_collection.py#L28"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/events_tree/parent_events_tree_collection.py#L29"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
