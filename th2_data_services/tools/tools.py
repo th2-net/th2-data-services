@@ -21,6 +21,8 @@ def get_time_obj_from_string(date_string: str, format: str = "nanoseconds") -> (
         return int(timestamp.timestamp() * 10 ** 6)
     elif format == "datetime":
         return timestamp
+    else:
+        raise ValueError(f"Format does not match argument: '{format}'")
 
 
 def get_time_obj_from_timestamp(timestamp: dict, format: str = "nanoseconds") -> (datetime, int):
@@ -40,3 +42,5 @@ def get_time_obj_from_timestamp(timestamp: dict, format: str = "nanoseconds") ->
         return _ts // 10 ** 3
     elif format == "datetime":
         return datetime.fromtimestamp(_ts / 10 ** 9)
+    else:
+        raise ValueError(f"Format does not match argument: '{format}'")
