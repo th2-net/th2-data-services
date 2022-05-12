@@ -12,16 +12,20 @@ def get_time_obj_from_string(datetime_string: str, format: str = "nanoseconds") 
     Returns:
         obj: Converted object.
     """
+    ds = ("", "")
     try:
-        timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S.%fZ")
-    except ValueError:
         timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        ds = datetime_string.rsplit(".")
+        timestamp = datetime.strptime(ds[0], "%Y-%m-%dT%H:%M:%S")
+    sec = f"{ds[1][:-1]}{'0' * (9 - len(ds[1][:-1]))}"
+    timestamp = int(timestamp.timestamp())
     if format == "nanoseconds":
-        return int(timestamp.timestamp() * 10 ** 6) * 1000
+        return int(f"{timestamp}{sec}")
     elif format == "microseconds":
-        return int(timestamp.timestamp() * 10 ** 6)
+        return int(f"{timestamp}{sec[:-3]}")
     elif format == "datetime":
-        return timestamp
+        return datetime.fromtimestamp(float(f"{timestamp}.{sec}"))
     else:
         raise ValueError(f"Format does not support the value: '{format}'")
 

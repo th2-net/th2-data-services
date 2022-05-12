@@ -9,24 +9,34 @@ import pytest
         (("2022-03-05T23:56:44.233856Z", "datetime"), datetime.fromisoformat("2022-03-05 23:56:44.233856")),
         (
             ("2022-03-05T23:56:44.233856Z", "nanoseconds"),
-            datetime.fromisoformat("2022-03-05 23:56:44.233856").timestamp() * 10 ** 9,
+            int(datetime.fromisoformat("2022-03-05 23:56:44.233856").timestamp() * 10 ** 9),
         ),
         (
             ("2022-03-05T23:56:44.233856Z", "microseconds"),
-            datetime.fromisoformat("2022-03-05 23:56:44.233856").timestamp() * 10 ** 6,
+            int(datetime.fromisoformat("2022-03-05 23:56:44.233856").timestamp() * 10 ** 6),
         ),
         (("2022-03-05T23:56:44.0Z", "datetime"), datetime.fromisoformat("2022-03-05 23:56:44")),
         (
             ("2022-03-05T23:56:44.0Z", "microseconds"),
-            datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 6,
+            int(datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 6),
         ),
         (
             ("2022-03-05T23:56:44.0Z", "nanoseconds"),
-            datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 9,
+            int(datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 9),
         ),
         (("2022-03-05T23:56:44Z", "datetime"), datetime.fromisoformat("2022-03-05 23:56:44")),
-        (("2022-03-05T23:56:44Z", "microseconds"), datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 6),
-        (("2022-03-05T23:56:44Z", "nanoseconds"), datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 9),
+        (
+            ("2022-03-05T23:56:44Z", "microseconds"),
+            int(datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 6),
+        ),
+        (
+            ("2022-03-05T23:56:44Z", "nanoseconds"),
+            int(datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 9),
+        ),
+        (
+            ("2022-03-05T23:56:44.000000001Z", "nanoseconds"),
+            int(datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 9) + 1,
+        ),
     ],
 )
 def test_get_time_obj_from_string(input_obj, expected):
