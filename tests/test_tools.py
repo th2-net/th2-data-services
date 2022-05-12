@@ -3,58 +3,76 @@ from datetime import datetime
 import pytest
 
 
-def test_get_time_obj_from_string():
-    dt = datetime.fromisoformat("2022-03-05 23:56:44.233856")
-    dt_1 = datetime.fromisoformat("2022-03-05 23:56:44")
-    assert all(
-        [
-            tools.get_time_obj_from_string("2022-03-05T23:56:44.233856Z", "datetime") == dt,
-            int(dt.timestamp() * 10 ** 6) * 1000 == tools.get_time_obj_from_string("2022-03-05T23:56:44.233856Z"),
-            int(dt.timestamp() * 10 ** 6)
-            == tools.get_time_obj_from_string("2022-03-05T23:56:44.233856Z", "microseconds"),
-            tools.get_time_obj_from_string("2022-03-05T23:56:44.0Z", "datetime") == dt_1,
-            int(dt_1.timestamp() * 10 ** 6) * 1000 == tools.get_time_obj_from_string("2022-03-05T23:56:44.0Z"),
-            int(dt_1.timestamp() * 10 ** 6) == tools.get_time_obj_from_string("2022-03-05T23:56:44.0Z", "microseconds"),
-            tools.get_time_obj_from_string("2022-03-05T23:56:44Z", "datetime") == dt_1,
-            int(dt_1.timestamp() * 10 ** 6) * 1000 == tools.get_time_obj_from_string("2022-03-05T23:56:44Z"),
-            int(dt_1.timestamp() * 10 ** 6) == tools.get_time_obj_from_string("2022-03-05T23:56:44Z", "microseconds"),
-        ]
-    )
+@pytest.mark.parametrize(
+    "input_obj, expected",
+    [
+        (("2022-03-05T23:56:44.233856Z", "datetime"), datetime.fromisoformat("2022-03-05 23:56:44.233856")),
+        (
+            ("2022-03-05T23:56:44.233856Z", "nanoseconds"),
+            datetime.fromisoformat("2022-03-05 23:56:44.233856").timestamp() * 10 ** 9,
+        ),
+        (
+            ("2022-03-05T23:56:44.233856Z", "microseconds"),
+            datetime.fromisoformat("2022-03-05 23:56:44.233856").timestamp() * 10 ** 6,
+        ),
+        (("2022-03-05T23:56:44.0Z", "datetime"), datetime.fromisoformat("2022-03-05 23:56:44")),
+        (
+            ("2022-03-05T23:56:44.0Z", "microseconds"),
+            datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 6,
+        ),
+        (
+            ("2022-03-05T23:56:44.0Z", "nanoseconds"),
+            datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 9,
+        ),
+        (("2022-03-05T23:56:44Z", "datetime"), datetime.fromisoformat("2022-03-05 23:56:44")),
+        (("2022-03-05T23:56:44Z", "microseconds"), datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 6),
+        (("2022-03-05T23:56:44Z", "nanoseconds"), datetime.fromisoformat("2022-03-05 23:56:44").timestamp() * 10 ** 9),
+    ],
+)
+def test_get_time_obj_from_string(input_obj, expected):
+    assert tools.get_time_obj_from_string(*input_obj) == expected
 
+
+@pytest.mark.parametrize(
+    "input_obj",
+    [
+        ("2022-03-05 23:56:44.233856", "datetime"),
+        ("2022-03-05 23:56:44.233856", "microseconds"),
+        ("2022-03-05 23:56:44.233856", "nanoseconds"),
+        ("2022-03-05T23:56:44.233856Z", "milliseconds"),
+    ],
+)
+def test_get_time_obj_from_string_raises(input_obj):
     with pytest.raises(ValueError):
-        tools.get_time_obj_from_string("2022-03-05 23:56:44.233856", "datetime")
-        tools.get_time_obj_from_string("2022-03-05 23:56:44.233856", "microseconds")
-        tools.get_time_obj_from_string("2022-03-05 23:56:44.233856")
-        tools.get_time_obj_from_string("2022-03-05T23:56:44.233856Z", "milliseconds")
+        tools.get_time_obj_from_string(*input_obj)
 
 
-def test_get_time_obj_from_timestamp():
-    d = {"nano": 1, "epochSecond": 1}
-    dt = datetime.fromtimestamp(1.000000001)
-    d_1 = {"nano": 0, "epochSecond": 0}
-    dt_1 = datetime.fromtimestamp(0.000000000)
-    d_2 = {"nano": 999999999, "epochSecond": 1}
-    dt_2 = datetime.fromtimestamp(1.999999999)
-    assert all(
-        [
-            tools.get_time_obj_from_timestamp(d, "datetime") == dt,
-            tools.get_time_obj_from_timestamp(d, "microseconds") == 1000000,
-            tools.get_time_obj_from_timestamp(d) == 1000000001,
-            tools.get_time_obj_from_timestamp(d_1, "datetime") == dt_1,
-            tools.get_time_obj_from_timestamp(d_1, "microseconds") == 0,
-            tools.get_time_obj_from_timestamp(d_1) == 0,
-            tools.get_time_obj_from_timestamp(d_2, "datetime") == dt_2,
-            tools.get_time_obj_from_timestamp(d_2, "microseconds") == 1999999,
-            tools.get_time_obj_from_timestamp(d_2) == 1999999999,
-        ]
-    )
-    incorrect_d_0 = {"nano": 4770.0000, "epochSecond": 1634223323}
-    incorrect_d_1 = {"nano": 47700000, "epochSecond": 16342.23323}
-    incorrect_d_2 = {"nan": 47700000, "epochSecond": 1634223323}
-    incorrect_d_3 = {"nano": 47700000, "epoch": 1634223323}
+@pytest.mark.parametrize(
+    "input_obj, expected",
+    [
+        (({"nano": 1, "epochSecond": 1}, "datetime"), datetime.fromtimestamp(1.000000001)),
+        (({"nano": 1, "epochSecond": 1}, "microseconds"), 1000000),
+        (({"nano": 1, "epochSecond": 1}, "nanoseconds"), 1000000001),
+        (({"nano": 0, "epochSecond": 0}, "datetime"), datetime.fromtimestamp(0.000000000)),
+        (({"nano": 0, "epochSecond": 0}, "microseconds"), 0),
+        (({"nano": 0, "epochSecond": 0}, "nanoseconds"), 0),
+        (({"nano": 999999999, "epochSecond": 1}, "datetime"), datetime.fromtimestamp(1.999999999)),
+        (({"nano": 999999999, "epochSecond": 1}, "microseconds"), 1999999),
+        (({"nano": 999999999, "epochSecond": 1}, "nanoseconds"), 1999999999),
+    ],
+)
+def test_get_time_obj_from_timestamp(input_obj, expected):
+    assert tools.get_time_obj_from_timestamp(*input_obj) == expected
+
+
+@pytest.mark.parametrize(
+    "input_obj",
+    [
+        ({"nano": 47700.000, "epochSecond": 1634223323}, "datetime"),
+        ({"nano": 47700000, "epochSecond": 16342.23323}, "datetime"),
+        ({"nano": 0, "epochSecond": 0}, "milliseconds"),
+    ],
+)
+def test_get_time_obj_from_timestamp_raises(input_obj):
     with pytest.raises(ValueError):
-        tools.get_time_obj_from_timestamp(incorrect_d_0, "datetime")
-        tools.get_time_obj_from_timestamp(incorrect_d_1, "datetime")
-        tools.get_time_obj_from_timestamp(incorrect_d_2, "datetime")
-        tools.get_time_obj_from_timestamp(incorrect_d_3, "datetime")
-        tools.get_time_obj_from_timestamp(d, "milliseconds")
+        tools.get_time_obj_from_timestamp(*input_obj)
