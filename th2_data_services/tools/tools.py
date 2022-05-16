@@ -2,12 +2,15 @@ from datetime import datetime
 
 
 def get_time_obj_from_string(datetime_string: str, format: str = "nanoseconds") -> (datetime, int):
-    """Parse datetime object from a string to different format.
+    """Convert datetime string to different format.
 
     Args:
-        datetime_string: Source datetime string to convert.
-        format: Transform parameter.
-            Values: 'nanoseconds', 'microseconds', 'datetime'. Defaults to 'nanoseconds'.
+        datetime_string: Source datetime string to convert. Expected format "yyyy-MM-ddTHH:mm:ss.[SSSSSSSSS]Z"
+        format: Transform parameter. Defaults to 'nanoseconds'.
+            Possible values:
+            - 'nanoseconds' or 'ns'
+            - 'microseconds' or 'us'
+            - 'datetime'
 
     Returns:
         obj: Converted object.
@@ -20,9 +23,9 @@ def get_time_obj_from_string(datetime_string: str, format: str = "nanoseconds") 
         timestamp = datetime.strptime(ds[0], "%Y-%m-%dT%H:%M:%S")
     sec = f"{ds[1][:-1]}{'0' * (9 - len(ds[1][:-1]))}"
     timestamp = int(timestamp.timestamp())
-    if format == "nanoseconds":
+    if format == "nanoseconds" or format == "ns":
         return int(f"{timestamp}{sec}")
-    elif format == "microseconds":
+    elif format == "microseconds" or format == "us":
         return int(f"{timestamp}{sec[:-3]}")
     elif format == "datetime":
         return datetime.fromtimestamp(float(f"{timestamp}.{sec}"))
@@ -34,7 +37,7 @@ def get_time_obj_from_timestamp(timestamp: dict, format: str = "nanoseconds") ->
     """Transform Th2 timestamp to different format.
 
     Args:
-        timestamp:  Th2 timestamp format.
+        timestamp: Th2 timestamp format.
         format: Transform parameter.
             Values: 'nanoseconds', 'microseconds', 'datetime'. Defaults to 'nanoseconds'.
 
@@ -42,9 +45,9 @@ def get_time_obj_from_timestamp(timestamp: dict, format: str = "nanoseconds") ->
         obj: Converted object.
     """
     datetime_string = f"{timestamp['epochSecond']}{timestamp['nano']:0>9}"
-    if format == "nanoseconds":
+    if format == "nanoseconds" or format == "ns":
         return int(datetime_string)
-    elif format == "microseconds":
+    elif format == "microseconds" or format == "us":
         return int(datetime_string[:-3])
     elif format == "datetime":
         return datetime.fromtimestamp(float(f"{timestamp['epochSecond']}.{timestamp['nano']:0>9}"))
