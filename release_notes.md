@@ -163,3 +163,4 @@ User will get original byte now.
 
 1. [TH2-3168] Fixed iterations in nested loops for Data object with limit.
 2. [TH2-3336] Url now uses the utf-8 encoding.
+3. [TH2-3700] Filter iterate values only once - fixed.
