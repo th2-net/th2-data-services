@@ -18,3 +18,15 @@ def test_filter_url():
 
 def test_filter_grcp():
     assert isinstance(Filter("type", ["one", 2, "three"], False, False), Filter)
+
+
+def test_iterate_filter_twice():
+    f = Filter("type", ["one", 2, "three"])
+    v1 = f.url()
+    v2 = f.url()
+    assert v1 == v2
+
+
+def test_repr():
+    f = Filter("type", ["one", 2, "three"])
+    assert repr(f) == "Filter(name='type', values=['one', '2', 'three'], negative='False', conjunct='False')"
