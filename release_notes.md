@@ -230,6 +230,11 @@ use `CodecPipelinesAdapter` manually.
 
 1. [TH2-3493] The method recover_unknown_events has become public.
 
+# v1.0.2
+
+## BugFixes
+1. [TH2-3700] Filter iterate values only once - fixed.
+
 # v1.1.0
 
 ## Features
