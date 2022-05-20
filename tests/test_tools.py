@@ -1,5 +1,5 @@
 from th2_data_services.tools import tools
-from datetime import datetime
+from datetime import datetime, timezone
 import pytest
 from collections import namedtuple
 
@@ -17,32 +17,50 @@ def format_us(request):
 
 
 # For 2022-03-05T23:56:44
-nanoseconds = 1646513804_000_000_000
-microseconds = 1646513804_000_000
+nanoseconds = 1646524604_000_000_000
+microseconds = 1646524604_000_000
 
 
-@pytest.fixture(params=[
-    TestCase("2022-03-05T23:56:44.0Z",
-             expected_datetime=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44),
-             expected_ns=nanoseconds,
-             expected_us=microseconds),
-    TestCase("2022-03-05T23:56:44Z",
-             expected_datetime=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44),
-             expected_ns=nanoseconds,
-             expected_us=microseconds),
-    TestCase("2022-03-05T23:56:44.123456Z",
-             expected_datetime=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456),
-             expected_ns=nanoseconds + 123_456_000,
-             expected_us=microseconds + 123_456),
-    TestCase("2022-03-05T23:56:44.123456789Z",
-             expected_datetime=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456),
-             expected_ns=nanoseconds + 123_456_789,
-             expected_us=microseconds + 123_456),
-    TestCase("2022-03-05T23:56:44.123Z",
-             expected_datetime=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123),
-             expected_ns=nanoseconds + 123_000_000,
-             expected_us=microseconds + 123_000),
-])
+@pytest.fixture(
+    params=[
+        TestCase(
+            "2022-03-05T23:56:44.0Z",
+            expected_datetime=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, tzinfo=timezone.utc),
+            expected_ns=nanoseconds,
+            expected_us=microseconds,
+        ),
+        TestCase(
+            "2022-03-05T23:56:44Z",
+            expected_datetime=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, tzinfo=timezone.utc),
+            expected_ns=nanoseconds,
+            expected_us=microseconds,
+        ),
+        TestCase(
+            "2022-03-05T23:56:44.123456Z",
+            expected_datetime=datetime(
+                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456, tzinfo=timezone.utc
+            ),
+            expected_ns=nanoseconds + 123_456_000,
+            expected_us=microseconds + 123_456,
+        ),
+        TestCase(
+            "2022-03-05T23:56:44.123456789Z",
+            expected_datetime=datetime(
+                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456, tzinfo=timezone.utc
+            ),
+            expected_ns=nanoseconds + 123_456_789,
+            expected_us=microseconds + 123_456,
+        ),
+        TestCase(
+            "2022-03-05T23:56:44.123Z",
+            expected_datetime=datetime(
+                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123, tzinfo=timezone.utc
+            ),
+            expected_ns=nanoseconds + 123_000_000,
+            expected_us=microseconds + 123_000,
+        ),
+    ]
+)
 def datetime_strings(request) -> TestCase:
     return request.param
 
@@ -56,8 +74,10 @@ def test_get_time_obj_from_string_us(datetime_strings, format_us):
 
 
 def test_get_time_obj_from_string_datatime(datetime_strings):
-    assert tools.get_time_obj_from_string(datetime_strings.datetime_string,
-                                          "datetime") == datetime_strings.expected_datetime
+    assert (
+        tools.get_time_obj_from_string(datetime_strings.datetime_string, "datetime")
+        == datetime_strings.expected_datetime
+    )
 
 
 @pytest.mark.parametrize(
@@ -77,13 +97,13 @@ def test_get_time_obj_from_string_raises(input_obj):
 @pytest.mark.parametrize(
     "input_obj, expected",
     [
-        (({"nano": 1, "epochSecond": 1}, "datetime"), datetime.fromtimestamp(1.000000001)),
+        (({"nano": 1, "epochSecond": 1}, "datetime"), datetime.utcfromtimestamp(1.000000001)),
         (({"nano": 1, "epochSecond": 1}, "microseconds"), 1000000),
         (({"nano": 1, "epochSecond": 1}, "nanoseconds"), 1000000001),
-        (({"nano": 0, "epochSecond": 0}, "datetime"), datetime.fromtimestamp(0.000000000)),
+        (({"nano": 0, "epochSecond": 0}, "datetime"), datetime.utcfromtimestamp(0.000000000)),
         (({"nano": 0, "epochSecond": 0}, "microseconds"), 0),
         (({"nano": 0, "epochSecond": 0}, "nanoseconds"), 0),
-        (({"nano": 999999999, "epochSecond": 1}, "datetime"), datetime.fromtimestamp(1.999999999)),
+        (({"nano": 999999999, "epochSecond": 1}, "datetime"), datetime.utcfromtimestamp(1.999999999)),
         (({"nano": 999999999, "epochSecond": 1}, "microseconds"), 1999999),
         (({"nano": 999999999, "epochSecond": 1}, "nanoseconds"), 1999999999),
     ],
