@@ -42,7 +42,7 @@ class Data:
             parents_cache: Parents chain. Works as a stack.
             cache: Flag if you want to write and read from cache.
         """
-        self._cache_filename = f"{str(id(self))}:{time()}.pickle"
+        self._cache_filename = f"{str(id(self))}_{time()}.pickle"
         self._len = None
         self._data = data
         self._workflow = [] if workflow is None else workflow

@@ -225,6 +225,7 @@ use `CodecPipelinesAdapter` manually.
 1. [TH2-3470] Fixed cache in commands GetEvents and GetMessages for http-provider.
 2. [TH2-3337] Url now use utf-8 encoding.
 3. [TH2-3474] Parentless tree has stub event instead empty event now.
+4. [TH2-3756] Change filepath for cache file due to character limit (':') in Windows
 
 ## Improvements
 
