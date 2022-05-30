@@ -49,7 +49,6 @@ class Data:
             cache: Set True if you want to write and read from cache.
             workflow: Workflow.
         """
-        self._cache_filename = f"{str(id(self))}_{time()}.pickle"
         self._id = id(self)
         self._cache_filename = f"{self._id}_{time()}.pickle"
         self._cache_path = Path(f"./temp/{self._cache_filename}").resolve()
