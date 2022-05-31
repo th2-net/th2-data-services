@@ -695,3 +695,9 @@ def test_link_gui_with_message_id():
     result = "http://host:port/th2-common/?messageId=fix01:first:1600854429908302153"
 
     assert link_message_id1 == result
+
+def test_cache_filename():
+    data = Data([1, 2, 3, 4, 5], cache=True)
+    for d in data:
+        d
+    assert data._cache_filename.find(":") == -1
