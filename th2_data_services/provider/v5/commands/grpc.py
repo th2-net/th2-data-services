@@ -427,6 +427,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         result_count_limit: int = None,
         keep_open: bool = False,
         filters: List[Filter] = None,
+        message_id: List[str] = None,
     ):
         """GetMessagesGRPCObject constructor.
 
@@ -439,6 +440,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
             result_count_limit: Result count limit.
             keep_open: If the search has reached the current moment.
                 It is need to wait further for the appearance of new data.
+            message_id: List of message ids to restore the search
             filters: Filters using in search for messages.
 
         """
@@ -451,6 +453,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._result_count_limit = result_count_limit
         self._keep_open = keep_open
         self._filters = filters
+        self._message_id = message_id
 
     def handle(self, data_source: GRPCProvider5DataSource) -> List[MessageData]:
         api = data_source.source_api
@@ -467,6 +470,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
             result_count_limit=self._result_count_limit,
             keep_open=self._keep_open,
             filters=self._filters,
+            message_id=self._message_id,
         )
         for response in stream_response:
             if response.WhichOneof("data") == "message":
@@ -493,6 +497,7 @@ class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
         result_count_limit: int = None,
         keep_open: bool = False,
         filters: List[Filter] = None,
+        message_id: List[str] = None,
         cache: bool = False,
     ):
         """GetMessages constructor.
@@ -507,6 +512,7 @@ class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
             keep_open: If the search has reached the current moment.
                 It is need to wait further for the appearance of new data.
             filters: Filters using in search for messages.
+            message_id: List of message ids to restore the search
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
 
         """
@@ -519,6 +525,7 @@ class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._result_count_limit = result_count_limit
         self._keep_open = keep_open
         self._filters = filters
+        self._message_id = message_id
         self._cache = cache
 
         self._decoder = GRPCObjectToDictAdapter()
