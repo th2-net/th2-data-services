@@ -258,3 +258,4 @@ use `CodecPipelinesAdapter` manually.
 3. [TH2-3546][TH2-3583] Data cache file will not be removed if you use `INTERACTIVE_MODE` and the file is being read.
 4. [TH2-3487][TH2-3585] `data = Data(source_data, cache=True).map(func)` Data object didn't write the cache in such case before. Fixed.
 5. [TH2-3558] Used loggers name fixed. Changed to __name__.
+6. [TH2-3733] Provider API class generate standard URL (without duplicate '/' and '/' before query)

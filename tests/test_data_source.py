@@ -20,7 +20,7 @@ def test_generate_url_search_sse_events():
     )
 
     assert (
-        url == f"http://host:port/search/sse/events/?startTimestamp={start_time}&endTimestamp={end_time}"
+        url == f"http://host:port/search/sse/events?startTimestamp={start_time}&endTimestamp={end_time}"
         f"&parentEvent={parent_event_id}&searchDirection=next&keepOpen={True}&metadataOnly=True"
         f"&attachedMessages={True}"
     )
@@ -38,7 +38,7 @@ def test_generate_url_search_sse_events_with_filters():
     )
 
     assert (
-        url == f"http://host:port/search/sse/events/?startTimestamp={start_time}&endTimestamp={end_time}"
+        url == f"http://host:port/search/sse/events?startTimestamp={start_time}&endTimestamp={end_time}"
         f"&searchDirection=next&keepOpen=False&metadataOnly=True&attachedMessages=False&filters={filter_name}"
         f"&{filter_name}-values={filter_value}&{filter_name}-negative=False"
     )
@@ -56,7 +56,7 @@ def test_generate_url_search_sse_messages():
     )
 
     assert (
-        url == f"http://host:port/search/sse/messages/?startTimestamp={start_time}&endTimestamp={end_time}"
+        url == f"http://host:port/search/sse/messages?startTimestamp={start_time}&endTimestamp={end_time}"
         f"&stream={stream[0]}&stream={stream[1]}&searchDirection=next&keepOpen={True}&attachedEvents=False"
     )
 
@@ -78,7 +78,7 @@ def test_generate_url_search_sse_messages_with_filters():
     )
 
     assert (
-        url == f"http://host:port/search/sse/messages/?startTimestamp={start_time}&endTimestamp={end_time}"
+        url == f"http://host:port/search/sse/messages?startTimestamp={start_time}&endTimestamp={end_time}"
         f"&stream={stream[0]}&stream={stream[1]}&searchDirection=next&keepOpen={True}&attachedEvents=False"
         f"&filters={filter_name}&{filter_name}-values={filter_value}&{filter_name}-negative=False"
     )
@@ -97,7 +97,7 @@ def test_encoding_url():
     filter_name = filter_name.split()
     filter_value = filter_value.split()
     assert (
-        url == f"http://host:port/search/sse/events/?startTimestamp={start_time}&endTimestamp={end_time}"
+        url == f"http://host:port/search/sse/events?startTimestamp={start_time}&endTimestamp={end_time}"
         f"&searchDirection=next&keepOpen=False&metadataOnly=True&attachedMessages=False&filters="
         f"{filter_name[0] + '%20' + filter_name[1]}"
         f"&{filter_name[0] + '%20' + filter_name[1]}-values={filter_value[0] + '%20' + filter_value[1]}&"
