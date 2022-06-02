@@ -436,7 +436,7 @@ Details:
 Requirements:
 
 1. Events have to have `event_name`, `event_id`, `parent_event_id` fields, which are described in the
-   passed `event_struct` object.
+passed `event_struct` object.
 
 #### Hints
 

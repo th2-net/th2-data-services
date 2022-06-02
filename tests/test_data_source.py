@@ -105,6 +105,7 @@ def test_encoding_url():
         f"{filter_name[0] + '%20' + filter_name[1]}-negative=False"
     )
 
+
 def test_generate_non_standart_url_search_sse_events():
     api = HTTPProvider5API(url="http://host:port////")
 
@@ -121,10 +122,11 @@ def test_generate_non_standart_url_search_sse_events():
     )
 
     assert (
-            url == f"http://host:port/search/sse/events?startTimestamp={start_time}&endTimestamp={end_time}"
-                   f"&parentEvent={parent_event_id}&searchDirection=next&keepOpen={True}&metadataOnly=True"
-                   f"&attachedMessages={True}"
+        url == f"http://host:port/search/sse/events?startTimestamp={start_time}&endTimestamp={end_time}"
+        f"&parentEvent={parent_event_id}&searchDirection=next&keepOpen={True}&metadataOnly=True"
+        f"&attachedMessages={True}"
     )
+
 
 def test_generate_non_standart_url_search_sse_messages_with_filters():
     api = HTTPProvider5API(url="http://host:port/")
@@ -148,13 +150,14 @@ def test_generate_non_standart_url_search_sse_messages_with_filters():
         f"&filters={filter_name}&{filter_name}-values={filter_value}&{filter_name}-negative=False"
     )
 
-def test_count_slash_in_non_standart_url():
-    api0 = HTTPProvider5API(url = "http://host:port")
-    api1 = HTTPProvider5API(url = "http://host:port/")
-    api4 = HTTPProvider5API(url = "http://host:port/////")
-    api10 = HTTPProvider5API(url = "//////////")
 
-    assert(
+def test_count_slash_in_non_standart_url():
+    api0 = HTTPProvider5API(url="http://host:port")
+    api1 = HTTPProvider5API(url="http://host:port/")
+    api4 = HTTPProvider5API(url="http://host:port/////")
+    api10 = HTTPProvider5API(url="//////////")
+
+    assert (
         api0._url == "http://host:port"
         and api1._url == "http://host:port"
         and api4._url == "http://host:port"
