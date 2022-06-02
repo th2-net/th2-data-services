@@ -44,10 +44,20 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
         """
-        self._url = url
+        self._url = self.__normalize_url(url)
         self._char_enc = char_enc
         self._chunk_length = chunk_length
         self._decode_error_handler = decode_error_handler
+
+    def __normalize_url(self, url):
+        if url is None:
+                return url
+
+        pos = len(url) - 1
+        while url[pos] == '/' and pos >= 0:
+            pos -= 1
+
+        return url[:pos + 1]
 
     def __encode_url(self, url: str) -> str:
         return quote(url.encode(), "/:&?=")
