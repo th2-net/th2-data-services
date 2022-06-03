@@ -50,7 +50,7 @@ class Data:
             workflow: Workflow.
         """
         self._id = id(self)
-        self._cache_filename = f"{self._id}:{time()}.pickle"
+        self._cache_filename = f"{self._id}_{time()}.pickle"
         self._cache_path = Path(f"./temp/{self._cache_filename}").resolve()
         self._len = None
         self._data_stream = data
