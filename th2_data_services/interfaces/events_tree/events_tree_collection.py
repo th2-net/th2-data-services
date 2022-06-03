@@ -247,6 +247,26 @@ class EventsTreeCollection(ABC):
 
         Raises:
             EventIdNotInTree: If event id is not in the trees.
+
+        Notes:
+            1. At the moment the method returns a tree by id and duplicates the get_tree_by_id method.
+        """
+        for tree in self._roots:
+            if tree.get_root_id() == id:
+                return tree
+        raise EventIdNotInTree(id)
+
+    def get_tree_by_id(self, id):
+        """Returns a tree by id as EventsTree class.
+
+        Args:
+            id: Root id.
+
+        Returns:
+            Tree.
+
+        Raises:
+            EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
             if tree.get_root_id() == id:
