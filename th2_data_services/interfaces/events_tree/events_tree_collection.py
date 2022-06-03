@@ -236,21 +236,21 @@ class EventsTreeCollection(ABC):
         """Returns the list of trees inside the collection."""
         return self._roots
 
-    def get_root_by_id(self, id) -> EventsTree:
-        """Returns a root tree by id as EventsTree class.
+    def get_root_by_id(self, id) -> Th2Event:
+        """Returns a root of tree by id as Th2Event.
 
         Args:
             id: Root id.
 
         Returns:
-            Root tree.
+            Th2Event.
 
         Raises:
             EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
-            if tree.find(lambda ch: ch["eventId"] == id):
-                return tree
+            if tree.get_root_id() == id:
+                return tree.get_root()
         raise EventIdNotInTree(id)
 
     def show(self):
