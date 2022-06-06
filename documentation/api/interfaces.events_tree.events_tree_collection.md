@@ -485,7 +485,7 @@ Returns a root tree by id as EventsTree class.
 
 **Notes:**
 
-> 1. At the moment the method returns a tree by id and duplicates the get_tree_by_id method. 
+> 1. At the moment the method returns a tree by id. 
 
 ---
 
