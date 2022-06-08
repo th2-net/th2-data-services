@@ -356,7 +356,7 @@ class EventsTree:
         subtree = self._tree.subtree(id)
         if not subtree:
             raise EventIdNotInTree(id)
-        return subtree
+        return EventsTree(subtree)
 
     def show(self) -> None:
         """Prints the EventsTree as tree view.
