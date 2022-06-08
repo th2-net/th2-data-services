@@ -25,6 +25,15 @@ from th2_data_services.events_tree.exceptions import EventIdNotInTree
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class _EventsTreeCollectionLogger(logging.LoggerAdapter):
+    def process(self, msg, kwargs):
+        return "ETC[%s] %s" % (self.extra["id"], msg), kwargs
+
 
 class EventsTreeCollection(ABC):
     """EventsTreeCollection objective is building 'EventsTree's and storing them.
@@ -52,6 +61,10 @@ class EventsTreeCollection(ABC):
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
         self._stub_status = stub
         self._data_source = data_source
+        self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
+        # It used to indicate the number of current iteration of the ETC object.
+        # It's required if the same instance iterates several times in for-in loops.
+        # Similar code in the Data object
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
@@ -68,9 +81,11 @@ class EventsTreeCollection(ABC):
             List of parentless trees if they exist, otherwise empty list.
         """
         if self._parentless is not None:
+            self._logger.warning("This instance of ETC have a list of parentless trees by detached events.")
             return self._parentless
         else:
             self._parentless = self._build_parentless_trees()
+            self._logger.warning("You have created a list of parentless trees by detached events.")
             return self._parentless
 
     def _build_parentless_trees(self) -> List[EventsTree]:
@@ -137,6 +152,10 @@ class EventsTreeCollection(ABC):
         nodes.pop(None)
 
         self._roots = [EventsTree(root) for root in roots]
+
+        if len(nodes) > 0:
+            self._logger.warning("You have created a ETC with detached events.")
+
         self._detached_nodes = nodes
 
     def _fill_tree(self, nodes: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:
@@ -585,5 +604,6 @@ class EventsTreeCollection(ABC):
                     self.append_event(event)
 
             if previous_detached_events == list(self.detached_events.keys()):
+                self._logger.warning("You have created a ETC wtth detached events.")
                 break
             previous_detached_events = list(self.detached_events.keys())
