@@ -1,6 +1,7 @@
 from typing import List, NamedTuple
 
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
+from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
@@ -125,7 +126,9 @@ def test_filter_stop(general_data: List[dict]):
 
 def test_subtree(general_data: List[dict]):
     tree = EventsTreeCollectionProvider5(general_data).get_trees()[0]
-
+    assert isinstance(
+        tree.get_subtree("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e"), EventsTree
+    )
     assert len(tree.get_subtree("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e")) == 11
 
 
