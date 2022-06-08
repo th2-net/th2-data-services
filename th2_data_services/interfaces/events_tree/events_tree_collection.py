@@ -240,7 +240,7 @@ class EventsTreeCollection(ABC):
         """Returns a root of tree by id as Th2Event.
 
         Args:
-            id: Root id.
+            id: Th2Event id.
 
         Returns:
             Th2Event.
@@ -249,7 +249,7 @@ class EventsTreeCollection(ABC):
             EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
-            if tree.find(lambda ch: ch["eventId"] == id):
+            if tree.find(lambda ch: self._get_event_id(ch) == id):
                 return tree.get_root()
         raise EventIdNotInTree(id)
 

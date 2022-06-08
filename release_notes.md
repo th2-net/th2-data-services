@@ -259,4 +259,4 @@ use `CodecPipelinesAdapter` manually.
 4. [TH2-3487][TH2-3585] `data = Data(source_data, cache=True).map(func)` Data object didn't write the cache in such case before. Fixed.
 5. [TH2-3558] Used loggers name fixed. Changed to __name__.
 6. [TH2-3733] Provider API class generate standard URL (without duplicate '/' and '/' before query)
-7. 
+7. [TH2-3593] Method get_root_by_id returns root by any non-root ID as Th2Event.

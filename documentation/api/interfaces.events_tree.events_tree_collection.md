@@ -468,7 +468,7 @@ Returns a root of tree by id as Th2Event.
 
 **Args:**
  
- - <b>`id`</b>:  Root id. 
+ - <b>`id`</b>:  Th2Event id. 
 
 
 
