@@ -535,7 +535,7 @@ Returns subtree of the event by its id.
 ### <kbd>method</kbd> `get_tree_by_id`
 
 ```python
-get_tree_by_id(id)
+get_tree_by_id(id) → EventsTree
 ```
 
 Returns a tree by id as EventsTree class. 
@@ -544,7 +544,7 @@ Returns a tree by id as EventsTree class.
 
 **Args:**
  
- - <b>`id`</b>:  Root id. 
+ - <b>`id`</b>:  Event id. 
 
 
 

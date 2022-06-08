@@ -256,11 +256,11 @@ class EventsTreeCollection(ABC):
                 return tree
         raise EventIdNotInTree(id)
 
-    def get_tree_by_id(self, id):
+    def get_tree_by_id(self, id) -> EventsTree:
         """Returns a tree by id as EventsTree class.
 
         Args:
-            id: Root id.
+            id: Event id.
 
         Returns:
             Tree.
