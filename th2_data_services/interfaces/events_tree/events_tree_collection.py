@@ -249,7 +249,7 @@ class EventsTreeCollection(ABC):
             EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
-            if tree.find(lambda ch: self._get_event_id(ch) == id):
+            if id in tree:
                 return tree.get_root()
         raise EventIdNotInTree(id)
 
