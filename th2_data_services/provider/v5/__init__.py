@@ -11,12 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from th2_data_services.provider.utils.version_checker import get_package_version
 
-version = get_package_version("th2_grpc_data_provider")
+from th2_data_services.provider.utils.version_checker import verify_grpc_version
 
-if not version:
-    raise SystemError(f"Package th2_grpc_data_provider not found")
-
-if version not in ("0.0.4", "0.1.4"):
-    raise SystemError(f"There is unsupported version of th2_grpc_data_provider for v5 provider api ({version})")
+verify_grpc_version(["0.0.4"])

@@ -102,7 +102,7 @@ For example, if you want to use v5 provider api, then you should run this comman
 
 | Provider api | th2_grpc_data_provider version |
 |:------------:|:------------------------------:|
-|      v5      |          0.0.4, 0.1.4          |
+|      v5      |             0.0.4              |
 |      v6      |             1.1.0              |
 
 
