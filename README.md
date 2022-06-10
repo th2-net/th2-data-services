@@ -73,6 +73,39 @@ There is also another part of _data services_
     pip install th2-data-services/
     ```
 
+### GRPC provider warning
+This library has ability to interact with several versions of grpc providers, but it's limited by installed version of
+`th2_grpc_data_provider` package version. You can use only appropriate version of provider api, which is compatible with
+installed version of `th2_grpc_data_provider`.
+
+By default, `th2_data_services` uses the latest available version of provider api version.
+
+#### Reasons for the restriction
+1. Two different versions of `th2_grpc_data_provider` can't be installed in the same virtual environment;
+2. Two different versions of package `th2_grpc_data_provider` may depend on different versions of packages `th2_grpc_common`;
+3. In the case of using another package in the process of using `th2_data_services` (for example `th2_common`), 
+which also depends on `th2_grpc_common`, a version conflict may occur (both at the Python level and at the Protobuf level).
+
+
+#### Switch to another interface
+The transition to another version of the interface is carried out by installing another version of the 
+`th2_grpc_data_provider` package by running this command (in case you are using pip):
+    
+    pip install th2_grpc_data_provider==<version>
+
+For example, if you want to use v5 provider api, then you should run this command:
+    
+    pip install th2_grpc_data_provider==0.1.4
+
+
+#### Versions compatibility table
+
+| Provider api | th2_grpc_data_provider version |
+|:------------:|:------------------------------:|
+|      v5      |             0.0.4              |
+|      v6      |             1.1.0              |
+
+
 ## 2.2. Example
 
 A good, short example is worth a thousand words.
