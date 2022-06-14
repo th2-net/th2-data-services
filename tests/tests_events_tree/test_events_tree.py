@@ -249,22 +249,6 @@ def test_find_ancestor(general_data: List[dict]):
     )
 
 
-def test_get_root_by_id(general_data: List[dict]):
-    collection = EventsTreeCollectionProvider5(general_data)
-    tree = collection.get_trees()[0]
-
-    assert collection.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == tree
-
-
-def test_get_tree_by_id(general_data: List[dict]):
-    collection = EventsTreeCollectionProvider5(general_data)
-    tree = collection.get_trees()[0]
-
-    assert collection.get_tree_by_id("8d6e0c9e-d1b4-11eb-9278-591e568ad66e") == tree
-    assert collection.get_tree_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == tree
-    assert collection.get_tree_by_id("8c3fec4f-d1b4-11eb-bae5-57b0c4472880") == tree
-
-
 def test_get_root(general_data: List[dict]):
     collection = EventsTreeCollectionProvider5(general_data)
     tree = collection.get_trees()[0]
