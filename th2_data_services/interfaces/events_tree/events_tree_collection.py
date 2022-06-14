@@ -263,6 +263,9 @@ class EventsTreeCollection(ABC):
 
         Returns:
             Root tree.
+
+        Raises:
+            EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
             if tree.get_root_id() == id:
