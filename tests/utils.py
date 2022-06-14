@@ -3,6 +3,7 @@ from typing import Optional
 from _pytest.logging import LogCaptureFixture
 
 from th2_data_services import Data
+from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
 
 
 class LogsChecker:
@@ -25,6 +26,18 @@ class LogsChecker:
         path = data.get_cache_filepath()
         msg = f"Data[{data._id}] Iterating using own cache file '{path}'"
         assert msg in self.messages, self._exception_message(msg)
+
+    def detached_etc_created(self, etc: EventsTreeCollectionProvider5):
+        msg = "ETC[%s] %s" % (id(etc), "You have created a ETC with detached events.")
+        assert msg in self.messages, self._exception_message(msg)
+
+    def parentless_trees_created(self, etc: EventsTreeCollectionProvider5):
+        parentless_trees_list1 = etc.get_parentless_trees()
+        parentless_trees_list2 = etc.get_parentless_trees()
+        msg1 = "ETC[%s] %s" % (id(etc), "You have created a list of parentless trees by detached events.")
+        msg2 = "ETC[%s] %s" % (id(etc), "This instance of ETC have a list of parentless trees by detached events.")
+        assert msg1 in self.messages, self._exception_message(msg1)
+        assert msg2 in self.messages, self._exception_message(msg2)
 
 
 def iterate_data(data: Data, *, to_return=True) -> Optional[list]:

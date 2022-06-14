@@ -55,6 +55,7 @@ class EventsTreeCollection(ABC):
             preserve_body: If True it will preserve 'body' field in the Events.
             stub: If True it will create stub when event is broken.
         """
+        self._id = id(self)
         self._preserve_body = preserve_body
         self._roots: List[EventsTree] = []
         self._parentless: Optional[List[EventsTree]] = None
@@ -153,10 +154,9 @@ class EventsTreeCollection(ABC):
 
         self._roots = [EventsTree(root) for root in roots]
 
-        if len(nodes) > 0:
-            self._logger.warning("You have created a ETC with detached events.")
-
         self._detached_nodes = nodes
+        if self._detached_nodes:
+            self._logger.warning("You have created a ETC with detached events.")
 
     def _fill_tree(self, nodes: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:
         """Fills tree recursively.
@@ -263,9 +263,6 @@ class EventsTreeCollection(ABC):
 
         Returns:
             Root tree.
-
-        Raises:
-            EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
             if tree.get_root_id() == id:
@@ -604,6 +601,5 @@ class EventsTreeCollection(ABC):
                     self.append_event(event)
 
             if previous_detached_events == list(self.detached_events.keys()):
-                self._logger.warning("You have created a ETC wtth detached events.")
                 break
             previous_detached_events = list(self.detached_events.keys())

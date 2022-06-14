@@ -1,5 +1,4 @@
 from typing import List
-
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 
 
@@ -245,3 +244,13 @@ def test_build_parentless_tree(general_data: List[dict]):
             "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d",
         },
     ]
+
+
+def test_checker_tree_with_detached_events(log_checker, detached_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(detached_data)
+    log_checker.detached_etc_created(etc)
+
+
+def test_checker_get_parentless_trees(log_checker, detached_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(detached_data)
+    log_checker.parentless_trees_created(etc)
