@@ -237,7 +237,7 @@ class EventsTreeCollection(ABC):
         return self._roots
 
     def get_root_by_id(self, id) -> Th2Event:
-        """Returns a root of tree by id as Th2Event.
+        """Returns the root event of some tree in the collection by any eventId.
 
         Args:
             id: Th2Event id.
