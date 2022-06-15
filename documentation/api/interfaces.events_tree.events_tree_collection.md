@@ -459,21 +459,21 @@ Detached events will be removed from the tree.
 ### <kbd>method</kbd> `get_root_by_id`
 
 ```python
-get_root_by_id(id) → EventsTree
+get_root_by_id(id) → dict
 ```
 
-Returns a root tree by id as EventsTree class. 
+Returns the root event of some tree in the collection by any eventId. 
 
 
 
 **Args:**
  
- - <b>`id`</b>:  Root id. 
+ - <b>`id`</b>:  Th2Event id. 
 
 
 
 **Returns:**
- Root tree. 
+ Th2Event. 
 
 
 
