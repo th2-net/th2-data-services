@@ -254,4 +254,3 @@ def test_checker_tree_with_detached_events(log_checker, detached_data: List[dict
 def test_checker_get_parentless_trees(log_checker, detached_data: List[dict]):
     etc = EventsTreeCollectionProvider5(detached_data)
     log_checker.parentless_trees_created(etc)
-    assert "You have created a ETC with detached events." in etc._warnings, True
