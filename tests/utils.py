@@ -30,13 +30,18 @@ class LogsChecker:
     def detached_etc_created(self, etc: EventsTreeCollectionProvider5):
         msg = "ETC[%s] %s" % (id(etc), "You have created a ETC with detached events.")
         assert msg in self.messages, self._exception_message(msg)
+        assert "You have created a ETC with detached events." in etc._warnings, True
 
     def parentless_trees_created(self, etc: EventsTreeCollectionProvider5):
         parentless_trees_list1 = etc.get_parentless_trees()
         parentless_trees_list2 = etc.get_parentless_trees()
+
         msg1 = "ETC[%s] %s" % (id(etc), "You have created a list of parentless trees by detached events.")
-        msg2 = "ETC[%s] %s" % (id(etc), "This instance of ETC have a list of parentless trees by detached events.")
+        assert "You have created a list of parentless trees by detached events." in etc._warnings
         assert msg1 in self.messages, self._exception_message(msg1)
+
+        msg2 = "ETC[%s] %s" % (id(etc), "This instance of ETC have a list of parentless trees by detached events.")
+        assert "This instance of ETC have a list of parentless trees by detached events." in etc._warnings
         assert msg2 in self.messages, self._exception_message(msg2)
 
 
