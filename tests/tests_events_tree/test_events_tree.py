@@ -247,25 +247,3 @@ def test_find_ancestor(general_data: List[dict]):
         "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a4-d1b4-11eb-9278-591e568ad66e",
         lambda event: "placeOrderFIX" in event["eventName"],
     )
-
-
-def test_get_root_by_id(general_data: List[dict]):
-    collection = EventsTreeCollectionProvider5(general_data)
-    tree = collection.get_trees()[0]
-    dict_root = tree.get_event("84db48fc-d1b4-11eb-b0fb-199708acc7bc")
-    assert collection.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == dict_root
-    assert collection.get_root_by_id("88a3ee80-d1b4-11eb-b0fb-199708acc7bc") == dict_root
-
-
-def test_get_root(general_data: List[dict]):
-    collection = EventsTreeCollectionProvider5(general_data)
-    tree = collection.get_trees()[0]
-
-    assert tree.get_root() == {
-        "batchId": None,
-        "eventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
-        "eventName": "[TS_1]Aggressive IOC vs two orders: second order's price is lower than first",
-        "eventType": "",
-        "isBatched": False,
-        "parentEventId": None,
-    }
