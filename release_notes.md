@@ -260,3 +260,4 @@ use `CodecPipelinesAdapter` manually.
 5. [TH2-3558] Used loggers name fixed. Changed to __name__.
 6. [TH2-3733] Provider API class generate standard URL (without duplicate '/' and '/' before query)
 7. [TH2-3598] Method get_subtree returns tree as EventsTree class.
+8. [TH2-3593][TH2-3664] Method get_root_by_id returns root by any non-root ID as Th2Event.
