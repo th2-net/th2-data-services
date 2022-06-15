@@ -247,14 +247,6 @@ def test_build_parentless_tree(general_data: List[dict]):
     ]
 
 
-def test_get_root_by_id(general_data: List[dict]):
-    collection = EventsTreeCollectionProvider5(general_data)
-    tree = collection.get_trees()[0]
-    dict_root = tree.get_event("84db48fc-d1b4-11eb-b0fb-199708acc7bc")
-    assert collection.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == dict_root
-    assert collection.get_root_by_id("88a3ee80-d1b4-11eb-b0fb-199708acc7bc") == dict_root
-
-
 def test_get_tree_by_id(general_data: List[dict]):
     collection = EventsTreeCollectionProvider5(general_data)
     tree = collection.get_trees()[0]
