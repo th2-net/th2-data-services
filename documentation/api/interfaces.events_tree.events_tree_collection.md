@@ -462,7 +462,7 @@ Detached events will be removed from the tree.
 get_root_by_id(id) → dict
 ```
 
-Returns a root of tree by id as Th2Event. 
+Returns the root event of some tree in the collection by any eventId. 
 
 
 
