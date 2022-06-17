@@ -251,6 +251,7 @@ use `CodecPipelinesAdapter` manually.
 1. [TH2-3003] Added automatic attachment of example.py code in readme.md.
 2. [TH2-3558] Added more debug info about Data cache using.
 3. [TH2-3389] GetXById http-provider command handles 404 error status instead of JsonDecodeException.
+4. [TH2-3732] Log message in http.GetMessages contains name of the stream.
 
 ## Bugs
 1. [TH2-3557][TH2-3560] Parent Data cache file will be created if you iterate a child Data object now.

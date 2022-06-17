@@ -497,8 +497,6 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters=self._filters,
         ).replace("&stream=", "")
 
-        logger.info(url)
-
         fixed_part_len = len(url)
         current_url, resulting_urls = "", []
         for stream in self._stream:
@@ -511,6 +509,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             resulting_urls.append(url + current_url)
 
         for url in resulting_urls:
+            logger.info(url)
             for response in api.execute_sse_request(url):
                 response = self._handle_adapters(response)
                 if response is not None:
