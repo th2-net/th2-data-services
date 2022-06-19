@@ -252,7 +252,7 @@ use `CodecPipelinesAdapter` manually.
 2. [TH2-3558] Added more debug info about Data cache using.
 3. [TH2-3389] GetXById http-provider command handles 404 error status instead of JsonDecodeException.
 
-## Bugs
+## BugFixes
 1. [TH2-3557][TH2-3560] Parent Data cache file will be created if you iterate a child Data object now.
 2. [TH2-3545][TH2-3580] The Data object now uses an absolute path, so it doesn't lose its cache file if you change the working directory.
 3. [TH2-3546][TH2-3583] Data cache file will not be removed if you use `INTERACTIVE_MODE` and the file is being read.
@@ -261,3 +261,4 @@ use `CodecPipelinesAdapter` manually.
 6. [TH2-3733] Provider API class generate standard URL (without duplicate '/' and '/' before query)
 7. [TH2-3598] Method get_subtree returns tree as EventsTree class.
 8. [TH2-3593][TH2-3664] Method get_root_by_id returns root by any non-root ID as Th2Event.
+9. [TH2-3595] When ETC creates subtree or itself ETC doesn't copy incoming data-stream.
