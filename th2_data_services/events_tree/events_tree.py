@@ -284,7 +284,7 @@ class EventsTree:
         """
         counter = 0
         for node in self._tree.all_nodes_itr():
-            event = node.data
+            event = node.data.copy()
             if stop is not None and stop(event):
                 break
             if filter(event):
