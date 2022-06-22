@@ -253,7 +253,7 @@ def test_checker_tree_with_detached_events(log_checker, detached_data: List[dict
     log_checker.detached_etc_created(etc)
 
 
-def test_show_warnings(detached_data: List[dict]):
+def test_show_warning_about_detached_events(detached_data: List[dict]):
     def create_etc():
         etc = EventsTreeCollectionProvider5(detached_data)
 
