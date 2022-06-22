@@ -65,14 +65,13 @@ class EventsTreeCollection(ABC):
         self._stub_status = stub
         self._data_source = data_source
         self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
-        self._warnings = []
-
-        # It used to indicate the number of current iteration of the ETC object.
-        # It's required if the same instance iterates several times in for-in loops.
-        # Similar code in the Data object
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
+        if self._detached_nodes:
+            w = "Tree created with detached events because some events have no parentsId. Check your data."
+            self._logger.warning(w)
+            warnings.warn(w)
 
         if data_source is not None:
             self.recover_unknown_events(self._data_source)
@@ -86,17 +85,9 @@ class EventsTreeCollection(ABC):
             List of parentless trees if they exist, otherwise empty list.
         """
         if self._parentless is not None:
-            w = "This instance of ETC have a list of parentless trees by detached events."
-            self._logger.warning(w)
-            warnings.warn(w)
-            self._warnings.append(w)
             return self._parentless
         else:
             self._parentless = self._build_parentless_trees()
-            w = "You have created a list of parentless trees by detached events."
-            self._logger.warning(w)
-            warnings.warn(w)
-            self._warnings.append(w)
             return self._parentless
 
     def _build_parentless_trees(self) -> List[EventsTree]:
@@ -165,11 +156,6 @@ class EventsTreeCollection(ABC):
         self._roots = [EventsTree(root) for root in roots]
 
         self._detached_nodes = nodes
-        if self._detached_nodes:
-            w = "You have created a ETC with detached events."
-            self._logger.warning(w)
-            warnings.warn(w)
-            self._warnings.append(w)
 
     def _fill_tree(self, nodes: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:
         """Fills tree recursively.

@@ -1,5 +1,6 @@
 from typing import List
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
+import warnings
 
 
 def test_get_parentless_trees():
@@ -251,6 +252,13 @@ def test_checker_tree_with_detached_events(log_checker, detached_data: List[dict
     log_checker.detached_etc_created(etc)
 
 
-def test_checker_get_parentless_trees(log_checker, detached_data: List[dict]):
-    etc = EventsTreeCollectionProvider5(detached_data)
-    log_checker.parentless_trees_created(etc)
+def test_show_warnings(detached_data: List[dict]):
+    def create_etc():
+        etc = EventsTreeCollectionProvider5(detached_data)
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        create_etc()
+        assert "Tree created with detached events because some events have no parentsId. Check your data." in str(
+            w[-1].message
+        )
