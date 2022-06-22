@@ -1,6 +1,7 @@
 from typing import List
-from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 import warnings
+
+from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 
 
 def test_get_parentless_trees():
@@ -262,3 +263,20 @@ def test_show_warnings(detached_data: List[dict]):
         assert "Tree created with detached events because some events have no parentsId. Check your data." in str(
             w[-1].message
         )
+
+
+def test_get_tree_by_id(general_data: List[dict]):
+    collection = EventsTreeCollectionProvider5(general_data)
+    tree = collection.get_trees()[0]
+
+    assert collection.get_tree_by_id("8d6e0c9e-d1b4-11eb-9278-591e568ad66e") == tree
+    assert collection.get_tree_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == tree
+    assert collection.get_tree_by_id("8c3fec4f-d1b4-11eb-bae5-57b0c4472880") == tree
+
+
+def test_get_root_by_id(general_data: List[dict]):
+    collection = EventsTreeCollectionProvider5(general_data)
+    tree = collection.get_trees()[0]
+    dict_root = tree.get_event("84db48fc-d1b4-11eb-b0fb-199708acc7bc")
+    assert collection.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == dict_root
+    assert collection.get_root_by_id("88a3ee80-d1b4-11eb-b0fb-199708acc7bc") == dict_root
