@@ -310,9 +310,11 @@ class EventsTreeCollection(ABC):
         return any([event_id in tree for tree in self._roots])
 
     def __repr__(self) -> str:
+        len_trees = self.len_trees
+        len_detached_events = self.len_detached_events
         return (
             f"{self.__class__.__name__}(trees={len(self.get_roots_ids())}, "
-            f"events={len(self)}[trees={self.len_trees}, detached={self.len_detached_events}])"
+            f"events={len_trees+len_detached_events}[trees={len_trees}, detached={len_detached_events}])"
         )
 
     def summary(self) -> str:
