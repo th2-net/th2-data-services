@@ -9,6 +9,7 @@
 - [`events_tree`](./events_tree.md#module-events_tree)
 - [`events_tree.events_tree`](./events_tree.events_tree.md#module-events_treeevents_tree)
 - [`events_tree.exceptions`](./events_tree.exceptions.md#module-events_treeexceptions)
+- [`events_tree.shelve_node`](./events_tree.shelve_node.md#module-events_treeshelve_node)
 - [`filter`](./filter.md#module-filter)
 - [`interfaces`](./interfaces.md#module-interfaces)
 - [`interfaces.adapter`](./interfaces.adapter.md#module-interfacesadapter)
@@ -59,6 +60,7 @@
 - [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree is a tree-based data structure of events.
 - [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
 - [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
+- [`shelve_node.ShelveNode`](./events_tree.shelve_node.md#class-shelvenode)
 - [`filter.Filter`](./filter.md#class-filter): The class for using rpt-data-provider filters API.
 - [`adapter.IAdapter`](./interfaces.adapter.md#class-iadapter): High level interface for Adapter.
 - [`adapter.IEventAdapter`](./interfaces.adapter.md#class-ieventadapter): Interface of Adapter for events.

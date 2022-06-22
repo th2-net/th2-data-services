@@ -26,7 +26,8 @@ __init__(
     data_source: Union[GRPCProvider5DataSource, HTTPProvider5DataSource] = None,
     preserve_body: bool = False,
     event_struct: IEventStruct = Provider5EventStruct(EVENT_ID='eventId', PARENT_EVENT_ID='parentEventId', STATUS='successful', NAME='eventName', TYPE='type', BATCH_ID='batchId', IS_BATCHED='isBatched', EVENT_TYPE='eventType', END_TIMESTAMP='endTimestamp', START_TIMESTAMP='startTimestamp', ATTACHED_MESSAGES_IDS='attachedMessageIds', BODY='body'),
-    stub: bool = False
+    stub: bool = False,
+    cache: bool = False
 )
 ```
 

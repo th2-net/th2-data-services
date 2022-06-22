@@ -38,8 +38,12 @@ class EventsTreeCollection(ABC):
     """
 
     def __init__(
-            self, data: Data, data_source: IProviderDataSource = None, preserve_body: bool = False, stub: bool = False,
-            cache=False
+        self,
+        data: Data,
+        data_source: IProviderDataSource = None,
+        preserve_body: bool = False,
+        stub: bool = False,
+        cache: bool = False,
     ):
         """EventsTreeCollection constructor.
 
@@ -48,6 +52,7 @@ class EventsTreeCollection(ABC):
             data_source: Data Source object.
             preserve_body: If True it will preserve 'body' field in the Events.
             stub: If True it will create stub when event is broken.
+            cache: If True it will save events data to cache file.
         """
         self._preserve_body = preserve_body
         self._roots: List[EventsTree] = []
@@ -57,8 +62,9 @@ class EventsTreeCollection(ABC):
         self._data_source = data_source
         self._cache = cache
 
+        # TODO - make unique cache file name and place it to tmp folder
         if self._cache:
-            self._shelve_file = shelve.open('some_shelve_file.shelve')
+            self._shelve_file = shelve.open("some_shelve_file.shelve")
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
@@ -121,16 +127,10 @@ class EventsTreeCollection(ABC):
         """
         events_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, Node2, ..]}
 
-        if not self._cache:
-            for event in self._parse_events(data):
-                parent_event_id: str = self._get_parent_event_id(event)
-                node = self._build_node(event)
-                events_nodes[parent_event_id].append(node)
-        else:
-            for event in self._parse_events(data):
-                parent_event_id: str = self._get_parent_event_id(event)
-                node = self._build_shelve_node(event)
-                events_nodes[parent_event_id].append(node)
+        for event in self._parse_events(data):
+            parent_event_id: str = self._get_parent_event_id(event)
+            node = self._func_to_build_node(event)
+            events_nodes[parent_event_id].append(node)
         return events_nodes
 
     def _build_trees(self, nodes: Dict[Optional[str], List[Node]]) -> None:
@@ -215,7 +215,8 @@ class EventsTreeCollection(ABC):
         event_id: str = self._get_event_id(event)
         event_name: str = self._get_event_name(event)
 
-        node = ShelveNode(tag=event_name, identifier=event_id, data=event, shelve_file=self._shelve_file)
+        node = ShelveNode(tag=event_name, identifier=event_id, shelve_file=self._cache_file)
+        self._cache_file[event_id] = event
         return node
 
     # TODO - add decstructor
@@ -227,7 +228,7 @@ class EventsTreeCollection(ABC):
             event: Event.
         """
         event: dict = self._parse_event(event)
-        node: Node = self._build_node(event) if not self._cache else self._build_shelve_node(event)
+        node: Node = self._func_to_build_node(event)
         parent_event_id: str = self._get_parent_event_id(event)
 
         if parent_event_id is not None:
@@ -498,10 +499,10 @@ class EventsTreeCollection(ABC):
         return None
 
     def findall_iter(
-            self,
-            filter: Callable,
-            stop: Callable = None,
-            max_count: int = None,
+        self,
+        filter: Callable,
+        stop: Callable = None,
+        max_count: int = None,
     ) -> Generator[Th2Event, None, None]:
         """Searches events matches as iterator.
 
@@ -522,10 +523,10 @@ class EventsTreeCollection(ABC):
             yield from tree.findall_iter(filter=filter, stop=stop, max_count=max_count)
 
     def findall(
-            self,
-            filter: Callable,
-            stop: Callable = None,
-            max_count: int = None,
+        self,
+        filter: Callable,
+        stop: Callable = None,
+        max_count: int = None,
     ) -> List[Th2Event]:
         """Searches events matches.
 
