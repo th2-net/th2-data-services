@@ -260,7 +260,7 @@ def test_show_warning_about_detached_events(detached_data: List[dict]):
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
         create_etc()
-        assert "Tree created with detached events because some events have no parentsId. Check your data." in str(
+        assert "The collection were built with detached events because there are no some events in the source" in str(
             w[-1].message
         )
 
