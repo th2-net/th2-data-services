@@ -25,6 +25,17 @@ from th2_data_services.events_tree.exceptions import EventIdNotInTree
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
+import logging
+
+import warnings
+
+logger = logging.getLogger(__name__)
+
+
+class _EventsTreeCollectionLogger(logging.LoggerAdapter):
+    def process(self, msg, kwargs):
+        return "ETC[%s] %s" % (self.extra["id"], msg), kwargs
+
 
 class EventsTreeCollection(ABC):
     """EventsTreeCollection objective is building 'EventsTree's and storing them.
@@ -46,15 +57,21 @@ class EventsTreeCollection(ABC):
             preserve_body: If True it will preserve 'body' field in the Events.
             stub: If True it will create stub when event is broken.
         """
+        self._id = id(self)
         self._preserve_body = preserve_body
         self._roots: List[EventsTree] = []
         self._parentless: Optional[List[EventsTree]] = None
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
         self._stub_status = stub
         self._data_source = data_source
+        self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
+        if self._detached_nodes:
+            w = "The collection were built with detached events because there are no some events in the source"
+            self._logger.warning(w)
+            warnings.warn(w)
 
         if data_source is not None:
             self.recover_unknown_events(self._data_source)
@@ -137,6 +154,7 @@ class EventsTreeCollection(ABC):
         nodes.pop(None)
 
         self._roots = [EventsTree(root) for root in roots]
+
         self._detached_nodes = nodes
 
     def _fill_tree(self, nodes: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:

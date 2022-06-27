@@ -1,4 +1,5 @@
 from typing import List
+import warnings
 
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 
@@ -245,6 +246,23 @@ def test_build_parentless_tree(general_data: List[dict]):
             "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d",
         },
     ]
+
+
+def test_checker_tree_with_detached_events(log_checker, detached_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(detached_data)
+    log_checker.detached_etc_created(etc)
+
+
+def test_show_warning_about_detached_events(detached_data: List[dict]):
+    def create_etc():
+        etc = EventsTreeCollectionProvider5(detached_data)
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        create_etc()
+        assert "The collection were built with detached events because there are no some events in the source" in str(
+            w[-1].message
+        )
 
 
 def test_get_tree_by_id(general_data: List[dict]):
