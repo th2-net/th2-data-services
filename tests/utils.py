@@ -30,7 +30,7 @@ class LogsChecker:
     def detached_etc_created(self, etc: EventsTreeCollectionProvider5):
         msg = "ETC[%s] %s" % (
             id(etc),
-            "Tree created with detached events because some events have no parentsId. Check your data.",
+            "The collection were built with detached events because there are no some events in the source",
         )
         assert msg in self.messages, self._exception_message(msg)
 
