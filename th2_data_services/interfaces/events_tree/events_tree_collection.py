@@ -69,7 +69,7 @@ class EventsTreeCollection(ABC):
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
         if self._detached_nodes:
-            w = "Tree created with detached events because some events have no parentsId. Check your data."
+            w = "The collection were built with detached events because there are no some events in the source"
             self._logger.warning(w)
             warnings.warn(w)
 
