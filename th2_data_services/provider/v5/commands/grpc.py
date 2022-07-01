@@ -426,8 +426,10 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         search_direction: str = "NEXT",
         result_count_limit: int = None,
         keep_open: bool = False,
-        filters: List[Filter] = None,
         message_id: List[str] = None,
+        attached_events: bool = False,
+        filters: List[Filter] = None,
+        lookup_limit_days: int = None,
     ):
         """GetMessagesGRPCObject constructor.
 
@@ -441,8 +443,9 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
             keep_open: If the search has reached the current moment.
                 It is need to wait further for the appearance of new data.
             message_id: List of message ids to restore the search
+            attached_events: If true, it will additionally load attachedEventsIds.
             filters: Filters using in search for messages.
-
+            lookup_limit_days: The number of days that will be viewed on the first request to get the one closest to the specified timestamp. By default it is absent - not limited to the past and up to the present moment to the future.
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -454,6 +457,8 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._keep_open = keep_open
         self._filters = filters
         self._message_id = message_id
+        self._attached_events = attached_events
+        self._lookup_limit_days = lookup_limit_days
 
     def handle(self, data_source: GRPCProvider5DataSource) -> List[MessageData]:
         api = data_source.source_api
@@ -471,6 +476,8 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
             keep_open=self._keep_open,
             filters=self._filters,
             message_id=self._message_id,
+            attached_events=self._attached_events,
+            lookup_limit_days=self._lookup_limit_days,
         )
         for response in stream_response:
             if response.WhichOneof("data") == "message":
@@ -498,7 +505,9 @@ class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
         keep_open: bool = False,
         filters: List[Filter] = None,
         message_id: List[str] = None,
+        attached_events: bool = False,
         cache: bool = False,
+        lookup_limit_days: int = None,
     ):
         """GetMessages constructor.
 
@@ -513,8 +522,9 @@ class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
                 It is need to wait further for the appearance of new data.
             filters: Filters using in search for messages.
             message_id: List of message ids to restore the search
+            attached_events: If true, it will additionally load attachedEventsIds.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
-
+            lookup_limit_days: The number of days that will be viewed on the first request.
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -526,7 +536,9 @@ class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._keep_open = keep_open
         self._filters = filters
         self._message_id = message_id
+        self._attached_events = attached_events
         self._cache = cache
+        self.lookup_limit_days = lookup_limit_days
 
         self._decoder = GRPCObjectToDictAdapter()
         self._wrapper_deleter = DeleteMessageWrappersAdapter()
@@ -544,7 +556,10 @@ class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
             search_direction=self._search_direction,
             result_count_limit=self._result_count_limit,
             keep_open=self._keep_open,
+            message_id=self._message_id,
+            attached_events=self._attached_events,
             filters=self._filters,
+            lookup_limit_days=self.lookup_limit_days,
         ).handle(data_source)
         for message in stream:
             message = self._decoder.handle(message)

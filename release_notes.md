@@ -234,3 +234,8 @@ use `CodecPipelinesAdapter` manually.
 
 ## BugFixes
 1. [TH2-3700] Filter iterate values only once - fixed.
+
+# v1.0.3
+
+#Features
+1. [TH2-3739] Added new fields (messages_id, lookup_limit_days) into command and datasourceapi (struct.py)
