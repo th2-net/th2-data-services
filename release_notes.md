@@ -237,5 +237,5 @@ use `CodecPipelinesAdapter` manually.
 
 # v1.0.3
 
-#Features
-1. [TH2-3739] Added new fields (messages_id, lookup_limit_days) into command and datasourceapi (struct.py)
+## BugFixes
+1. [TH2-3739] GRPCProvider5API is based on grpc v0.1.6 now.

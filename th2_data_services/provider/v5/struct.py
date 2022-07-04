@@ -68,7 +68,6 @@ class Provider5MessageStruct(IMessageStruct):
     TYPE: str
     MESSAGE_ID: str
     ATTACHED_EVENT_IDS: str
-    LOOKUP_LIMIT_DAYS: str
 
 
 provider5_message_struct = Provider5MessageStruct(
@@ -85,5 +84,4 @@ provider5_message_struct = Provider5MessageStruct(
     TYPE="type",
     MESSAGE_ID="messageId",
     ATTACHED_EVENT_IDS="attachedEventIds",
-    LOOKUP_LIMIT_DAYS="lookup_limit_days",
 )

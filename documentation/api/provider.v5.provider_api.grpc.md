@@ -50,7 +50,7 @@ GRPC Provider5 API.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L333"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L330"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event`
 
@@ -62,7 +62,7 @@ GRPC-API `getEvent` call returns a single event with the specified id.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L351"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L348"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event_filter_info`
 
@@ -74,7 +74,7 @@ GRPC-API `getEventFilterInfo` call returns event filter info.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L347"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L344"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_events_filters`
 
@@ -86,7 +86,7 @@ GRPC-API `getEventsFilters` call returns all the names of sse event filters.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L338"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L335"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_message`
 
@@ -98,7 +98,7 @@ GRPC-API `getMessage` call returns a single message with the specified id.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L356"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L353"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_message_filter_info`
 
@@ -122,7 +122,7 @@ GRPC-API `getMessageStreams` call returns a list of message stream names.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L343"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L340"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_messages_filters`
 
@@ -134,7 +134,7 @@ GRPC-API `getMessagesFilters` call returns all the names of sse message filters.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L361"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L358"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match_event`
 
@@ -146,7 +146,7 @@ GRPC-API `matchEvent` call checks that the event with the specified id is matche
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L366"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/grpc.py#L363"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match_message`
 
@@ -218,8 +218,7 @@ search_messages(
     keep_open: bool = False,
     filters: Optional[List[Filter]] = None,
     message_id: Optional[List[str]] = None,
-    attached_events: bool = False,
-    lookup_limit_days: int = None
+    attached_events: bool = False
 ) → Iterable[StreamResponse]
 ```
 
@@ -239,7 +238,6 @@ GRPC-API `searchMessages` call creates a message stream that matches the filter.
  - <b>`filters`</b>:  Which filters to apply in a search. 
  - <b>`message_id`</b>:  List of message ids to restore the search. 
  - <b>`attached_events`</b>:  If true, it will additionally load attachedEventsIds. 
- - <b>`lookup_limit_days`</b>:  The number of days that will be viewed on the first request. 
 
 
 

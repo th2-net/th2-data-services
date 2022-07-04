@@ -154,7 +154,6 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         filters: Optional[List[Filter]] = None,
         message_id: Optional[List[str]] = None,
         attached_events: bool = False,
-        lookup_limit_days: int = None,
     ) -> Iterable[StreamResponse]:
         """GRPC-API `searchMessages` call creates a message stream that matches the filter.
 
@@ -172,7 +171,6 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             filters: Which filters to apply in a search.
             message_id: List of message ids to restore the search.
             attached_events: If true, it will additionally load attachedEventsIds.
-            lookup_limit_days: The number of days that will be viewed on the first request.
 
         Returns:
             Iterable object which return messages as parts of streaming response.
@@ -210,7 +208,6 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             message_id=message_id,
             attached_events=attached_events,
             filters=basic_request.filters,
-            lookup_limit_days=lookup_limit_days,
         )
         return self.__stub.searchMessages(message_search_request)
 

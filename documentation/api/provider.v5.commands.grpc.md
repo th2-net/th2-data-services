@@ -505,8 +505,7 @@ __init__(
     keep_open: bool = False,
     message_id: List[str] = None,
     attached_events: bool = False,
-    filters: List[Filter] = None,
-    lookup_limit_days: int = None
+    filters: List[Filter] = None
 )
 ```
 
@@ -526,14 +525,13 @@ GetMessagesGRPCObject constructor.
  - <b>`message_id`</b>:  List of message ids to restore the search 
  - <b>`attached_events`</b>:  If true, it will additionally load attachedEventsIds. 
  - <b>`filters`</b>:  Filters using in search for messages. 
- - <b>`lookup_limit_days`</b>:  The number of days that will be viewed on the first request to get the one closest to the specified timestamp. By default it is absent - not limited to the past and up to the present moment to the future. 
 
 
 
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/grpc.py#L463"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/grpc.py#L460"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -548,7 +546,7 @@ handle(data_source: GRPCProvider5DataSource) → List[MessageData]
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/grpc.py#L488"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/grpc.py#L484"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessages`
 A Class-Command for request to rpt-data-provider. 
@@ -561,7 +559,7 @@ It searches messages stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v5/commands/grpc.py#L497"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/grpc.py#L493"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -577,8 +575,7 @@ __init__(
     filters: List[Filter] = None,
     message_id: List[str] = None,
     attached_events: bool = False,
-    cache: bool = False,
-    lookup_limit_days: int = None
+    cache: bool = False
 )
 ```
 
@@ -599,14 +596,13 @@ GetMessages constructor.
  - <b>`message_id`</b>:  List of message ids to restore the search 
  - <b>`attached_events`</b>:  If true, it will additionally load attachedEventsIds. 
  - <b>`cache`</b>:  If True, all requested data from rpt-data-provider will be saved to cache. 
- - <b>`lookup_limit_days`</b>:  The number of days that will be viewed on the first request. 
 
 
 
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/grpc.py#L546"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/grpc.py#L539"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
