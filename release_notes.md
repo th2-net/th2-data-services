@@ -234,3 +234,8 @@ use `CodecPipelinesAdapter` manually.
 
 ## BugFixes
 1. [TH2-3700] Filter iterate values only once - fixed.
+
+# v1.0.3
+
+## BugFixes
+1. [TH2-3739] GRPCProvider5API is based on grpc v0.1.6 now.

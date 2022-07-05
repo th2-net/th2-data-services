@@ -152,6 +152,8 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         result_count_limit: int = None,
         keep_open: bool = False,
         filters: Optional[List[Filter]] = None,
+        message_id: Optional[List[str]] = None,
+        attached_events: bool = False,
     ) -> Iterable[StreamResponse]:
         """GRPC-API `searchMessages` call creates a message stream that matches the filter.
 
@@ -167,12 +169,15 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             keep_open: Option if the search has reached the current moment,
                 it is necessary to wait further for the appearance of new data.
             filters: Which filters to apply in a search.
+            message_id: List of message ids to restore the search.
+            attached_events: If true, it will additionally load attachedEventsIds.
 
         Returns:
             Iterable object which return messages as parts of streaming response.
         """
         if stream is None:
             raise TypeError("Argument 'stream' is required.")
+        message_id = message_id or []
         self.__search_basic_checks(
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
@@ -190,15 +195,18 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             filters=filters,
         )
         resume_from_id = self.__build_message_id_object(resume_from_id) if resume_from_id else None
-
+        message_id = [self.__build_message_id_object(id_) for id_ in message_id]
+        attached_events = BoolValue(value=attached_events)
         message_search_request = MessageSearchRequest(
             start_timestamp=basic_request.start_timestamp,
             end_timestamp=basic_request.end_timestamp,
-            stream=StringList(list_string=stream),
-            search_direction=basic_request.search_direction,
             resume_from_id=resume_from_id,
+            search_direction=basic_request.search_direction,
             result_count_limit=basic_request.result_count_limit,
+            stream=StringList(list_string=stream),
             keep_open=basic_request.keep_open,
+            message_id=message_id,
+            attached_events=attached_events,
             filters=basic_request.filters,
         )
         return self.__stub.searchMessages(message_search_request)
