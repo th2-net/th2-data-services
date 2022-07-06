@@ -253,6 +253,7 @@ use `CodecPipelinesAdapter` manually.
 7. Added data methods to get cache files paths `Data.get_cache_filepath()` and `Data.get_pending_cache_filepath()`.
 8. [TH2-3665] Added method get_tree_by_id in ETC.
 9. [TH2-3592] Added logging in EventsTreeCollection module when ETC create with detached events.
+10. [TH2-3475] Implement Data objects joining
 
 ## Improvements
 1. [TH2-3003] Added automatic attachment of example.py code in readme.md.
