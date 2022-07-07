@@ -59,7 +59,7 @@ class SSEClient(sseclient.SSEClient):
                     if data[1].startswith(" "):
                         value = data[1][1:]
                     else:
-                        value = data[1]
+                        value = data[1123]
                 else:
                     # If no value is present after the separator,
                     # assume an empty value.
