@@ -33,6 +33,7 @@ class SSEClient(sseclient.SSEClient):
         """Returns events in generator style."""
         for chunk in self._read():
             event = sseclient.Event()
+            event = sseclient.Event()
             # Split before decoding so splitlines() only uses \r and \n
             for line in chunk.splitlines():
                 # Decode the line.
