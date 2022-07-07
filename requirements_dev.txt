@@ -4,4 +4,4 @@ pre-commit
 black
 lazydocs
 pydocstyle
-autoflake
+autoflake1221
