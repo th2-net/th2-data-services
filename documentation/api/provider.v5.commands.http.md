@@ -528,7 +528,7 @@ handle(
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L520"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L519"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessagesSSEEvents`
 A Class-Command for request to rpt-data-provider. 
@@ -541,7 +541,7 @@ It searches messages stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L529"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L528"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -588,7 +588,7 @@ GetMessagesSSEEvents constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L580"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L579"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -605,7 +605,7 @@ handle(
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L602"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L601"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessages`
 A Class-Command for request to rpt-data-provider. 
@@ -618,7 +618,7 @@ It searches messages stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L611"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L610"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -667,7 +667,7 @@ GetMessages constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L665"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L664"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 

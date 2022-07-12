@@ -633,7 +633,7 @@ def test_inner_cycle_with_cache(general_data: List[dict]):
 
 
 def test_inner_cycle_with_cache_and_workflow(general_data: List[dict]):
-    data = Data(general_data)  # 21 objects
+    data = Data(general_data).use_cache(True)  # 21 objects
     data_filter = data.filter(lambda record: "Checkpoint" in record.get("eventType"))  # 12 objects
     external_counter = 0
     internal_counter = 0
@@ -695,3 +695,63 @@ def test_link_gui_with_message_id():
     result = "http://host:port/th2-common/?messageId=fix01:first:1600854429908302153"
 
     assert link_message_id1 == result
+
+
+def test_cache_filename():
+    data = Data([1, 2, 3, 4, 5], cache=True)
+    for d in data:
+        d
+    assert data._cache_filename.find(":") == -1
+
+
+class TestDataObjectJoining:
+    @classmethod
+    def setup_class(cls):
+        cls.d1 = Data([1, 2, 3])
+        cls.d2 = Data(["a", {"id": 123}, "c"])
+        cls.d3 = Data([7, 8, 9])
+        cls.data_via_init = Data([cls.d1, cls.d2, cls.d3])
+        cls.data_via_add = cls.d1 + cls.d2 + cls.d3
+        cls.data_with_non_data_obj_via_init = Data([cls.d1, ["a", {"id": 123}, "c"], cls.d3])
+        cls.data_with_non_data_obj_via_add = cls.d1 + ["a", {"id": 123}, "c"] + cls.d3
+        cls.expected_dx_lst = [1, 2, 3, "a", {"id": 123}, "c", 7, 8, 9]
+
+        # It contains Data objects with exactly the same values inside == cls.expected_dx_lst.
+        cls.complex_datas_lst = [
+            cls.data_via_init,
+            cls.data_via_add,
+            cls.data_with_non_data_obj_via_init,
+            cls.data_with_non_data_obj_via_add,
+        ]
+
+    def test_iters_all_data_objects_inside(self):
+        """Checks data consistency."""
+        for dx in self.complex_datas_lst:
+            assert list(dx) == self.expected_dx_lst
+
+    def test_iterates_many_times(self):
+        """Iterates the same data object 3 times."""
+        for dx in self.complex_datas_lst:
+            l1 = list(dx)
+            l2 = list(dx)
+            l3 = list(dx)
+            assert l1 == l2 == l3
+
+    def test_len_joined_data(self):
+        for dx in self.complex_datas_lst:
+            assert dx.len == len(self.expected_dx_lst)
+
+    def test_cache(self):
+        """
+        dx = d1 + d2(with_cache) + d3  <- d2 cache should work
+        dx.use_cache(True)  <- dx will get own cache
+        """
+        # dx = self.d1 + Data(['a', {'id': 123}, 'c'], cache=True) + self.d3
+        d2 = Data(["a", {"id": 123}, "c"], cache=True)
+        dx = self.d1 + d2 + self.d3
+        iterate_data(dx, to_return=False)  # It should create d2 cache file.
+        assert is_cache_file_exists(d2), f"The cache was not dumped after using len"
+
+        dx.use_cache(True)
+        iterate_data(dx, to_return=False)  # It should create dx cache file.
+        assert is_cache_file_exists(dx), f"The cache was not dumped after using len"

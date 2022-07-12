@@ -14,23 +14,25 @@
 import copy
 import pickle
 import pprint
+from functools import partial
 from os import rename
 from pathlib import Path
 from time import time
-from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Any
+from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Iterator, Any
 from weakref import finalize
 import logging
 
 logger = logging.getLogger(__name__)
 
-DataSet = Union["Data", Iterable, Callable[..., Generator[dict, None, None]]]
-WorkFlow = List[Dict[str, Union[Callable, str]]]
-DataGenerator = Generator[Any, None, None]
-
 
 class _DataLogger(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         return "Data[%s] %s" % (self.extra["id"], msg), kwargs
+
+
+DataGenerator = Generator[dict, None, None]
+DataSet = Union[Iterator, Callable[..., DataGenerator], List[Iterator]]
+WorkFlow = List[Dict[str, Union[Callable, str]]]
 
 
 class Data:
@@ -49,11 +51,15 @@ class Data:
             cache: Set True if you want to write and read from cache.
             workflow: Workflow.
         """
+        if self._is_iterables_list(data):
+            self._data_stream = self._create_data_set_from_iterables(data)
+        else:
+            self._data_stream = data
+
         self._id = id(self)
-        self._cache_filename = f"{self._id}:{time()}.pickle"
+        self._cache_filename = f"{self._id}_{time()}.pickle"
         self._cache_path = Path(f"./temp/{self._cache_filename}").resolve()
         self._len = None
-        self._data_stream = data
         self._workflow = [] if workflow is None else workflow  # Normally it has empty list or one Step.
         self._length_hint = None  # The value is populated when we use limit method.
         self._cache_status = cache
@@ -87,6 +93,21 @@ class Data:
         if path.exists():
             self._logger.debug("Deleting cache file '%s'" % path)
             path.unlink()
+
+    def _create_data_set_from_iterables(self, iterables_list: List[Iterable]) -> DataSet:
+        """Creates a generator from the list of iterables."""
+        return partial(self._create_generator_data_source_from_iterables, iterables_list)
+
+    def _create_generator_data_source_from_iterables(self, iterables_list: List[Iterable]) -> Generator:
+        """Creates a generator from the list of iterables."""
+        for data in iterables_list:
+            yield from data
+
+    def _is_iterables_list(self, data: DataSet) -> bool:
+        if not isinstance(data, (list, tuple)):
+            return False
+
+        return all([isinstance(d, (Data, tuple, list)) for d in data])
 
     @property
     def len(self) -> int:
@@ -518,3 +539,6 @@ class Data:
         for _ in self.__load_data():
             return True
         return False
+
+    def __add__(self, other_data: Iterable) -> "Data":
+        return Data(self._create_data_set_from_iterables([self, other_data]))

@@ -25,6 +25,17 @@ from th2_data_services.events_tree.exceptions import EventIdNotInTree
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
+import logging
+
+import warnings
+
+logger = logging.getLogger(__name__)
+
+
+class _EventsTreeCollectionLogger(logging.LoggerAdapter):
+    def process(self, msg, kwargs):
+        return "ETC[%s] %s" % (self.extra["id"], msg), kwargs
+
 
 class EventsTreeCollection(ABC):
     """EventsTreeCollection objective is building 'EventsTree's and storing them.
@@ -46,15 +57,21 @@ class EventsTreeCollection(ABC):
             preserve_body: If True it will preserve 'body' field in the Events.
             stub: If True it will create stub when event is broken.
         """
+        self._id = id(self)
         self._preserve_body = preserve_body
         self._roots: List[EventsTree] = []
         self._parentless: Optional[List[EventsTree]] = None
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
         self._stub_status = stub
         self._data_source = data_source
+        self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
+        if self._detached_nodes:
+            w = "The collection were built with detached events because there are no some events in the source"
+            self._logger.warning(w)
+            warnings.warn(w)
 
         if data_source is not None:
             self.recover_unknown_events(self._data_source)
@@ -137,6 +154,7 @@ class EventsTreeCollection(ABC):
         nodes.pop(None)
 
         self._roots = [EventsTree(root) for root in roots]
+
         self._detached_nodes = nodes
 
     def _fill_tree(self, nodes: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:
@@ -236,20 +254,37 @@ class EventsTreeCollection(ABC):
         """Returns the list of trees inside the collection."""
         return self._roots
 
-    def get_root_by_id(self, id) -> EventsTree:
-        """Returns a root tree by id as EventsTree class.
+    def get_root_by_id(self, id) -> Th2Event:
+        """Returns the root event of some tree in the collection by any eventId.
 
         Args:
-            id: Root id.
+            id: Th2Event id.
 
         Returns:
-            Root tree.
+            Th2Event.
 
         Raises:
             EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
-            if tree.get_root_id() == id:
+            if id in tree:
+                return tree.get_root()
+        raise EventIdNotInTree(id)
+
+    def get_tree_by_id(self, id) -> EventsTree:
+        """Returns a tree by id as EventsTree class.
+
+        Args:
+            id: Event id.
+
+        Returns:
+            Tree.
+
+        Raises:
+            EventIdNotInTree: If event id is not in the trees.
+        """
+        for tree in self._roots:
+            if tree.find(lambda ch: ch["eventId"] == id):
                 return tree
         raise EventIdNotInTree(id)
 
@@ -293,9 +328,11 @@ class EventsTreeCollection(ABC):
         return any([event_id in tree for tree in self._roots])
 
     def __repr__(self) -> str:
+        len_trees = self.len_trees
+        len_detached_events = self.len_detached_events
         return (
             f"{self.__class__.__name__}(trees={len(self.get_roots_ids())}, "
-            f"events={len(self)}[trees={self.len_trees}, detached={self.len_detached_events}])"
+            f"events={len_trees+len_detached_events}[trees={len_trees}, detached={len_detached_events}])"
         )
 
     def summary(self) -> str:

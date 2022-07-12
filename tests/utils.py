@@ -3,6 +3,7 @@ from typing import Optional
 from _pytest.logging import LogCaptureFixture
 
 from th2_data_services import Data
+from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
 
 
 class LogsChecker:
@@ -24,6 +25,13 @@ class LogsChecker:
     def used_own_cache_file(self, data: Data):
         path = data.get_cache_filepath()
         msg = f"Data[{data._id}] Iterating using own cache file '{path}'"
+        assert msg in self.messages, self._exception_message(msg)
+
+    def detached_etc_created(self, etc: EventsTreeCollectionProvider5):
+        msg = "ETC[%s] %s" % (
+            id(etc),
+            "The collection were built with detached events because there are no some events in the source",
+        )
         assert msg in self.messages, self._exception_message(msg)
 
 

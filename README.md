@@ -167,6 +167,8 @@ only_first_10_events: Generator = events.sift(limit=10)
 
 # [3.5] Changing cache status.
 events.use_cache(True)
+# or just
+events.use_cache()
 
 # [3.6] Walk through data.
 for event in events:
@@ -218,6 +220,17 @@ events_types_with_batch = events_with_batch.map(lambda record: {"eventType": rec
 
 events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
 events_without_types_with_batch.use_cache(True)
+
+# [3.12] Data objects joining.
+# You have the following 3 Data objects.
+d1 = Data([1, 2, 3])
+d2 = Data(["a", {"id": 123}, "c"])
+d3 = Data([7, 8, 9])
+# You can join Data objects in following ways.
+data_via_init = Data([d1, d2, d3])
+data_via_add = d1 + d2 + d3
+data_with_non_data_obj_via_init = Data([d1, ["a", {"id": 123}, "c"], d3])
+data_with_non_data_obj_via_add = d1 + ["a", {"id": 123}, "c"] + d3
 
 # [4] Working with EventsTree and EventsTreeCollection.
 # [4.1] Building the EventsTreeCollection.
@@ -436,7 +449,7 @@ Details:
 Requirements:
 
 1. Events have to have `event_name`, `event_id`, `parent_event_id` fields, which are described in the
-   passed `event_struct` object.
+passed `event_struct` object.
 
 #### Hints
 

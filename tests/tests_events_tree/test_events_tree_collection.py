@@ -1,4 +1,5 @@
 from typing import List
+import warnings
 
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 
@@ -245,3 +246,37 @@ def test_build_parentless_tree(general_data: List[dict]):
             "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d",
         },
     ]
+
+
+def test_checker_tree_with_detached_events(log_checker, detached_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(detached_data)
+    log_checker.detached_etc_created(etc)
+
+
+def test_show_warning_about_detached_events(detached_data: List[dict]):
+    def create_etc():
+        etc = EventsTreeCollectionProvider5(detached_data)
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        create_etc()
+        assert "The collection were built with detached events because there are no some events in the source" in str(
+            w[-1].message
+        )
+
+
+def test_get_tree_by_id(general_data: List[dict]):
+    collection = EventsTreeCollectionProvider5(general_data)
+    tree = collection.get_trees()[0]
+
+    assert collection.get_tree_by_id("8d6e0c9e-d1b4-11eb-9278-591e568ad66e") == tree
+    assert collection.get_tree_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == tree
+    assert collection.get_tree_by_id("8c3fec4f-d1b4-11eb-bae5-57b0c4472880") == tree
+
+
+def test_get_root_by_id(general_data: List[dict]):
+    collection = EventsTreeCollectionProvider5(general_data)
+    tree = collection.get_trees()[0]
+    dict_root = tree.get_event("84db48fc-d1b4-11eb-b0fb-199708acc7bc")
+    assert collection.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == dict_root
+    assert collection.get_root_by_id("88a3ee80-d1b4-11eb-b0fb-199708acc7bc") == dict_root

@@ -23,12 +23,17 @@ class Filter:
         self.name = name
 
         if isinstance(values, (list, tuple)):
-            self.values = map(str, values)
+            self.values = [str(v) for v in values]
         else:
             self.values = [str(values)]
 
         self.negative = negative
         self.conjunct = conjunct
+
+    def __repr__(self):
+        return (
+            f"Filter(name='{self.name}', values={self.values}, negative='{self.negative}', conjunct='{self.conjunct}')"
+        )
 
     def url(self) -> str:
         """Forms a filter.
