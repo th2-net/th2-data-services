@@ -36,7 +36,7 @@ from th2_grpc_data_provider.data_provider_pb2 import (
     MessageMatchRequest,
     EventSearchRequest,
     MessageSearchRequest,
-    TimeRelation,
+    TimeRelation, MessageStream, MessageStreamPointer,
 )
 from grpc import Channel, insecure_channel
 from th2_data_services.provider.interfaces.source_api import IGRPCProviderSourceAPI
@@ -49,9 +49,9 @@ BasicRequest = namedtuple(
 )
 
 
-class GRPCProvider5API(IGRPCProviderSourceAPI):
+class GRPCProvider6API(IGRPCProviderSourceAPI):
     def __init__(self, url: str):
-        """GRPC Provider5 API.
+        """GRPC Provider6 API.
 
         Args:
             url: GRPC data source url.
@@ -110,7 +110,6 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
             result_count_limit=result_count_limit,
-            resume_from_ids=resume_from_id,
             search_direction=search_direction,
         )
 
@@ -146,14 +145,13 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
     def search_messages(
         self,
         start_timestamp: int,
-        stream: List[str],
         end_timestamp: int = None,
-        resume_from_id: str = None,
         search_direction: str = "NEXT",
         result_count_limit: int = None,
+        stream: MessageSearchRequest = None,
         keep_open: bool = False,
+        stream_pointer: MessageStreamPointer = None,
         filters: Optional[List[Filter]] = None,
-        message_id: Optional[List[str]] = None,
         attached_events: bool = False,
     ) -> Iterable[MessageSearchResponse]:
         """GRPC-API `searchMessages` call creates a message stream that matches the filter.
@@ -165,12 +163,10 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             end_timestamp: Sets the timestamp to which the search will be performed, starting with 'start_timestamp'.
                 Expected in nanoseconds.
             search_direction: Sets the lookup direction. Can be 'NEXT' or 'PREVIOUS'.
-            resume_from_id: The last event id from which we start searching for messages.
             result_count_limit: Sets the maximum amount of messages to return.
             keep_open: Option if the search has reached the current moment,
                 it is necessary to wait further for the appearance of new data.
             filters: Which filters to apply in a search.
-            message_id: List of message ids to restore the search.
             attached_events: If true, it will additionally load attachedEventsIds.
 
         Returns:
@@ -178,12 +174,10 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         """
         if stream is None:
             raise TypeError("Argument 'stream' is required.")
-        message_id = message_id or []
         self.__search_basic_checks(
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
             result_count_limit=result_count_limit,
-            resume_from_ids=resume_from_id,
             search_direction=search_direction,
         )
 
@@ -195,8 +189,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             search_direction=search_direction,
             filters=filters,
         )
-        # resume_from_id = self.__build_message_id_object(resume_from_id) if resume_from_id else None
-        # message_id = [self.__build_message_id_object(id_) for id_ in message_id]
+
         attached_events = BoolValue(value=attached_events)
         message_search_request = MessageSearchRequest(
             start_timestamp=basic_request.start_timestamp,
@@ -206,8 +199,9 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             keep_open=basic_request.keep_open,
             filter=basic_request.filters,
             attached_events=attached_events,
-            stream=Filter(value=stream),  # TODO
-         )
+            stream=stream,
+            stream_pointer=stream_pointer,
+        )
 
         return self.__stub.searchMessages(message_search_request)
 
@@ -215,11 +209,10 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
     def __search_basic_checks(
         start_timestamp: Optional[int],
         end_timestamp: Optional[int],
-        resume_from_ids: Optional[str],
         search_direction: Optional[str],
         result_count_limit: Optional[int],
     ):
-        if start_timestamp is None and resume_from_ids is None:
+        if start_timestamp  is None:
             raise ValueError("One of the 'startTimestamp' or 'resumeFromId(s)' must not be None.")
 
         if end_timestamp is None and result_count_limit is None:

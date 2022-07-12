@@ -1,6 +1,6 @@
 from typing import Union, List, Tuple
 
-from th2_grpc_data_provider.data_provider_template_pb2 import Filter as grpc_Filter, FilterName as grpc_FilterName
+from th2_grpc_data_provider.data_provider_pb2 import Filter as grpc_Filter, FilterName as grpc_FilterName
 import google.protobuf.wrappers_pb2
 
 

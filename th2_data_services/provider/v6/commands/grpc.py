@@ -25,20 +25,20 @@ from th2_grpc_data_provider.data_provider_pb2 import (
 from th2_data_services import Filter, Data
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
-from th2_data_services.provider.v5.adapters.basic_adapters import GRPCObjectToDictAdapter
-from th2_data_services.provider.v5.adapters.event_adapters import DeleteEventWrappersAdapter
-from th2_data_services.provider.v5.adapters.message_adapters import DeleteMessageWrappersAdapter
-from th2_data_services.provider.v5.interfaces.command import IGRPCProvider5Command
+from th2_data_services.provider.v6.adapters.basic_adapters import GRPCObjectToDictAdapter
+from th2_data_services.provider.v6.adapters.event_adapters import DeleteEventWrappersAdapter
+from th2_data_services.provider.v6.adapters.message_adapters import DeleteMessageWrappersAdapter
+from th2_data_services.provider.v6.interfaces.command import IGRPCProvider6Command
 
-from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
-from th2_data_services.provider.v5.provider_api import GRPCProvider5API
+from th2_data_services.provider.v6.data_source.grpc import GRPCProvider6DataSource
+from th2_data_services.provider.v6.provider_api import GRPCProvider6API
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class GetEventByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetEventByIdGRPCObject(IGRPCProvider6Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id as GRPC object.
@@ -57,15 +57,15 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         super().__init__()
         self._id = id
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> EventResponse:  # noqa: D102
-        api: GRPCProvider5API = data_source.source_api
+    def handle(self, data_source: GRPCProvider6DataSource) -> EventResponse:  # noqa: D102
+        api: GRPCProvider6API = data_source.source_api
         event = api.get_event(self._id)
 
         event = self._handle_adapters(event)
         return event
 
 
-class GetEventById(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetEventById(IGRPCProvider6Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the event by id with `attachedMessageIds` list.
@@ -91,7 +91,7 @@ class GetEventById(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._wrapper_deleter = DeleteEventWrappersAdapter()
         self._stub_status = use_stub
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> dict:  # noqa: D102
+    def handle(self, data_source: GRPCProvider6DataSource) -> dict:  # noqa: D102
         try:
             event = GetEventByIdGRPCObject(self._id).handle(data_source)
             event = self._grpc_decoder.handle(event)
@@ -107,7 +107,7 @@ class GetEventById(IGRPCProvider5Command, ProviderAdaptableCommand):
         return event
 
 
-class GetEventsById(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetEventsById(IGRPCProvider6Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the events by ids with `attachedMessageIds` list.
@@ -131,7 +131,7 @@ class GetEventsById(IGRPCProvider5Command, ProviderAdaptableCommand):
         self.ids = ids
         self._stub_status = use_stub
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:  # noqa: D102
+    def handle(self, data_source: GRPCProvider6DataSource) -> List[dict]:  # noqa: D102
         response = []
         for event_id in self.ids:
             event = GetEventById(event_id, use_stub=self._stub_status).handle(data_source=data_source)
@@ -141,7 +141,7 @@ class GetEventsById(IGRPCProvider5Command, ProviderAdaptableCommand):
         return response
 
 
-class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetEventsGRPCObjects(IGRPCProvider6Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream as GRPC object by options.
@@ -193,8 +193,8 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._attached_messages = attached_messages
         self._filters = filters
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[EventResponse]:  # noqa: D102
-        api: GRPCProvider5API = data_source.source_api
+    def handle(self, data_source: GRPCProvider6DataSource) -> Iterable[EventResponse]:  # noqa: D102
+        api: GRPCProvider6API = data_source.source_api
 
         start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)
         end_timestamp = int(self._end_timestamp.timestamp() * 10 ** 9)
@@ -218,7 +218,7 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
                 yield response.event
 
 
-class GetEvents(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetEvents(IGRPCProvider6Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches events stream by options.
@@ -276,11 +276,11 @@ class GetEvents(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._grpc_decoder = GRPCObjectToDictAdapter()
         self._wrapper_deleter = DeleteEventWrappersAdapter()
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> Data:  # noqa: D102
+    def handle(self, data_source: GRPCProvider6DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
         return Data(source, cache=self._cache)
 
-    def __handle_stream(self, data_source: GRPCProvider5DataSource) -> Generator[dict, None, None]:
+    def __handle_stream(self, data_source: GRPCProvider6DataSource) -> Generator[dict, None, None]:
         stream = GetEventsGRPCObjects(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
@@ -300,7 +300,7 @@ class GetEvents(IGRPCProvider5Command, ProviderAdaptableCommand):
             yield event
 
 
-class GetMessageByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):  # noqa: D102
+class GetMessageByIdGRPCObject(IGRPCProvider6Command, ProviderAdaptableCommand):  # noqa: D102
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id as GRPC Object.
@@ -319,19 +319,19 @@ class GetMessageByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         super().__init__()
         self._id = id
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> MessageGroupResponse:
-        api: GRPCProvider5API = data_source.source_api
+    def handle(self, data_source: GRPCProvider6DataSource) -> MessageGroupResponse:
+        api: GRPCProvider6API = data_source.source_api
         response = api.get_message(self._id)
         response = self._handle_adapters(response)
         return response
 
 
-class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):  # noqa: D102
+class GetMessageById(IGRPCProvider6Command, ProviderAdaptableCommand):  # noqa: D102
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the message by id.
 
-    Please note, Provider5 doesn't return `attachedEventIds`. It will be == [].
+    Please note, Provider6 doesn't return `attachedEventIds`. It will be == [].
     It's expected that Provider7 will be support it.
 
     Returns:
@@ -355,7 +355,7 @@ class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):  # noqa: 
         self._wrapper_deleter = DeleteMessageWrappersAdapter()
         self._stub_status = use_stub
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> dict:  # noqa: D102
+    def handle(self, data_source: GRPCProvider6DataSource) -> dict:  # noqa: D102
         try:
             message = GetMessageByIdGRPCObject(self._id).handle(data_source)
             message = self._decoder.handle(message)
@@ -370,12 +370,12 @@ class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):  # noqa: 
         return message
 
 
-class GetMessagesById(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetMessagesById(IGRPCProvider6Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It retrieves the messages by id.
 
-    Please note, Provider5 doesn't return `attachedEventIds`. It will be == [].
+    Please note, Provider6 doesn't return `attachedEventIds`. It will be == [].
     It's expected that Provider7 will be support it.
 
     Returns:
@@ -397,7 +397,7 @@ class GetMessagesById(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._ids = ids
         self._stub_status = use_stub
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> List[dict]:  # noqa: D102
+    def handle(self, data_source: GRPCProvider6DataSource) -> List[dict]:  # noqa: D102
         response = []
         for id_ in self._ids:
             message = GetMessageById(id_, use_stub=self._stub_status).handle(data_source)
@@ -407,7 +407,7 @@ class GetMessagesById(IGRPCProvider5Command, ProviderAdaptableCommand):
         return response
 
 
-class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetMessagesGRPCObject(IGRPCProvider6Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream as GRPC object by options.
@@ -456,7 +456,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._message_id = message_id
         self._attached_events = attached_events
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> List[MessageGroupResponse]:
+    def handle(self, data_source: GRPCProvider6DataSource) -> List[MessageGroupResponse]:
         api = data_source.source_api
 
         start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)
@@ -480,7 +480,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
                 yield response.message
 
 
-class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
+class GetMessages(IGRPCProvider6Command, ProviderAdaptableCommand):
     """A Class-Command for request to rpt-data-provider.
 
     It searches messages stream by options.
@@ -535,11 +535,11 @@ class GetMessages(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._decoder = GRPCObjectToDictAdapter()
         self._wrapper_deleter = DeleteMessageWrappersAdapter()
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> Data:
+    def handle(self, data_source: GRPCProvider6DataSource) -> Data:
         source = partial(self.__handle_stream, data_source)
         return Data(source, cache=self._cache)
 
-    def __handle_stream(self, data_source: GRPCProvider5DataSource) -> Iterable[dict]:
+    def __handle_stream(self, data_source: GRPCProvider6DataSource) -> Iterable[dict]:
         stream = GetMessagesGRPCObject(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
