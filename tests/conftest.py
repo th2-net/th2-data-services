@@ -14,7 +14,7 @@ from th2_data_services.filter import Filter
 
 @pytest.fixture
 def demo_data_source():
-    DEMO_HOST = "10.64.66.66"  # th2-kube-demo
+    DEMO_HOST = "10.100.66.66"  # th2-kube-demo
     DEMO_PORT = "30999"  # Data-provider Node port
     data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
     return data_source
