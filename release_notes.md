@@ -255,6 +255,8 @@ use `CodecPipelinesAdapter` manually.
 9. [TH2-3592] Added logging in EventsTreeCollection module when ETC create with detached events.
 10. [TH2-3475] Implement Data objects joining
 11. [TH2-3467] Added utils classes to convert timestamps.
+12. [TH2-3662] Added get_detached_events_iter and get_detached_events in EventsTreeCollections.
+      * Note: Property detached_events will stop working in the future.  
 
 ## Improvements
 1. [TH2-3003] Added automatic attachment of example.py code in readme.md.

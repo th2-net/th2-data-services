@@ -265,9 +265,9 @@ def test_subtree_with_parentless(parentless_data: List[dict]):
 
 def test_contains_with_parentless(parentless_data: List[dict]):
     etc = EventsTreeCollectionProvider5(parentless_data)
-    detached = ['a', 'b', 'c', 'x', 'y', 'z']
+    detached = ["a", "b", "c", "x", "y", "z"]
     assert all([id in etc for id in detached])
-    detached.extend(['e', 'd', 't'])
+    detached.extend(["e", "d", "t"])
     with pytest.raises(AssertionError):
         assert all([id in etc for id in detached])
     etc.get_parentless_trees()
@@ -473,3 +473,17 @@ def test_get_root_by_id(general_data: List[dict]):
     dict_root = tree.get_event("84db48fc-d1b4-11eb-b0fb-199708acc7bc")
     assert collection.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == dict_root
     assert collection.get_root_by_id("88a3ee80-d1b4-11eb-b0fb-199708acc7bc") == dict_root
+
+
+def test_get_detached_events_iter(parentless_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(parentless_data)
+    iter_detached = etc.get_detached_events_iter()
+    assert isinstance(iter_detached, Generator)
+    assert list(iter_detached) == [parentless_data[6], parentless_data[7]]
+
+
+def test_get_detached_events(parentless_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(parentless_data)
+    detached = etc.get_detached_events()
+    assert isinstance(detached, list)
+    assert detached == [parentless_data[6], parentless_data[7]]

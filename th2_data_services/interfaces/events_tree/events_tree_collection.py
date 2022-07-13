@@ -248,7 +248,22 @@ class EventsTreeCollection(ABC):
     @property
     def detached_events(self) -> dict:
         """Returns detached events as a dict with a view {'parent_id': ['referenced event', ...]}."""
+        w = (
+            f"This method deprecated since th2-data-services 1.1.0, and it will stop working in the future. "
+            f"Please use get get_detached_events_iter or get_detached_events."
+        )
+        warnings.warn(message=w, category=DeprecationWarning, stacklevel=2)
         return {id_: [node.data for node in nodes] for id_, nodes in self._detached_nodes.items()}
+
+    def get_detached_events_iter(self) -> Generator[Th2Event, None, None]:
+        """Returns detached events as iterator."""
+        for nodes in self._detached_nodes.values():
+            for node in nodes:
+                yield node.data
+
+    def get_detached_events(self) -> List[Th2Event]:
+        """Returns detached events."""
+        return list(self.get_detached_events_iter())
 
     def get_roots_ids(self) -> List[str]:
         """Returns roots ids."""
@@ -367,7 +382,7 @@ class EventsTreeCollection(ABC):
 
     @property
     def len_parentless(self) -> int:
-        """Returns number of events in the trees inside the collection."""
+        """Returns number of events in the parentless trees inside the collection."""
         if self._parentless is not None:
             return sum([len(root) for root in self._parentless])
         return 0

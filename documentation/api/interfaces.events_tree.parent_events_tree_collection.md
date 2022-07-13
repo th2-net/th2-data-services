@@ -59,7 +59,7 @@ Returns number of detached events in the collection.
 
 #### <kbd>property</kbd> len_parentless
 
-Returns number of events in the trees inside the collection. 
+Returns number of events in the parentless trees inside the collection. 
 
 ---
 
