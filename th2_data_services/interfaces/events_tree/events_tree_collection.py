@@ -232,8 +232,11 @@ class EventsTreeCollection(ABC):
             events_trees = list(filter(lambda tree: parent_event_id in tree, self._roots))
             if events_trees:
                 event_tree = events_trees[0]
-                event_tree._append_node(node, parent_event_id)
-                self._fill_tree(self._detached_nodes, event_tree._tree, parent_event_id)
+                if node.identifier in event_tree:
+                    pass
+                else:
+                    event_tree._append_node(node, parent_event_id)
+                    self._fill_tree(self._detached_nodes, event_tree._tree, parent_event_id)
             else:
                 self._detached_nodes[parent_event_id].append(node)
         else:

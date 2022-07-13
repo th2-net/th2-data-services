@@ -273,4 +273,5 @@ use `CodecPipelinesAdapter` manually.
 8. [TH2-3593][TH2-3664] Method get_root_by_id returns root by any non-root ID as Th2Event.
 9. [TH2-3595] When ETC creates subtree or itself ETC doesn't copy incoming data-stream.
 10. [TH2-3732] Log message in http.GetMessages contains name of the stream.
+11. [TH2-3734] EventsTreeCollection append_event method doesn't add duplicate event.
 
