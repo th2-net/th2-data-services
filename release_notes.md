@@ -260,7 +260,6 @@ use `CodecPipelinesAdapter` manually.
 1. [TH2-3003] Added automatic attachment of example.py code in readme.md.
 2. [TH2-3558] Added more debug info about Data cache using.
 3. [TH2-3389] GetXById http-provider command handles 404 error status instead of JsonDecodeException.
-4. [TH2-3596] EventsTreeCollections. Get or find methods includes parentless results, if parentless exists.
 
 ## BugFixes
 1. [TH2-3557][TH2-3560] Parent Data cache file will be created if you iterate a child Data object now.
@@ -274,4 +273,5 @@ use `CodecPipelinesAdapter` manually.
 9. [TH2-3595] When ETC creates subtree or itself ETC doesn't copy incoming data-stream.
 10. [TH2-3732] Log message in http.GetMessages contains name of the stream.
 11. [TH2-3734] EventsTreeCollection append_event method doesn't add duplicate event.
+12. [TH2-3596][TH2-3594][TH2-3473] EventsTreeCollections. Get or find methods includes parentless results, if parentless exists.
 

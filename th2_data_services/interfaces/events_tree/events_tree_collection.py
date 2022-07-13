@@ -337,7 +337,14 @@ class EventsTreeCollection(ABC):
         return self.len_trees + self.len_detached_events
 
     def __contains__(self, event_id: str):
-        return any([event_id in tree for tree in self._roots])
+        for tree in self._roots:
+            if event_id in tree:
+                return True
+        if self._parentless is not None:
+            for tree in self._parentless:
+                if event_id in tree:
+                    return True
+        return False
 
     def __repr__(self) -> str:
         len_trees = self.len_trees

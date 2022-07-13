@@ -263,6 +263,17 @@ def test_subtree_with_parentless(parentless_data: List[dict]):
         etc.get_subtree("EventIdNotInTree")
 
 
+def test_contains_with_parentless(parentless_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(parentless_data)
+    detached = ['a', 'b', 'c', 'x', 'y', 'z']
+    assert all([id in etc for id in detached])
+    detached.extend(['e', 'd', 't'])
+    with pytest.raises(AssertionError):
+        assert all([id in etc for id in detached])
+    etc.get_parentless_trees()
+    assert all([id in etc for id in detached])
+
+
 def test_get_all_events(general_data: List[dict]):
     collection = EventsTreeCollectionProvider5(general_data)
 
