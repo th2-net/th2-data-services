@@ -26,7 +26,7 @@ add_stderr_logger()  # Just execute it to activate DS lib logging. Debug level b
 add_file_logger()
 
 # [1] Create DataSource object to connect to rpt-data-provider.
-DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
+DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
 data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
