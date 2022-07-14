@@ -126,7 +126,7 @@ def test_get_all_events_iter_with_parentless(parentless_data: List[dict]):
     etc = EventsTreeCollectionProvider5(parentless_data)
     iter_events = etc.get_all_events_iter()
     assert isinstance(iter_events, Generator)
-    assert len(list(iter_events)) == len(parentless_data) - 2
+    assert list(iter_events) == parentless_data
     etc.get_parentless_trees()
     iter_events = etc.get_all_events_iter()
     parentless_data.insert(6, etc._build_stub_event("e"))
@@ -137,7 +137,7 @@ def test_get_all_events_with_parentless(parentless_data: List[dict]):
     etc = EventsTreeCollectionProvider5(parentless_data)
     events = etc.get_all_events()
     assert isinstance(events, list)
-    assert len(events) == len(parentless_data) - 2
+    assert events == parentless_data
     etc.get_parentless_trees()
     events = etc.get_all_events()
     parentless_data.insert(6, etc._build_stub_event("e"))
@@ -147,6 +147,7 @@ def test_get_all_events_with_parentless(parentless_data: List[dict]):
 def test_get_event_with_parentless(parentless_data: List[dict]):
     etc = EventsTreeCollectionProvider5(parentless_data)
     assert etc.get_event("a") and etc.get_event("x")
+    assert etc.get_event("d") and etc.get_event("t")
     etc.get_parentless_trees()
     assert etc.get_event("d") and etc.get_event("t") and etc.get_event("e")
 
@@ -204,6 +205,7 @@ def test_get_parent_with_parentless(parentless_data: List[dict]):
     etc = EventsTreeCollectionProvider5(parentless_data)
     with pytest.raises(EventIdNotInTree):
         etc.get_parent("d")
+    assert etc.get_parent("t") == etc.get_event("d")
     etc.get_parentless_trees()
     assert etc.get_parent("d") == etc._build_stub_event("e")
 
@@ -277,13 +279,13 @@ def test_contains_with_parentless(parentless_data: List[dict]):
 def test_get_all_events(general_data: List[dict]):
     collection = EventsTreeCollectionProvider5(general_data)
 
-    assert len(collection.get_all_events()) == 18
+    assert len(collection.get_all_events()) == len(general_data)
 
 
 def test_get_all_events_iter(general_data: List[dict]):
     collection = EventsTreeCollectionProvider5(general_data)
 
-    assert len(list(collection.get_all_events_iter())) == 18
+    assert len(list(collection.get_all_events_iter())) == len(general_data)
 
 
 def test_get_event(general_data: List[dict]):

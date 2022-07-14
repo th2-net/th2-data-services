@@ -411,16 +411,16 @@ class EventsTreeCollection(ABC):
 
     def get_all_events_iter(self) -> Generator[Th2Event, None, None]:
         """Yields all events from the collection."""
-        # TODO - it should returns all events (detached too).
         for tree in self._roots:
             yield from tree.get_all_events_iter()
+        if self._detached_nodes:
+            yield from self.get_detached_events_iter()
         if self._parentless is not None:
             for tree in self._parentless:
                 yield from tree.get_all_events_iter()
 
     def get_all_events(self) -> List[Th2Event]:
         """Returns all events from the collection."""
-        # TODO - it should returns all events (detached too).
         return list(self.get_all_events_iter())
 
     def get_event(self, id: str) -> Optional[Th2Event]:
@@ -432,13 +432,15 @@ class EventsTreeCollection(ABC):
         Raises:
             EventIdNotInTree: If event id is not in the collection.
         """
-        # TODO - it should returns all events (detached too).
-
         for tree in self._roots:
             try:
                 return tree.get_event(id)
             except EventIdNotInTree:
                 continue
+        if self._detached_nodes:
+            for event in self.get_detached_events_iter():
+                if self._get_event_id(event) == id:
+                    return event
         if self._parentless is not None:
             for tree in self._parentless:
                 try:
@@ -520,13 +522,20 @@ class EventsTreeCollection(ABC):
         Raises:
             NodeIDAbsentError: If event id is not in the trees.
         """
-        # TODO - I think we should return parent of detached events too.
-
         for tree in self._roots:
             try:
                 return tree.get_parent(id)
             except EventIdNotInTree:
                 continue
+        if self._detached_nodes:
+            parent_id = None
+            for event in self.get_detached_events_iter():
+                if self._get_event_id(event) == id:
+                    parent_id = self._get_parent_event_id(event)
+                    break
+            for event in self.get_detached_events_iter():
+                if self._get_event_id(event) == parent_id:
+                    return event
         if self._parentless is not None:
             for tree in self._parentless:
                 try:
