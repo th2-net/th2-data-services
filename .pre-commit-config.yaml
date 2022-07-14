@@ -52,8 +52,6 @@ repos:
           - README.md
         require_serial: true
 
-  - repo: local
-    hooks:
       - id: unit_tests
         name: unit_tests
         stages: [ push ]
