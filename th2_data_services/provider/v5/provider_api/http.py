@@ -51,13 +51,13 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
     def __normalize_url(self, url):
         if url is None:
-                return url
+            return url
 
         pos = len(url) - 1
-        while url[pos] == '/' and pos >= 0:
+        while url[pos] == "/" and pos >= 0:
             pos -= 1
 
-        return url[:pos + 1]
+        return url[: pos + 1]
 
     def __encode_url(self, url: str) -> str:
         return quote(url.encode(), "/:&?=")
