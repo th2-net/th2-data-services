@@ -139,8 +139,6 @@
 - [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
 - [`command_resolver.resolver_get_event_by_id`](./provider.v5.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
 - [`command_resolver.resolver_get_events_by_id`](./provider.v5.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
-- [`converters.datetime_string_to_time_obj`](./utils.converters.md#function-datetime_string_to_time_obj): Convert datetime string to unix timestamp or datetime object.
-- [`converters.th2_timestamp_to_time_obj`](./utils.converters.md#function-th2_timestamp_to_time_obj): Convert Th2 timestamp to unix timestamp or datetime object.
 
 
 ---
