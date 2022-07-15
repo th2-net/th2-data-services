@@ -1,6 +1,5 @@
 from collections import namedtuple
 from datetime import datetime, timezone
-from typing import Union
 
 from th2_data_services.interfaces.utils.converter import ITimestampConverter
 

@@ -47,7 +47,7 @@ EventsTreeCollectionProvider5 constructor.
 
 #### <kbd>property</kbd> detached_events
 
-Returns detached events as a dict with a view {'parent_id': ['referenced event', ...]}. 
+Returns detached events as a dict that looks like {'parent_id': ['referenced event', ...]}. 
 
 ---
 
@@ -57,9 +57,15 @@ Returns number of detached events in the collection.
 
 ---
 
+#### <kbd>property</kbd> len_parentless
+
+Returns number of events in the parentless trees inside the collection. 
+
+---
+
 #### <kbd>property</kbd> len_trees
 
-Returns number of events in the trees inside the collection. 
+Returns number of events in the trees inside the collection, including parentless trees. 
 
 
 
