@@ -489,3 +489,21 @@ def test_get_detached_events(parentless_data: List[dict]):
     detached = etc.get_detached_events()
     assert isinstance(detached, list)
     assert detached == [parentless_data[6], parentless_data[7]]
+
+
+def test_get_parentless_tree_collection(parentless_data: List[dict]):
+    etc = EventsTreeCollectionProvider5(parentless_data)
+    expected_events = [
+        parentless_data[6],
+        parentless_data[7],
+        {"type": "event", "eventId": "k", "eventName": "k", "parentEventId": "m"},
+        {"type": "event", "eventId": "s", "eventName": "s", "parentEventId": "k"},
+    ]
+    etc.append_event(expected_events[2])
+    etc.append_event(expected_events[3])
+    assert etc.len_trees == 6 and etc.len_detached_events == 4
+    plt_c = etc.get_parentless_tree_collection()
+    expected_events.insert(0, etc._build_stub_event("e"))
+    expected_events.insert(3, etc._build_stub_event("m"))
+    assert plt_c.len_trees == 6 and plt_c.get_all_events() == expected_events
+    assert etc.get_detached_events() == []
