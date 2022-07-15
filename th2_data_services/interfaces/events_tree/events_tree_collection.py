@@ -778,7 +778,7 @@ class EventsTreeCollection(ABC):
     def get_parentless_tree_collection(self) -> "EventsTreeCollection":
         """Builds and returns parentless trees by detached events as EventsTreeCollection.
 
-        Detached events will be removed from the tree.
+        Detached events will be removed from the collection.
 
         Returns:
             EventsTreeCollection.
