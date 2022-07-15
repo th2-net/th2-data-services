@@ -481,6 +481,25 @@ Returns a parent of the event by its id.
 
 ---
 
+<a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L778"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_parentless_tree_collection`
+
+```python
+get_parentless_tree_collection() → EventsTreeCollection
+```
+
+Builds and returns parentless trees by detached events as EventsTreeCollection. 
+
+Detached events will be removed from the tree. 
+
+
+
+**Returns:**
+  EventsTreeCollection. 
+
+---
+
 <a href="../../th2_data_services/interfaces/events_tree/events_tree_collection.py#L80"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_parentless_trees`

@@ -774,3 +774,17 @@ class EventsTreeCollection(ABC):
             if previous_detached_events == list(self._detached_events().keys()):
                 break
             previous_detached_events = list(self._detached_events().keys())
+
+    def get_parentless_tree_collection(self) -> "EventsTreeCollection":
+        """Builds and returns parentless trees by detached events as EventsTreeCollection.
+
+        Detached events will be removed from the collection.
+
+        Returns:
+            EventsTreeCollection.
+        """
+        new_etc = self.__class__(
+            data=[], data_source=self._data_source, preserve_body=self._preserve_body, stub=self._stub_status
+        )
+        new_etc._roots = self.get_parentless_trees()
+        return new_etc

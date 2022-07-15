@@ -256,7 +256,8 @@ use `CodecPipelinesAdapter` manually.
 10. [TH2-3475] Implement Data objects joining
 11. [TH2-3467] Added utils classes to convert timestamps.
 12. [TH2-3662][TH2-3492] Added `get_detached_events_iter` and `get_detached_events` methods in EventsTreeCollections.
-      * Warning: Property `detached_events` is deprecated and will be removed in the future.  
+      * Warning: Property `detached_events` is deprecated and will be removed in the future.
+13. [TH2-3496] Added get_parentless_tree_collection method in EventsTreeCollection.
 
 ## Improvements
 1. [TH2-3003] Added automatic attachment of example.py code in readme.md.
