@@ -407,7 +407,7 @@ class EventsTreeCollection(ABC):
     @property
     def len_detached_events(self) -> int:
         """Returns number of detached events in the collection."""
-        return sum([len(de_lst) for de_lst in self._detached_events().values()])
+        return sum([len(nodes_lst) for nodes_lst in self._detached_nodes.values()])
 
     def get_all_events_iter(self) -> Generator[Th2Event, None, None]:
         """Yields all events from the collection."""
