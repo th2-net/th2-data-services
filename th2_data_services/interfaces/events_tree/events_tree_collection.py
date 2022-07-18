@@ -17,6 +17,7 @@ from collections import defaultdict
 from typing import List, Dict, Optional, Union, Generator, Tuple, Callable
 
 from treelib import Node, Tree
+from treelib.exceptions import NodeIDAbsentError
 
 from th2_data_services import Data
 from th2_data_services.events_tree.events_tree import EventsTree
@@ -41,8 +42,8 @@ class EventsTreeCollection(ABC):
     """EventsTreeCollection objective is building 'EventsTree's and storing them.
 
     - EventsTreeCollection stores all EventsTree. You can to refer to each of them.
-    - Recovery of missing events occurs when you have passed DataSource class.
-    Otherwise you should execute the method 'recover_unknown_events'.
+    - Recovery of missing events occurs when you have passed DataSource class to constructor.
+    Otherwise you should execute the method 'recover_unknown_events' manually.
     Note that there is no point in the method if the list of detached events is empty.
     """
 
@@ -52,8 +53,8 @@ class EventsTreeCollection(ABC):
         """EventsTreeCollection constructor.
 
         Args:
-            data: Data object.
-            data_source: Data Source object.
+            data: Data object with events.
+            data_source: Provider Data Source object.
             preserve_body: If True it will preserve 'body' field in the Events.
             stub: If True it will create stub when event is broken.
         """
@@ -218,7 +219,7 @@ class EventsTreeCollection(ABC):
         return node
 
     def append_event(self, event: dict) -> None:
-        """Appends event into tree.
+        """Appends event into a tree.
 
         Args:
             event: Event.
@@ -246,22 +247,53 @@ class EventsTreeCollection(ABC):
 
     @property
     def detached_events(self) -> dict:
-        """Returns detached events as a dict with a view {'parent_id': ['referenced event', ...]}."""
+        """Returns detached events as a dict that looks like {'parent_id': ['referenced event', ...]}."""
+        w = (
+            f"This method is deprecated since v1.1.0, and will be removed in the future. "
+            f"Please use get_detached_events_iter or get_detached_events."
+        )
+        warnings.warn(message=w, category=DeprecationWarning, stacklevel=2)
+        return self._detached_events()
+
+    def _detached_events(self) -> dict:
+        """Returns detached events as a dict that looks like {'parent_id': ['referenced event', ...]}."""
         return {id_: [node.data for node in nodes] for id_, nodes in self._detached_nodes.items()}
 
+    def get_detached_events_iter(self) -> Generator[Th2Event, None, None]:
+        """Yields detached events."""
+        for nodes in self._detached_nodes.values():
+            for node in nodes:
+                yield node.data
+
+    def get_detached_events(self) -> List[Th2Event]:
+        """Returns detached events list."""
+        return list(self.get_detached_events_iter())
+
     def get_roots_ids(self) -> List[str]:
-        """Returns roots ids."""
+        """Returns ids of all trees roots located in the collection.
+
+        If there are parentless trees, they also will be return.
+        """
+        if self._parentless is not None:
+            return [tree.get_root_id() for tree in self._roots] + [tree.get_root_id() for tree in self._parentless]
         return [tree.get_root_id() for tree in self._roots]
 
     def get_trees(self) -> List[EventsTree]:
-        """Returns the list of trees inside the collection."""
+        """Returns the list of trees inside the collection.
+
+        If there are parentless trees, they also will be return.
+        """
+        if self._parentless is not None:
+            return self._roots + self._parentless
         return self._roots
 
     def get_root_by_id(self, id) -> Th2Event:
-        """Returns the root event of some tree in the collection by any eventId.
+        """Returns the root event of a tree by id of any event in this tree.
+
+        If event id of parentless tree is passed, stub of this parentless tree will be returnd.
 
         Args:
-            id: Th2Event id.
+            id: Event id.
 
         Returns:
             Th2Event.
@@ -269,13 +301,15 @@ class EventsTreeCollection(ABC):
         Raises:
             EventIdNotInTree: If event id is not in the trees.
         """
-        for tree in self._roots:
-            if id in tree:
-                return tree.get_root()
-        raise EventIdNotInTree(id)
+        try:
+            return self.get_tree_by_id(id).get_root()
+        except EventIdNotInTree:
+            raise EventIdNotInTree(id)
 
     def get_tree_by_id(self, id) -> EventsTree:
-        """Returns a tree by id as EventsTree class.
+        """Returns a tree by id of any event in this tree.
+
+        If event id of parentless tree is passed, stub of this parentless tree will be returnd.
 
         Args:
             id: Event id.
@@ -287,8 +321,12 @@ class EventsTreeCollection(ABC):
             EventIdNotInTree: If event id is not in the trees.
         """
         for tree in self._roots:
-            if tree.find(lambda ch: ch["eventId"] == id):
+            if id in tree:
                 return tree
+        if self._parentless is not None:
+            for tree in self._parentless:
+                if id in tree:
+                    return tree
         raise EventIdNotInTree(id)
 
     def show(self):
@@ -328,7 +366,14 @@ class EventsTreeCollection(ABC):
         return self.len_trees + self.len_detached_events
 
     def __contains__(self, event_id: str):
-        return any([event_id in tree for tree in self._roots])
+        for tree in self._roots:
+            if event_id in tree:
+                return True
+        if self._parentless is not None:
+            for tree in self._parentless:
+                if event_id in tree:
+                    return True
+        return False
 
     def __repr__(self) -> str:
         len_trees = self.len_trees
@@ -339,55 +384,87 @@ class EventsTreeCollection(ABC):
         )
 
     def summary(self) -> str:
-        """Returns the collection summary."""
+        """Returns the collection summary.
+
+        The same as repr(EventsTreeCollection).
+        """
         return self.__repr__()
 
     @property
     def len_trees(self) -> int:
-        """Returns number of events in the trees inside the collection."""
+        """Returns number of events in the trees inside the collection, including parentless trees."""
+        if self._parentless is not None:
+            return sum([len(root) for root in self._roots]) + self.len_parentless
         return sum([len(root) for root in self._roots])
+
+    @property
+    def len_parentless(self) -> int:
+        """Returns number of events in the parentless trees inside the collection."""
+        if self._parentless is not None:
+            return sum([len(root) for root in self._parentless])
+        return 0
 
     @property
     def len_detached_events(self) -> int:
         """Returns number of detached events in the collection."""
-        return sum([len(de_lst) for de_lst in self.detached_events.values()])
+        return sum([len(nodes_lst) for nodes_lst in self._detached_nodes.values()])
 
     def get_all_events_iter(self) -> Generator[Th2Event, None, None]:
-        """Returns all events from the trees as iterator."""
+        """Yields all events from the collection."""
         for tree in self._roots:
-            yield from tree.get_all_events()
+            yield from tree.get_all_events_iter()
+        if self._detached_nodes:
+            yield from self.get_detached_events_iter()
+        if self._parentless is not None:
+            for tree in self._parentless:
+                yield from tree.get_all_events_iter()
 
     def get_all_events(self) -> List[Th2Event]:
-        """Returns all events from the trees."""
-        return [event for tree in self._roots for event in tree.get_all_events()]
+        """Returns all events from the collection."""
+        return list(self.get_all_events_iter())
 
     def get_event(self, id: str) -> Optional[Th2Event]:
-        """Returns an event by id.
+        """Returns an event by its id.
 
         Args:
             id: Event id.
 
         Raises:
-            EventIdNotInTree: If event id is not in the trees.
+            EventIdNotInTree: If event id is not in the collection.
         """
         for tree in self._roots:
             try:
                 return tree.get_event(id)
             except EventIdNotInTree:
                 continue
+        if self._detached_nodes:
+            for event in self.get_detached_events_iter():
+                if self._get_event_id(event) == id:
+                    return event
+        if self._parentless is not None:
+            for tree in self._parentless:
+                try:
+                    return tree.get_event(id)
+                except EventIdNotInTree:
+                    continue
         raise EventIdNotInTree(id)
 
     def get_leaves(self) -> Tuple[Th2Event]:
-        """Returns all trees leaves."""
+        """Returns all trees leaves, including parentless trees."""
         return tuple(self.get_leaves_iter())
 
     def get_leaves_iter(self) -> Generator[Th2Event, None, None]:
-        """Returns all trees leaves as iterator."""
+        """Yields all trees leaves, including parentless trees."""
         for tree in self._roots:
             yield from tree.get_leaves_iter()
+        if self._parentless is not None:
+            for tree in self._parentless:
+                yield from tree.get_leaves_iter()
 
     def get_children(self, id: str) -> Tuple[Th2Event]:
-        """Returns children for the event by its id.
+        """Returns children of the event by its id.
+
+        This method applicable only for trees (regular or parentless), not for detached events.
 
         Args:
             id: Event id.
@@ -400,10 +477,18 @@ class EventsTreeCollection(ABC):
                 return tree.get_children(id)
             except EventIdNotInTree:
                 continue
+        if self._parentless is not None:
+            for tree in self._parentless:
+                try:
+                    return tree.get_children(id)
+                except EventIdNotInTree:
+                    continue
         raise EventIdNotInTree(id)
 
     def get_children_iter(self, id: str) -> Generator[Th2Event, None, None]:
-        """Returns children as iterator for the event by its id.
+        """Yields children of the event by its id.
+
+        This method applicable only for trees (regular or parentless), not for detached events.
 
         Args:
             id: Event id.
@@ -418,11 +503,18 @@ class EventsTreeCollection(ABC):
                 is_iter = True
             except EventIdNotInTree:
                 continue
+        if self._parentless is not None:
+            for tree in self._parentless:
+                try:
+                    yield from tree.get_children_iter(id)
+                    is_iter = True
+                except EventIdNotInTree:
+                    continue
         if not is_iter:
             raise EventIdNotInTree(id)
 
     def get_parent(self, id: str) -> Th2Event:
-        """Returns a parent for the event by its id.
+        """Returns a parent of the event by its id.
 
         Args:
             id: Event id.
@@ -435,10 +527,27 @@ class EventsTreeCollection(ABC):
                 return tree.get_parent(id)
             except EventIdNotInTree:
                 continue
+        if self._detached_nodes:
+            parent_id = None
+            for event in self.get_detached_events_iter():
+                if self._get_event_id(event) == id:
+                    parent_id = self._get_parent_event_id(event)
+                    break
+            for event in self.get_detached_events_iter():
+                if self._get_event_id(event) == parent_id:
+                    return event
+        if self._parentless is not None:
+            for tree in self._parentless:
+                try:
+                    return tree.get_parent(id)
+                except EventIdNotInTree:
+                    continue
         raise EventIdNotInTree(id)
 
     def get_full_path(self, id: str, field: str = None) -> List[Union[str, Th2Event]]:  # noqa: D412
         """Returns the full path for the event by its id in the right order.
+
+        This method applicable only for trees (regular or parentless), not for detached events.
 
         Examples:
 
@@ -479,10 +588,18 @@ class EventsTreeCollection(ABC):
                 return tree.get_full_path(id, field)
             except EventIdNotInTree:
                 continue
+        if self._parentless is not None:
+            for tree in self._parentless:
+                try:
+                    return tree.get_full_path(id, field)
+                except EventIdNotInTree:
+                    continue
         raise EventIdNotInTree(id)
 
     def get_ancestors(self, id: str) -> List[Th2Event]:
         """Returns all event's ancestors in right order.
+
+        This method applicable only for trees (regular or parentless), not for detached events.
 
         Args:
             id: Event id.
@@ -498,10 +615,18 @@ class EventsTreeCollection(ABC):
                 return tree.get_ancestors(id)
             except EventIdNotInTree:
                 continue
+        if self._parentless is not None:
+            for tree in self._parentless:
+                try:
+                    return tree.get_ancestors(id)
+                except EventIdNotInTree:
+                    continue
         raise EventIdNotInTree(id)
 
     def find_ancestor(self, id: str, filter: Callable) -> Optional[Th2Event]:
         """Finds the ancestor of an event.
+
+        This method applicable only for trees (regular or parentless), not for detached events.
 
         Args:
             id: Event id.
@@ -514,6 +639,11 @@ class EventsTreeCollection(ABC):
             ancestor = tree.find_ancestor(id, filter)
             if ancestor is not None:
                 return ancestor
+        if self._parentless is not None:
+            for tree in self._parentless:
+                ancestor = tree.find_ancestor(id, filter)
+                if ancestor is not None:
+                    return ancestor
         return None
 
     def findall_iter(
@@ -529,6 +659,8 @@ class EventsTreeCollection(ABC):
         If 'stop' function returns 'True' then search is complete.
         - 'max_count' is a parameter that limits the search to a specified count.
 
+        This method applicable only for trees (regular or parentless), not for detached events.
+
         Args:
             filter: Filter function.
             stop: Stop function. If None searches for all nodes in the trees.
@@ -539,6 +671,9 @@ class EventsTreeCollection(ABC):
         """
         for tree in self._roots:
             yield from tree.findall_iter(filter=filter, stop=stop, max_count=max_count)
+        if self._parentless is not None:
+            for tree in self._parentless:
+                yield from tree.findall_iter(filter=filter, stop=stop, max_count=max_count)
 
     def findall(
         self,
@@ -553,6 +688,8 @@ class EventsTreeCollection(ABC):
         If 'stop' function returns 'True' then search is complete.
         - 'max_count' is a parameter that limits the search to a specified count.
 
+        This method applicable only for trees (regular or parentless), not for detached events.
+
         Args:
             filter: Filter function.
             stop: Stop function. If None searches for all nodes in the trees.
@@ -561,12 +698,7 @@ class EventsTreeCollection(ABC):
         Returns:
             Matching events.
         """
-        result = []
-        for tree in self._roots:
-            events = tree.findall(filter=filter, stop=stop, max_count=max_count)
-            if result is not None:
-                result += [*events]
-        return result
+        return list(self.findall_iter(filter=filter, stop=stop, max_count=max_count))
 
     def find(self, filter: Callable, stop: Callable = None) -> Optional[Th2Event]:
         """Searches the first event match.
@@ -574,6 +706,8 @@ class EventsTreeCollection(ABC):
         - The search uses 'filter' which is a filtering function.
         - Optionally, the search uses 'stop' which is a stopping function.
         If 'stop' function returns 'True' then search is complete.
+
+        This method applicable only for trees (regular or parentless), not for detached events.
 
         Args:
             filter: Filter function.
@@ -586,10 +720,17 @@ class EventsTreeCollection(ABC):
             event = tree.find(filter=filter, stop=stop)
             if event is not None:
                 return event
+        if self._parentless is not None:
+            for tree in self._parentless:
+                event = tree.find(filter=filter, stop=stop)
+                if event is not None:
+                    return event
         return None
 
     def get_subtree(self, id: str) -> "EventsTree":
         """Returns subtree of the event by its id.
+
+        This method applicable only for trees (regular or parentless), not for detached events.
 
         Args:
             id: Event id.
@@ -603,8 +744,14 @@ class EventsTreeCollection(ABC):
         for tree in self._roots:
             try:
                 return tree.get_subtree(id)
-            except EventIdNotInTree:
+            except (EventIdNotInTree, NodeIDAbsentError):
                 continue
+        if self._parentless is not None:
+            for tree in self._parentless:
+                try:
+                    return tree.get_subtree(id)
+                except (EventIdNotInTree, NodeIDAbsentError):
+                    continue
         raise EventIdNotInTree(id)
 
     def recover_unknown_events(self, data_source: IProviderDataSource) -> None:
@@ -615,15 +762,29 @@ class EventsTreeCollection(ABC):
         """
         instance_command = resolver_get_events_by_id(data_source)
 
-        previous_detached_events = list(self.detached_events.keys())
+        previous_detached_events = list(self._detached_events().keys())
         while previous_detached_events:
-            called_command = instance_command(self.detached_events.keys(), use_stub=self._stub_status)
+            called_command = instance_command(self._detached_events().keys(), use_stub=self._stub_status)
             events = data_source.command(called_command)
 
             for event in events:
                 if not self._get_event_name(event) == "Broken_Event":
                     self.append_event(event)
 
-            if previous_detached_events == list(self.detached_events.keys()):
+            if previous_detached_events == list(self._detached_events().keys()):
                 break
-            previous_detached_events = list(self.detached_events.keys())
+            previous_detached_events = list(self._detached_events().keys())
+
+    def get_parentless_tree_collection(self) -> "EventsTreeCollection":
+        """Builds and returns parentless trees by detached events as EventsTreeCollection.
+
+        Detached events will be removed from the collection.
+
+        Returns:
+            EventsTreeCollection.
+        """
+        new_etc = self.__class__(
+            data=[], data_source=self._data_source, preserve_body=self._preserve_body, stub=self._stub_status
+        )
+        new_etc._roots = self.get_parentless_trees()
+        return new_etc
