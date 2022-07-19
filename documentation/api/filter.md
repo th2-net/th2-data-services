@@ -11,19 +11,19 @@
 
 ---
 
-<a href="../../th2_data_services/filter.py#L7"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/filter.py#L21"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Filter`
 The class for using rpt-data-provider filters API. 
 
-<a href="../../th2_data_services/filter.py#L10"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/filter.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
 __init__(
     name: str,
-    values: Union[List[str], Tuple[str], str],
+    values: Sequence[str],
     negative: bool = False,
     conjunct: bool = False
 )
@@ -42,40 +42,6 @@ Filter constructor.
 
 
 
-
----
-
-<a href="../../th2_data_services/filter.py#L53"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `grpc`
-
-```python
-grpc() → Filter
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/filter.py#L38"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `url`
-
-```python
-url() → str
-```
-
-Forms a filter. 
-
-For help use this readme: https://github.com/th2-net/th2-rpt-data-provider#filters-api. 
-
-
-
-**Returns:**
- 
- - <b>`str`</b>:  Formed filter. 
 
 
 

@@ -258,6 +258,8 @@ use `CodecPipelinesAdapter` manually.
 12. [TH2-3662][TH2-3492] Added `get_detached_events_iter` and `get_detached_events` methods in EventsTreeCollections.
       * Warning: Property `detached_events` is deprecated and will be removed in the future.
 13. [TH2-3496] Added get_parentless_tree_collection method in EventsTreeCollection.
+14. [TH2-3905] Separate filer classes added instead of `th2_data_services.Filter` class. 
+      * Warning: Class `th2_data_services.Filter` is deprecated and will be removed in the future.
 
 ## Improvements
 1. [TH2-3003] Added automatic attachment of example.py code in readme.md.
@@ -278,4 +280,3 @@ use `CodecPipelinesAdapter` manually.
 10. [TH2-3732] Log message in http.GetMessages contains name of the stream.
 11. [TH2-3734] EventsTreeCollection append_event method doesn't add duplicate event.
 12. [TH2-3596][TH2-3594][TH2-3473] EventsTreeCollections. Get or find methods includes parentless results, if parentless exists.
-
