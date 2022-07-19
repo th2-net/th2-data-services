@@ -376,11 +376,21 @@ class EventsTreeCollection(ABC):
         return False
 
     def __repr__(self) -> str:
-        len_trees = self.len_trees
+        len_trees_events = self.len_trees
         len_detached_events = self.len_detached_events
+        len_regular_trees = len(self.get_roots_ids())
+
+        if self._parentless:
+            len_parentless_trees = len(self.get_parentless_trees())
+            trees_parentless_info = (
+                f"[regular={len_regular_trees - len_parentless_trees}, parentless={len_parentless_trees}]"
+            )
+        else:
+            trees_parentless_info = ""
+
         return (
-            f"{self.__class__.__name__}(trees={len(self.get_roots_ids())}, "
-            f"events={len_trees+len_detached_events}[trees={len_trees}, detached={len_detached_events}])"
+            f"{self.__class__.__name__}(trees={len_regular_trees}{trees_parentless_info}, "
+            f"events={len_trees_events + len_detached_events}[trees={len_trees_events}, detached={len_detached_events}])"
         )
 
     def summary(self) -> str:
