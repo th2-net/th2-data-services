@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from th2_data_services.provider.interfaces.filter import IProviderFilter
-from typing import Sequence
+from typing import Sequence, Any, Union
 
 from th2_grpc_data_provider.data_provider_template_pb2 import Filter as grpc_Filter, FilterName as grpc_FilterName
 import google.protobuf.wrappers_pb2
@@ -25,7 +25,7 @@ class Provider5Filter(IProviderFilter):
     def __init__(
         self,
         name: str,
-        values: Sequence[str],
+        values: Union[str, int, float, Sequence[Union[str, int, float]]],
         negative: bool = False,
         conjunct: bool = False,
         # exact: bool = False, # Will be added in 5.4.x
@@ -34,7 +34,7 @@ class Provider5Filter(IProviderFilter):
 
         Args:
             name (str): Filter name.
-            values (Union[List[str], Tuple[str], str]): One string with filter value or list of filter values.
+            values (Union[str, int, float, Sequence[Union[str, int, float]]]): One string with filter value or list of filter values.
             negative (bool):  If true, will match events/messages that do not match those specified values.
                 If false, will match the events/messages by their values. Defaults to false.
             conjunct (bool): If true, each of the specific filter values should be applied
@@ -90,7 +90,7 @@ class Provider5Filter(IProviderFilter):
 class _Provider5FilterBase(Provider5Filter):
     FILTER_NAME = "FILTER_NAME"
 
-    def __init__(self, values: Sequence[str], negative: bool = False, conjunct: bool = False):
+    def __init__(self, values: Sequence[Any], negative: bool = False, conjunct: bool = False):
         super().__init__(self.FILTER_NAME, values, negative, conjunct)
 
 

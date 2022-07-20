@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Sequence
+from typing import Sequence, Union
 
 from th2_data_services.provider.v5.filters.filter import Provider5Filter
 from warnings import warn
@@ -24,7 +24,7 @@ class Filter(Provider5Filter):
     def __init__(
         self,
         name: str,
-        values: Sequence[str],
+        values: Union[str, int, float, Sequence[Union[str, int, float]]],
         negative: bool = False,
         conjunct: bool = False,
     ):
@@ -32,7 +32,7 @@ class Filter(Provider5Filter):
 
         Args:
             name (str): Filter name.
-            values (Union[List[str], Tuple[str], str]): One string with filter value or list of filter values.
+            values (Union[str, int, float, Sequence[Union[str, int, float]]]): One string with filter value or list of filter values.
             negative (bool):  If true, will match events/messages that do not match those specified values.
                 If false, will match the events/messages by their values. Defaults to false.
             conjunct (bool): If true, each of the specific filter values should be applied
