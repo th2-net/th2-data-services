@@ -44,10 +44,20 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
         """
-        self._url = url
+        self._url = self.__normalize_url(url)
         self._char_enc = char_enc
         self._chunk_length = chunk_length
         self._decode_error_handler = decode_error_handler
+
+    def __normalize_url(self, url):
+        if url is None:
+            return url
+
+        pos = len(url) - 1
+        while url[pos] == "/" and pos >= 0:
+            pos -= 1
+
+        return url[: pos + 1]
 
     def __encode_url(self, url: str) -> str:
         return quote(url.encode(), "/:&?=")
@@ -70,7 +80,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         query = ""
         for id in ids:
             query += f"ids={id}&"
-        return self.__encode_url(f"{self._url}/events/?{query[:-1]}")
+        return self.__encode_url(f"{self._url}/events?{query[:-1]}")
 
     def get_url_find_message_by_id(self, message_id: str) -> str:
         """REST-API `message` call returns a single message with the specified id."""
@@ -154,7 +164,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         }
 
         query = ""
-        url = f"{self._url}/search/sse/events/?"
+        url = f"{self._url}/search/sse/events?"
         for k, v in kwargs.items():
             if v is None:
                 continue
@@ -197,7 +207,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         }
 
         query = ""
-        url = f"{self._url}/search/sse/messages/?"
+        url = f"{self._url}/search/sse/messages?"
         for k, v in kwargs.items():
             if v is None:
                 continue

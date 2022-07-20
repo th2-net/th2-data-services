@@ -12,9 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Generator, List
-import json
-import simplejson
+from typing import Generator, List, Sequence, Union
 from datetime import datetime, timezone
 from functools import partial
 
@@ -22,6 +20,7 @@ from th2_data_services import Filter, Data
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v5.interfaces.command import IHTTPProvider5Command
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
+from th2_data_services.provider.v5.filters.filter import Provider5EventFilter, Provider5MessageFilter
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.sse_client import SSEClient
@@ -30,8 +29,19 @@ from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 import logging
 
-logger = logging.getLogger("th2_data_services")
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+
+EventFilters = Union[Filter, Provider5EventFilter, Sequence[Union[Filter, Provider5EventFilter]]]
+MessageFilters = Union[Filter, Provider5MessageFilter, Sequence[Union[Filter, Provider5MessageFilter]]]
+
+
+def _convert_filters_to_string(filters):
+    filters_res = filters
+    if not isinstance(filters_res, (tuple, list)):
+        filters_res = [filters_res]
+
+    return "".join([filter_.url() for filter_ in filters_res])
 
 
 class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
@@ -65,15 +75,14 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
         logger.info(url)
 
         response = api.execute_request(url)
-        try:
-            event = response.json()
-        except (json.JSONDecodeError, simplejson.JSONDecodeError):
-            if self._stub_status:
-                return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
-            else:
-                logger.error(f"Unable to find the message. Id: {self._id}")
-                raise EventNotFound(self._id)
-        return self._handle_adapters(event)
+
+        if response.status_code == 404 and self._stub_status:
+            return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+        elif response.status_code == 404:
+            logger.error(f"Unable to find the message. Id: {self._id}")
+            raise EventNotFound(self._id)
+        else:
+            return self._handle_adapters(response.json())
 
 
 class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
@@ -129,7 +138,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         keep_open: bool = False,
         limit_for_parent: int = None,
         attached_messages: bool = False,
-        filters: (Filter, List[Filter]) = None,
+        filters: EventFilters = None,
     ):
         """GetEventsSSEBytes constructor.
 
@@ -160,10 +169,6 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._metadata_only = False
         self._attached_messages = attached_messages
         self._filters = filters
-        if isinstance(filters, Filter):
-            self._filters = filters.url()
-        elif isinstance(filters, (tuple, list)):
-            self._filters = "".join([filter_.url() for filter_ in filters])
 
     def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
@@ -178,7 +183,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             limit_for_parent=self._limit_for_parent,
             metadata_only=self._metadata_only,
             attached_messages=self._attached_messages,
-            filters=self._filters,
+            filters=_convert_filters_to_string(self._filters),
         )
 
         logger.info(url)
@@ -209,7 +214,7 @@ class GetEventsSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         keep_open: bool = False,
         limit_for_parent: int = None,
         attached_messages: bool = False,
-        filters: (Filter, List[Filter]) = None,
+        filters: EventFilters = None,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
     ):
@@ -286,7 +291,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         keep_open: bool = False,
         limit_for_parent: int = None,
         attached_messages: bool = False,
-        filters: (Filter, List[Filter]) = None,
+        filters: EventFilters = None,
         cache: bool = False,
     ):
         """GetEvents constructor.
@@ -378,16 +383,14 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         logger.info(url)
 
         response = api.execute_request(url)
-        try:
-            message = response.json()
-        except (json.JSONDecodeError, simplejson.JSONDecodeError):
-            if self._stub_status:
-                return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
-            else:
-                exception_msg = f"Unable to find the message. Id: {self._id}"
-                logger.error(exception_msg)
-                raise MessageNotFound(self._id)
-        return self._handle_adapters(message)
+
+        if response.status_code == 404 and self._stub_status:
+            return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+        elif response.status_code == 404:
+            logger.error(f"Unable to find the message. Id: {self._id}")
+            raise MessageNotFound(self._id)
+        else:
+            return self._handle_adapters(response.json())
 
 
 class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
@@ -447,7 +450,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         message_id: List[str] = None,
         attached_events: bool = False,
         lookup_limit_days: int = None,
-        filters: (Filter, List[Filter]) = None,
+        filters: MessageFilters = None,
     ):
         """GetMessagesSSEBytes constructor.
 
@@ -483,10 +486,6 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._attached_events = attached_events
         self._lookup_limit_days = lookup_limit_days
         self._filters = filters
-        if isinstance(filters, Filter):
-            self._filters = filters.url()
-        elif isinstance(filters, (tuple, list)):
-            self._filters = "".join([filter_.url() for filter_ in filters])
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
@@ -500,10 +499,8 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             keep_open=self._keep_open,
             attached_events=self._attached_events,
             lookup_limit_days=self._lookup_limit_days,
-            filters=self._filters,
+            filters=_convert_filters_to_string(self._filters),
         ).replace("&stream=", "")
-
-        logger.info(url)
 
         fixed_part_len = len(url)
         current_url, resulting_urls = "", []
@@ -517,6 +514,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             resulting_urls.append(url + current_url)
 
         for url in resulting_urls:
+            logger.info(url)
             for response in api.execute_sse_request(url):
                 response = self._handle_adapters(response)
                 if response is not None:
@@ -544,7 +542,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         message_id: List[str] = None,
         attached_events: bool = False,
         lookup_limit_days: int = None,
-        filters: (Filter, List[Filter]) = None,
+        filters: MessageFilters = None,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
     ):
@@ -626,7 +624,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         message_id: List[str] = None,
         attached_events: bool = False,
         lookup_limit_days: int = None,
-        filters: (Filter, List[Filter]) = None,
+        filters: MessageFilters = None,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         cache: bool = False,

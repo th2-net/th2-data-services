@@ -1,9 +1,11 @@
+import logging
 from collections import namedtuple
 from datetime import datetime
 from typing import List, NamedTuple
 
 import pytest
 
+from tests.utils import LogsChecker
 from th2_data_services.data import Data
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
@@ -12,7 +14,7 @@ from th2_data_services.filter import Filter
 
 @pytest.fixture
 def demo_data_source():
-    DEMO_HOST = "10.64.66.66"  # th2-kube-demo
+    DEMO_HOST = "10.100.66.66"  # th2-kube-demo
     DEMO_PORT = "30999"  # Data-provider Node port
     data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
     return data_source
@@ -176,6 +178,7 @@ def demo_messages_from_data_source_with_test_streams(
 
 @pytest.fixture
 def general_data() -> List[dict]:
+    """21 event."""
     data = [
         {
             "batchId": None,
@@ -354,6 +357,165 @@ def general_data() -> List[dict]:
             "isBatched": False,
             "eventType": "Checkpoint for session",
             "parentEventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
+        },
+    ]
+    return data
+
+
+@pytest.fixture
+def detached_data() -> List[dict]:
+    data = [
+        {
+            "batchId": None,
+            "eventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
+            "eventName": "[TS_1]Aggressive IOC vs two orders: second order's price is " "lower than first",
+            "eventType": "",
+            "isBatched": False,
+            "parentEventId": None,
+        },
+        {
+            "batchId": None,
+            "eventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
+            "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for " "instrument INSTR1",
+            "eventType": "",
+            "isBatched": False,
+            "parentEventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
+        },
+        {
+            "batchId": None,
+            "eventId": "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
+            "eventName": 'placeOrderFIX demo-conn1 - STEP1: Trader "DEMO-CONN1" sends '
+            "request to create passive Order.",
+            "eventType": "placeOrderFIX",
+            "isBatched": False,
+            "parentEventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint",
+            "eventType": "Checkpoint",
+            "isBatched": True,
+            "parentEventId": "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a4-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'th2-hand-demo' direction 'FIRST' "
+            "sequence '1623852603564709030'",
+            "eventType": "Checkpoint for session",
+            "isBatched": True,
+            "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a5-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'SECOND' "
+            "sequence '1624005455622140289'",
+            "eventType": "Checkpoint for session",
+            "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a6-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'SECOND' " "sequence '1624005475721015014'",
+            "eventType": "Checkpoint for session",
+            "isBatched": True,
+            "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a7-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'FIRST' " "sequence '1624005475720919499'",
+            "eventType": "Checkpoint for session",
+            "isBatched": True,
+            "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a8-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'FIRST' "
+            "sequence '1624005448022245399'",
+            "eventType": "Checkpoint for session",
+            "isBatched": True,
+            "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a9-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'demo-conn2' direction 'SECOND' "
+            "sequence '1624005448022426113'",
+            "eventType": "Checkpoint for session",
+            "isBatched": True,
+            "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114aa-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'SECOND' " "sequence '1624005466840347015'",
+            "eventType": "Checkpoint for session",
+            "isBatched": True,
+            "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ab-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'FIRST' " "sequence '1624005466840263372'",
+            "eventType": "Checkpoint for session",
+            "isBatched": True,
+            "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ac-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'demo-conn1' direction 'FIRST' "
+            "sequence '1624005455622011522'",
+            "eventType": "Checkpoint for session",
+            "isBatched": True,
+            "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
+        },
+        {
+            "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
+            "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ad-d1b4-11eb-9278-591e568ad66e",
+            "eventName": "Checkpoint for session alias 'demo-log' direction 'FIRST' " "sequence '1624029363623063053'",
+            "eventType": "Checkpoint for session",
+            "isBatched": True,
+            "parentEventId": None,
+        },
+        {
+            "batchId": None,
+            "eventId": "8c3fec4f-d1b4-11eb-bae5-57b0c4472880",
+            "eventName": "Send 'NewOrderSingle' message to connectivity",
+            "eventType": "Outgoing message",
+            "isBatched": False,
+            "parentEventId": "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
+        },
+        {
+            "batchId": None,
+            "eventId": "8c44806c-d1b4-11eb-8e55-d3a76285d588",
+            "eventName": "Send 'NewOrderSingle' message",
+            "eventType": "Outgoing message",
+            "isBatched": False,
+            "parentEventId": "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
+        },
+        {
+            "batchId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf",
+            "eventId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf:8ca20288-d1b4-11eb-986f-1e8d42132387",
+            "eventName": "Remove 'NewOrderSingle' "
+            "id='demo-conn1:SECOND:1624005455622135205' "
+            "Hash='7009491514226292581' Group='NOS_CONN' "
+            "Hash['SecondaryClOrdID': 11111, 'SecurityID': INSTR1]",
+            "isBatched": True,
+            "eventType": "",
+            "parentEventId": None,
+        },
+        {
+            "batchId": None,
+            "eventId": "8ceb47f6-d1b4-11eb-a9ed-ffb57363e013",
+            "eventName": "Send 'ExecutionReport' message",
+            "isBatched": False,
+            "eventType": "Send message",
+            "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d",
         },
     ]
     return data
@@ -1794,3 +1956,30 @@ def messages_from_after_pipeline_empty_body():
         },
     ]
     return messages
+
+
+@pytest.fixture(params=[True, False])
+def cache(request):
+    return request.param
+
+
+@pytest.fixture
+def log_checker(caplog) -> LogsChecker:
+    """Activates DS lib logging and returns Log checker class."""
+    caplog.set_level(logging.DEBUG, logger="th2_data_services")
+    return LogsChecker(caplog)
+
+
+@pytest.fixture
+def parentless_data() -> List[dict]:
+    data = [
+        {"type": "event", "eventId": "a", "eventName": "a", "parentEventId": None},
+        {"type": "event", "eventId": "b", "eventName": "b", "parentEventId": "a"},
+        {"type": "event", "eventId": "c", "eventName": "c", "parentEventId": "b"},
+        {"type": "event", "eventId": "x", "eventName": "x", "parentEventId": None},
+        {"type": "event", "eventId": "y", "eventName": "y", "parentEventId": "x"},
+        {"type": "event", "eventId": "z", "eventName": "z", "parentEventId": "y"},
+        {"type": "event", "eventId": "d", "eventName": "d", "parentEventId": "e"},
+        {"type": "event", "eventId": "t", "eventName": "t", "parentEventId": "d"},
+    ]
+    return data

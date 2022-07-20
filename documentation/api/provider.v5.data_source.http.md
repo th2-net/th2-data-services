@@ -15,14 +15,14 @@
 
 ---
 
-<a href="../../th2_data_services/provider/v5/data_source/http.py#L44"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/http.py#L43"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `HTTPProvider5DataSource`
 DataSource class which provide work with rpt-data-provider. 
 
 Rpt-data-provider version: 5.x.y Protocol: HTTP 
 
-<a href="../../th2_data_services/provider/v5/data_source/http.py#L51"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/http.py#L50"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -97,7 +97,7 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/data_source/http.py#L86"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/http.py#L85"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `command`
 

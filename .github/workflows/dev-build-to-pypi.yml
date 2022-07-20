@@ -3,7 +3,7 @@ name: Dev build and publish Python distributions to PyPI
 on:
   push:
     branches:
-      - dev
+      - dev_*
       - pypi_*
 
 jobs:

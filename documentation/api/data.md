@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2_data_services/data.py#L28"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L38"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Data`
 A wrapper for data/data_stream. 
@@ -20,16 +20,15 @@ The class provides methods for working with data as a stream.
 
 Such approach to data analysis called streaming transformation. 
 
-<a href="../../th2_data_services/data.py#L36"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L46"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
 __init__(
-    data: Optional[Iterator, Callable[, Generator[dict, NoneType]]],
+    data: Optional[Iterator, Callable[, Generator[dict, NoneType]], List[Iterator]],
     cache: bool = False,
-    workflow: List[Dict[str, Union[Callable, str]]] = None,
-    parents_cache: List[str] = None
+    workflow: List[Dict[str, Union[Callable, str]]] = None
 )
 ```
 
@@ -39,10 +38,9 @@ Data constructor.
 
 **Args:**
  
- - <b>`data`</b>:  Data source. 
+ - <b>`data`</b>:  Data source. Any iterable, Data object or function that creates generator. 
+ - <b>`cache`</b>:  Set True if you want to write and read from cache. 
  - <b>`workflow`</b>:  Workflow. 
- - <b>`parents_cache`</b>:  Parents chain. Works as a stack. 
- - <b>`cache`</b>:  Flag if you want to write and read from cache. 
 
 
 ---
@@ -68,7 +66,7 @@ int: How many records in the Data stream.
 
 ---
 
-<a href="../../th2_data_services/data.py#L317"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L392"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `filter`
 
@@ -92,7 +90,7 @@ Append `filter` to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L425"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L493"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_by`
 
@@ -119,21 +117,31 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L176"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L252"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-### <kbd>method</kbd> `get_last_cache`
+### <kbd>method</kbd> `get_cache_filepath`
 
 ```python
-get_last_cache() → Union[str, NoneType]
+get_cache_filepath() → Union[Path, NoneType]
 ```
 
-Returns last existing cache. 
-
-Returns: Cache filename 
+Returns filepath for a cache file. 
 
 ---
 
-<a href="../../th2_data_services/data.py#L363"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L247"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_pending_cache_filepath`
+
+```python
+get_pending_cache_filepath() → Path
+```
+
+Returns filepath for a pending cache file. 
+
+---
+
+<a href="../../th2_data_services/data.py#L440"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `limit`
 
@@ -157,7 +165,7 @@ Limits the stream to `num` entries.
 
 ---
 
-<a href="../../th2_data_services/data.py#L336"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L410"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -181,7 +189,7 @@ Append `transform` function to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L386"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L455"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sift`
 
@@ -205,23 +213,21 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L409"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L478"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `use_cache`
 
 ```python
-use_cache(status: bool) → Data
+use_cache(status: bool = True) → Data
 ```
 
-Change status cache. 
-
-If True all requested data from rpt-data-provider will be saved to cache file. Further actions with the Data object will consume data from the cache file. 
+Changes cache flag and returns self. 
 
 
 
 **Args:**
  
- - <b>`status`</b> (bool):  Status. 
+ - <b>`status`</b> (bool):  If True the whole data stream will be saved to cache file. Further actions with the Data object will consume data from the cache file. True by default. 
 
 
 
@@ -231,7 +237,7 @@ If True all requested data from rpt-data-provider will be saved to cache file. F
 
 ---
 
-<a href="../../th2_data_services/data.py#L451"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L519"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `write_to_file`
 

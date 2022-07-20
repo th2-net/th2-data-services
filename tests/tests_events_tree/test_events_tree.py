@@ -1,6 +1,7 @@
 from typing import List, NamedTuple
 
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
+from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
@@ -125,7 +126,9 @@ def test_filter_stop(general_data: List[dict]):
 
 def test_subtree(general_data: List[dict]):
     tree = EventsTreeCollectionProvider5(general_data).get_trees()[0]
-
+    assert isinstance(
+        tree.get_subtree("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e"), EventsTree
+    )
     assert len(tree.get_subtree("6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e")) == 11
 
 
@@ -244,13 +247,6 @@ def test_find_ancestor(general_data: List[dict]):
         "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a4-d1b4-11eb-9278-591e568ad66e",
         lambda event: "placeOrderFIX" in event["eventName"],
     )
-
-
-def test_get_root_by_id(general_data: List[dict]):
-    collection = EventsTreeCollectionProvider5(general_data)
-    tree = collection.get_trees()[0]
-
-    assert collection.get_root_by_id("84db48fc-d1b4-11eb-b0fb-199708acc7bc") == tree
 
 
 def test_get_root(general_data: List[dict]):

@@ -18,6 +18,8 @@
 - [`interfaces.events_tree.events_tree_collection`](./interfaces.events_tree.events_tree_collection.md#module-interfacesevents_treeevents_tree_collection)
 - [`interfaces.events_tree.parent_events_tree_collection`](./interfaces.events_tree.parent_events_tree_collection.md#module-interfacesevents_treeparent_events_tree_collection)
 - [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
+- [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
+- [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
 - [`provider`](./provider.md#module-provider)
 - [`provider.adapters`](./provider.adapters.md#module-provideradapters)
 - [`provider.adapters.adapter_sse`](./provider.adapters.adapter_sse.md#module-provideradaptersadapter_sse)
@@ -26,6 +28,7 @@
 - [`provider.interfaces`](./provider.interfaces.md#module-providerinterfaces)
 - [`provider.interfaces.command`](./provider.interfaces.command.md#module-providerinterfacescommand): Interfaces for Provider Commands.
 - [`provider.interfaces.data_source`](./provider.interfaces.data_source.md#module-providerinterfacesdata_source): Interfaces for Provider Data Source.
+- [`provider.interfaces.filter`](./provider.interfaces.filter.md#module-providerinterfacesfilter)
 - [`provider.interfaces.source_api`](./provider.interfaces.source_api.md#module-providerinterfacessource_api)
 - [`provider.interfaces.struct`](./provider.interfaces.struct.md#module-providerinterfacesstruct)
 - [`provider.interfaces.stub_builder`](./provider.interfaces.stub_builder.md#module-providerinterfacesstub_builder)
@@ -44,14 +47,22 @@
 - [`provider.v5.events_tree`](./provider.v5.events_tree.md#module-providerv5events_tree)
 - [`provider.v5.events_tree.events_tree_collection`](./provider.v5.events_tree.events_tree_collection.md#module-providerv5events_treeevents_tree_collection)
 - [`provider.v5.events_tree.parent_events_tree_collection`](./provider.v5.events_tree.parent_events_tree_collection.md#module-providerv5events_treeparent_events_tree_collection)
+- [`provider.v5.filters`](./provider.v5.filters.md#module-providerv5filters)
+- [`provider.v5.filters.event_filters`](./provider.v5.filters.event_filters.md#module-providerv5filtersevent_filters)
+- [`provider.v5.filters.filter`](./provider.v5.filters.filter.md#module-providerv5filtersfilter)
+- [`provider.v5.filters.message_filters`](./provider.v5.filters.message_filters.md#module-providerv5filtersmessage_filters)
 - [`provider.v5.interfaces`](./provider.v5.interfaces.md#module-providerv5interfaces)
 - [`provider.v5.interfaces.command`](./provider.v5.interfaces.command.md#module-providerv5interfacescommand)
 - [`provider.v5.provider_api`](./provider.v5.provider_api.md#module-providerv5provider_api)
 - [`provider.v5.provider_api.grpc`](./provider.v5.provider_api.grpc.md#module-providerv5provider_apigrpc)
 - [`provider.v5.provider_api.http`](./provider.v5.provider_api.http.md#module-providerv5provider_apihttp)
 - [`provider.v5.stub_builder`](./provider.v5.stub_builder.md#module-providerv5stub_builder)
+- [`provider.v5.utils`](./provider.v5.utils.md#module-providerv5utils)
+- [`provider.v5.utils.converters`](./provider.v5.utils.converters.md#module-providerv5utilsconverters)
 - [`sse_client`](./sse_client.md#module-sse_client)
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
+- [`utils`](./utils.md#module-utils)
+- [`utils.converters`](./utils.converters.md#module-utilsconverters)
 
 ## Classes
 
@@ -68,6 +79,7 @@
 - [`events_tree_collection.EventsTreeCollection`](./interfaces.events_tree.events_tree_collection.md#class-eventstreecollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
 - [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
+- [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
 - [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
 - [`exceptions.CommandError`](./provider.exceptions.md#class-commanderror): Exception raised for errors in the command.
@@ -79,6 +91,7 @@
 - [`data_source.IGRPCProviderDataSource`](./provider.interfaces.data_source.md#class-igrpcproviderdatasource): Interface of DataSource that provides work with rpt-data-provider via GRPC.
 - [`data_source.IHTTPProviderDataSource`](./provider.interfaces.data_source.md#class-ihttpproviderdatasource): Interface of DataSource that provides work with rpt-data-provider via HTTP.
 - [`data_source.IProviderDataSource`](./provider.interfaces.data_source.md#class-iproviderdatasource)
+- [`filter.IProviderFilter`](./provider.interfaces.filter.md#class-iproviderfilter)
 - [`source_api.IGRPCProviderSourceAPI`](./provider.interfaces.source_api.md#class-igrpcprovidersourceapi): Interface for Source API of rpt-data-provider which works via GRPC.
 - [`source_api.IHTTPProviderSourceAPI`](./provider.interfaces.source_api.md#class-ihttpprovidersourceapi): Interface for Source API of rpt-data-provider which works via HTTP.
 - [`source_api.IProviderSourceAPI`](./provider.interfaces.source_api.md#class-iprovidersourceapi): Interface for Source API of rpt-data-provider.
@@ -115,6 +128,19 @@
 - [`http.HTTPProvider5DataSource`](./provider.v5.data_source.http.md#class-httpprovider5datasource): DataSource class which provide work with rpt-data-provider.
 - [`events_tree_collection.EventsTreeCollectionProvider5`](./provider.v5.events_tree.events_tree_collection.md#class-eventstreecollectionprovider5): EventsTreesCollections for data-provider v5.
 - [`parent_events_tree_collection.ParentEventsTreeCollectionProvider5`](./provider.v5.events_tree.parent_events_tree_collection.md#class-parenteventstreecollectionprovider5): ParentEventsTreeCollection for data-provider v5.
+- [`event_filters.AttachedMessageIdFilter`](./provider.v5.filters.event_filters.md#class-attachedmessageidfilter): Filters the events that are linked to the specified message id.
+- [`event_filters.BodyFilter`](./provider.v5.filters.event_filters.md#class-bodyfilter): Will match the events which body contains one of the given substrings.
+- [`event_filters.FailedStatusFilter`](./provider.v5.filters.event_filters.md#class-failedstatusfilter): Will match the events which status equals failed.
+- [`event_filters.NameFilter`](./provider.v5.filters.event_filters.md#class-namefilter): Will match the events which name contains one of the given substrings.
+- [`event_filters.PassedStatusFilter`](./provider.v5.filters.event_filters.md#class-passedstatusfilter): Will match the events which status equals passed.
+- [`event_filters.TypeFilter`](./provider.v5.filters.event_filters.md#class-typefilter): Will match the events which type contains one of the given substrings.
+- [`filter.Provider5EventFilter`](./provider.v5.filters.filter.md#class-provider5eventfilter): Base class for Event Filters of Provider v5.
+- [`filter.Provider5Filter`](./provider.v5.filters.filter.md#class-provider5filter): General interface for Filters of Provider v5.
+- [`filter.Provider5MessageFilter`](./provider.v5.filters.filter.md#class-provider5messagefilter): Base class for Message Filters of Provider v5.
+- [`message_filters.AttachedEventIdsFilter`](./provider.v5.filters.message_filters.md#class-attachedeventidsfilter): Filters the messages that are linked to the specified event id.
+- [`message_filters.BodyBinaryFilter`](./provider.v5.filters.message_filters.md#class-bodybinaryfilter): Will match the messages by their binary body.
+- [`message_filters.BodyFilter`](./provider.v5.filters.message_filters.md#class-bodyfilter): Will match the messages by their parsed body.
+- [`message_filters.TypeFilter`](./provider.v5.filters.message_filters.md#class-typefilter): Will match the messages by their full type name.
 - [`command.IGRPCProvider5Command`](./provider.v5.interfaces.command.md#class-igrpcprovider5command): Interface of command for rpt-data-provider.
 - [`command.IHTTPProvider5Command`](./provider.v5.interfaces.command.md#class-ihttpprovider5command): Interface of command for rpt-data-provider.
 - [`grpc.BasicRequest`](./provider.v5.provider_api.grpc.md#class-basicrequest): BasicRequest(start_timestamp, end_timestamp, result_count_limit, keep_open, search_direction, filters)
@@ -122,8 +148,10 @@
 - [`http.HTTPProvider5API`](./provider.v5.provider_api.http.md#class-httpprovider5api)
 - [`stub_builder.Provider5EventStubBuilder`](./provider.v5.stub_builder.md#class-provider5eventstubbuilder)
 - [`stub_builder.Provider5MessageStubBuilder`](./provider.v5.stub_builder.md#class-provider5messagestubbuilder)
+- [`converters.Th2TimestampConverter`](./provider.v5.utils.converters.md#class-th2timestampconverter): Converts Th2 timestamps.
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
+- [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
 
 ## Functions
 

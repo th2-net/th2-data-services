@@ -1,47 +1,70 @@
 from collections import Generator
-from datetime import datetime
 from typing import Tuple, List, Optional
+from datetime import datetime
 
 from th2_data_services import Data
 from th2_data_services.events_tree import EventsTree
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.commands import http
-from th2_data_services.filter import Filter
+from th2_data_services.provider.v5.commands import http as commands
 from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5, ParentEventsTreeCollectionProvider5
+from th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
+from th2_data_services.provider.v5.filters.message_filters import BodyFilter
+
+# [0] Lib configuration
+# [0.1] Interactive or Script mode
+# If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
+# global parameter to True. It'll keep cache files if something went wrong.
+import th2_data_services
+
+th2_data_services.INTERACTIVE_MODE = True
+
+# [0.2] Logging
+# Import helper function to setup logging.
+from th2_data_services import add_stderr_logger, add_file_logger
+
+add_stderr_logger()  # Just execute it to activate DS lib logging. Debug level by default.
+# or if you want to put logs to the file
+add_file_logger()
 
 # [1] Create DataSource object to connect to rpt-data-provider.
-DEMO_HOST = "10.64.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
+DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
 data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
 START_TIME = datetime(
     year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
-)  # object given in utc format
-END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
+)  # Datetime in utc format.
+END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=50)
 
 # [2] Get events or messages from START_TIME to END_TIME.
 # [2.1] Get events.
 events: Data = data_source.command(
-    http.GetEvents(
+    commands.GetEvents(
         start_timestamp=START_TIME,
         end_timestamp=END_TIME,
         attached_messages=True,
         # Use Filter class to apply rpt-data-provider filters.
-        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
+        # Do not use multiple classes of the same type.
+        filters=[
+            TypeFilter("Send message"),
+            NameFilter(["ExecutionReport", "NewOrderSingle"]),  # You can use multiple values.
+            FailedStatusFilter(),
+        ],
     )
 )
 
 # [2.2] Get messages.
 messages: Data = data_source.command(
-    http.GetMessages(
+    commands.GetMessages(
         start_timestamp=START_TIME,
+        end_timestamp=END_TIME,
         attached_events=True,
         stream=["demo-conn2"],
-        filters=Filter("body", "195"),
+        filters=BodyFilter("195"),  # Filter message if there is a substring '195' in the body.
     )
 )
 
-# [3] Work with your Data object.
+# [3] Work with a Data object.
 # [3.1] Filter.
 filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter events with empty body.
 
@@ -66,6 +89,8 @@ only_first_10_events: Generator = events.sift(limit=10)
 
 # [3.5] Changing cache status.
 events.use_cache(True)
+# or just
+events.use_cache()
 
 # [3.6] Walk through data.
 for event in events:
@@ -97,11 +122,11 @@ desired_messages = [
     "demo-conn1:first:1619506157132265833",
 ]
 
-data_source.command(http.GetEventById(desired_event))  # Returns 1 event (dict).
-data_source.command(http.GetEventsById(desired_events))  # Returns 2 events list(dict).
+data_source.command(commands.GetEventById(desired_event))  # Returns 1 event (dict).
+data_source.command(commands.GetEventsById(desired_events))  # Returns 2 events list(dict).
 
-data_source.command(http.GetMessageById(desired_message))  # Returns 1 message (dict).
-data_source.command(http.GetMessagesById(desired_messages))  # Returns 2 messages list(dict).
+data_source.command(commands.GetMessageById(desired_message))  # Returns 1 message (dict).
+data_source.command(commands.GetMessagesById(desired_messages))  # Returns 2 messages list(dict).
 
 # [3.11] The cache inheritance.
 # Creates a new Data object that will use cache from the events Data object.
@@ -117,6 +142,17 @@ events_types_with_batch = events_with_batch.map(lambda record: {"eventType": rec
 
 events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
 events_without_types_with_batch.use_cache(True)
+
+# [3.12] Data objects joining.
+# You have the following 3 Data objects.
+d1 = Data([1, 2, 3])
+d2 = Data(["a", {"id": 123}, "c"])
+d3 = Data([7, 8, 9])
+# You can join Data objects in following ways.
+data_via_init = Data([d1, d2, d3])
+data_via_add = d1 + d2 + d3
+data_with_non_data_obj_via_init = Data([d1, ["a", {"id": 123}, "c"], d3])
+data_with_non_data_obj_via_add = d1 + ["a", {"id": 123}, "c"] + d3
 
 # [4] Working with EventsTree and EventsTreeCollection.
 # [4.1] Building the EventsTreeCollection.

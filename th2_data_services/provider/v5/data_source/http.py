@@ -37,8 +37,7 @@ from th2_data_services.provider.v5.stub_builder import (
 )
 from th2_data_services.provider.v5.provider_api.http import HTTPProvider5API
 
-logger = logging.getLogger("th2_data_services")
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class HTTPProvider5DataSource(IHTTPProviderDataSource):
