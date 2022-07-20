@@ -243,6 +243,9 @@ use `CodecPipelinesAdapter` manually.
 
 # v1.1.0
 
+## User impact and migration instructions
+This release is not required any additional steps to use.
+
 ## Features
 1. [TH2-3497] EventsTreeCollection got `get_leaves_iter` method.
 2. [TH2-3497] EventsTreeCollection got `len_trees` and `len_detached_events` properties.
