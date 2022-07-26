@@ -148,7 +148,7 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
         end_timestamp: int = None,
         search_direction: str = "NEXT",
         result_count_limit: int = None,
-        stream: MessageSearchRequest = None,
+        stream: MessageStream = None,
         keep_open: bool = False,
         stream_pointer: MessageStreamPointer = None,
         filters: Optional[List[Filter]] = None,
@@ -166,6 +166,7 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
             result_count_limit: Sets the maximum amount of messages to return.
             keep_open: Option if the search has reached the current moment,
                 it is necessary to wait further for the appearance of new data.
+            stream_pointer: TODO
             filters: Which filters to apply in a search.
             attached_events: If true, it will additionally load attachedEventsIds.
 
