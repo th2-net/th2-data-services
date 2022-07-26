@@ -340,21 +340,21 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
 
     def get_event_filter_info(self, filter_name: str) -> FilterInfoResponse:
         """GRPC-API `getEventFilterInfo` call returns event filter info."""
-        filter_name = FilterName(filter_name=filter_name)
+        filter_name = FilterName(name=filter_name)
         return self.__stub.getEventFilterInfo(filter_name)
 
     def get_message_filter_info(self, filter_name: str) -> FilterInfoResponse:
         """GRPC-API `getMessageFilterInfo` call returns message filter info."""
-        filter_name = FilterName(filter_name=filter_name)
+        filter_name = FilterName(name=filter_name)
         return self.__stub.getMessageFilterInfo(filter_name)
 
     def match_event(self, event_id: str, filters: List[Filter]) -> MatchResponse:
         """GRPC-API `matchEvent` call checks that the event with the specified id is matched by the filter."""
-        match_request = EventMatchRequest(event_id=EventID(id=event_id), filters=filters)
+        match_request = EventMatchRequest(event_id=EventID(id=event_id), filter=filters)
         return self.__stub.matchEvent(match_request)
 
     def match_message(self, message_id: str, filters: List[Filter]) -> MatchResponse:
         """GRPC-API `matchMessage` call checks that the message with the specified id is matched by the filter."""
         message_id = self.__build_message_id_object(message_id)
-        match_request = MessageMatchRequest(message_id=message_id, filters=filters)
+        match_request = MessageMatchRequest(message_id=message_id, filter=filters)
         return self.__stub.matchMessage(match_request)
