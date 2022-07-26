@@ -7,3 +7,4 @@ th2-grpc-data-provider==1.1.0
 treelib==1.6.1
 grpcio==1.46.3
 grpcio-tools==1.38.1
+types-protobuf==3.19.22
