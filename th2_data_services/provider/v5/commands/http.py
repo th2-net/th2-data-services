@@ -37,6 +37,8 @@ MessageFilters = Union[Filter, Provider5MessageFilter, Sequence[Union[Filter, Pr
 
 
 def _convert_filters_to_string(filters):
+    if not filters:
+        return None
     filters_res = filters
     if not isinstance(filters_res, (tuple, list)):
         filters_res = [filters_res]
