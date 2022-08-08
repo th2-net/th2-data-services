@@ -1,13 +1,14 @@
 from collections import Generator
-from datetime import datetime
 from typing import Tuple, List, Optional
+from datetime import datetime
 
 from th2_data_services import Data
 from th2_data_services.events_tree import EventsTree
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.commands import http
-from th2_data_services.filter import Filter
+from th2_data_services.provider.v5.commands import http as commands
 from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5, ParentEventsTreeCollectionProvider5
+from th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
+from th2_data_services.provider.v5.filters.message_filters import BodyFilter
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
@@ -32,32 +33,38 @@ data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
 START_TIME = datetime(
     year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
-)  # object given in utc format
-END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=49, microsecond=28579)
+)  # Datetime in utc format.
+END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=50)
 
 # [2] Get events or messages from START_TIME to END_TIME.
 # [2.1] Get events.
 events: Data = data_source.command(
-    http.GetEvents(
+    commands.GetEvents(
         start_timestamp=START_TIME,
         end_timestamp=END_TIME,
         attached_messages=True,
         # Use Filter class to apply rpt-data-provider filters.
-        filters=[Filter("name", "ExecutionReport"), Filter("type", "Send message")],
+        # Do not use multiple classes of the same type.
+        filters=[
+            TypeFilter("Send message"),
+            NameFilter(["ExecutionReport", "NewOrderSingle"]),  # You can use multiple values.
+            FailedStatusFilter(),
+        ],
     )
 )
 
 # [2.2] Get messages.
 messages: Data = data_source.command(
-    http.GetMessages(
+    commands.GetMessages(
         start_timestamp=START_TIME,
+        end_timestamp=END_TIME,
         attached_events=True,
         stream=["demo-conn2"],
-        filters=Filter("body", "195"),
+        filters=BodyFilter("195"),  # Filter message if there is a substring '195' in the body.
     )
 )
 
-# [3] Work with your Data object.
+# [3] Work with a Data object.
 # [3.1] Filter.
 filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter events with empty body.
 
@@ -115,11 +122,11 @@ desired_messages = [
     "demo-conn1:first:1619506157132265833",
 ]
 
-data_source.command(http.GetEventById(desired_event))  # Returns 1 event (dict).
-data_source.command(http.GetEventsById(desired_events))  # Returns 2 events list(dict).
+data_source.command(commands.GetEventById(desired_event))  # Returns 1 event (dict).
+data_source.command(commands.GetEventsById(desired_events))  # Returns 2 events list(dict).
 
-data_source.command(http.GetMessageById(desired_message))  # Returns 1 message (dict).
-data_source.command(http.GetMessagesById(desired_messages))  # Returns 2 messages list(dict).
+data_source.command(commands.GetMessageById(desired_message))  # Returns 1 message (dict).
+data_source.command(commands.GetMessagesById(desired_messages))  # Returns 2 messages list(dict).
 
 # [3.11] The cache inheritance.
 # Creates a new Data object that will use cache from the events Data object.

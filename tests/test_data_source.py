@@ -40,7 +40,7 @@ def test_generate_url_search_sse_events_with_filters():
     assert (
         url == f"http://host:port/search/sse/events?startTimestamp={start_time}&endTimestamp={end_time}"
         f"&searchDirection=next&keepOpen=False&metadataOnly=True&attachedMessages=False&filters={filter_name}"
-        f"&{filter_name}-values={filter_value}&{filter_name}-negative=False"
+        f"&{filter_name}-values={filter_value}&{filter_name}-negative=False&{filter_name}-conjunct=False"
     )
 
 
@@ -80,7 +80,7 @@ def test_generate_url_search_sse_messages_with_filters():
     assert (
         url == f"http://host:port/search/sse/messages?startTimestamp={start_time}&endTimestamp={end_time}"
         f"&stream={stream[0]}&stream={stream[1]}&searchDirection=next&keepOpen={True}&attachedEvents=False"
-        f"&filters={filter_name}&{filter_name}-values={filter_value}&{filter_name}-negative=False"
+        f"&filters={filter_name}&{filter_name}-values={filter_value}&{filter_name}-negative=False&{filter_name}-conjunct=False"
     )
 
 
@@ -97,12 +97,15 @@ def test_encoding_url():
 
     filter_name = filter_name.split()
     filter_value = filter_value.split()
+
+    encoded_filter_name = filter_name[0] + "%20" + filter_name[1]
+
     assert (
         url == f"http://host:port/search/sse/events?startTimestamp={start_time}&endTimestamp={end_time}"
         f"&searchDirection=next&keepOpen=False&metadataOnly=True&attachedMessages=False&filters="
-        f"{filter_name[0] + '%20' + filter_name[1]}"
-        f"&{filter_name[0] + '%20' + filter_name[1]}-values={filter_value[0] + '%20' + filter_value[1]}&"
-        f"{filter_name[0] + '%20' + filter_name[1]}-negative=False"
+        f"{encoded_filter_name}"
+        f"&{encoded_filter_name}-values={filter_value[0] + '%20' + filter_value[1]}&"
+        f"{encoded_filter_name}-negative=False&{encoded_filter_name}-conjunct=False"
     )
 
 
@@ -147,7 +150,7 @@ def test_generate_non_standart_url_search_sse_messages_with_filters():
     assert (
         url == f"http://host:port/search/sse/messages?startTimestamp={start_time}&endTimestamp={end_time}"
         f"&stream={stream[0]}&stream={stream[1]}&searchDirection=next&keepOpen={True}&attachedEvents=False"
-        f"&filters={filter_name}&{filter_name}-values={filter_value}&{filter_name}-negative=False"
+        f"&filters={filter_name}&{filter_name}-values={filter_value}&{filter_name}-negative=False&{filter_name}-conjunct=False"
     )
 
 
