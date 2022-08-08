@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 class GRPCProvider6DataSource(IGRPCProviderDataSource):
     """DataSource class which provide work with rpt-data-provider.
 
-    Rpt-data-provider version: 5.x.y
+    Rpt-data-provider version: 6.x.y
     Protocol: GRPC
     """
 

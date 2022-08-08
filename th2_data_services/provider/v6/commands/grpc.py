@@ -17,10 +17,7 @@ from functools import partial
 from typing import List, Iterable, Generator
 
 from grpc._channel import _InactiveRpcError
-from th2_grpc_data_provider.data_provider_pb2 import (
-    EventResponse,
-    MessageGroupResponse
-)
+from th2_grpc_data_provider.data_provider_pb2 import EventResponse, MessageGroupResponse, MessageStreamPointer
 
 from th2_data_services import Filter, Data
 from th2_data_services.provider.command import ProviderAdaptableCommand
@@ -421,12 +418,12 @@ class GetMessagesGRPCObject(IGRPCProvider6Command, ProviderAdaptableCommand):
         start_timestamp: datetime,
         stream: List[str],
         end_timestamp: datetime = None,
-        resume_from_id: str = None,
         search_direction: str = "NEXT",
         result_count_limit: int = None,
         keep_open: bool = False,
         message_id: List[str] = None,
         attached_events: bool = False,
+        stream_pointers: List[MessageStreamPointer] = None,
         filters: List[Filter] = None,
     ):
         """GetMessagesGRPCObject constructor.
@@ -435,26 +432,28 @@ class GetMessagesGRPCObject(IGRPCProvider6Command, ProviderAdaptableCommand):
             start_timestamp: Start timestamp of search.
             end_timestamp: End timestamp of search.
             stream: Alias of messages.
-            resume_from_id: Message id from which search starts.
             search_direction: Search direction.
             result_count_limit: Result count limit.
             keep_open: If the search has reached the current moment.
                 It is need to wait further for the appearance of new data.
             message_id: List of message ids to restore the search
             attached_events: If true, it will additionally load attachedEventsIds.
+            stream_pointers: List of stream pointers to restore the search from.
+                start_timestamp will be ignored if this parameter is specified. This parameter is only received
+                from the provider.
             filters: Filters using in search for messages.
         """
         super().__init__()
         self._start_timestamp = start_timestamp
         self._end_timestamp = end_timestamp
         self._stream = stream
-        self._resume_from_id = resume_from_id
         self._search_direction = search_direction
         self._result_count_limit = result_count_limit
         self._keep_open = keep_open
         self._filters = filters
         self._message_id = message_id
         self._attached_events = attached_events
+        self._stream_pointers = stream_pointers
 
     def handle(self, data_source: GRPCProvider6DataSource) -> List[MessageGroupResponse]:
         api = data_source.source_api
@@ -466,12 +465,11 @@ class GetMessagesGRPCObject(IGRPCProvider6Command, ProviderAdaptableCommand):
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
             stream=self._stream,
-            resume_from_id=self._resume_from_id,
             search_direction=self._search_direction,
             result_count_limit=self._result_count_limit,
             keep_open=self._keep_open,
             filters=self._filters,
-            message_id=self._message_id,
+            stream_pointer=self._stream_pointers,
             attached_events=self._attached_events,
         )
         for response in stream_response:
@@ -501,6 +499,7 @@ class GetMessages(IGRPCProvider6Command, ProviderAdaptableCommand):
         filters: List[Filter] = None,
         message_id: List[str] = None,
         attached_events: bool = False,
+        stream_pointers: List[MessageStreamPointer] = None,
         cache: bool = False,
     ):
         """GetMessages constructor.
@@ -517,6 +516,9 @@ class GetMessages(IGRPCProvider6Command, ProviderAdaptableCommand):
             filters: Filters using in search for messages.
             message_id: List of message ids to restore the search
             attached_events: If true, it will additionally load attachedEventsIds.
+            stream_pointers: List of stream pointers to restore the search from.
+                start_timestamp will be ignored if this parameter is specified. This parameter is only received
+                from the provider.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
         """
         super().__init__()
@@ -530,6 +532,7 @@ class GetMessages(IGRPCProvider6Command, ProviderAdaptableCommand):
         self._filters = filters
         self._message_id = message_id
         self._attached_events = attached_events
+        self._stream_pointers = stream_pointers
         self._cache = cache
 
         self._decoder = GRPCObjectToDictAdapter()
@@ -544,12 +547,12 @@ class GetMessages(IGRPCProvider6Command, ProviderAdaptableCommand):
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
             stream=self._stream,
-            resume_from_id=self._resume_from_id,
             search_direction=self._search_direction,
             result_count_limit=self._result_count_limit,
             keep_open=self._keep_open,
             message_id=self._message_id,
             attached_events=self._attached_events,
+            stream_pointers=self._stream_pointers,
             filters=self._filters,
         ).handle(data_source)
         for message in stream:

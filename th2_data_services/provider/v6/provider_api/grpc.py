@@ -14,7 +14,7 @@
 
 import logging
 from collections import namedtuple
-from typing import Iterable, List, Optional
+from typing import Iterable, List, Optional, Union
 
 from google.protobuf.empty_pb2 import Empty
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -36,7 +36,9 @@ from th2_grpc_data_provider.data_provider_pb2 import (
     MessageMatchRequest,
     EventSearchRequest,
     MessageSearchRequest,
-    TimeRelation, MessageStream, MessageStreamPointer,
+    TimeRelation,
+    MessageStream,
+    MessageStreamPointer,
 )
 from grpc import Channel, insecure_channel
 from th2_data_services.provider.interfaces.source_api import IGRPCProviderSourceAPI
@@ -148,9 +150,9 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
         end_timestamp: int = None,
         search_direction: str = "NEXT",
         result_count_limit: int = None,
-        stream: MessageStream = None,
+        stream: List[str] = None,
         keep_open: bool = False,
-        stream_pointer: MessageStreamPointer = None,
+        stream_pointer: List[MessageStreamPointer] = None,
         filters: Optional[List[Filter]] = None,
         attached_events: bool = False,
     ) -> Iterable[MessageSearchResponse]:
@@ -166,12 +168,14 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
             result_count_limit: Sets the maximum amount of messages to return.
             keep_open: Option if the search has reached the current moment,
                 it is necessary to wait further for the appearance of new data.
-            stream_pointer: TODO
+            stream_pointer: List of stream pointers to restore the search from.
+                start_timestamp will be ignored if this parameter is specified. This parameter is only received
+                from the provider.
             filters: Which filters to apply in a search.
             attached_events: If true, it will additionally load attachedEventsIds.
 
         Returns:
-            Iterable object which return messages as parts of streaming response.
+            Iterable object which return messages as parts of streaming response or message stream pointers.
         """
         if stream is None:
             raise TypeError("Argument 'stream' is required.")
@@ -191,6 +195,7 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
             filters=filters,
         )
 
+        stream = self.__transform_streams(stream)
         attached_events = BoolValue(value=attached_events)
         message_search_request = MessageSearchRequest(
             start_timestamp=basic_request.start_timestamp,
@@ -213,7 +218,7 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
         search_direction: Optional[str],
         result_count_limit: Optional[int],
     ):
-        if start_timestamp  is None:
+        if start_timestamp is None:
             raise ValueError("One of the 'startTimestamp' or 'resumeFromId(s)' must not be None.")
 
         if end_timestamp is None and result_count_limit is None:
@@ -233,6 +238,51 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
                 raise ValueError("Argument 'search_direction' must be 'NEXT' or 'PREVIOUS'.")
         else:
             raise ValueError("Argument 'search_direction' must be 'NEXT' or 'PREVIOUS'.")
+
+    def __transform_streams(self, streams: List[str]) -> List[MessageStream]:
+        """Transforms streams to MessagesStream of 'protobuf' entity.
+
+        Args:
+            streams: Streams.
+
+        Returns:
+            List of MessageStream.
+        """
+        new_streams = []
+        for raw_stream in streams:
+            msg_stream = self.__build_message_stream(raw_stream)
+            if isinstance(msg_stream, list):
+                new_streams.extend(new_streams)
+            else:
+                new_streams.append(msg_stream)
+        return new_streams
+
+    @staticmethod
+    def __build_message_stream(raw_stream: str) -> Union[MessageStream, List[MessageStream]]:
+        """Builds MessageStream of 'protobuf' entity.
+
+        Note that if raw_stream doesn't have direction, the function returns both directions.
+
+        Args:
+            raw_stream: Stream string as 'alias:direction'
+
+        Returns:
+            MessageStream.
+
+        Raises:
+            ValueError.
+        """
+        splitted_stream = raw_stream.split(":")
+        if len(splitted_stream) > 1:
+            name, search_direction = splitted_stream[0], splitted_stream[1]
+            if search_direction not in ("NEXT", "PREVIOUS"):
+                raise ValueError("Argument 'stream' must has a direction as 'NEXT' or 'PREVIOUS'.")
+            else:
+                return MessageStream(name=name, direction=search_direction)
+        return [
+            MessageStream(name=splitted_stream[0], direction="NEXT"),
+            MessageStream(name=splitted_stream[0], direction="PREVIOUS"),
+        ]
 
     def __build_basic_request_object(
         self,

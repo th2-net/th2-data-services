@@ -39,7 +39,7 @@ class AttachedMessageIdFilter(Provider5EventFilter):
     FILTER_NAME = "attachedMessageId"
 
 
-class _StatusFiler(Provider5EventFilter):
+class _StatusFilter(Provider5EventFilter):
     FILTER_NAME = "status"
 
     def url(self) -> str:
@@ -54,14 +54,14 @@ class _StatusFiler(Provider5EventFilter):
         return f"&filters={self.name}" + "".join([f"&{self.name}-values={val}" for val in self.values])
 
 
-class PassedStatusFilter(_StatusFiler):
+class PassedStatusFilter(_StatusFilter):
     """Will match the events which status equals passed."""
 
     def __init__(self):  # noqa: D107
         super().__init__("passed")
 
 
-class FailedStatusFilter(_StatusFiler):
+class FailedStatusFilter(_StatusFilter):
     """Will match the events which status equals failed."""
 
     def __init__(self):  # noqa: D107
