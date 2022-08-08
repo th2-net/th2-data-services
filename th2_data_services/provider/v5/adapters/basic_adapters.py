@@ -17,24 +17,24 @@ from typing import Union
 from th2_data_services.interfaces.adapter import IAdapter
 
 from google.protobuf.json_format import MessageToDict
-from th2_grpc_data_provider.data_provider_pb2 import EventResponse, MessageGroupResponse
+from th2_grpc_data_provider.data_provider_template_pb2 import EventData, MessageData
 
 
 class GRPCObjectToDictAdapter(IAdapter):
     """GRPC Adapter decodes a GRPC object into a Dict object."""
 
-    def handle(self, record: Union[MessageGroupResponse, EventResponse]) -> dict:
-        """Decodes MessageGroupResponse or EventResponse as GRPC object into a Dict object.
+    def handle(self, record: Union[MessageData, EventData]) -> dict:
+        """Decodes MessageData or EventData as GRPC object into a Dict object.
 
         Args:
-            record: MessageGroupResponse/EventResponse.
+            record: MessageData/EventData.
 
         Returns:
             Dict object.
         """
         new_record = MessageToDict(record, including_default_value_fields=True)
 
-        if isinstance(record, EventResponse):
+        if isinstance(record, EventData):
             new_record["startTimestamp"] = {
                 "epochSecond": record.start_timestamp.seconds,
                 "nano": record.start_timestamp.nanos,
@@ -43,7 +43,7 @@ class GRPCObjectToDictAdapter(IAdapter):
                 "epochSecond": record.end_timestamp.seconds,
                 "nano": record.end_timestamp.nanos,
             }
-        elif isinstance(record, MessageGroupResponse):
+        elif isinstance(record, MessageData):
             new_record["timestamp"] = {"epochSecond": record.timestamp.seconds, "nano": record.timestamp.nanos}
 
         try:

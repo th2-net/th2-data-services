@@ -17,9 +17,9 @@ from functools import partial
 from typing import List, Iterable, Generator
 
 from grpc._channel import _InactiveRpcError
-from th2_grpc_data_provider.data_provider_pb2 import (
-    EventResponse,
-    MessageGroupResponse
+from th2_grpc_data_provider.data_provider_template_pb2 import (
+    EventData,
+    MessageData,
 )
 
 from th2_data_services import Filter, Data
@@ -44,7 +44,7 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
     It retrieves the event by id as GRPC object.
 
     Returns:
-        EventResponse: Th2 event.
+        EventData: Th2 event.
     """
 
     def __init__(self, id: str):
@@ -57,7 +57,7 @@ class GetEventByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         super().__init__()
         self._id = id
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> EventResponse:  # noqa: D102
+    def handle(self, data_source: GRPCProvider5DataSource) -> EventData:  # noqa: D102
         api: GRPCProvider5API = data_source.source_api
         event = api.get_event(self._id)
 
@@ -147,7 +147,7 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
     It searches events stream as GRPC object by options.
 
     Returns:
-        Iterable[EventResponse]: Stream of Th2 events.
+        Iterable[EventData]: Stream of Th2 events.
     """
 
     def __init__(
@@ -193,7 +193,7 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._attached_messages = attached_messages
         self._filters = filters
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[EventResponse]:  # noqa: D102
+    def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[EventData]:  # noqa: D102
         api: GRPCProvider5API = data_source.source_api
 
         start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)
@@ -306,7 +306,7 @@ class GetMessageByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
     It retrieves the message by id as GRPC Object.
 
     Returns:
-        MessageGroupResponse: Th2 message.
+        MessageData: Th2 message.
     """
 
     def __init__(self, id: str):
@@ -319,7 +319,7 @@ class GetMessageByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         super().__init__()
         self._id = id
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> MessageGroupResponse:
+    def handle(self, data_source: GRPCProvider5DataSource) -> MessageData:
         api: GRPCProvider5API = data_source.source_api
         response = api.get_message(self._id)
         response = self._handle_adapters(response)
@@ -413,7 +413,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
     It searches messages stream as GRPC object by options.
 
     Returns:
-        Iterable[MessageGroupResponse]: Stream of Th2 messages.
+        Iterable[MessageData]: Stream of Th2 messages.
     """
 
     def __init__(
@@ -456,7 +456,7 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
         self._message_id = message_id
         self._attached_events = attached_events
 
-    def handle(self, data_source: GRPCProvider5DataSource) -> List[MessageGroupResponse]:
+    def handle(self, data_source: GRPCProvider5DataSource) -> List[MessageData]:
         api = data_source.source_api
 
         start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)

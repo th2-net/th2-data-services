@@ -20,23 +20,21 @@ from google.protobuf.empty_pb2 import Empty
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.wrappers_pb2 import BoolValue, Int32Value, Int64Value
 from th2_grpc_common.common_pb2 import MessageID, EventID, ConnectionID, Direction
-from th2_grpc_data_provider.data_provider_pb2_grpc import DataProviderStub
-from th2_grpc_data_provider.data_provider_pb2 import (
-    EventResponse,
-    MessageGroupResponse,
-    MessageStreamsResponse,
-    MessageSearchResponse,
-    Filter,
-    EventSearchResponse,
-    FilterNamesResponse,
-    FilterInfoResponse,
-    FilterName,
-    MatchResponse,
-    EventMatchRequest,
-    MessageMatchRequest,
+from th2_grpc_data_provider.data_provider_template_pb2_grpc import DataProviderStub
+from th2_grpc_data_provider.data_provider_template_pb2 import (
     EventSearchRequest,
     MessageSearchRequest,
+    FilterName,
+    MatchRequest,
+    FilterInfo,
+    ListFilterName,
+    StreamResponse,
+    EventData,
+    StringList,
+    IsMatched,
+    MessageData,
     TimeRelation,
+    Filter,
 )
 from grpc import Channel, insecure_channel
 from th2_data_services.provider.interfaces.source_api import IGRPCProviderSourceAPI
@@ -67,7 +65,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         channel: Channel = insecure_channel(url)
         self.__stub: DataProviderStub = DataProviderStub(channel)
 
-    def get_message_streams(self) -> MessageStreamsResponse:
+    def get_message_streams(self) -> StringList:
         """GRPC-API `getMessageStreams` call returns a list of message stream names."""
         return self.__stub.getMessageStreams(Empty())
 
@@ -84,7 +82,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         metadata_only: bool = True,
         attached_messages: bool = False,
         filters: Optional[List[Filter]] = None,
-    ) -> Iterable[EventSearchResponse]:
+    ) -> Iterable[StreamResponse]:
         """GRPC-API `searchEvents` call creates an event or an event metadata stream that matches the filter.
 
         Args:
@@ -139,7 +137,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             limit_for_parent=limit_for_parent,
             metadata_only=metadata_only,
             attached_messages=attached_messages,
-            filter=basic_request.filters,
+            filters=basic_request.filters,
         )
         return self.__stub.searchEvents(event_search_request)
 
@@ -155,7 +153,7 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         filters: Optional[List[Filter]] = None,
         message_id: Optional[List[str]] = None,
         attached_events: bool = False,
-    ) -> Iterable[MessageSearchResponse]:
+    ) -> Iterable[StreamResponse]:
         """GRPC-API `searchMessages` call creates a message stream that matches the filter.
 
         Args:
@@ -195,20 +193,21 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
             search_direction=search_direction,
             filters=filters,
         )
-        # resume_from_id = self.__build_message_id_object(resume_from_id) if resume_from_id else None
-        # message_id = [self.__build_message_id_object(id_) for id_ in message_id]
+        resume_from_id = self.__build_message_id_object(resume_from_id) if resume_from_id else None
+        message_id = [self.__build_message_id_object(id_) for id_ in message_id]
         attached_events = BoolValue(value=attached_events)
         message_search_request = MessageSearchRequest(
             start_timestamp=basic_request.start_timestamp,
             end_timestamp=basic_request.end_timestamp,
+            resume_from_id=resume_from_id,
             search_direction=basic_request.search_direction,
             result_count_limit=basic_request.result_count_limit,
+            stream=StringList(list_string=stream),
             keep_open=basic_request.keep_open,
-            filter=basic_request.filters,
+            message_id=message_id,
             attached_events=attached_events,
-            stream=Filter(value=stream),  # TODO
-         )
-
+            filters=basic_request.filters,
+        )
         return self.__stub.searchMessages(message_search_request)
 
     @staticmethod
@@ -327,41 +326,41 @@ class GRPCProvider5API(IGRPCProviderSourceAPI):
         )
         return message_id
 
-    def get_event(self, event_id: str) -> EventResponse:
+    def get_event(self, event_id: str) -> EventData:
         """GRPC-API `getEvent` call returns a single event with the specified id."""
         event_id = EventID(id=event_id)
         return self.__stub.getEvent(event_id)
 
-    def get_message(self, message_id: str) -> MessageGroupResponse:
+    def get_message(self, message_id: str) -> MessageData:
         """GRPC-API `getMessage` call returns a single message with the specified id."""
         message_id = self.__build_message_id_object(message_id)
         return self.__stub.getMessage(message_id)
 
-    def get_messages_filters(self) -> FilterNamesResponse:
+    def get_messages_filters(self) -> ListFilterName:
         """GRPC-API `getMessagesFilters` call returns all the names of sse message filters."""
         return self.__stub.getMessagesFilters(Empty())
 
-    def get_events_filters(self) -> FilterNamesResponse:
+    def get_events_filters(self) -> ListFilterName:
         """GRPC-API `getEventsFilters` call returns all the names of sse event filters."""
         return self.__stub.getEventsFilters(Empty())
 
-    def get_event_filter_info(self, filter_name: str) -> FilterInfoResponse:
+    def get_event_filter_info(self, filter_name: str) -> FilterInfo:
         """GRPC-API `getEventFilterInfo` call returns event filter info."""
         filter_name = FilterName(filter_name=filter_name)
         return self.__stub.getEventFilterInfo(filter_name)
 
-    def get_message_filter_info(self, filter_name: str) -> FilterInfoResponse:
+    def get_message_filter_info(self, filter_name: str) -> FilterInfo:
         """GRPC-API `getMessageFilterInfo` call returns message filter info."""
         filter_name = FilterName(filter_name=filter_name)
         return self.__stub.getMessageFilterInfo(filter_name)
 
-    def match_event(self, event_id: str, filters: List[Filter]) -> MatchResponse:
+    def match_event(self, event_id: str, filters: List[Filter]) -> IsMatched:
         """GRPC-API `matchEvent` call checks that the event with the specified id is matched by the filter."""
-        match_request = EventMatchRequest(event_id=EventID(id=event_id), filters=filters)
+        match_request = MatchRequest(event_id=EventID(id=event_id), filters=filters)
         return self.__stub.matchEvent(match_request)
 
-    def match_message(self, message_id: str, filters: List[Filter]) -> MatchResponse:
+    def match_message(self, message_id: str, filters: List[Filter]) -> IsMatched:
         """GRPC-API `matchMessage` call checks that the message with the specified id is matched by the filter."""
         message_id = self.__build_message_id_object(message_id)
-        match_request = MessageMatchRequest(message_id=message_id, filters=filters)
+        match_request = MatchRequest(message_id=message_id, filters=filters)
         return self.__stub.matchMessage(match_request)
