@@ -18,6 +18,8 @@
 - [`interfaces.events_tree.events_tree_collection`](./interfaces.events_tree.events_tree_collection.md#module-interfacesevents_treeevents_tree_collection)
 - [`interfaces.events_tree.parent_events_tree_collection`](./interfaces.events_tree.parent_events_tree_collection.md#module-interfacesevents_treeparent_events_tree_collection)
 - [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
+- [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
+- [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
 - [`provider`](./provider.md#module-provider)
 - [`provider.adapters`](./provider.adapters.md#module-provideradapters)
 - [`provider.adapters.adapter_sse`](./provider.adapters.adapter_sse.md#module-provideradaptersadapter_sse)
@@ -50,8 +52,12 @@
 - [`provider.v5.provider_api.grpc`](./provider.v5.provider_api.grpc.md#module-providerv5provider_apigrpc)
 - [`provider.v5.provider_api.http`](./provider.v5.provider_api.http.md#module-providerv5provider_apihttp)
 - [`provider.v5.stub_builder`](./provider.v5.stub_builder.md#module-providerv5stub_builder)
+- [`provider.v5.utils`](./provider.v5.utils.md#module-providerv5utils)
+- [`provider.v5.utils.converters`](./provider.v5.utils.converters.md#module-providerv5utilsconverters)
 - [`sse_client`](./sse_client.md#module-sse_client)
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
+- [`utils`](./utils.md#module-utils)
+- [`utils.converters`](./utils.converters.md#module-utilsconverters)
 
 ## Classes
 
@@ -68,6 +74,7 @@
 - [`events_tree_collection.EventsTreeCollection`](./interfaces.events_tree.events_tree_collection.md#class-eventstreecollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
 - [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
+- [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
 - [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
 - [`exceptions.CommandError`](./provider.exceptions.md#class-commanderror): Exception raised for errors in the command.
@@ -122,8 +129,10 @@
 - [`http.HTTPProvider5API`](./provider.v5.provider_api.http.md#class-httpprovider5api)
 - [`stub_builder.Provider5EventStubBuilder`](./provider.v5.stub_builder.md#class-provider5eventstubbuilder)
 - [`stub_builder.Provider5MessageStubBuilder`](./provider.v5.stub_builder.md#class-provider5messagestubbuilder)
+- [`converters.Th2TimestampConverter`](./provider.v5.utils.converters.md#class-th2timestampconverter): Converts Th2 timestamps.
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
+- [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
 
 ## Functions
 

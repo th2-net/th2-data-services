@@ -14,7 +14,7 @@ from th2_data_services.filter import Filter
 
 @pytest.fixture
 def demo_data_source():
-    DEMO_HOST = "10.64.66.66"  # th2-kube-demo
+    DEMO_HOST = "10.100.66.66"  # th2-kube-demo
     DEMO_PORT = "30999"  # Data-provider Node port
     data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
     return data_source
@@ -1968,3 +1968,18 @@ def log_checker(caplog) -> LogsChecker:
     """Activates DS lib logging and returns Log checker class."""
     caplog.set_level(logging.DEBUG, logger="th2_data_services")
     return LogsChecker(caplog)
+
+
+@pytest.fixture
+def parentless_data() -> List[dict]:
+    data = [
+        {"type": "event", "eventId": "a", "eventName": "a", "parentEventId": None},
+        {"type": "event", "eventId": "b", "eventName": "b", "parentEventId": "a"},
+        {"type": "event", "eventId": "c", "eventName": "c", "parentEventId": "b"},
+        {"type": "event", "eventId": "x", "eventName": "x", "parentEventId": None},
+        {"type": "event", "eventId": "y", "eventName": "y", "parentEventId": "x"},
+        {"type": "event", "eventId": "z", "eventName": "z", "parentEventId": "y"},
+        {"type": "event", "eventId": "d", "eventName": "d", "parentEventId": "e"},
+        {"type": "event", "eventId": "t", "eventName": "t", "parentEventId": "d"},
+    ]
+    return data
