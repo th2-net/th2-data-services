@@ -19,7 +19,8 @@ from typing import List, Iterable, Generator
 from grpc._channel import _InactiveRpcError
 from th2_grpc_data_provider.data_provider_pb2 import EventResponse, MessageGroupResponse, MessageStreamPointer
 
-from th2_data_services import Filter, Data
+from th2_data_services import Data
+from th2_data_services.provider.v6.filters.filter import Provider6Filter as Filter
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v6.adapters.basic_adapters import GRPCObjectToDictAdapter

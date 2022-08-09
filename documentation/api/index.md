@@ -6,6 +6,9 @@
 
 - [`data`](./data.md#module-data)
 - [`decode_error_handler`](./decode_error_handler.md#module-decode_error_handler)
+- [`events_tree`](./events_tree.md#module-events_tree)
+- [`events_tree.events_tree`](./events_tree.events_tree.md#module-events_treeevents_tree)
+- [`events_tree.exceptions`](./events_tree.exceptions.md#module-events_treeexceptions)
 - [`interfaces`](./interfaces.md#module-interfaces)
 - [`interfaces.adapter`](./interfaces.adapter.md#module-interfacesadapter)
 - [`interfaces.command`](./interfaces.command.md#module-interfacescommand)
@@ -30,11 +33,26 @@
 - [`provider.v5.filters`](./provider.v5.filters.md#module-providerv5filters)
 - [`provider.v5.stub_builder`](./provider.v5.stub_builder.md#module-providerv5stub_builder)
 - [`provider.v5.utils`](./provider.v5.utils.md#module-providerv5utils)
+- [`provider.v5.utils.converters`](./provider.v5.utils.converters.md#module-providerv5utilsconverters)
 - [`provider.v6`](./provider.v6.md#module-providerv6)
+- [`provider.v6.adapters`](./provider.v6.adapters.md#module-providerv6adapters)
 - [`provider.v6.adapters.basic_adapters`](./provider.v6.adapters.basic_adapters.md#module-providerv6adaptersbasic_adapters)
 - [`provider.v6.adapters.event_adapters`](./provider.v6.adapters.event_adapters.md#module-providerv6adaptersevent_adapters)
 - [`provider.v6.adapters.message_adapters`](./provider.v6.adapters.message_adapters.md#module-providerv6adaptersmessage_adapters)
 - [`provider.v6.commands`](./provider.v6.commands.md#module-providerv6commands)
+- [`provider.v6.commands.grpc`](./provider.v6.commands.grpc.md#module-providerv6commandsgrpc)
+- [`provider.v6.data_source`](./provider.v6.data_source.md#module-providerv6data_source)
+- [`provider.v6.data_source.grpc`](./provider.v6.data_source.grpc.md#module-providerv6data_sourcegrpc)
+- [`provider.v6.data_source.http`](./provider.v6.data_source.http.md#module-providerv6data_sourcehttp)
+- [`provider.v6.filters`](./provider.v6.filters.md#module-providerv6filters)
+- [`provider.v6.filters.event_filters`](./provider.v6.filters.event_filters.md#module-providerv6filtersevent_filters)
+- [`provider.v6.filters.filter`](./provider.v6.filters.filter.md#module-providerv6filtersfilter)
+- [`provider.v6.filters.message_filters`](./provider.v6.filters.message_filters.md#module-providerv6filtersmessage_filters)
+- [`provider.v6.interfaces`](./provider.v6.interfaces.md#module-providerv6interfaces)
+- [`provider.v6.interfaces.command`](./provider.v6.interfaces.command.md#module-providerv6interfacescommand)
+- [`provider.v6.provider_api`](./provider.v6.provider_api.md#module-providerv6provider_api)
+- [`provider.v6.provider_api.grpc`](./provider.v6.provider_api.grpc.md#module-providerv6provider_apigrpc)
+- [`provider.v6.provider_api.http`](./provider.v6.provider_api.http.md#module-providerv6provider_apihttp)
 - [`provider.v6.struct`](./provider.v6.struct.md#module-providerv6struct)
 - [`provider.v6.stub_builder`](./provider.v6.stub_builder.md#module-providerv6stub_builder)
 - [`sse_client`](./sse_client.md#module-sse_client)
@@ -45,6 +63,9 @@
 ## Classes
 
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
+- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree is a tree-based data structure of events.
+- [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
+- [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
 - [`adapter.IAdapter`](./interfaces.adapter.md#class-iadapter): High level interface for Adapter.
 - [`adapter.IEventAdapter`](./interfaces.adapter.md#class-ieventadapter): Interface of Adapter for events.
 - [`adapter.IMessageAdapter`](./interfaces.adapter.md#class-imessageadapter): Interface of Adapter for messages.
@@ -74,10 +95,41 @@
 - [`stub_builder.IStub`](./provider.interfaces.stub_builder.md#class-istub)
 - [`stub_builder.Provider5EventStubBuilder`](./provider.v5.stub_builder.md#class-provider5eventstubbuilder)
 - [`stub_builder.Provider5MessageStubBuilder`](./provider.v5.stub_builder.md#class-provider5messagestubbuilder)
+- [`converters.Th2TimestampConverter`](./provider.v5.utils.converters.md#class-th2timestampconverter): Converts Th2 timestamps.
 - [`basic_adapters.GRPCObjectToDictAdapter`](./provider.v6.adapters.basic_adapters.md#class-grpcobjecttodictadapter): GRPC Adapter decodes a GRPC object into a Dict object.
 - [`event_adapters.DeleteEventWrappersAdapter`](./provider.v6.adapters.event_adapters.md#class-deleteeventwrappersadapter): Adapter that deletes unnecessary wrappers in events.
 - [`message_adapters.CodecPipelinesAdapter`](./provider.v6.adapters.message_adapters.md#class-codecpipelinesadapter): Adapter for codec-pipeline messages from provider v6.
 - [`message_adapters.DeleteMessageWrappersAdapter`](./provider.v6.adapters.message_adapters.md#class-deletemessagewrappersadapter): Adapter that deletes unnecessary wrappers in messages.
+- [`grpc.GetEventById`](./provider.v6.commands.grpc.md#class-geteventbyid): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetEventByIdGRPCObject`](./provider.v6.commands.grpc.md#class-geteventbyidgrpcobject): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetEvents`](./provider.v6.commands.grpc.md#class-getevents): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetEventsById`](./provider.v6.commands.grpc.md#class-geteventsbyid): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetEventsGRPCObjects`](./provider.v6.commands.grpc.md#class-geteventsgrpcobjects): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessageById`](./provider.v6.commands.grpc.md#class-getmessagebyid): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessageByIdGRPCObject`](./provider.v6.commands.grpc.md#class-getmessagebyidgrpcobject): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessages`](./provider.v6.commands.grpc.md#class-getmessages): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessagesById`](./provider.v6.commands.grpc.md#class-getmessagesbyid): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessagesGRPCObject`](./provider.v6.commands.grpc.md#class-getmessagesgrpcobject): A Class-Command for request to rpt-data-provider.
+- [`grpc.GRPCProvider6DataSource`](./provider.v6.data_source.grpc.md#class-grpcprovider6datasource): DataSource class which provide work with rpt-data-provider.
+- [`http.HTTPProvider6DataSource`](./provider.v6.data_source.http.md#class-httpprovider6datasource): DataSource class which provide work with rpt-data-provider.
+- [`event_filters.AttachedMessageIdFilter`](./provider.v6.filters.event_filters.md#class-attachedmessageidfilter): Filters the events that are linked to the specified message id.
+- [`event_filters.BodyFilter`](./provider.v6.filters.event_filters.md#class-bodyfilter): Will match the events which body contains one of the given substrings.
+- [`event_filters.FailedStatusFilter`](./provider.v6.filters.event_filters.md#class-failedstatusfilter): Will match the events which status equals failed.
+- [`event_filters.NameFilter`](./provider.v6.filters.event_filters.md#class-namefilter): Will match the events which name contains one of the given substrings.
+- [`event_filters.PassedStatusFilter`](./provider.v6.filters.event_filters.md#class-passedstatusfilter): Will match the events which status equals passed.
+- [`event_filters.TypeFilter`](./provider.v6.filters.event_filters.md#class-typefilter): Will match the events which type contains one of the given substrings.
+- [`filter.Provider6EventFilter`](./provider.v6.filters.filter.md#class-provider6eventfilter): Base class for Event Filters of Provider v5.
+- [`filter.Provider6Filter`](./provider.v6.filters.filter.md#class-provider6filter): General interface for Filters of Provider v5.
+- [`filter.Provider6MessageFilter`](./provider.v6.filters.filter.md#class-provider6messagefilter): Base class for Message Filters of Provider v5.
+- [`message_filters.AttachedEventIdsFilter`](./provider.v6.filters.message_filters.md#class-attachedeventidsfilter): Filters the messages that are linked to the specified event id.
+- [`message_filters.BodyBinaryFilter`](./provider.v6.filters.message_filters.md#class-bodybinaryfilter): Will match the messages by their binary body.
+- [`message_filters.BodyFilter`](./provider.v6.filters.message_filters.md#class-bodyfilter): Will match the messages by their parsed body.
+- [`message_filters.TypeFilter`](./provider.v6.filters.message_filters.md#class-typefilter): Will match the messages by their full type name.
+- [`command.IGRPCProvider6Command`](./provider.v6.interfaces.command.md#class-igrpcprovider6command): Interface of command for rpt-data-provider.
+- [`command.IHTTPProvider6Command`](./provider.v6.interfaces.command.md#class-ihttpprovider6command): Interface of command for rpt-data-provider.
+- [`grpc.BasicRequest`](./provider.v6.provider_api.grpc.md#class-basicrequest): BasicRequest(start_timestamp, end_timestamp, result_count_limit, keep_open, search_direction, filters)
+- [`grpc.GRPCProvider6API`](./provider.v6.provider_api.grpc.md#class-grpcprovider6api)
+- [`http.HTTPProvider6API`](./provider.v6.provider_api.http.md#class-httpprovider6api)
 - [`struct.Provider6EventStruct`](./provider.v6.struct.md#class-provider6eventstruct): Interface for Event of data-provider v6.
 - [`stub_builder.Provider6EventStubBuilder`](./provider.v6.stub_builder.md#class-provider6eventstubbuilder)
 - [`stub_builder.Provider6MessageStubBuilder`](./provider.v6.stub_builder.md#class-provider6messagestubbuilder)

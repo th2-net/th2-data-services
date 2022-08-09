@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 from .data import Data
-from .filter import Filter
 import logging
 from logging import NullHandler
 
