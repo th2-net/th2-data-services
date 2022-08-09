@@ -7,6 +7,7 @@ import pytest
 
 from tests.utils import LogsChecker
 from th2_data_services.data import Data
+
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
 from th2_data_services.filter import Filter
@@ -14,8 +15,8 @@ from th2_data_services.filter import Filter
 
 @pytest.fixture
 def demo_data_source():
-    DEMO_HOST = "10.100.66.66"  # th2-kube-demo
-    DEMO_PORT = "30999"  # Data-provider Node port
+    DEMO_HOST = "10.100.66.114"  # de-th2-qa
+    DEMO_PORT = "31789"  # Data-provider Node port
     data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
     return data_source
 

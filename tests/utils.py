@@ -1,9 +1,12 @@
-from typing import Optional
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 
 from _pytest.logging import LogCaptureFixture
 
 from th2_data_services import Data
-from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
+
+if TYPE_CHECKING:
+    from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
 
 
 class LogsChecker:
