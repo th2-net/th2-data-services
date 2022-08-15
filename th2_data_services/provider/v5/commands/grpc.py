@@ -22,7 +22,8 @@ from th2_grpc_data_provider.data_provider_template_pb2 import (
     MessageData,
 )
 
-from th2_data_services import Filter, Data
+from th2_data_services import Data
+from th2_data_services.filter import Filter
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v5.adapters.basic_adapters import GRPCObjectToDictAdapter

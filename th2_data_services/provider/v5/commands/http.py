@@ -16,7 +16,8 @@ from typing import Generator, List, Sequence, Union
 from datetime import datetime, timezone
 from functools import partial
 
-from th2_data_services import Filter, Data
+from th2_data_services import Data
+from th2_data_services.filter import Filter
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v5.interfaces.command import IHTTPProvider5Command
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource

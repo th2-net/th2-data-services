@@ -2,7 +2,7 @@ from sseclient import Event
 import pytest
 
 from th2_data_services import Data
-from tests.conftest import START_TIME, END_TIME
+from tests.tests_v5.conftest import START_TIME, END_TIME
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http
 

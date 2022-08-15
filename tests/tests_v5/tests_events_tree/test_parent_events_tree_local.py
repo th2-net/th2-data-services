@@ -9,11 +9,11 @@ from th2_data_services.provider.v5.events_tree.parent_events_tree_collection imp
 
 
 def test_recover_unknown_events():
-    data_source = HTTPProvider5DataSource("http://10.64.66.66:30999/")
+    data_source = HTTPProvider5DataSource("http://10.100.66.114:31787/")
     events: Data = data_source.command(
         GetEvents(
-            start_timestamp=datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724),
-            end_timestamp=datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579),
+            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
         )
     )
 
@@ -25,11 +25,11 @@ def test_recover_unknown_events():
 
 
 def test_recover_unknown_events_with_stub_events():
-    data_source = HTTPProvider5DataSource("http://10.64.66.66:30999/")
+    data_source = HTTPProvider5DataSource("http://10.100.66.114:31787/")
     events: Data = data_source.command(
         GetEvents(
-            start_timestamp=datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724),
-            end_timestamp=datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579),
+            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
         )
     )
 
@@ -56,11 +56,11 @@ def test_recover_unknown_events_with_stub_events():
 
 
 def test_preserve_body():
-    data_source = HTTPProvider5DataSource("http://10.64.66.66:30999/")
+    data_source = HTTPProvider5DataSource("http://10.100.66.114:31787/")
     events: Data = data_source.command(
         GetEvents(
-            start_timestamp=datetime(year=2021, month=6, day=15, hour=9, minute=44, second=41, microsecond=692724),
-            end_timestamp=datetime(year=2021, month=6, day=15, hour=12, minute=45, second=49, microsecond=28579),
+            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
         )
     )
 

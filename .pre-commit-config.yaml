@@ -52,10 +52,10 @@ repos:
           - README.md
         require_serial: true
 
-#      - id: unit_tests
-#        name: unit_tests
-#        stages: [ push ]
-#        entry: pytest -n auto
-#        language: system
-#        pass_filenames: false
-#        always_run: true
+      - id: unit_tests
+        name: unit_tests
+        stages: [ push ]
+        entry: pytest -n auto
+        language: system
+        pass_filenames: false
+        always_run: true

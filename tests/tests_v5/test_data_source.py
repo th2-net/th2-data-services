@@ -1,10 +1,6 @@
 from datetime import datetime
 
-
-class Filter:
-    pass
-
-
+from th2_data_services.filter import Filter
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
 
 

@@ -95,8 +95,8 @@ class _Provider5FilterBase(Provider5Filter):
 
 
 class Provider5EventFilter(_Provider5FilterBase):
-    """Base class for Event Filters of Provider v5."""
+    """Base class for Event Filters of Provider tests_v5."""
 
 
 class Provider5MessageFilter(_Provider5FilterBase):
-    """Base class for Message Filters of Provider v5."""
+    """Base class for Message Filters of Provider tests_v5."""

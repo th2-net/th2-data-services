@@ -20,7 +20,7 @@ import google.protobuf.wrappers_pb2
 
 
 class Provider6Filter(IProviderFilter):
-    """General interface for Filters of Provider v5."""
+    """General interface for Filters of Provider v6."""
 
     def __init__(
         self,
@@ -93,8 +93,8 @@ class _Provider6FilterBase(Provider6Filter):
 
 
 class Provider6EventFilter(_Provider6FilterBase):
-    """Base class for Event Filters of Provider v5."""
+    """Base class for Event Filters of Provider tests_v5."""
 
 
 class Provider6MessageFilter(_Provider6FilterBase):
-    """Base class for Message Filters of Provider v5."""
+    """Base class for Message Filters of Provider tests_v5."""

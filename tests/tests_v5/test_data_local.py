@@ -16,4 +16,4 @@ def test_filter_data(demo_events_from_data_source: Data):
     events = demo_events_from_data_source
     data = events.filter(lambda r: r["successful"] is False)
 
-    assert len(list(data)) == 6
+    assert len(list(data)) == 23
