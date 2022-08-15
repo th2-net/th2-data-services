@@ -39,8 +39,10 @@
 - [`provider.v6.adapters.basic_adapters`](./provider.v6.adapters.basic_adapters.md#module-providerv6adaptersbasic_adapters)
 - [`provider.v6.adapters.event_adapters`](./provider.v6.adapters.event_adapters.md#module-providerv6adaptersevent_adapters)
 - [`provider.v6.adapters.message_adapters`](./provider.v6.adapters.message_adapters.md#module-providerv6adaptersmessage_adapters)
+- [`provider.v6.command_resolver`](./provider.v6.command_resolver.md#module-providerv6command_resolver)
 - [`provider.v6.commands`](./provider.v6.commands.md#module-providerv6commands)
 - [`provider.v6.commands.grpc`](./provider.v6.commands.grpc.md#module-providerv6commandsgrpc)
+- [`provider.v6.commands.http`](./provider.v6.commands.http.md#module-providerv6commandshttp)
 - [`provider.v6.data_source`](./provider.v6.data_source.md#module-providerv6data_source)
 - [`provider.v6.data_source.grpc`](./provider.v6.data_source.grpc.md#module-providerv6data_sourcegrpc)
 - [`provider.v6.data_source.http`](./provider.v6.data_source.http.md#module-providerv6data_sourcehttp)
@@ -110,6 +112,16 @@
 - [`grpc.GetMessages`](./provider.v6.commands.grpc.md#class-getmessages): A Class-Command for request to rpt-data-provider.
 - [`grpc.GetMessagesById`](./provider.v6.commands.grpc.md#class-getmessagesbyid): A Class-Command for request to rpt-data-provider.
 - [`grpc.GetMessagesGRPCObject`](./provider.v6.commands.grpc.md#class-getmessagesgrpcobject): A Class-Command for request to rpt-data-provider.
+- [`http.GetEventById`](./provider.v6.commands.http.md#class-geteventbyid): A Class-Command for request to rpt-data-provider.
+- [`http.GetEvents`](./provider.v6.commands.http.md#class-getevents): A Class-Command for request to rpt-data-provider.
+- [`http.GetEventsById`](./provider.v6.commands.http.md#class-geteventsbyid): A Class-Command for request to rpt-data-provider.
+- [`http.GetEventsSSEBytes`](./provider.v6.commands.http.md#class-geteventsssebytes): A Class-Command for request to rpt-data-provider.
+- [`http.GetEventsSSEEvents`](./provider.v6.commands.http.md#class-geteventssseevents): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessageById`](./provider.v6.commands.http.md#class-getmessagebyid): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessages`](./provider.v6.commands.http.md#class-getmessages): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessagesById`](./provider.v6.commands.http.md#class-getmessagesbyid): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessagesSSEBytes`](./provider.v6.commands.http.md#class-getmessagesssebytes): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessagesSSEEvents`](./provider.v6.commands.http.md#class-getmessagessseevents): A Class-Command for request to rpt-data-provider.
 - [`grpc.GRPCProvider6DataSource`](./provider.v6.data_source.grpc.md#class-grpcprovider6datasource): DataSource class which provide work with rpt-data-provider.
 - [`http.HTTPProvider6DataSource`](./provider.v6.data_source.http.md#class-httpprovider6datasource): DataSource class which provide work with rpt-data-provider.
 - [`event_filters.AttachedMessageIdFilter`](./provider.v6.filters.event_filters.md#class-attachedmessageidfilter): Filters the events that are linked to the specified message id.
@@ -118,9 +130,9 @@
 - [`event_filters.NameFilter`](./provider.v6.filters.event_filters.md#class-namefilter): Will match the events which name contains one of the given substrings.
 - [`event_filters.PassedStatusFilter`](./provider.v6.filters.event_filters.md#class-passedstatusfilter): Will match the events which status equals passed.
 - [`event_filters.TypeFilter`](./provider.v6.filters.event_filters.md#class-typefilter): Will match the events which type contains one of the given substrings.
-- [`filter.Provider6EventFilter`](./provider.v6.filters.filter.md#class-provider6eventfilter): Base class for Event Filters of Provider v5.
-- [`filter.Provider6Filter`](./provider.v6.filters.filter.md#class-provider6filter): General interface for Filters of Provider v5.
-- [`filter.Provider6MessageFilter`](./provider.v6.filters.filter.md#class-provider6messagefilter): Base class for Message Filters of Provider v5.
+- [`filter.Provider6EventFilter`](./provider.v6.filters.filter.md#class-provider6eventfilter): Base class for Event Filters of Provider tests_v5.
+- [`filter.Provider6Filter`](./provider.v6.filters.filter.md#class-provider6filter): General interface for Filters of Provider v6.
+- [`filter.Provider6MessageFilter`](./provider.v6.filters.filter.md#class-provider6messagefilter): Base class for Message Filters of Provider tests_v5.
 - [`message_filters.AttachedEventIdsFilter`](./provider.v6.filters.message_filters.md#class-attachedeventidsfilter): Filters the messages that are linked to the specified event id.
 - [`message_filters.BodyBinaryFilter`](./provider.v6.filters.message_filters.md#class-bodybinaryfilter): Will match the messages by their binary body.
 - [`message_filters.BodyFilter`](./provider.v6.filters.message_filters.md#class-bodyfilter): Will match the messages by their parsed body.
@@ -140,6 +152,8 @@
 ## Functions
 
 - [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
+- [`command_resolver.resolver_get_event_by_id`](./provider.v6.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
+- [`command_resolver.resolver_get_events_by_id`](./provider.v6.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
 
 
 ---

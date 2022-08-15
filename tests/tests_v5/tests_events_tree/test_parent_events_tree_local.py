@@ -13,7 +13,7 @@ def test_recover_unknown_events():
     events: Data = data_source.command(
         GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
         )
     )
 
@@ -29,7 +29,7 @@ def test_recover_unknown_events_with_stub_events():
     events: Data = data_source.command(
         GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
         )
     )
 
@@ -60,7 +60,7 @@ def test_preserve_body():
     events: Data = data_source.command(
         GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
         )
     )
 

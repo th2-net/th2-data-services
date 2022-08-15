@@ -6,7 +6,6 @@ from typing import List, NamedTuple
 import pytest
 
 from tests.utils import LogsChecker
-from th2_data_services.data import Data
 
 
 @pytest.fixture

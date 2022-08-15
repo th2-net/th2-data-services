@@ -10,7 +10,7 @@ def test_recover_unknown_events():
     events: Data = data_source.command(
         GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=50, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
         )
     )
 
@@ -26,7 +26,7 @@ def test_recover_unknown_events_ds_passed_into_method():
     events: Data = data_source.command(
         GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=50, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
         )
     )
 
@@ -43,7 +43,7 @@ def test_recover_unknown_events_with_stub_events():
     events: Data = data_source.command(
         GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=50, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
         )
     )
 
@@ -74,7 +74,7 @@ def test_preserve_body():
     events: Data = data_source.command(
         GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
         )
     )
 
@@ -90,7 +90,7 @@ def test_create_subtree_incoming_data_stream():
     events: Data = data_source.command(
         GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
         )
     )
     tree = EventsTreeCollectionProvider5(events, preserve_body=True).get_trees()[0]
@@ -100,5 +100,7 @@ def test_create_subtree_incoming_data_stream():
     etc_2 = EventsTreeCollectionProvider5(tree.findall(lambda e: e["eventName"]))
     assert root_sub_tree_0 != etc_2.get_trees()[0]
     assert root_sub_tree_0 == sub_tree_0.get_root()
-    assert root_sub_tree_0.get("body") == [{'data': "Root event", "type": "message"}] and etc_2.get_trees()[
-        0].get_root().get("body") is None
+    assert (
+        root_sub_tree_0.get("body") == [{"data": "Root event", "type": "message"}]
+        and etc_2.get_trees()[0].get_root().get("body") is None
+    )

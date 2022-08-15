@@ -50,7 +50,7 @@ GRPC Provider6 API.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L374"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L372"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event`
 
@@ -62,7 +62,7 @@ GRPC-API `getEvent` call returns a single event with the specified id.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L392"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L390"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event_filter_info`
 
@@ -74,7 +74,7 @@ GRPC-API `getEventFilterInfo` call returns event filter info.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L388"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L386"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_events_filters`
 
@@ -86,7 +86,7 @@ GRPC-API `getEventsFilters` call returns all the names of sse event filters.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L379"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L377"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_message`
 
@@ -98,7 +98,7 @@ GRPC-API `getMessage` call returns a single message with the specified id.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L397"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L395"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_message_filter_info`
 
@@ -122,7 +122,7 @@ GRPC-API `getMessageStreams` call returns a list of message stream names.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L384"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L382"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_messages_filters`
 
@@ -134,7 +134,7 @@ GRPC-API `getMessagesFilters` call returns all the names of sse message filters.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L402"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L400"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match_event`
 
@@ -146,7 +146,7 @@ GRPC-API `matchEvent` call checks that the event with the specified id is matche
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L407"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L405"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match_message`
 

@@ -16,7 +16,8 @@ from typing import Generator, List
 from datetime import datetime, timezone
 from functools import partial
 
-from th2_data_services import Filter, Data
+from th2_data_services import Data
+from th2_data_services.provider.v6.filters.filter import Provider6Filter as Filter
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v6.interfaces.command import IHTTPProvider6Command
 from th2_data_services.provider.v6.data_source.http import HTTPProvider6DataSource
@@ -145,8 +146,8 @@ class GetEventsSSEBytes(IHTTPProvider6Command, ProviderAdaptableCommand):
 
         """
         super().__init__()
-        self._start_timestamp = int(1000 * start_timestamp.replace(tzinfo=timezone.utc).timestamp())
-        self._end_timestamp = int(1000 * end_timestamp.replace(tzinfo=timezone.utc).timestamp())
+        self._start_timestamp = start_timestamp.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        self._end_timestamp = end_timestamp.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         self._parent_event = parent_event
         self._search_direction = search_direction
         self._resume_from_id = resume_from_id
@@ -462,11 +463,11 @@ class GetMessagesSSEBytes(IHTTPProvider6Command, ProviderAdaptableCommand):
             filters: Filters using in search for messages.
         """
         super().__init__()
-        self._start_timestamp = int(1000 * start_timestamp.replace(tzinfo=timezone.utc).timestamp())
+        self._start_timestamp = start_timestamp.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         self._end_timestamp = (
             end_timestamp
             if end_timestamp is None
-            else int(1000 * end_timestamp.replace(tzinfo=timezone.utc).timestamp())
+            else end_timestamp.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         )
         self._stream = stream
         self._resume_from_id = resume_from_id

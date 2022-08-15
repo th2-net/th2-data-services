@@ -1,5 +1,7 @@
 from typing import List
-from th2_data_services.provider.v5.adapters.message_adapters import CodecPipelinesAdapter
+
+# from th2_data_services.provider.v5.adapters.message_adapters import CodecPipelinesAdapter
+from ..conftest import CodecPipelinesAdapter
 
 
 def create_adapter_with_ignore_errors():

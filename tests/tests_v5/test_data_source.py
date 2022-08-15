@@ -1,7 +1,11 @@
 from datetime import datetime
 
-from th2_data_services.filter import Filter
-from th2_data_services.provider.v5.provider_api import HTTPProvider5API
+from .conftest import Filter, HTTPProvider5API
+
+# # from th2_data_services.filter import Filter
+# from th2_data_services.provider.v6.filters.filter import Provider6Filter as Filter
+# # from th2_data_services.provider.v5.provider_api import HTTPProvider5API
+# from th2_data_services.provider.v6.provider_api import HTTPProvider6API as HTTPProvider5API
 
 
 def test_generate_url_search_sse_events():

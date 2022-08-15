@@ -1,4 +1,5 @@
-from th2_data_services.filter import Filter
+# from th2_data_services.filter import Filter
+from .conftest import Filter
 
 
 def test_filter_url():

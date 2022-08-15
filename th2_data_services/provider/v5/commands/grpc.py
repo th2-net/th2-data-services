@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import partial
 from typing import List, Iterable, Generator
 
@@ -197,8 +197,8 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
     def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[EventData]:  # noqa: D102
         api: GRPCProvider5API = data_source.source_api
 
-        start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)
-        end_timestamp = int(self._end_timestamp.timestamp() * 10 ** 9)
+        start_timestamp = int(self._start_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10 ** 9)
+        end_timestamp = int(self._end_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10 ** 9)
 
         stream_response = api.search_events(
             start_timestamp=start_timestamp,
@@ -460,8 +460,8 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
     def handle(self, data_source: GRPCProvider5DataSource) -> List[MessageData]:
         api = data_source.source_api
 
-        start_timestamp = int(self._start_timestamp.timestamp() * 10 ** 9)
-        end_timestamp = int(self._end_timestamp.timestamp() * 10 ** 9)
+        start_timestamp = int(self._start_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10 ** 9)
+        end_timestamp = int(self._end_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10 ** 9)
 
         stream_response = api.search_messages(
             start_timestamp=start_timestamp,
