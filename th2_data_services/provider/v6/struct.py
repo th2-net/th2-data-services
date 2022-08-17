@@ -79,9 +79,9 @@ provider6_message_struct = Provider6MessageStruct(
     SUBSEQUENCE="subsequence",
     SEQUENCE="sequence",
     TIMESTAMP="timestamp",
-    BODY="body",
-    BODY_BASE64="bodyBase64",
+    BODY="parsedMessages",
+    BODY_BASE64="rawMessageBase64",
     TYPE="type",
-    MESSAGE_ID="messageId",
+    MESSAGE_ID="id",
     ATTACHED_EVENT_IDS="attachedEventIds",
 )

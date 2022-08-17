@@ -11,14 +11,14 @@
 
 ---
 
-<a href="../../th2_data_services/provider/v6/adapters/event_adapters.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/adapters/event_adapters.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `DeleteEventWrappersAdapter`
 Adapter that deletes unnecessary wrappers in events. 
 
 It used for events to which an AdaptorGRPCObjectToDict has been applied. 
 
-<a href="../../th2_data_services/provider/v6/adapters/event_adapters.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/adapters/event_adapters.py#L26"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -41,7 +41,7 @@ AdapterDeleteEventWrappers constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/adapters/event_adapters.py#L33"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/adapters/event_adapters.py#L34"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -61,6 +61,31 @@ Deletes unnecessary wrappers for fields eventId, parentEventId and BatchId.
 
 **Returns:**
  Event without wrappers. 
+
+
+---
+
+<a href="../../th2_data_services/provider/v6/adapters/event_adapters.py#L69"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+## <kbd>class</kbd> `DeleteSystemEvents`
+Adapter that deletes unnecessary system events. 
+
+
+
+
+---
+
+<a href="../../th2_data_services/provider/v6/adapters/event_adapters.py#L72"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `handle`
+
+```python
+handle(event: dict) → Union[dict, NoneType]
+```
+
+Deletes unnecessary system events. 
+
+System events have form '{'hasEnded': bool, 'hasStarted': bool, 'lastId': bool}' 
 
 
 

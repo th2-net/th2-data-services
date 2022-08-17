@@ -1,10 +1,6 @@
 from th2_data_services.provider.v5.utils.converters import Th2TimestampConverter
 
 
-# def test_parse_timestamp():
-#     assert False
-
-
 def test_to_datetime(datetime_strings):
     assert Th2TimestampConverter.to_datetime(datetime_strings.th2_timestamp) == datetime_strings.expected_datetime
 

@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 from functools import partial
 
 from th2_data_services import Data
+from th2_data_services.provider.v6.adapters.event_adapters import DeleteSystemEvents
 from th2_data_services.provider.v6.filters.filter import Provider6Filter as Filter
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v6.interfaces.command import IHTTPProvider6Command
@@ -317,10 +318,12 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
         self._filters = filters
         self._cache = cache
 
+        self._sse_adapter = SSEAdapter()
+        self._event_system_adapter = DeleteSystemEvents()
+
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
-        adapter = SSEAdapter()
-        return Data(source).map(adapter.handle).use_cache(self._cache)
+        return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
         stream = GetEventsSSEEvents(
@@ -337,6 +340,14 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
         ).handle(data_source)
 
         for event in stream:
+            event = self._sse_adapter.handle(event)
+            if event is None:
+                continue
+
+            event = self._event_system_adapter.handle(event)
+            if event is None:
+                continue
+
             event = self._handle_adapters(event)
             yield event
 
@@ -501,7 +512,7 @@ class GetMessagesSSEBytes(IHTTPProvider6Command, ProviderAdaptableCommand):
         fixed_part_len = len(url)
         current_url, resulting_urls = "", []
         for stream in self._stream:
-            stream = f"&stream={stream}"
+            stream = f"&stream={stream}:FIRST&stream={stream}:SECOND"  # TODO: Specify direction
             if fixed_part_len + len(current_url) + len(stream) >= 2048:
                 resulting_urls.append(url + current_url)
                 current_url = ""

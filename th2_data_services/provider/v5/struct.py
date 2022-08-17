@@ -53,7 +53,7 @@ provider5_event_struct = Provider5EventStruct(
 
 @dataclass
 class Provider5MessageStruct(IMessageStruct):
-    """Interface for Message of data-provider tests_v5."""
+    """Interface for Message of data-provider v5."""
 
     DIRECTION: str
     SESSION_ID: str

@@ -1,15 +1,10 @@
 from datetime import datetime
 
-from .conftest import Filter, HTTPProvider5API
-
-# # from th2_data_services.filter import Filter
-# from th2_data_services.provider.v6.filters.filter import Provider6Filter as Filter
-# # from th2_data_services.provider.v5.provider_api import HTTPProvider5API
-# from th2_data_services.provider.v6.provider_api import HTTPProvider6API as HTTPProvider5API
+from tests.tests_unit.tests_diff_version.conftest import Filter, HTTPProviderAPI
 
 
 def test_generate_url_search_sse_events():
-    api = HTTPProvider5API(url="http://host:port")
+    api = HTTPProviderAPI(url="http://host:port")
 
     start_time = int(datetime.now().timestamp() * 1000)
     end_time = int(datetime.now().timestamp() * 1000)
@@ -31,7 +26,7 @@ def test_generate_url_search_sse_events():
 
 
 def test_generate_url_search_sse_events_with_filters():
-    api = HTTPProvider5API(url="http://host:port")
+    api = HTTPProviderAPI(url="http://host:port")
 
     start_time = int(datetime.now().timestamp() * 1000)
     end_time = int(datetime.now().timestamp() * 1000)
@@ -49,7 +44,7 @@ def test_generate_url_search_sse_events_with_filters():
 
 
 def test_generate_url_search_sse_messages():
-    api = HTTPProvider5API(url="http://host:port")
+    api = HTTPProviderAPI(url="http://host:port")
 
     start_time = int(datetime.now().timestamp() * 1000)
     end_time = int(datetime.now().timestamp() * 1000)
@@ -66,7 +61,7 @@ def test_generate_url_search_sse_messages():
 
 
 def test_generate_url_search_sse_messages_with_filters():
-    api = HTTPProvider5API(url="http://host:port")
+    api = HTTPProviderAPI(url="http://host:port")
 
     start_time = int(datetime.now().timestamp() * 1000)
     end_time = int(datetime.now().timestamp() * 1000)
@@ -89,7 +84,7 @@ def test_generate_url_search_sse_messages_with_filters():
 
 
 def test_encoding_url():
-    api = HTTPProvider5API(url="http://host:port")
+    api = HTTPProviderAPI(url="http://host:port")
 
     start_time = int(datetime.now().timestamp() * 1000)
     end_time = int(datetime.now().timestamp() * 1000)
@@ -114,7 +109,7 @@ def test_encoding_url():
 
 
 def test_generate_non_standart_url_search_sse_events():
-    api = HTTPProvider5API(url="http://host:port////")
+    api = HTTPProviderAPI(url="http://host:port////")
 
     start_time = int(datetime.now().timestamp() * 1000)
     end_time = int(datetime.now().timestamp() * 1000)
@@ -136,7 +131,7 @@ def test_generate_non_standart_url_search_sse_events():
 
 
 def test_generate_non_standart_url_search_sse_messages_with_filters():
-    api = HTTPProvider5API(url="http://host:port/")
+    api = HTTPProviderAPI(url="http://host:port/")
 
     start_time = int(datetime.now().timestamp() * 1000)
     end_time = int(datetime.now().timestamp() * 1000)
@@ -159,10 +154,10 @@ def test_generate_non_standart_url_search_sse_messages_with_filters():
 
 
 def test_count_slash_in_non_standart_url():
-    api0 = HTTPProvider5API(url="http://host:port")
-    api1 = HTTPProvider5API(url="http://host:port/")
-    api4 = HTTPProvider5API(url="http://host:port/////")
-    api10 = HTTPProvider5API(url="//////////")
+    api0 = HTTPProviderAPI(url="http://host:port")
+    api1 = HTTPProviderAPI(url="http://host:port/")
+    api4 = HTTPProviderAPI(url="http://host:port/////")
+    api10 = HTTPProviderAPI(url="//////////")
 
     assert (
         api0._url == "http://host:port"

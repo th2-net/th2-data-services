@@ -29,7 +29,7 @@ Rpt-data-provider version: 6.x.y Protocol: GRPC
 __init__(
     url: 'str',
     event_struct: 'IEventStruct' = Provider6EventStruct(EVENT_ID='eventId', PARENT_EVENT_ID='parentEventId', STATUS='successful', NAME='eventName', TYPE='type', BATCH_ID='batchId', IS_BATCHED='isBatched', EVENT_TYPE='eventType', END_TIMESTAMP='endTimestamp', START_TIMESTAMP='startTimestamp', ATTACHED_MESSAGES_IDS='attachedMessageIds', BODY='body'),
-    message_struct: 'IMessageStruct' = Provider6MessageStruct(DIRECTION='direction', SESSION_ID='sessionId', MESSAGE_TYPE='messageType', CONNECTION_ID='connectionId', SESSION_ALIAS='sessionAlias', SUBSEQUENCE='subsequence', SEQUENCE='sequence', TIMESTAMP='timestamp', BODY='body', BODY_BASE64='bodyBase64', TYPE='type', MESSAGE_ID='messageId', ATTACHED_EVENT_IDS='attachedEventIds'),
+    message_struct: 'IMessageStruct' = Provider6MessageStruct(DIRECTION='direction', SESSION_ID='sessionId', MESSAGE_TYPE='messageType', CONNECTION_ID='connectionId', SESSION_ALIAS='sessionAlias', SUBSEQUENCE='subsequence', SEQUENCE='sequence', TIMESTAMP='timestamp', BODY='parsedMessages', BODY_BASE64='rawMessageBase64', TYPE='type', MESSAGE_ID='id', ATTACHED_EVENT_IDS='attachedEventIds'),
     event_stub_builder: 'IEventStub' = Provider6EventStubBuilder,
     message_stub_builder: 'IMessageStub' = Provider6MessageStubBuilder
 )

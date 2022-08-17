@@ -24,7 +24,7 @@ It used for the message to which an AdaptorGRPCObjectToDict has been applied.
 
 ```python
 __init__(
-    message_struct: Provider6MessageStruct = Provider6MessageStruct(DIRECTION='direction', SESSION_ID='sessionId', MESSAGE_TYPE='messageType', CONNECTION_ID='connectionId', SESSION_ALIAS='sessionAlias', SUBSEQUENCE='subsequence', SEQUENCE='sequence', TIMESTAMP='timestamp', BODY='body', BODY_BASE64='bodyBase64', TYPE='type', MESSAGE_ID='messageId', ATTACHED_EVENT_IDS='attachedEventIds')
+    message_struct: Provider6MessageStruct = Provider6MessageStruct(DIRECTION='direction', SESSION_ID='sessionId', MESSAGE_TYPE='messageType', CONNECTION_ID='connectionId', SESSION_ALIAS='sessionAlias', SUBSEQUENCE='subsequence', SEQUENCE='sequence', TIMESTAMP='timestamp', BODY='parsedMessages', BODY_BASE64='rawMessageBase64', TYPE='type', MESSAGE_ID='id', ATTACHED_EVENT_IDS='attachedEventIds')
 )
 ```
 

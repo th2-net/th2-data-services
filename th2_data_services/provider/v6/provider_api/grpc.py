@@ -272,11 +272,11 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
         splitted_stream = raw_stream.split(":")
         name = splitted_stream[0]
         if len(splitted_stream) > 1:
-            name, search_direction = "".join(splitted_stream[0:-1]), splitted_stream[-1]
+            name, search_direction = ":".join(splitted_stream[0:-1]), splitted_stream[-1]
             if search_direction in ("FIRST", "SECOND"):
                 return MessageStream(name=name, direction=Direction.Value(search_direction))
             else:
-                name = "".join(splitted_stream)
+                name = ":".join(splitted_stream)
         return [
             MessageStream(name=name, direction=Direction.Value("FIRST")),
             MessageStream(name=name, direction=Direction.Value("SECOND")),

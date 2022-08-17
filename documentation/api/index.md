@@ -100,6 +100,7 @@
 - [`converters.Th2TimestampConverter`](./provider.v5.utils.converters.md#class-th2timestampconverter): Converts Th2 timestamps.
 - [`basic_adapters.GRPCObjectToDictAdapter`](./provider.v6.adapters.basic_adapters.md#class-grpcobjecttodictadapter): GRPC Adapter decodes a GRPC object into a Dict object.
 - [`event_adapters.DeleteEventWrappersAdapter`](./provider.v6.adapters.event_adapters.md#class-deleteeventwrappersadapter): Adapter that deletes unnecessary wrappers in events.
+- [`event_adapters.DeleteSystemEvents`](./provider.v6.adapters.event_adapters.md#class-deletesystemevents): Adapter that deletes unnecessary system events.
 - [`message_adapters.CodecPipelinesAdapter`](./provider.v6.adapters.message_adapters.md#class-codecpipelinesadapter): Adapter for codec-pipeline messages from provider v6.
 - [`message_adapters.DeleteMessageWrappersAdapter`](./provider.v6.adapters.message_adapters.md#class-deletemessagewrappersadapter): Adapter that deletes unnecessary wrappers in messages.
 - [`grpc.GetEventById`](./provider.v6.commands.grpc.md#class-geteventbyid): A Class-Command for request to rpt-data-provider.
@@ -130,9 +131,9 @@
 - [`event_filters.NameFilter`](./provider.v6.filters.event_filters.md#class-namefilter): Will match the events which name contains one of the given substrings.
 - [`event_filters.PassedStatusFilter`](./provider.v6.filters.event_filters.md#class-passedstatusfilter): Will match the events which status equals passed.
 - [`event_filters.TypeFilter`](./provider.v6.filters.event_filters.md#class-typefilter): Will match the events which type contains one of the given substrings.
-- [`filter.Provider6EventFilter`](./provider.v6.filters.filter.md#class-provider6eventfilter): Base class for Event Filters of Provider tests_v5.
+- [`filter.Provider6EventFilter`](./provider.v6.filters.filter.md#class-provider6eventfilter): Base class for Event Filters of Provider v5.
 - [`filter.Provider6Filter`](./provider.v6.filters.filter.md#class-provider6filter): General interface for Filters of Provider v6.
-- [`filter.Provider6MessageFilter`](./provider.v6.filters.filter.md#class-provider6messagefilter): Base class for Message Filters of Provider tests_v5.
+- [`filter.Provider6MessageFilter`](./provider.v6.filters.filter.md#class-provider6messagefilter): Base class for Message Filters of Provider v5.
 - [`message_filters.AttachedEventIdsFilter`](./provider.v6.filters.message_filters.md#class-attachedeventidsfilter): Filters the messages that are linked to the specified event id.
 - [`message_filters.BodyBinaryFilter`](./provider.v6.filters.message_filters.md#class-bodybinaryfilter): Will match the messages by their binary body.
 - [`message_filters.BodyFilter`](./provider.v6.filters.message_filters.md#class-bodyfilter): Will match the messages by their parsed body.

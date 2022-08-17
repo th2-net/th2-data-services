@@ -1,7 +1,12 @@
 import os
 from typing import List
 
-from tests.utils import is_cache_file_exists, iterate_data_and_do_checks, iterate_data, is_pending_cache_file_exists
+from tests.tests_unit.utils import (
+    is_cache_file_exists,
+    iterate_data_and_do_checks,
+    iterate_data,
+    is_pending_cache_file_exists,
+)
 from th2_data_services.th2_gui_report import Th2GUIReport
 from th2_data_services.data import Data
 import pytest

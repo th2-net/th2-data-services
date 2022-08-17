@@ -5,7 +5,7 @@ from typing import List, NamedTuple
 
 import pytest
 
-from tests.utils import LogsChecker
+from tests.tests_unit.utils import LogsChecker
 
 
 @pytest.fixture

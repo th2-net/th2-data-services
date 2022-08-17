@@ -3,27 +3,13 @@ from datetime import datetime
 import pytest
 
 from th2_data_services import Data
-
-# from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-# from th2_data_services.provider.v5.commands import http
-from th2_data_services.provider.v6.data_source.http import HTTPProvider6DataSource as HTTPProvider5DataSource
-from th2_data_services.provider.v6.commands import http
-
-# from th2_data_services.filter import Filter
-from th2_data_services.provider.v6.filters.filter import Provider6Filter as Filter
-
-# from th2_data_services.provider.v5.provider_api import HTTPProvider5API
-from th2_data_services.provider.v6.provider_api import HTTPProvider6API as HTTPProvider5API  # noqa
-
-# from th2_data_services.provider.v5.adapters.message_adapters import CodecPipelinesAdapter
-from th2_data_services.provider.v6.adapters.message_adapters import CodecPipelinesAdapter  # noqa
+from . import HTTPProviderAPI, HTTPProviderDataSource, http, CodecPipelinesAdapter, Filter, DEMO_PORT  # noqa  # noqa
 
 
 @pytest.fixture
 def demo_data_source():
     DEMO_HOST = "10.100.66.114"  # de-th2-qa
-    DEMO_PORT = "31788"  # "31787"  # Data-provider Node port
-    data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+    data_source = HTTPProviderDataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
     return data_source
 
 
@@ -32,7 +18,7 @@ END_TIME = datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, mic
 
 
 @pytest.fixture
-def demo_get_events_with_one_filter(demo_data_source: HTTPProvider5DataSource) -> Data:
+def demo_get_events_with_one_filter(demo_data_source: HTTPProviderDataSource) -> Data:
     case = demo_data_source.command(
         http.GetEvents(
             start_timestamp=START_TIME,
@@ -45,7 +31,7 @@ def demo_get_events_with_one_filter(demo_data_source: HTTPProvider5DataSource) -
 
 
 @pytest.fixture
-def demo_get_events_with_filters(demo_data_source: HTTPProvider5DataSource) -> Data:
+def demo_get_events_with_filters(demo_data_source: HTTPProviderDataSource) -> Data:
     case = demo_data_source.command(
         http.GetEvents(
             start_timestamp=START_TIME,
@@ -58,7 +44,7 @@ def demo_get_events_with_filters(demo_data_source: HTTPProvider5DataSource) -> D
 
 
 @pytest.fixture
-def demo_get_messages_with_one_filter(demo_data_source: HTTPProvider5DataSource) -> Data:
+def demo_get_messages_with_one_filter(demo_data_source: HTTPProviderDataSource) -> Data:
     case = demo_data_source.command(
         http.GetMessages(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=20, microsecond=0),
@@ -72,7 +58,7 @@ def demo_get_messages_with_one_filter(demo_data_source: HTTPProvider5DataSource)
 
 
 @pytest.fixture
-def demo_get_messages_with_filters(demo_data_source: HTTPProvider5DataSource) -> Data:
+def demo_get_messages_with_filters(demo_data_source: HTTPProviderDataSource) -> Data:
     case = demo_data_source.command(
         http.GetMessages(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=20, microsecond=0),
@@ -86,20 +72,20 @@ def demo_get_messages_with_filters(demo_data_source: HTTPProvider5DataSource) ->
 
 
 @pytest.fixture
-def demo_events_from_data_source(demo_data_source: HTTPProvider5DataSource) -> Data:
+def demo_events_from_data_source(demo_data_source: HTTPProviderDataSource) -> Data:
     events = demo_data_source.command(
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
         )
     )
-    # Returns 49 events
+    # Returns 49 events #TODO
     # Failed = 6
     return events
 
 
 @pytest.fixture
-def demo_messages_from_data_source(demo_data_source: HTTPProvider5DataSource) -> Data:
+def demo_messages_from_data_source(demo_data_source: HTTPProviderDataSource) -> Data:
     messages = demo_data_source.command(
         http.GetMessages(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=58, second=0, microsecond=0),
@@ -113,17 +99,17 @@ def demo_messages_from_data_source(demo_data_source: HTTPProvider5DataSource) ->
 
 @pytest.fixture
 def demo_events_from_data_source_with_cache_status(
-    demo_data_source: HTTPProvider5DataSource,
+    demo_data_source: HTTPProviderDataSource,
 ) -> Data:
     events = demo_data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
-    # Returns 49 events
+    # Returns 49 events #TODO
     # Failed = 6
     return events
 
 
 @pytest.fixture
 def demo_messages_from_data_source_with_test_streams(
-    demo_data_source: HTTPProvider5DataSource,
+    demo_data_source: HTTPProviderDataSource,
 ) -> Data:
     messages = demo_data_source.command(
         http.GetMessages(

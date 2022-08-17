@@ -1,5 +1,4 @@
-# from th2_data_services.filter import Filter
-from .conftest import Filter
+from tests.tests_unit.tests_diff_version.conftest import Filter
 
 
 def test_filter_url():
@@ -25,11 +24,3 @@ def test_iterate_filter_twice():
     v1 = f.url()
     v2 = f.url()
     assert v1 == v2
-
-
-def test_repr():
-    f = Filter(name="type", values=["one", 2, "three"])
-    assert repr(f) == "Filter(name='type', values=['one', '2', 'three'], negative='False', conjunct='False')"
-
-    f = Filter(name="type", values="abc")
-    assert repr(f) == "Filter(name='type', values=['abc'], negative='False', conjunct='False')"

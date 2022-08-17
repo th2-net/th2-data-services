@@ -53,7 +53,7 @@ class Provider5EventStubBuilder(IEventStub):
 
 class Provider5MessageStubBuilder(IMessageStub):
     def __init__(self, message_struct=provider5_message_struct):
-        """Event stub builder for Provider tests_v5.
+        """Event stub builder for Provider v5.
 
         Args:
             message_struct: Message struct class.

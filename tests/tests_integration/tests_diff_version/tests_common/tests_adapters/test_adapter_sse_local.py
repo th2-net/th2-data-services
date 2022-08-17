@@ -2,11 +2,7 @@ from sseclient import Event
 import pytest
 
 from th2_data_services import Data
-from tests.tests_v5.conftest import START_TIME, END_TIME
-
-# from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-# from th2_data_services.provider.v5.commands import http
-from ..conftest import HTTPProvider5DataSource, http
+from tests.tests_unit.tests_diff_version.conftest import HTTPProviderDataSource, http, START_TIME, END_TIME
 
 
 def get_data_obj(rtype, ds, params_dict):
@@ -49,7 +45,7 @@ class TestSSEFlagTrue:
             ),
         ],
     )
-    def test_x_flag_true_or_default(self, demo_data_source: HTTPProvider5DataSource, params):
+    def test_x_flag_true_or_default(self, demo_data_source: HTTPProviderDataSource, params):
         ds = demo_data_source
         data: Data = get_data_obj(params[0], ds, dict(startTimestamp=START_TIME, endTimestamp=END_TIME, **params[1]))
 
@@ -59,7 +55,7 @@ class TestSSEFlagTrue:
 
 class TestSSEFlagFalse:
     # @pytest.mark.parametrize("rtype", ['events', 'messages'])
-    def test_events(self, demo_data_source: HTTPProvider5DataSource):
+    def test_events(self, demo_data_source: HTTPProviderDataSource):
         ds = demo_data_source
         data: Data = ds.command(
             http.GetEventsSSEEvents(
@@ -71,7 +67,7 @@ class TestSSEFlagFalse:
         for e in data:
             assert isinstance(e, Event)
 
-    def test_messages_provider_none(self, demo_data_source: HTTPProvider5DataSource):
+    def test_messages_provider_none(self, demo_data_source: HTTPProviderDataSource):
         ds = demo_data_source
         data: Data = ds.command(
             http.GetMessages(

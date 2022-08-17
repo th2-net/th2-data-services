@@ -81,7 +81,7 @@ For help use this readme: https://github.com/th2-net/th2-rpt-data-provider#filte
 <a href="../../th2_data_services/provider/v6/filters/filter.py#L95"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Provider6EventFilter`
-Base class for Event Filters of Provider tests_v5. 
+Base class for Event Filters of Provider v5. 
 
 <a href="../../th2_data_services/provider/v6/filters/filter.py#L91"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
@@ -136,7 +136,7 @@ For help use this readme: https://github.com/th2-net/th2-rpt-data-provider#filte
 <a href="../../th2_data_services/provider/v6/filters/filter.py#L99"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Provider6MessageFilter`
-Base class for Message Filters of Provider tests_v5. 
+Base class for Message Filters of Provider v5. 
 
 <a href="../../th2_data_services/provider/v6/filters/filter.py#L91"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
