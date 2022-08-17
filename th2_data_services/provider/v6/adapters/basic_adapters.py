@@ -48,6 +48,8 @@ class GRPCObjectToDictAdapter(IAdapter):
 
         try:
             new_record["body"] = json.loads(record.body)
-        except (KeyError, json.JSONDecodeError):
+        except (KeyError, AttributeError, json.JSONDecodeError):
             return new_record
+        except Exception as e:
+            raise Exception(f"{e}; Current record: {record}")
         return new_record

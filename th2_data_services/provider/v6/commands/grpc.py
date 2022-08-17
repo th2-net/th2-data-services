@@ -475,6 +475,9 @@ class GetMessagesGRPCObject(IGRPCProvider6Command, ProviderAdaptableCommand):
         )
         for response in stream_response:
             if response.WhichOneof("data") == "message":
+                from pprint import pprint
+
+                pprint(response)
                 response = self._handle_adapters(response)
                 yield response.message
 
