@@ -14,7 +14,7 @@
 
 from datetime import datetime, timezone
 from functools import partial
-from typing import List, Iterable, Generator
+from typing import List, Iterable, Generator, Union
 
 from grpc._channel import _InactiveRpcError
 from th2_grpc_data_provider.data_provider_pb2 import EventResponse, MessageGroupResponse, MessageStreamPointer
@@ -32,6 +32,8 @@ from th2_data_services.provider.v6.data_source.grpc import GRPCProvider6DataSour
 from th2_data_services.provider.v6.provider_api import GRPCProvider6API
 
 import logging
+
+from th2_data_services.provider.v6.streams import Streams
 
 logger = logging.getLogger(__name__)
 
@@ -417,7 +419,7 @@ class GetMessagesGRPCObject(IGRPCProvider6Command, ProviderAdaptableCommand):
     def __init__(
         self,
         start_timestamp: datetime,
-        stream: List[str],
+        stream: List[Union[str, Streams]],
         end_timestamp: datetime = None,
         search_direction: str = "NEXT",
         result_count_limit: int = None,
@@ -475,9 +477,6 @@ class GetMessagesGRPCObject(IGRPCProvider6Command, ProviderAdaptableCommand):
         )
         for response in stream_response:
             if response.WhichOneof("data") == "message":
-                from pprint import pprint
-
-                pprint(response)
                 response = self._handle_adapters(response)
                 yield response.message
 
@@ -494,7 +493,7 @@ class GetMessages(IGRPCProvider6Command, ProviderAdaptableCommand):
     def __init__(
         self,
         start_timestamp: datetime,
-        stream: List[str],
+        stream: List[Union[str, Streams]],
         end_timestamp: datetime = None,
         resume_from_id: str = None,
         search_direction: str = "NEXT",

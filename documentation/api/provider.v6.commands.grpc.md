@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L39"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetEventByIdGRPCObject`
 A Class-Command for request to rpt-data-provider. 
@@ -24,7 +24,7 @@ It retrieves the event by id as GRPC object.
  
  - <b>`EventResponse`</b>:  Th2 event. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L48"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L50"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -45,7 +45,7 @@ GetEventByIdGRPCObject constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L58"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L60"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -60,7 +60,7 @@ handle(data_source: GRPCProvider6DataSource) → EventResponse
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L68"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetEventById`
 A Class-Command for request to rpt-data-provider. 
@@ -79,7 +79,7 @@ It retrieves the event by id with `attachedMessageIds` list.
  
  - <b>`EventNotFound`</b>:  If event by Id wasn't found. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L78"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L80"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -101,7 +101,7 @@ GetEventById constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L92"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L94"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -116,7 +116,7 @@ handle(data_source: GRPCProvider6DataSource) → dict
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L108"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L110"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetEventsById`
 A Class-Command for request to rpt-data-provider. 
@@ -135,7 +135,7 @@ It retrieves the events by ids with `attachedMessageIds` list.
  
  - <b>`EventNotFound`</b>:  If any event by Id wasn't found. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L120"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L122"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -157,7 +157,7 @@ GetEventsById constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L132"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L134"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -172,7 +172,7 @@ handle(data_source: GRPCProvider6DataSource) → List[dict]
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L142"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L144"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetEventsGRPCObjects`
 A Class-Command for request to rpt-data-provider. 
@@ -185,7 +185,7 @@ It searches events stream as GRPC object by options.
  
  - <b>`Iterable[EventResponse]`</b>:  Stream of Th2 events. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L151"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L153"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -226,7 +226,7 @@ GetEventsGRPCObjects constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L194"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L196"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -241,7 +241,7 @@ handle(data_source: GRPCProvider6DataSource) → Iterable[EventResponse]
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L219"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L221"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetEvents`
 A Class-Command for request to rpt-data-provider. 
@@ -254,7 +254,7 @@ It searches events stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 events. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L228"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L230"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -297,7 +297,7 @@ GetEvents constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L277"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L279"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -312,7 +312,7 @@ handle(data_source: GRPCProvider6DataSource) → Data
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L301"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L303"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessageByIdGRPCObject`
 A Class-Command for request to rpt-data-provider. 
@@ -325,7 +325,7 @@ It retrieves the message by id as GRPC Object.
  
  - <b>`MessageGroupResponse`</b>:  Th2 message. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L310"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L312"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -346,7 +346,7 @@ GetMessageByIdGRPCObject constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L320"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L322"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -361,7 +361,7 @@ handle(data_source: GRPCProvider6DataSource) → MessageGroupResponse
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L327"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L329"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessageById`
 A Class-Command for request to rpt-data-provider. 
@@ -382,7 +382,7 @@ Please note, Provider6 doesn't return `attachedEventIds`. It will be == []. It's
  
  - <b>`MessageNotFound`</b>:  If message by id wasn't found. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L342"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L344"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -404,7 +404,7 @@ GetMessageById constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L356"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L358"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -419,7 +419,7 @@ handle(data_source: GRPCProvider6DataSource) → dict
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L371"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L373"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessagesById`
 A Class-Command for request to rpt-data-provider. 
@@ -440,7 +440,7 @@ Please note, Provider6 doesn't return `attachedEventIds`. It will be == []. It's
  
  - <b>`MessageNotFound`</b>:  If any message by id wasn't found. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L386"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L388"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -462,7 +462,7 @@ GetMessagesById constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L398"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L400"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -477,7 +477,7 @@ handle(data_source: GRPCProvider6DataSource) → List[dict]
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L408"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L410"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessagesGRPCObject`
 A Class-Command for request to rpt-data-provider. 
@@ -490,14 +490,14 @@ It searches messages stream as GRPC object by options.
  
  - <b>`Iterable[MessageGroupResponse]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L417"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L419"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
 __init__(
     start_timestamp: datetime,
-    stream: List[str],
+    stream: List[Union[str, Streams]],
     end_timestamp: datetime = None,
     search_direction: str = 'NEXT',
     result_count_limit: int = None,
@@ -531,7 +531,7 @@ GetMessagesGRPCObject constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L459"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L461"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -546,7 +546,7 @@ handle(data_source: GRPCProvider6DataSource) → List[MessageGroupResponse]
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L485"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L484"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessages`
 A Class-Command for request to rpt-data-provider. 
@@ -559,14 +559,14 @@ It searches messages stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L494"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L493"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
 __init__(
     start_timestamp: datetime,
-    stream: List[str],
+    stream: List[Union[str, Streams]],
     end_timestamp: datetime = None,
     resume_from_id: str = None,
     search_direction: str = 'NEXT',
@@ -604,7 +604,7 @@ GetMessages constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/commands/grpc.py#L545"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/commands/grpc.py#L544"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 

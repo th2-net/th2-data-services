@@ -56,6 +56,7 @@
 - [`provider.v6.provider_api`](./provider.v6.provider_api.md#module-providerv6provider_api)
 - [`provider.v6.provider_api.grpc`](./provider.v6.provider_api.grpc.md#module-providerv6provider_apigrpc)
 - [`provider.v6.provider_api.http`](./provider.v6.provider_api.http.md#module-providerv6provider_apihttp)
+- [`provider.v6.streams`](./provider.v6.streams.md#module-providerv6streams)
 - [`provider.v6.struct`](./provider.v6.struct.md#module-providerv6struct)
 - [`provider.v6.stub_builder`](./provider.v6.stub_builder.md#module-providerv6stub_builder)
 - [`sse_client`](./sse_client.md#module-sse_client)
@@ -145,6 +146,7 @@
 - [`grpc.BasicRequest`](./provider.v6.provider_api.grpc.md#class-basicrequest): BasicRequest(start_timestamp, end_timestamp, result_count_limit, keep_open, search_direction, filters)
 - [`grpc.GRPCProvider6API`](./provider.v6.provider_api.grpc.md#class-grpcprovider6api)
 - [`http.HTTPProvider6API`](./provider.v6.provider_api.http.md#class-httpprovider6api)
+- [`streams.Streams`](./provider.v6.streams.md#class-streams): General interface for composite streams of Provider v6.
 - [`struct.Provider6EventStruct`](./provider.v6.struct.md#class-provider6eventstruct): Interface for Event of data-provider v6.
 - [`stub_builder.Provider6EventStubBuilder`](./provider.v6.stub_builder.md#class-provider6eventstubbuilder)
 - [`stub_builder.Provider6MessageStubBuilder`](./provider.v6.stub_builder.md#class-provider6messagestubbuilder)

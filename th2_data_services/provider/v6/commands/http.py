@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Generator, List
+from typing import Generator, List, Union
 from datetime import datetime, timezone
 from functools import partial
 
@@ -24,6 +24,7 @@ from th2_data_services.provider.v6.interfaces.command import IHTTPProvider6Comma
 from th2_data_services.provider.v6.data_source.http import HTTPProvider6DataSource
 from th2_data_services.provider.v6.provider_api import HTTPProvider6API
 from th2_data_services.provider.command import ProviderAdaptableCommand
+from th2_data_services.provider.v6.streams import Streams
 from th2_data_services.sse_client import SSEClient
 from th2_data_services.provider.adapters.adapter_sse import SSEAdapter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
@@ -444,7 +445,7 @@ class GetMessagesSSEBytes(IHTTPProvider6Command, ProviderAdaptableCommand):
     def __init__(
         self,
         start_timestamp: datetime,
-        stream: List[str],
+        stream: List[Union[str, Streams]],
         end_timestamp: datetime = None,
         resume_from_id: str = None,
         search_direction: str = "next",
@@ -512,7 +513,19 @@ class GetMessagesSSEBytes(IHTTPProvider6Command, ProviderAdaptableCommand):
         fixed_part_len = len(url)
         current_url, resulting_urls = "", []
         for stream in self._stream:
-            stream = f"&stream={stream}:FIRST&stream={stream}:SECOND"  # TODO: Specify direction
+            if isinstance(stream, Streams):
+                stream = f"&{stream.url()}"
+            else:
+                splitted_stream = stream.split(":")
+                if len(splitted_stream) > 1:
+                    name, search_direction = ":".join(splitted_stream[0:-1]), splitted_stream[-1].upper()
+                    if search_direction in ("FIRST", "SECOND"):
+                        stream = f"&stream={name}:{search_direction}"
+                    else:
+                        stream = f"&stream={stream}:FIRST&stream={stream}:SECOND"
+                else:
+                    stream = f"&stream={stream}:FIRST&stream={stream}:SECOND"
+
             if fixed_part_len + len(current_url) + len(stream) >= 2048:
                 resulting_urls.append(url + current_url)
                 current_url = ""
@@ -540,7 +553,7 @@ class GetMessagesSSEEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
     def __init__(
         self,
         start_timestamp: datetime,
-        stream: List[str],
+        stream: List[Union[str, Streams]],
         end_timestamp: datetime = None,
         resume_from_id: str = None,
         search_direction: str = "next",
@@ -622,7 +635,7 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
     def __init__(
         self,
         start_timestamp: datetime,
-        stream: List[str],
+        stream: List[Union[str, Streams]],
         end_timestamp: datetime = None,
         resume_from_id: str = None,
         search_direction: str = "next",

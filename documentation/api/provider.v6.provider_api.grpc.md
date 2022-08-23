@@ -22,14 +22,14 @@ BasicRequest(start_timestamp, end_timestamp, result_count_limit, keep_open, sear
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L54"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GRPCProvider6API`
 
 
 
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L56"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -50,7 +50,7 @@ GRPC Provider6 API.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L372"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L376"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event`
 
@@ -62,7 +62,7 @@ GRPC-API `getEvent` call returns a single event with the specified id.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L390"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L394"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event_filter_info`
 
@@ -74,7 +74,7 @@ GRPC-API `getEventFilterInfo` call returns event filter info.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L386"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L390"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_events_filters`
 
@@ -86,7 +86,7 @@ GRPC-API `getEventsFilters` call returns all the names of sse event filters.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L377"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L381"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_message`
 
@@ -98,7 +98,7 @@ GRPC-API `getMessage` call returns a single message with the specified id.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L395"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L399"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_message_filter_info`
 
@@ -110,7 +110,7 @@ GRPC-API `getMessageFilterInfo` call returns message filter info.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L72"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L73"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_message_streams`
 
@@ -122,7 +122,7 @@ GRPC-API `getMessageStreams` call returns a list of message stream names.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L382"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L386"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_messages_filters`
 
@@ -134,7 +134,7 @@ GRPC-API `getMessagesFilters` call returns all the names of sse message filters.
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L400"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L404"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match_event`
 
@@ -146,7 +146,7 @@ GRPC-API `matchEvent` call checks that the event with the specified id is matche
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L405"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L409"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match_message`
 
@@ -158,7 +158,7 @@ GRPC-API `matchMessage` call checks that the message with the specified id is ma
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L76"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L77"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `search_events`
 
@@ -203,7 +203,7 @@ GRPC-API `searchEvents` call creates an event or an event metadata stream that m
 
 ---
 
-<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L147"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v6/provider_api/grpc.py#L148"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `search_messages`
 

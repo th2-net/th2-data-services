@@ -42,6 +42,7 @@ from th2_grpc_data_provider.data_provider_pb2 import (
 )
 from grpc import Channel, insecure_channel
 from th2_data_services.provider.interfaces.source_api import IGRPCProviderSourceAPI
+from th2_data_services.provider.v6.streams import Streams
 
 logger = logging.getLogger(__name__)
 
@@ -250,7 +251,10 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
         """
         new_streams = []
         for raw_stream in streams:
-            msg_stream = self.__build_message_stream(raw_stream)
+            if isinstance(raw_stream, Streams):
+                msg_stream = raw_stream.grpc()
+            else:
+                msg_stream = self.__build_message_stream(raw_stream)
             if isinstance(msg_stream, list):
                 new_streams.extend(msg_stream)
             else:
@@ -272,7 +276,7 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
         splitted_stream = raw_stream.split(":")
         name = splitted_stream[0]
         if len(splitted_stream) > 1:
-            name, search_direction = ":".join(splitted_stream[0:-1]), splitted_stream[-1]
+            name, search_direction = ":".join(splitted_stream[0:-1]), splitted_stream[-1].upper()
             if search_direction in ("FIRST", "SECOND"):
                 return MessageStream(name=name, direction=Direction.Value(search_direction))
             else:
