@@ -11,14 +11,19 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+from importlib.metadata import version
 from typing import Sequence, Union
-
-from th2_data_services.provider.v5.filters.filter import Provider5Filter
 from warnings import warn
 
+v = version("th2_grpc_data_provider")
 
-class Filter(Provider5Filter):
+if v == "1.1.0":  # v6
+    from th2_data_services.provider.v6.filters.filter import Provider6Filter as ProviderFilter  # noqa
+elif v == "0.1.6":  # v5
+    from th2_data_services.provider.v5.filters.filter import Provider5Filter as ProviderFilter  # noqa
+
+
+class Filter(ProviderFilter):
     """The class for using rpt-data-provider filters API."""
 
     def __init__(
