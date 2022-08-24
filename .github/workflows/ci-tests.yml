@@ -22,7 +22,3 @@ jobs:
           cd tests
           python unittestV5.py
           python unittestV6.py
-#          pip install th2-grpc-data-provider==0.1.6
-#          pytest tests_unit --ignore=./tests_unit/tests_diff_version/tests_v6
-#          pip install th2-grpc-data-provider==1.1.0
-#          pytest tests_unit --ignore=./tests_unit/tests_diff_version/tests_v5
