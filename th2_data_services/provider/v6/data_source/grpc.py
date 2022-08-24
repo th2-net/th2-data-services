@@ -31,10 +31,10 @@ import logging
 from th2_data_services.provider.interfaces.stub_builder import IEventStub, IMessageStub
 from th2_data_services.provider.v6.provider_api import GRPCProvider6API
 from th2_data_services.provider.v6.struct import (
-    provider6_event_struct,
-    provider6_message_struct,
-    Provider6EventStruct,
-    Provider6MessageStruct,
+    HTTPProvider6EventStruct,
+    HTTPProvider6MessageStruct,
+    grpc_provider6_message_struct,
+    grpc_provider6_event_struct,
 )
 from th2_data_services.provider.v6.stub_builder import (
     provider6_event_stub_builder,
@@ -54,8 +54,8 @@ class GRPCProvider6DataSource(IGRPCProviderDataSource):
     def __init__(
         self,
         url: str,
-        event_struct: IEventStruct = provider6_event_struct,
-        message_struct: IMessageStruct = provider6_message_struct,
+        event_struct: IEventStruct = grpc_provider6_event_struct,
+        message_struct: IMessageStruct = grpc_provider6_message_struct,
         event_stub_builder: IEventStub = provider6_event_stub_builder,
         message_stub_builder: IMessageStub = provider6_message_stub_builder,
     ):
@@ -105,11 +105,11 @@ class GRPCProvider6DataSource(IGRPCProviderDataSource):
         return self.__provider_api
 
     @property
-    def event_struct(self) -> Provider6EventStruct:
+    def event_struct(self) -> HTTPProvider6EventStruct:
         """Returns event structure class."""
         return self._event_struct
 
     @property
-    def message_struct(self) -> Provider6MessageStruct:
+    def message_struct(self) -> HTTPProvider6MessageStruct:
         """Returns message structure class."""
         return self._message_struct

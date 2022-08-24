@@ -26,10 +26,10 @@ if TYPE_CHECKING:
 
 from th2_data_services.provider.interfaces.data_source import IHTTPProviderDataSource
 from th2_data_services.provider.v6.struct import (
-    provider6_event_struct,
-    provider6_message_struct,
-    Provider6EventStruct,
-    Provider6MessageStruct,
+    http_provider6_event_struct,
+    http_provider6_message_struct,
+    HTTPProvider6EventStruct,
+    HTTPProvider6MessageStruct,
 )
 from th2_data_services.provider.v6.stub_builder import (
     provider6_event_stub_builder,
@@ -53,8 +53,8 @@ class HTTPProvider6DataSource(IHTTPProviderDataSource):
         chunk_length: int = 65536,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
-        event_struct: IEventStruct = provider6_event_struct,
-        message_struct: IMessageStruct = provider6_message_struct,
+        event_struct: IEventStruct = http_provider6_event_struct,
+        message_struct: IMessageStruct = http_provider6_message_struct,
         event_stub_builder: IEventStub = provider6_event_stub_builder,
         message_stub_builder: IMessageStub = provider6_message_stub_builder,
         check_connect_timeout: (int, float) = 5,
@@ -105,11 +105,11 @@ class HTTPProvider6DataSource(IHTTPProviderDataSource):
         return self._provider_api
 
     @property
-    def event_struct(self) -> Provider6EventStruct:
+    def event_struct(self) -> HTTPProvider6EventStruct:
         """Returns event structure class."""
         return self._event_struct
 
     @property
-    def message_struct(self) -> Provider6MessageStruct:
+    def message_struct(self) -> HTTPProvider6MessageStruct:
         """Returns message structure class."""
         return self._message_struct

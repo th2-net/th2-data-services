@@ -14,13 +14,13 @@
 
 from th2_data_services.provider.interfaces.stub_builder import IEventStub, IMessageStub
 from th2_data_services.provider.v6.struct import (
-    provider6_event_struct,
-    provider6_message_struct,
+    http_provider6_event_struct,
+    http_provider6_message_struct,
 )
 
 
 class Provider6EventStubBuilder(IEventStub):
-    def __init__(self, event_struct=provider6_event_struct):
+    def __init__(self, event_struct=http_provider6_event_struct):
         """Event stub builder for Provider v6.
 
         Args:
@@ -52,7 +52,7 @@ class Provider6EventStubBuilder(IEventStub):
 
 
 class Provider6MessageStubBuilder(IMessageStub):
-    def __init__(self, message_struct=provider6_message_struct):
+    def __init__(self, message_struct=http_provider6_message_struct):
         """Event stub builder for Provider 6.
 
         Args:

@@ -155,7 +155,7 @@
 - [`http.HTTPProvider5API`](./provider.v5.provider_api.http.md#class-httpprovider5api)
 - [`stub_builder.Provider5EventStubBuilder`](./provider.v5.stub_builder.md#class-provider5eventstubbuilder)
 - [`stub_builder.Provider5MessageStubBuilder`](./provider.v5.stub_builder.md#class-provider5messagestubbuilder)
-- [`struct.Provider6EventStruct`](./provider.v6.struct.md#class-provider6eventstruct): Interface for Event of data-provider v6.
+- [`struct.GRPCProvider6EventStruct`](./provider.v6.struct.md#class-grpcprovider6eventstruct): Interface for Event of data-provider v6.
 - [`stub_builder.Provider6EventStubBuilder`](./provider.v6.stub_builder.md#class-provider6eventstubbuilder)
 - [`stub_builder.Provider6MessageStubBuilder`](./provider.v6.stub_builder.md#class-provider6messagestubbuilder)
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.

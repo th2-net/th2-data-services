@@ -14,7 +14,7 @@
 from typing import Optional
 
 from th2_data_services.interfaces.adapter import IEventAdapter
-from th2_data_services.provider.v6.struct import Provider6EventStruct, provider6_event_struct
+from th2_data_services.provider.v6.struct import HTTPProvider6EventStruct, http_provider6_event_struct
 
 
 class DeleteEventWrappersAdapter(IEventAdapter):
@@ -23,7 +23,7 @@ class DeleteEventWrappersAdapter(IEventAdapter):
     It used for events to which an AdaptorGRPCObjectToDict has been applied.
     """
 
-    def __init__(self, event_struct: Provider6EventStruct = provider6_event_struct):
+    def __init__(self, event_struct: HTTPProvider6EventStruct = http_provider6_event_struct):
         """AdapterDeleteEventWrappers constructor.
 
         Args:
