@@ -19,7 +19,7 @@ v = version("th2_grpc_data_provider")
 
 if v == "1.1.0":  # v6
     from th2_data_services.provider.v6.filters.filter import Provider6Filter as ProviderFilter  # noqa
-elif v == "0.1.6":  # v5
+elif v == "0.0.4":  # v5
     from th2_data_services.provider.v5.filters.filter import Provider5Filter as ProviderFilter  # noqa
 
 
