@@ -29,6 +29,8 @@
 - [`provider.interfaces.source_api`](./provider.interfaces.source_api.md#module-providerinterfacessource_api)
 - [`provider.interfaces.struct`](./provider.interfaces.struct.md#module-providerinterfacesstruct)
 - [`provider.interfaces.stub_builder`](./provider.interfaces.stub_builder.md#module-providerinterfacesstub_builder)
+- [`provider.utils`](./provider.utils.md#module-providerutils)
+- [`provider.utils.version_checker`](./provider.utils.version_checker.md#module-providerutilsversion_checker)
 - [`provider.v5`](./provider.v5.md#module-providerv5)
 - [`provider.v5.commands`](./provider.v5.commands.md#module-providerv5commands)
 - [`provider.v5.filters`](./provider.v5.filters.md#module-providerv5filters)
@@ -157,6 +159,9 @@
 ## Functions
 
 - [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
+- [`version_checker.get_package_version`](./provider.utils.version_checker.md#function-get_package_version)
+- [`version_checker.get_version_by_pip`](./provider.utils.version_checker.md#function-get_version_by_pip)
+- [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
 - [`command_resolver.resolver_get_event_by_id`](./provider.v6.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
 - [`command_resolver.resolver_get_events_by_id`](./provider.v6.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
 

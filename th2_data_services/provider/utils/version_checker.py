@@ -5,10 +5,8 @@ import sys
 from typing import List
 
 
-def get_version_by_pip(package_name: str):
-    pip_run = subprocess.run(
-        [sys.executable, "-m", "pip", "show", package_name], capture_output=True
-    )
+def get_version_by_pip(package_name: str):  # noqa: D103
+    pip_run = subprocess.run([sys.executable, "-m", "pip", "show", package_name], capture_output=True)
     if pip_run.returncode != 0:
         return None
 
@@ -17,13 +15,13 @@ def get_version_by_pip(package_name: str):
     return matches[0]
 
 
-def get_package_version(package_name: str):
+def get_package_version(package_name: str):  # noqa: D103
     version = get_version_by_pip(package_name)
     # TODO: get version in case of conda
     return version
 
 
-def verify_grpc_version(valid: List[str]):
+def verify_grpc_version(valid: List[str]):  # noqa: D103
     if os.environ.get("TH2_DS_SKIP_GRPC_VERIFY", "0") == "1":
         return
     version = get_package_version("th2_grpc_data_provider")
@@ -32,6 +30,4 @@ def verify_grpc_version(valid: List[str]):
         raise SystemError(f"Package th2_grpc_data_provider not found")
 
     if version not in valid:
-        raise SystemError(
-            f"There is unsupported version of th2_grpc_data_provider for v5 provider api ({version})"
-        )
+        raise SystemError(f"There is unsupported version of th2_grpc_data_provider for v5 provider api ({version})")
