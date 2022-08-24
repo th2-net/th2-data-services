@@ -1,4 +1,4 @@
-from importlib.metadata import version, PackageNotFoundError
+from importlib_metadata import version, PackageNotFoundError
 
 v = version("th2_grpc_data_provider")
 DEMO_PORT = "31789"  # GRPC provider v6

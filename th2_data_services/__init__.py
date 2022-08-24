@@ -12,8 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .data import Data
-from .filter import Filter
+from th2_data_services.data import Data
+from th2_data_services.filter import Filter
 import logging
 from logging import NullHandler
 

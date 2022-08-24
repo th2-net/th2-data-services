@@ -1,6 +1,9 @@
+import pytest
+
 from th2_data_services.data import Data
 
 
+@pytest.mark.skip
 def test_iter_data(demo_events_from_data_source: Data):
     """Test via data provider"""
     # output = [
@@ -19,6 +22,7 @@ def test_iter_data(demo_events_from_data_source: Data):
     assert list(events)
 
 
+@pytest.mark.skip
 def test_filter_data(demo_events_from_data_source: Data):
     # TODO: Change on mock
     events = demo_events_from_data_source

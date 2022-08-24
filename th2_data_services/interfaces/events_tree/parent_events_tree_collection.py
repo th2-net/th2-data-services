@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Callable
 
 from treelib import Node, Tree
 
@@ -29,7 +29,12 @@ class ParentEventsTreeCollection(EventsTreeCollection):
     """
 
     def __init__(
-        self, data: Data, data_source: IProviderDataSource = None, preserve_body: bool = False, stub: bool = False
+        self,
+        data: Data,
+        data_source: IProviderDataSource = None,
+        preserve_body: bool = False,
+        stub: bool = False,
+        resolver: Callable = None,
     ):
         """ParentEventsTreeCollection constructor.
 
@@ -38,8 +43,10 @@ class ParentEventsTreeCollection(EventsTreeCollection):
             data_source: Data Source object.
             preserve_body: If True then save body of event.
             stub: If True it will create stub when event is broken.
+            resolver: It's function that solve which protocol command to choose.
+                Note that this parameter is only required during implementation.
         """
-        super().__init__(data, data_source, preserve_body, stub)
+        super().__init__(data, data_source, preserve_body, stub, resolver)
 
     def _build_trees(self, nodes: Dict[Optional[str], List[Node]]) -> None:
         """Builds trees and saves detached events.

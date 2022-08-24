@@ -4,6 +4,7 @@ from ..conftest import HTTPProviderDataSource, http, Data
 from th2_data_services.provider.exceptions import CommandError
 
 
+@pytest.mark.skip
 def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProviderDataSource):
     data_source = demo_data_source  # TODO: Change on mock
 
@@ -116,6 +117,7 @@ def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProviderData
         data_source.command(http.GetEventById("id"))
 
 
+@pytest.mark.skip
 def test_find_messages_by_id_from_data_provider(demo_data_source: HTTPProviderDataSource):
     data_source = demo_data_source  # TODO: Change on mock
 
@@ -236,6 +238,7 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: HTTPProviderDa
     assert len(messages_with_one_element) == 1
 
 
+@pytest.mark.skip
 def test_get_x_with_filters(
     demo_get_events_with_one_filter: Data,
     demo_get_messages_with_one_filter: Data,

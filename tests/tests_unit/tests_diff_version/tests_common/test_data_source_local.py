@@ -11,6 +11,7 @@ from tests.tests_unit.tests_diff_version.conftest import http, HTTPProviderDataS
 # TODO: Change on mock
 
 
+@pytest.mark.skip
 def test_find_message_by_id_from_data_provider_with_error(demo_data_source: HTTPProviderDataSource):
     data_source = demo_data_source
 
@@ -18,6 +19,7 @@ def test_find_message_by_id_from_data_provider_with_error(demo_data_source: HTTP
         data_source.command(http.GetMessageById("demo-conn_not_exist:first:1624005448022245399"))
 
 
+@pytest.mark.skip
 def test_get_events_from_data_provider_with_error(demo_data_source: HTTPProviderDataSource):
     data_source = demo_data_source
 
@@ -27,6 +29,7 @@ def test_get_events_from_data_provider_with_error(demo_data_source: HTTPProvider
     assert "replace() takes no keyword arguments" in str(exc_info)
 
 
+@pytest.mark.skip
 def test_get_messages_from_data_provider_with_error(demo_data_source: HTTPProviderDataSource):
     data_source = demo_data_source
 
@@ -36,12 +39,14 @@ def test_get_messages_from_data_provider_with_error(demo_data_source: HTTPProvid
     assert "replace() takes no keyword arguments" in str(exc_info)
 
 
+@pytest.mark.skip
 def test_check_url_for_data_source():
     with pytest.raises(requests.exceptions.ConnectionError) as exc_info:
         data_source = HTTPProviderDataSource("http://test_test:8080/")
     assert "Max retries exceeded with url" in str(exc_info)
 
 
+@pytest.mark.skip
 def test_messageIds_not_in_last_msg(demo_messages_from_data_source: Data):
     data = demo_messages_from_data_source
     data_lst = list(data)
@@ -49,6 +54,7 @@ def test_messageIds_not_in_last_msg(demo_messages_from_data_source: Data):
     assert "messageIds" not in last_msg
 
 
+@pytest.mark.skip
 def test_get_messages_with_multiple_url(
     demo_messages_from_data_source_with_test_streams: Data,
     demo_messages_from_data_source: Data,
@@ -70,6 +76,7 @@ def test_get_messages_with_multiple_url(
 #     assert "\x80" in event["body"][0]["value"] and event["body"][0]["value"] == "nobJjpBJkTuQMmscc4R\x80"
 
 
+@pytest.mark.skip
 def test_attached_messages(demo_data_source: HTTPProviderDataSource):
     events = demo_data_source.command(
         http.GetEvents(
