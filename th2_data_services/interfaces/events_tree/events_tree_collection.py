@@ -24,7 +24,6 @@ from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
-from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
 import logging
 
@@ -48,7 +47,12 @@ class EventsTreeCollection(ABC):
     """
 
     def __init__(
-        self, data: Data, data_source: IProviderDataSource = None, preserve_body: bool = False, stub: bool = False
+        self,
+        data: Data,
+        data_source: IProviderDataSource = None,
+        preserve_body: bool = False,
+        stub: bool = False,
+        resolver: Callable = None,
     ):
         """EventsTreeCollection constructor.
 
@@ -57,6 +61,8 @@ class EventsTreeCollection(ABC):
             data_source: Provider Data Source object.
             preserve_body: If True it will preserve 'body' field in the Events.
             stub: If True it will create stub when event is broken.
+            resolver: It's function that solve which protocol command to choose.
+                Note that this parameter is only required during implementation.
         """
         self._id = id(self)
         self._preserve_body = preserve_body
@@ -65,17 +71,21 @@ class EventsTreeCollection(ABC):
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
         self._stub_status = stub
         self._data_source = data_source
+        if resolver is None:
+            raise ValueError("Parameter 'resolver' must be not None.")
+        self._resolver = resolver
         self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
+
+        if data_source is not None:
+            self.recover_unknown_events(self._data_source)
+
         if self._detached_nodes:
             w = "The collection were built with detached events because there are no some events in the source"
             self._logger.warning(w)
             warnings.warn(w)
-
-        if data_source is not None:
-            self.recover_unknown_events(self._data_source)
 
     def get_parentless_trees(self) -> List[EventsTree]:
         """Builds and returns parentless trees by detached events.
@@ -770,7 +780,7 @@ class EventsTreeCollection(ABC):
         Args:
             data_source: Data Source.
         """
-        instance_command = resolver_get_events_by_id(data_source)
+        instance_command = self._resolver(data_source)
 
         previous_detached_events = list(self._detached_events().keys())
         while previous_detached_events:
