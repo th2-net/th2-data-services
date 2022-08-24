@@ -12,6 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from th2_data_services.provider.utils.version_checker import verify_grpc_version
+# from th2_data_services.provider.utils.version_checker import verify_grpc_version
 
-verify_grpc_version(["0.0.4"])
+# verify_grpc_version(["0.0.4"])

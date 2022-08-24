@@ -236,7 +236,15 @@ use `CodecPipelinesAdapter` manually.
 ## BugFixes
 1. [TH2-3700] Filter iterate values only once - fixed.
 
+# v1.0.3
+
+## BugFixes
+1. [TH2-3739] GRPCProvider5API is based on grpc v0.1.6 now.
+
 # v1.1.0
+
+## User impact and migration instructions
+This release is not required any additional steps to use.
 
 ## Features
 1. [TH2-3497] EventsTreeCollection got `get_leaves_iter` method.
@@ -246,15 +254,32 @@ use `CodecPipelinesAdapter` manually.
 5. [TH2-3546][TH2-3583] `INTERACTIVE_MODE` - global parameter was introduced.
 6. `Data.use_cache()` <- True by default.
 7. Added data methods to get cache files paths `Data.get_cache_filepath()` and `Data.get_pending_cache_filepath()`.
+8. [TH2-3665] Added method get_tree_by_id in ETC.
+9. [TH2-3592] Added logging in EventsTreeCollection module when ETC create with detached events.
+10. [TH2-3475] Implement Data objects joining
+11. [TH2-3467] Added utils classes to convert timestamps.
+12. [TH2-3662][TH2-3492] Added `get_detached_events_iter` and `get_detached_events` methods in EventsTreeCollections.
+      * Warning: Property `detached_events` is deprecated and will be removed in the future.
+13. [TH2-3496] Added get_parentless_tree_collection method in EventsTreeCollection.
+14. [TH2-3905] Separate filer classes added instead of `th2_data_services.Filter` class. 
+      * Warning: Class `th2_data_services.Filter` is deprecated and will be removed in the future.
 
 ## Improvements
 1. [TH2-3003] Added automatic attachment of example.py code in readme.md.
 2. [TH2-3558] Added more debug info about Data cache using.
 3. [TH2-3389] GetXById http-provider command handles 404 error status instead of JsonDecodeException.
+4. [TH2-3663] Speed up len_detached_events property
 
-## Bugs
+## BugFixes
 1. [TH2-3557][TH2-3560] Parent Data cache file will be created if you iterate a child Data object now.
 2. [TH2-3545][TH2-3580] The Data object now uses an absolute path, so it doesn't lose its cache file if you change the working directory.
 3. [TH2-3546][TH2-3583] Data cache file will not be removed if you use `INTERACTIVE_MODE` and the file is being read.
 4. [TH2-3487][TH2-3585] `data = Data(source_data, cache=True).map(func)` Data object didn't write the cache in such case before. Fixed.
 5. [TH2-3558] Used loggers name fixed. Changed to __name__.
+6. [TH2-3733] Provider API class generate standard URL (without duplicate '/' and '/' before query)
+7. [TH2-3598] Method get_subtree returns tree as EventsTree class.
+8. [TH2-3593][TH2-3664] Method get_root_by_id returns root by any non-root ID as Th2Event.
+9. [TH2-3595] When ETC creates subtree or itself ETC doesn't copy incoming data-stream.
+10. [TH2-3732] Log message in http.GetMessages contains name of the stream.
+11. [TH2-3734] EventsTreeCollection append_event method doesn't add duplicate event.
+12. [TH2-3596][TH2-3594][TH2-3473] EventsTreeCollections. Get or find methods includes parentless results, if parentless exists.
