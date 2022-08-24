@@ -21,6 +21,7 @@ from th2_data_services.provider.interfaces.struct import IEventStruct
 from th2_data_services.provider.v6.data_source import HTTPProvider6DataSource, GRPCProvider6DataSource
 from th2_data_services.provider.v6.struct import provider6_event_struct
 from th2_data_services.provider.v6.stub_builder import provider6_event_stub_builder
+from th2_data_services.provider.v6.command_resolver import resolver_get_events_by_id
 
 
 class EventsTreeCollectionProvider6(EventsTreeCollection):
@@ -45,7 +46,13 @@ class EventsTreeCollectionProvider6(EventsTreeCollection):
         """
         self._event_struct = event_struct  # Should be placed before super!
 
-        super().__init__(data=data, data_source=data_source, preserve_body=preserve_body, stub=stub)
+        super().__init__(
+            data=data,
+            data_source=data_source,
+            preserve_body=preserve_body,
+            stub=stub,
+            resolver=resolver_get_events_by_id,
+        )
 
     def _get_event_id(self, event) -> str:
         """Gets event id from the event.
