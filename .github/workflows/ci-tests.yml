@@ -17,6 +17,7 @@ jobs:
           pip install -r requirements.txt
       - name: Test with pytest
         run: |
+          pip install pytest
           python tests/unittestV5.py
           python tests/unittestV6.py
 #        run: |
