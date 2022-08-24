@@ -17,6 +17,7 @@ jobs:
           pip install -r requirements.txt
       - name: Test with pytest
         run: |
+          pip install importlib-metadata
           pip install pytest importlib importlib-metadata
           cd tests
           python unittestV5.py
