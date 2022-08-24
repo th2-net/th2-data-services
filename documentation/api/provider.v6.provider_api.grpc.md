@@ -17,6 +17,42 @@
 BasicRequest(start_timestamp, end_timestamp, result_count_limit, keep_open, search_direction, filters) 
 
 
+---
+
+#### <kbd>property</kbd> end_timestamp
+
+Alias for field number 1 
+
+---
+
+#### <kbd>property</kbd> filters
+
+Alias for field number 5 
+
+---
+
+#### <kbd>property</kbd> keep_open
+
+Alias for field number 3 
+
+---
+
+#### <kbd>property</kbd> result_count_limit
+
+Alias for field number 2 
+
+---
+
+#### <kbd>property</kbd> search_direction
+
+Alias for field number 4 
+
+---
+
+#### <kbd>property</kbd> start_timestamp
+
+Alias for field number 0 
+
 
 
 
