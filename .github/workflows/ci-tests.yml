@@ -20,6 +20,7 @@ jobs:
         run: |
           pip install pytest
           cd tests
+          pip freeze | grep importlib
           pip install th2-grpc-data-provider==0.1.6
           pytest tests_unit --ignore=./tests_unit/tests_diff_version/tests_v6
           pip install th2-grpc-data-provider==1.1.0
