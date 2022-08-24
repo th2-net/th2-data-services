@@ -15,10 +15,10 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install importlib-metadata
       - name: Test with pytest
         run: |
-          pip install importlib-metadata
-          pip install pytest importlib importlib-metadata
+          pip install pytest
           cd tests
           python unittestV5.py
           python unittestV6.py
