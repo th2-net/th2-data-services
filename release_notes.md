@@ -283,3 +283,20 @@ This release is not required any additional steps to use.
 10. [TH2-3732] Log message in http.GetMessages contains name of the stream.
 11. [TH2-3734] EventsTreeCollection append_event method doesn't add duplicate event.
 12. [TH2-3596][TH2-3594][TH2-3473] EventsTreeCollections. Get or find methods includes parentless results, if parentless exists.
+
+# v1.1.1
+
+## BugFixes
+1. [TH2-4039] An empty filter is validated.
+
+# v1.2.0
+
+## Features
+1. [TH2-3083] The problem with several versions of the grpc interface is solved.
+2. [TH2-3512] Provider V6 module is developed.
+
+# Improvements
+1. [TH2-4098] Added Streams class for the param 'stream'.
+
+# BugFixes
+1. [TH2-4072] Now ETC doesn't raise a warning for missing detached_events.
