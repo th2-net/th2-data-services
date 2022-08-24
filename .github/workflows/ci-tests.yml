@@ -17,8 +17,8 @@ jobs:
           pip install -r requirements.txt
       - name: Test with pytest
         run: |
-          python unittestV5.py
-          python unittestV6.py
+          python tests/unittestV5.py
+          python tests/unittestV6.py
 #        run: |
 #          pip install pytest
 #          pytest -k "not test_parent_events_tree_local and not test_data_source_local and not test_data_local and not test_events_tree_local and not test_adapter_sse_local"
