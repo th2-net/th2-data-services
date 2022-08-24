@@ -291,6 +291,16 @@ This release is not required any additional steps to use.
 
 # v1.2.0
 
+## User impact and migration instructions
+This release is added new grpc version. Therefore, we are forced 
+to update th2-grpc-data-provider to 1.1.0 .
+
+1. [I] A new version of grpc has been added.  
+   [M] If you require the v6 version of the interface, you do not need to do anything. 
+       Otherwise, you need to reinstall version 1.1.0 of th2-grpc-data-provider.
+
+More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.0#grpc-provider-warning)
+
 ## Features
 1. [TH2-3083] The problem with several versions of the grpc interface is solved.
 2. [TH2-3512] Provider V6 module is developed.
