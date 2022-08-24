@@ -1,6 +1,9 @@
+import pytest
+
 from th2_data_services.data import Data
 
 
+@pytest.mark.skip
 def test_iter_data(demo_events_from_data_source: Data):
     """Test via data provider"""
     # output = [

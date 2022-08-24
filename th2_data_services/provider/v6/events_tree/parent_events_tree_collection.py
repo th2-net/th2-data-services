@@ -18,6 +18,7 @@ from th2_data_services import Data
 from th2_data_services.interfaces.events_tree import ParentEventsTreeCollection
 from th2_data_services.events_tree.exceptions import FieldIsNotExist
 from th2_data_services.provider.interfaces.struct import IEventStruct
+from th2_data_services.provider.v6.command_resolver import resolver_get_events_by_id
 from th2_data_services.provider.v6.data_source import GRPCProvider6DataSource, HTTPProvider6DataSource
 from th2_data_services.provider.v6.struct import provider6_event_struct
 from th2_data_services.provider.v6.stub_builder import provider6_event_stub_builder
@@ -50,6 +51,7 @@ class ParentEventsTreeCollectionProvider6(ParentEventsTreeCollection):
             data_source=data_source,
             preserve_body=preserve_body,
             stub=stub,
+            resolver=resolver_get_events_by_id,
         )
 
     def _get_event_id(self, event) -> str:

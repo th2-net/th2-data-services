@@ -5,6 +5,7 @@ from th2_data_services import Data
 from tests.tests_unit.tests_diff_version.conftest import HTTPProviderDataSource, http, START_TIME, END_TIME
 
 
+@pytest.mark.skip
 def get_data_obj(rtype, ds, params_dict):
     if rtype == "events":
         return ds.command(
@@ -22,6 +23,7 @@ def get_data_obj(rtype, ds, params_dict):
         raise Exception("Not events or messages")
 
 
+@pytest.mark.skip
 class TestSSEFlagTrue:
     @pytest.mark.parametrize(
         "params",
@@ -53,6 +55,7 @@ class TestSSEFlagTrue:
             assert isinstance(e, dict)
 
 
+@pytest.mark.skip
 class TestSSEFlagFalse:
     # @pytest.mark.parametrize("rtype", ['events', 'messages'])
     def test_events(self, demo_data_source: HTTPProviderDataSource):

@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import pytest
+
 from th2_data_services import Data
 from th2_data_services.provider.v5.commands.http import GetEvents
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
@@ -8,6 +10,7 @@ from th2_data_services.provider.v5.events_tree.parent_events_tree_collection imp
 )
 
 
+@pytest.mark.skip
 def test_recover_unknown_events():
     data_source = HTTPProvider5DataSource("http://10.100.66.114:31787/")
     events: Data = data_source.command(
@@ -24,6 +27,7 @@ def test_recover_unknown_events():
     assert not collection.detached_events and before_tree != after_tree
 
 
+@pytest.mark.skip
 def test_recover_unknown_events_with_stub_events():
     data_source = HTTPProvider5DataSource("http://10.100.66.114:31787/")
     events: Data = data_source.command(
@@ -55,6 +59,7 @@ def test_recover_unknown_events_with_stub_events():
     assert collection.detached_events == {"Broken_Event": [broken_event]} and before_tree != after_tree
 
 
+@pytest.mark.skip
 def test_preserve_body():
     data_source = HTTPProvider5DataSource("http://10.100.66.114:31787/")
     events: Data = data_source.command(

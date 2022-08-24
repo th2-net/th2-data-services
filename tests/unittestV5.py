@@ -20,4 +20,4 @@ def run_tests(source_dir: str = ".", ignore_dir=None) -> int:
 
 if __name__ == "__main__":
     install_package(PACKAGE_NAME, grpc_version_5)
-    run_tests(ignore_dir=f"./{PATH_DIFF_VERSION}/tests_v6")
+    run_tests(source_dir="./tests_unit", ignore_dir=f"./{PATH_DIFF_VERSION}/tests_v6")
