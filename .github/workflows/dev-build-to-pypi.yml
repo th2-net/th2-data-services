@@ -27,7 +27,7 @@ jobs:
       - name: Set version for current build in package_info.json
         uses: MerthinTechnologies/edit-json-action@v1
         with:
-          filename: './package_info.json'
+          filename: 'bin_package/package_info.json'
           key: 'package_version'
           value: ${{ steps.release_ver.outputs.value }}
       # Build and publish
