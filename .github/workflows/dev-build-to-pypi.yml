@@ -17,7 +17,7 @@ jobs:
         id: pack_ver
         uses: notiz-dev/github-action-json-property@release
         with:
-          path: th2_data_services/package_info.json
+          path: bin_package/package_info.json
           prop_path: package_version
       - name: Build custom package version
         id: release_ver
