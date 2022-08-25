@@ -1,8 +1,8 @@
 from typing import List, Generator
 import warnings
 import pytest
-from th2_data_services.events_tree.exceptions import EventIdNotInTree
-from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
+from bin_package.th2_data_services.events_tree.exceptions import EventIdNotInTree
+from bin_package.th2_data_services.provider.v5 import EventsTreeCollectionProvider5
 
 
 def test_get_parentless_trees():

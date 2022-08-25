@@ -1,6 +1,6 @@
 import pytest
 
-from th2_data_services.data import Data
+from bin_package.th2_data_services.data import Data
 
 
 @pytest.mark.skip

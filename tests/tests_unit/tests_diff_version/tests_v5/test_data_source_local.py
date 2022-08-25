@@ -1,7 +1,8 @@
 import pytest
 
-from ..conftest import HTTPProviderDataSource, http, Data
-from th2_data_services.provider.exceptions import CommandError
+from ..conftest import HTTPProviderDataSource, Data
+from bin_package.th2_data_services.provider.v5.commands import http
+from bin_package.th2_data_services.provider import CommandError
 
 
 @pytest.mark.skip

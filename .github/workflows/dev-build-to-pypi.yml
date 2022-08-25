@@ -39,19 +39,22 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install importlib importlib-metadata
-      - name: Test with pytest
-        run: |
-          pip install pytest
-          cd tests
-          python unittestV5.py
-          python unittestV6.py
-          cd ..
+#      - name: Test with pytest
+#        run: |
+#          pip install pytest
+#          cd tests
+#          python unittestV5.py
+#          python unittestV6.py
+#          cd ..
       - name: Build package
         run: |
+          cd th2_data_services
           python setup.py sdist
+          cd ..
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
+          packages_dir: bin_package/sdist/
           password: ${{ secrets.PYPI_PASSWORD }}
           repository_url: https://upload.pypi.org/legacy/

@@ -119,24 +119,26 @@ This example works with **Events**, but you also can do the same actions with **
 [The following example as a file](examples/get_started_example.py).
 
 <!-- start get_started_example.py -->
+
 ```python
 from collections import Generator
 from typing import Tuple, List, Optional
 from datetime import datetime
 
-from th2_data_services import Data
-from th2_data_services.events_tree import EventsTree
-from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.commands import http as commands
-from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5, ParentEventsTreeCollectionProvider5
-from th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
-from th2_data_services.provider.v5.filters.message_filters import BodyFilter
+from bin_package.th2_data_services import Data
+from bin_package.th2_data_services import EventsTree
+from bin_package.th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
+from bin_package.th2_data_services import http as commands
+from bin_package.th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5,
+    ParentEventsTreeCollectionProvider5
+from bin_package.th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
+from bin_package.th2_data_services.provider.v5.filters import BodyFilter
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
 # If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
 # global parameter to True. It'll keep cache files if something went wrong.
-import th2_data_services
+from bin_package import th2_data_services
 
 th2_data_services.INTERACTIVE_MODE = True
 

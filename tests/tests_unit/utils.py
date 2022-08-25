@@ -6,7 +6,7 @@ from _pytest.logging import LogCaptureFixture
 from th2_data_services import Data
 
 if TYPE_CHECKING:
-    from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
+    from bin_package.th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
 
 
 class LogsChecker:

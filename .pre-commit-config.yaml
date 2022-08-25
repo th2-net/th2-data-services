@@ -35,22 +35,22 @@ repos:
           - --convention=google
           - --add-ignore=D100,D101,D104,D105,D403,  D102,   # http://www.pydocstyle.org/en/stable/error_codes.html
 
-  - repo: local
-    hooks:
-      - id: docgen
-        name: docgen
-        language: script
-        entry: doc_gen.sh
-        require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
-
-      - id: update_get_started_example_in_readme
-        name: update_get_started_example_in_readme
-        language: script
-        entry: attach_file_to.sh
-        args:
-          - get_started_example.py
-          - README.md
-        require_serial: true
+#  - repo: local
+#    hooks:
+#      - id: docgen
+#        name: docgen
+#        language: script
+#        entry: doc_gen.sh
+#        require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
+#
+#      - id: update_get_started_example_in_readme
+#        name: update_get_started_example_in_readme
+#        language: script
+#        entry: attach_file_to.sh
+#        args:
+#          - get_started_example.py
+#          - README.md
+#        require_serial: true
 
 #      - id: unit_tests
 #        name: unit_tests

@@ -3,9 +3,10 @@ from datetime import datetime
 import pytest
 import requests
 
-from th2_data_services.data import Data
-from th2_data_services.provider.exceptions import CommandError
-from tests.tests_unit.tests_diff_version.conftest import http, HTTPProviderDataSource
+from bin_package.th2_data_services.data import Data
+from bin_package.th2_data_services.provider import CommandError
+from tests.tests_unit.tests_diff_version.conftest import HTTPProviderDataSource
+from bin_package.th2_data_services.provider.v5.commands import http
 
 
 # TODO: Change on mock

@@ -7,8 +7,8 @@ from tests.tests_unit.utils import (
     iterate_data,
     is_pending_cache_file_exists,
 )
-from th2_data_services.th2_gui_report import Th2GUIReport
-from th2_data_services.data import Data
+from bin_package.th2_data_services.th2_gui_report import Th2GUIReport
+from bin_package.th2_data_services.data import Data
 import pytest
 
 

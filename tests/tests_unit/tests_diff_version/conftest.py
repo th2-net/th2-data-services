@@ -3,7 +3,8 @@ from datetime import datetime
 import pytest
 
 from th2_data_services import Data
-from . import HTTPProviderAPI, HTTPProviderDataSource, http, CodecPipelinesAdapter, Filter, DEMO_PORT  # noqa  # noqa
+from . import HTTPProviderAPI, HTTPProviderDataSource, CodecPipelinesAdapter, Filter, DEMO_PORT  # noqa  # noqa
+from bin_package.th2_data_services.provider.v5.commands import http
 
 
 @pytest.fixture

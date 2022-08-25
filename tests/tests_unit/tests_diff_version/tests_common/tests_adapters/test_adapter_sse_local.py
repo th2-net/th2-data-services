@@ -2,7 +2,8 @@ from sseclient import Event
 import pytest
 
 from th2_data_services import Data
-from tests.tests_unit.tests_diff_version.conftest import HTTPProviderDataSource, http, START_TIME, END_TIME
+from tests.tests_unit.tests_diff_version.conftest import HTTPProviderDataSource, START_TIME, END_TIME
+from bin_package.th2_data_services.provider.v5.commands import http
 
 
 @pytest.mark.skip

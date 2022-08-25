@@ -1,7 +1,7 @@
 from typing import List, NamedTuple
 
-from th2_data_services.provider.v5.events_tree import ParentEventsTreeCollectionProvider5
-from th2_data_services.provider.v5.struct import provider5_event_struct
+from bin_package.th2_data_services.provider.v5.events_tree import ParentEventsTreeCollectionProvider5
+from bin_package.th2_data_services.provider.v5.struct import provider5_event_struct
 
 
 def test_build_tree(general_data: List[dict], test_parent_events_tree: NamedTuple):

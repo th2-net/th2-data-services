@@ -3,12 +3,15 @@ from typing import Tuple, List, Optional
 from datetime import datetime
 
 from th2_data_services import Data
-from th2_data_services.events_tree import EventsTree
-from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.commands import http as commands
-from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5, ParentEventsTreeCollectionProvider5
-from th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
-from th2_data_services.provider.v5.filters.message_filters import BodyFilter
+from bin_package.th2_data_services.events_tree import EventsTree
+from bin_package.th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
+from bin_package.th2_data_services.provider import http as commands
+from bin_package.th2_data_services.provider.v5.events_tree import (
+    EventsTreeCollectionProvider5,
+    ParentEventsTreeCollectionProvider5,
+)
+from bin_package.th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
+from bin_package.th2_data_services.provider.v5.filters import BodyFilter
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode

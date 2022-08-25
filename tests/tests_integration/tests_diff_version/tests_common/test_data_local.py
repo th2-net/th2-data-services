@@ -1,4 +1,4 @@
-from th2_data_services.data import Data
+from bin_package.th2_data_services.data import Data
 
 
 def test_iter_data(demo_events_from_data_source: Data):
