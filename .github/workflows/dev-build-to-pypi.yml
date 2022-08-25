@@ -51,6 +51,7 @@ jobs:
           cd bin_package
           python setup.py sdist
       - name: Publish distribution to PyPI
+        run: cd bin_package
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
