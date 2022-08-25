@@ -55,6 +55,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
-          packages_dir: bin_package/sdist/
+          packages_dir: bin_package/sdist
           password: ${{ secrets.PYPI_PASSWORD }}
           repository_url: https://upload.pypi.org/legacy/
