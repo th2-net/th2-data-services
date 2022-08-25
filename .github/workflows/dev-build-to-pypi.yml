@@ -48,7 +48,7 @@ jobs:
 #          cd ..
       - name: Build package
         run: |
-          cd th2_data_services
+          cd bin_package
           python setup.py sdist
           cd ..
       - name: Publish distribution to PyPI
