@@ -50,12 +50,12 @@ HTTP Provider5 API.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L248"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L249"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `execute_request`
 
 ```python
-execute_request(url: str) → Response
+execute_request(url: str, verify: bool = True) → Response
 ```
 
 Sends a GET request to provider. 
@@ -65,6 +65,7 @@ Sends a GET request to provider.
 **Args:**
  
  - <b>`url`</b>:  Url for a get request to rpt-data-provider. 
+ - <b>`verify`</b>:  If False SSL certification is disable 
 
 
 
@@ -79,7 +80,10 @@ Sends a GET request to provider.
 ### <kbd>method</kbd> `execute_sse_request`
 
 ```python
-execute_sse_request(url: str) → Generator[bytes, NoneType, NoneType]
+execute_sse_request(
+    url: str,
+    certification: bool = True
+) → Generator[bytes, NoneType, NoneType]
 ```
 
 Create stream connection. 
@@ -89,6 +93,7 @@ Create stream connection.
 **Args:**
  
  - <b>`url`</b>:  Url. 
+ - <b>`certification`</b>:  If False SSL certification is disable 
 
 
 

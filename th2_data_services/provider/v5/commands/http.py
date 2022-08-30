@@ -31,7 +31,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 EventFilters = Union[Filter, Provider5EventFilter, Sequence[Union[Filter, Provider5EventFilter]]]
 MessageFilters = Union[Filter, Provider5MessageFilter, Sequence[Union[Filter, Provider5MessageFilter]]]
 
@@ -58,17 +57,18 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
         EventNotFound: If event by Id wasn't found.
     """
 
-    def __init__(self, id: str, use_stub=False):
+    def __init__(self, id: str, use_stub: bool = False, certification: bool = True):
         """GetEventById constructor.
 
         Args:
             id: Event id.
             use_stub: If True the command returns stub instead of exception.
-
+            certification: Checking the ssl certificate.
         """
         super().__init__()
         self._id = id
         self._stub_status = use_stub
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource) -> dict:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
@@ -76,7 +76,7 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
 
         logger.info(url)
 
-        response = api.execute_request(url)
+        response = api.execute_request(url, verify=self._certification)
 
         if response.status_code == 404 and self._stub_status:
             return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
@@ -99,22 +99,25 @@ class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
         EventNotFound: If any event by Id wasn't found.
     """
 
-    def __init__(self, ids: List[str], use_stub=False):
+    def __init__(self, ids: List[str], use_stub: bool = False, certification: bool = True):
         """GetEventsById constructor.
 
         Args:
             ids: Event id list.
             use_stub: If True the command returns stub instead of exception.
-
+            certification: Checking the ssl certificate.
         """
         super().__init__()
         self._ids: ids = ids
         self._stub_status = use_stub
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         result = []
         for event_id in self._ids:
-            event = GetEventById(event_id, use_stub=self._stub_status).handle(data_source)
+            event = GetEventById(event_id, use_stub=self._stub_status, certification=self._certification).handle(
+                data_source
+            )
             result.append(self._handle_adapters(event))
 
         return result
@@ -141,6 +144,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         limit_for_parent: int = None,
         attached_messages: bool = False,
         filters: EventFilters = None,
+        certification: bool = True,
     ):
         """GetEventsSSEBytes constructor.
 
@@ -157,6 +161,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             limit_for_parent: How many children events for each parent do we want to request.
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
+            certification: Checking the ssl certificate.
 
         """
         super().__init__()
@@ -171,6 +176,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._metadata_only = False
         self._attached_messages = attached_messages
         self._filters = filters
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
@@ -190,7 +196,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
 
         logger.info(url)
 
-        for response in api.execute_sse_request(url):
+        for response in api.execute_sse_request(url, certification=self._certification):
             response = self._handle_adapters(response)
             if response is not None:
                 yield response
@@ -219,6 +225,7 @@ class GetEventsSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         filters: EventFilters = None,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
+        certification: bool = True,
     ):
         """GetEventsSSEEvents constructor.
 
@@ -237,7 +244,7 @@ class GetEventsSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters: Filters using in search for messages.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
-
+            certification: Checking the ssl certificate.
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -252,6 +259,7 @@ class GetEventsSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._filters = filters
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource):  # noqa: D102
         response = GetEventsSSEBytes(
@@ -265,6 +273,7 @@ class GetEventsSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             limit_for_parent=self._limit_for_parent,
             attached_messages=self._attached_messages,
             filters=self._filters,
+            certification=self._certification,
         ).handle(data_source)
         client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
         for record in client.events():
@@ -295,6 +304,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         attached_messages: bool = False,
         filters: EventFilters = None,
         cache: bool = False,
+        certification: bool = True,
     ):
         """GetEvents constructor.
 
@@ -312,7 +322,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
-
+            certification: Checking the ssl certificate.
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -326,6 +336,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._attached_messages = attached_messages
         self._filters = filters
         self._cache = cache
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
@@ -344,6 +355,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             limit_for_parent=self._limit_for_parent,
             attached_messages=self._attached_messages,
             filters=self._filters,
+            certification=self._certification,
         ).handle(data_source)
 
         for event in stream:
@@ -366,17 +378,18 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         MessageNotFound: If message by id wasn't found.
     """
 
-    def __init__(self, id: str, use_stub=False):
+    def __init__(self, id: str, use_stub: bool = False, certification: bool = True):
         """GetMessageById constructor.
 
         Args:
             id: Message id.
             use_stub: If True the command returns stub instead of exception.
-
+            certification: Checking the ssl certificate.
         """
         super().__init__()
         self._id = id
         self._stub_status = use_stub
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource) -> dict:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
@@ -384,7 +397,7 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
 
         logger.info(url)
 
-        response = api.execute_request(url)
+        response = api.execute_request(url, verify=self._certification)
 
         if response.status_code == 404 and self._stub_status:
             return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
@@ -410,22 +423,25 @@ class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
         MessageNotFound: If any message by id wasn't found.
     """
 
-    def __init__(self, ids: List[str], use_stub=False):
+    def __init__(self, ids: List[str], use_stub: bool = False, certification: bool = True):
         """GetMessagesById constructor.
 
         Args:
             ids: Message id list.
             use_stub: If True the command returns stub instead of exception.
-
+            certification: Checking the ssl certificate.
         """
         super().__init__()
         self._ids: ids = ids
         self._stub_status = use_stub
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource) -> List[dict]:  # noqa: D102
         result = []
         for message_id in self._ids:
-            message = GetMessageById(message_id, use_stub=self._stub_status).handle(data_source)
+            message = GetMessageById(message_id, use_stub=self._stub_status, certification=self._certification).handle(
+                data_source
+            )
             result.append(self._handle_adapters(message))
 
         return result
@@ -453,6 +469,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         attached_events: bool = False,
         lookup_limit_days: int = None,
         filters: MessageFilters = None,
+        certification: bool = True,
     ):
         """GetMessagesSSEBytes constructor.
 
@@ -471,6 +488,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             lookup_limit_days: The number of days that will be viewed on
                 the first request to get the one closest to the specified timestamp.
             filters: Filters using in search for messages.
+            certification: Checking the ssl certificate.
         """
         super().__init__()
         self._start_timestamp = int(1000 * start_timestamp.replace(tzinfo=timezone.utc).timestamp())
@@ -488,6 +506,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._attached_events = attached_events
         self._lookup_limit_days = lookup_limit_days
         self._filters = filters
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
@@ -517,7 +536,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
 
         for url in resulting_urls:
             logger.info(url)
-            for response in api.execute_sse_request(url):
+            for response in api.execute_sse_request(url, certification=self._certification):
                 response = self._handle_adapters(response)
                 if response is not None:
                     yield response
@@ -547,6 +566,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         filters: MessageFilters = None,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
+        certification: bool = True,
     ):
         """GetMessagesSSEEvents constructor.
 
@@ -567,6 +587,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters: Filters using in search for messages.
             char_enc: Character encode that will use SSEClient.
             decode_error_handler: Decode error handler.
+            certification: Checking the ssl certificate.
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -582,6 +603,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._filters = filters
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:  # noqa: D102
         response = GetMessagesSSEBytes(
@@ -595,6 +617,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             attached_events=self._attached_events,
             lookup_limit_days=self._lookup_limit_days,
             filters=self._filters,
+            certification=self._certification,
         ).handle(data_source)
 
         client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
@@ -630,6 +653,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         cache: bool = False,
+        certification: bool = True,
     ):
         """GetMessages constructor.
 
@@ -651,6 +675,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
+            certification: Checking the ssl certificate.
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -667,6 +692,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self._cache = cache
+        self._certification = certification
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
@@ -685,6 +711,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
             attached_events=self._attached_events,
             lookup_limit_days=self._lookup_limit_days,
             filters=self._filters,
+            certification=self._certification,
         ).handle(data_source)
 
         for message in stream:
