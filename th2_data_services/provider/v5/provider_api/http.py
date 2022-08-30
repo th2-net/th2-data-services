@@ -221,17 +221,18 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             url += filters
         return self.__encode_url(url)
 
-    def execute_sse_request(self, url: str) -> Generator[bytes, None, None]:
+    def execute_sse_request(self, url: str, certification: bool = True) -> Generator[bytes, None, None]:
         """Create stream connection.
 
         Args:
             url: Url.
+            certification: If False SSL certification is disable
 
         Yields:
              str: Response stream data.
         """
         headers = {"Accept": "text/event-stream"}
-        http = PoolManager()
+        http = certification if PoolManager() else PoolManager(cert_reqs="CERT_NONE")
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
 
         if response.status != HTTPStatus.OK:
@@ -245,13 +246,14 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
         response.release_conn()
 
-    def execute_request(self, url: str) -> Response:
+    def execute_request(self, url: str, verify: bool = True) -> Response:
         """Sends a GET request to provider.
 
         Args:
             url: Url for a get request to rpt-data-provider.
+            verify: If False SSL certification is disable
 
         Returns:
             requests.Response: Response data.
         """
-        return requests.get(url)
+        return requests.get(url, verify=verify)
