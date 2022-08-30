@@ -36,7 +36,8 @@ __init__(
     message_struct: 'IMessageStruct' = Provider5MessageStruct(DIRECTION='direction', SESSION_ID='sessionId', MESSAGE_TYPE='messageType', CONNECTION_ID='connectionId', SESSION_ALIAS='sessionAlias', SUBSEQUENCE='subsequence', SEQUENCE='sequence', TIMESTAMP='timestamp', BODY='body', BODY_BASE64='bodyBase64', TYPE='type', MESSAGE_ID='messageId', ATTACHED_EVENT_IDS='attachedEventIds'),
     event_stub_builder: 'IEventStub' = Provider5EventStubBuilder,
     message_stub_builder: 'IMessageStub' = Provider5MessageStubBuilder,
-    check_connect_timeout: '(int, float)' = 5
+    check_connect_timeout: '(int, float)' = 5,
+    certification: 'bool' = True
 )
 ```
 
@@ -55,6 +56,7 @@ HTTPProvider5DataSource constructor.
  - <b>`message_struct`</b>:  Struct of message from rpt-data-provider. 
  - <b>`event_stub_builder`</b>:  Stub for event. 
  - <b>`message_stub_builder`</b>:  Stub for message. 
+ - <b>`certification`</b>:  Checking SSL certification. 
 
 
 ---
@@ -97,7 +99,7 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/data_source/http.py#L85"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/http.py#L87"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `command`
 

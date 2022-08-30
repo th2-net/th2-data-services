@@ -58,6 +58,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         event_stub_builder: IEventStub = provider5_event_stub_builder,
         message_stub_builder: IMessageStub = provider5_message_stub_builder,
         check_connect_timeout: (int, float) = 5,
+        certification: bool = True,
     ):
         """HTTPProvider5DataSource constructor.
 
@@ -71,13 +72,14 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
             message_struct: Struct of message from rpt-data-provider.
             event_stub_builder: Stub for event.
             message_stub_builder: Stub for message.
+            certification: Checking SSL certification.
         """
         super().__init__(url, event_struct, message_struct, event_stub_builder, message_stub_builder)
 
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
-        self.check_connect(check_connect_timeout)
+        self.check_connect(check_connect_timeout, certification)
         self._provider_api = HTTPProvider5API(url, chunk_length, decode_error_handler, char_enc)
 
         logger.info(url)
