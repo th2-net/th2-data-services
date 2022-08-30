@@ -232,7 +232,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
              str: Response stream data.
         """
         headers = {"Accept": "text/event-stream"}
-        http = certification if PoolManager() else PoolManager(cert_reqs="CERT_NONE")
+        http = PoolManager() if certification else PoolManager(cert_reqs="CERT_NONE")
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
 
         if response.status != HTTPStatus.OK:
