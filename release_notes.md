@@ -304,6 +304,7 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 ## Features
 1. [TH2-3083] The problem with several versions of the grpc interface is solved.
 2. [TH2-3512] Provider V6 module is developed.
+3. [TH2-4141] Option to disable ssl certificate for rdp5 is added
 
 # Improvements
 1. [TH2-4098] Added Streams class for the param 'stream'.
