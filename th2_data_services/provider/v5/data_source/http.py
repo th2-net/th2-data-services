@@ -79,6 +79,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
+        self._certification = certification
         self.check_connect(check_connect_timeout, certification)
         self._provider_api = HTTPProvider5API(url, chunk_length, decode_error_handler, char_enc)
 
@@ -97,7 +98,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
             CommandError: If the command was broken.
         """
         try:
-            return cmd.handle(data_source=self)
+            return cmd.handle(data_source=self, certification=self._certification)
         except Exception as e:
             raise CommandError(f"The command '{cmd.__class__.__name__}' was broken. Details of error:\n{e}")
 
