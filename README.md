@@ -99,14 +99,14 @@ The transition to another version of the interface is carried out by installing 
 
 For example, if you want to use v5 provider api, then you should run this command:
     
-    pip install th2_grpc_data_provider==0.1.4
+    pip install th2_grpc_data_provider==0.1.6
 
 
 #### Versions compatibility table
 
 | Provider api | th2_grpc_data_provider version |
 |:------------:|:------------------------------:|
-|      v5      |             0.0.4              |
+|      v5      |             0.1.6              |
 |      v6      |             1.1.0              |
 
 
