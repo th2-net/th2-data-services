@@ -48,7 +48,7 @@ class EventsTreeCollectionProvider6(EventsTreeCollection):
 
         super().__init__(data=data, data_source=data_source, preserve_body=preserve_body, stub=stub)
 
-    def _get_resolver(self) -> Callable:
+    def _get_events_by_id_resolver(self) -> Callable:
         """Gets a function that solve which protocol command to choose."""
         return resolver_get_events_by_id
 

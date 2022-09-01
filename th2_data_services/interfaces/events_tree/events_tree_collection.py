@@ -366,7 +366,7 @@ class EventsTreeCollection(ABC):
         """Gets event name from the event."""
 
     @abstractmethod
-    def _get_resolver(self) -> Callable:
+    def _get_events_by_id_resolver(self) -> Callable:
         """Gets a function that solve which protocol command to choose."""
 
     def __len__(self) -> int:
@@ -778,7 +778,7 @@ class EventsTreeCollection(ABC):
         Args:
             data_source: Data Source.
         """
-        resolver = self._get_resolver()
+        resolver = self._get_events_by_id_resolver()
         instance_command = resolver(data_source)
 
         previous_detached_events = list(self._detached_events().keys())
