@@ -11,18 +11,18 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
-from typing import List, Tuple, Generator, Callable, Optional, Union
+from abc import ABC, abstractmethod
+from typing import List, Tuple, Generator, Callable, Optional, Union, Iterable
 
 from treelib import Tree, Node
 from treelib.exceptions import NodeIDAbsentError
 
-from th2_data_services.events_tree.exceptions import EventIdNotInTree
+from th2_data_services.interfaces.events_tree.exceptions import EventIdNotInTree, EventAlreadyExist, EventRootExist
 
 Th2Event = dict
 
 
-class EventsTree:
+class EventsTree(ABC):
     """EventsTree is a tree-based data structure of events.
 
     - get_x methods raise Exceptions if no result is found.
@@ -45,25 +45,56 @@ class EventsTree:
     ```
     """
 
-    def __init__(self, tree: Tree):
+    def __init__(self, data: Iterable = None, tree: Tree = None):
         """EventsTree constructor.
 
         Args:
-            tree (treelib.Tree): Tree.
+            data: Events.
+            tree: Tree.
         """
-        self._tree = tree
+        self._tree = Tree() if tree is None else tree
+        data = [] if data is None else data
 
-    def _append_node(self, node: Node, parent_id: str) -> None:
+        self._build_tree(data)
+
+    def _build_tree(self, data: Iterable):
+        for event in data:
+            self.append_event(event)
+
+    def append_event(self, event: dict) -> None:
         """Appends a node to the tree.
 
         Args:
-            node: Node.
-            parent_id: Parent event id.
+            event: Event. #TODO
         """
-        if parent_id not in self._tree:
-            raise NodeIDAbsentError(f"Node {parent_id} is not in the tree.")
+        event_name = self._get_event_name(event)
+        event_id = self._get_event_id(event)
+        parent_id = self._get_parent_event_id(event)
+        # parent_id = parent_id if parent_id != "Broken_Event" else None
 
-        self._tree.add_node(node, parent_id)
+        if event_id in self._tree:
+            raise EventAlreadyExist(event_id)
+        elif self._tree.root is not None and not parent_id:
+            raise EventRootExist(event_id)
+
+        try:
+            self._tree.create_node(
+                tag=event_name, identifier=event_id, parent=parent_id if parent_id else None, data=event
+            )
+        except NodeIDAbsentError:
+            pass
+
+    @abstractmethod
+    def _get_parent_event_id(self, event):
+        """Gets parent event id from the event."""
+
+    @abstractmethod
+    def _get_event_id(self, event):
+        """Gets event id from the event."""
+
+    @abstractmethod
+    def _get_event_name(self, event):
+        """Gets event name from the event."""
 
     def get_all_events_iter(self) -> Generator[Th2Event, None, None]:
         """Returns all events from the tree as iterator."""
@@ -356,7 +387,7 @@ class EventsTree:
         subtree = self._tree.subtree(id)
         if not subtree:
             raise EventIdNotInTree(id)
-        return EventsTree(subtree)
+        return self.__class__(tree=subtree)
 
     def show(self) -> None:
         """Prints the EventsTree as tree view.

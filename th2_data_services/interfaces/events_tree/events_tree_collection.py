@@ -16,13 +16,12 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import List, Dict, Optional, Union, Generator, Tuple, Callable
 
-from treelib import Node, Tree
 from treelib.exceptions import NodeIDAbsentError
 
 from th2_data_services import Data
-from th2_data_services.events_tree.events_tree import EventsTree
-from th2_data_services.events_tree.events_tree import Th2Event
-from th2_data_services.events_tree.exceptions import EventIdNotInTree
+from th2_data_services.interfaces.events_tree.events_tree import EventsTree
+from th2_data_services.interfaces.events_tree.events_tree import Th2Event
+from th2_data_services.interfaces.events_tree.exceptions import EventIdNotInTree
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 
 import logging
@@ -65,12 +64,12 @@ class EventsTreeCollection(ABC):
         self._preserve_body = preserve_body
         self._roots: List[EventsTree] = []
         self._parentless: Optional[List[EventsTree]] = None
-        self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
+        self._detached_nodes: Dict[Optional[str], List[dict]] = defaultdict(list)  # {parent_event_id: [event1, ..]}
         self._stub_status = stub
         self._data_source = data_source
         self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
 
-        events_nodes = self._build_event_nodes(data)
+        events_nodes = self._build_events_store(data)
         self._build_trees(events_nodes)
 
         if data_source is not None:
@@ -104,16 +103,19 @@ class EventsTreeCollection(ABC):
         self._parentless = []
 
         stub_roots = list(self._detached_nodes.keys())
-        for nodes in self._detached_nodes.values():
-            for node in nodes:
-                if node.identifier in stub_roots:
-                    stub_roots.remove(node.identifier)
+        for events in self._detached_nodes.values():
+            for event in events:
+                event_id = self._get_event_id(event)
+                if event_id in stub_roots:
+                    stub_roots.remove(event_id)
 
         for id_ in stub_roots:
-            tree = Tree()
-            tree.create_node(tag="Stub", identifier=id_, data=self._build_stub_event(id_))
+            tree = self._create_events_tree()
+            stub_event = self._build_stub_event(id_)
+            # stub_event
+            tree.append_event(stub_event)
             self._fill_tree(self._detached_nodes, tree, id_)
-            self._parentless.append(EventsTree(tree))
+            self._parentless.append(tree)
 
         return self._parentless
 
@@ -125,8 +127,8 @@ class EventsTreeCollection(ABC):
             id_: Event Id.
         """
 
-    def _build_event_nodes(self, data: Data) -> Dict[Optional[str], List[Node]]:
-        """Builds event nodes and group them by parent_event_id.
+    def _build_events_store(self, data: Data) -> Dict[Optional[str], List[dict]]:
+        """Builds events store, grouping them by parent_event_id.
 
         Args:
             data: Data.
@@ -134,49 +136,49 @@ class EventsTreeCollection(ABC):
         Returns:
             Nodes.
         """
-        events_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, Node2, ..]}
+        events_store: Dict[Optional[str], List[dict]] = defaultdict(list)  # {parent_event_id: [event1, event2, ..]}
 
         for event in self._parse_events(data):
             parent_event_id: str = self._get_parent_event_id(event)
-            node = self._build_node(event)
-            events_nodes[parent_event_id].append(node)
+            events_store[parent_event_id].append(event)
 
-        return events_nodes
+        return events_store
 
-    def _build_trees(self, nodes: Dict[Optional[str], List[Node]]) -> None:
+    def _build_trees(self, events_store: Dict[Optional[str], List[dict]]) -> None:
         """Builds trees and saves detached events.
 
         Args:
-            nodes: Events nodes.
+            events_store: Events nodes.
         """
         roots = []
-        for root_node in nodes[None]:  # None - is parent_event_id for root events.
-            tree = Tree()
-            tree.add_node(root_node)
+        for root_event in events_store[None]:  # None - is parent_event_id for root events.
+            tree = self._create_events_tree()
             roots.append(tree)
-            root_event_id: str = root_node.identifier
-            self._fill_tree(nodes, tree, root_event_id)
-        nodes.pop(None)
+            tree.append_event(root_event)
+            root_event_id: str = self._get_event_id(root_event)
+            self._fill_tree(events_store, tree, root_event_id)
+        events_store.pop(None)
 
-        self._roots = [EventsTree(root) for root in roots]
+        self._roots = roots
+        self._detached_nodes = events_store
 
-        self._detached_nodes = nodes
-
-    def _fill_tree(self, nodes: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:
+    def _fill_tree(
+        self, events_store: Dict[Optional[str], List[dict]], current_tree: EventsTree, parent_id: str
+    ) -> None:
         """Fills tree recursively.
 
         Args:
-            nodes: Events nodes.
+            events_store: Events nodes.
             current_tree: Tree for fill.
             parent_id: Parent even id.
         """
-        for node in nodes[parent_id].copy():
-            event_id: str = node.identifier
+        for event in events_store[parent_id].copy():
+            event_id: str = self._get_event_id(event)
             if event_id not in current_tree:
-                current_tree.add_node(node, parent=parent_id)
-            nodes[parent_id].remove(node)
-            self._fill_tree(nodes, current_tree, event_id)  # Recursive fill.
-        nodes.pop(parent_id)
+                current_tree.append_event(event)
+            events_store[parent_id].remove(event)
+            self._fill_tree(events_store, current_tree, event_id)  # Recursive fill.
+        events_store.pop(parent_id)
 
     def _parse_event(self, event: Th2Event) -> Th2Event:
         """Parses event.
@@ -207,21 +209,6 @@ class EventsTreeCollection(ABC):
             event = self._parse_event(event)
             yield event
 
-    def _build_node(self, event: dict) -> Node:
-        """Builds event as dict into event as Node.
-
-        Args:
-            event: Event.
-
-        Returns:
-            Node.
-        """
-        event_id: str = self._get_event_id(event)
-        event_name: str = self._get_event_name(event)
-
-        node = Node(tag=event_name, identifier=event_id, data=event)
-        return node
-
     def append_event(self, event: dict) -> None:
         """Appends event into a tree.
 
@@ -229,25 +216,27 @@ class EventsTreeCollection(ABC):
             event: Event.
         """
         event: dict = self._parse_event(event)
-        node: Node = self._build_node(event)
         parent_event_id: str = self._get_parent_event_id(event)
 
         if parent_event_id is not None:
             events_trees = list(filter(lambda tree: parent_event_id in tree, self._roots))
             if events_trees:
                 event_tree = events_trees[0]
-                if node.identifier in event_tree:
+                event_id = self._get_event_id(event)
+                if event_id in event_tree:
                     pass
                 else:
-                    event_tree._append_node(node, parent_event_id)
-                    self._fill_tree(self._detached_nodes, event_tree._tree, parent_event_id)
+                    event_tree.append_event(event)
+                    self._fill_tree(self._detached_nodes, event_tree, parent_event_id)
             else:
-                self._detached_nodes[parent_event_id].append(node)
+                self._detached_nodes[parent_event_id].append(event)
         else:
-            tree = Tree()
-            tree.add_node(node)
-            self._roots.append(EventsTree(tree))
-            self._fill_tree(self._detached_nodes, tree, node.identifier)
+            tree = self._create_events_tree()
+            tree.append_event(event)
+            self._roots.append(tree)
+
+            event_id = self._get_event_id(event)
+            self._fill_tree(self._detached_nodes, tree, event_id)
 
     @property
     def detached_events(self) -> dict:
@@ -261,13 +250,13 @@ class EventsTreeCollection(ABC):
 
     def _detached_events(self) -> dict:
         """Returns detached events as a dict that looks like {'parent_id': ['referenced event', ...]}."""
-        return {id_: [node.data for node in nodes] for id_, nodes in self._detached_nodes.items()}
+        return {id_: [event for event in events] for id_, events in self._detached_nodes.items()}
 
     def get_detached_events_iter(self) -> Generator[Th2Event, None, None]:
         """Yields detached events."""
-        for nodes in self._detached_nodes.values():
-            for node in nodes:
-                yield node.data
+        for events in self._detached_nodes.values():
+            for event in events:
+                yield event
 
     def get_detached_events(self) -> List[Th2Event]:
         """Returns detached events list."""
@@ -368,6 +357,10 @@ class EventsTreeCollection(ABC):
     @abstractmethod
     def _get_resolver(self) -> Callable:
         """Gets a function that solve which protocol command to choose."""
+
+    @abstractmethod
+    def _create_events_tree(self) -> EventsTree:
+        """Creates a EventsTree."""
 
     def __len__(self) -> int:
         """Returns the number of all events, including detached events."""

@@ -16,7 +16,7 @@ from typing import Union, Optional, Callable
 
 from th2_data_services import Data
 from th2_data_services.interfaces.events_tree import ParentEventsTreeCollection
-from th2_data_services.events_tree.exceptions import FieldIsNotExist
+from th2_data_services.interfaces.events_tree.exceptions import FieldIsNotExist
 from th2_data_services.provider.interfaces.struct import IEventStruct
 from th2_data_services.provider.v6.command_resolver import resolver_get_events_by_id
 from th2_data_services.provider.v6.data_source import GRPCProvider6DataSource, HTTPProvider6DataSource

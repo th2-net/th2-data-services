@@ -37,3 +37,29 @@ class FieldIsNotExist(Exception):
 
     def __str__(self):
         return f"Event doesn't have '{self._field_name}' field"
+
+
+class EventAlreadyExist(Exception):
+    def __init__(self, event_id):
+        """Exception for the case when event already exist in tree.
+
+        Args:
+            event_id: Event id.
+        """
+        self._event_id = event_id
+
+    def __str__(self):
+        return f"Event with the id '{self._event_id}' already exist in tree."
+
+
+class EventRootExist(Exception):
+    def __init__(self, event_id):
+        """Exception for the case when root already added in tree.
+
+        Args:
+            event_id: Event id.
+        """
+        self._event_id = event_id
+
+    def __str__(self):
+        return f"Event with the id '{self._event_id}' can't be added in tree. Root event already exist."

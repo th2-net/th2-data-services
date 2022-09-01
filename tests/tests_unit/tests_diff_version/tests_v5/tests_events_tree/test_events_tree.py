@@ -1,7 +1,7 @@
 from typing import List, NamedTuple
 
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
-from th2_data_services.events_tree.events_tree import EventsTree
+from th2_data_services.interfaces.events_tree.events_tree import EventsTree
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 
@@ -56,6 +56,7 @@ def test_build_parentless_trees(general_data: List[dict]):
     collection = EventsTreeCollectionProvider5(general_data)
     trees = collection.get_parentless_trees()
 
+    print(trees)
     assert trees[1]._tree.get_node("a3779b94-d051-11eb-986f-1e8d42132387") and not collection.detached_events
 
 
