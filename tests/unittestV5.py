@@ -4,7 +4,7 @@ import pytest
 PATH_DIFF_VERSION = "tests_unit/tests_diff_version"
 PACKAGE_NAME = "th2-grpc-data-provider"
 
-grpc_version_5 = "0.0.4"
+grpc_version_5 = "0.1.6"
 
 
 def install_package(name: str, version: str) -> int:
