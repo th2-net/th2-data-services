@@ -292,12 +292,11 @@ This release is not required any additional steps to use.
 # v1.2.0
 
 ## User impact and migration instructions
-This release is added new grpc version. Therefore, we are forced 
-to update th2-grpc-data-provider to 1.1.0 .
+This release implements rdp v6 support that requres new grpc version. It means you cannot connect to rdp5.grpc and rdp6.grpc via the same environment. This DS lib version will have grpc version for rdp v6 == th2-grpc-data-provider v1.1.0.
 
-1. [I] A new version of grpc has been added.  
-   [M] If you require the v6 version of the interface, you do not need to do anything. 
-       Otherwise, you need to reinstall version 1.1.0 of th2-grpc-data-provider.
+1. [I] The new version of grpc has been added.  
+   [M] If you require the rdp v6 version of the interface, you do not need to do anything. 
+       Otherwise, you need to reinstall th2-grpc-data-provider lib to the required one for your rdp.
 
 More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.0#grpc-provider-warning)
 
@@ -305,9 +304,7 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 1. [TH2-3083] The problem with several versions of the grpc interface is solved.
 2. [TH2-3512] Provider V6 module is developed.
 3. [TH2-4141] Option to disable ssl certificate for rdp5 is added
-
-# Improvements
-1. [TH2-4098] Added Streams class for the param 'stream'.
+4. [TH2-4098] Added Streams class for the param 'stream'.
 
 # BugFixes
 1. [TH2-4072] Now ETC doesn't raise a warning for missing detached_events.
