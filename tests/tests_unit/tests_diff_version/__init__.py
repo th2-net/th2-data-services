@@ -12,7 +12,7 @@ if v == "1.1.0":  # v6
 
     DEMO_PORT = "31788"  # HTTP provider v6
 
-elif v == "0.0.4":  # v5
+elif v == "0.1.6":  # v5
     from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource as HTTPProviderDataSource  # noqa
     from th2_data_services.provider.v5.commands import http  # noqa
     from th2_data_services.provider.v5.provider_api import HTTPProvider5API as HTTPProviderAPI  # noqa

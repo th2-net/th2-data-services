@@ -52,7 +52,6 @@ class EventsTreeCollection(ABC):
         data_source: IProviderDataSource = None,
         preserve_body: bool = False,
         stub: bool = False,
-        resolver: Callable = None,
     ):
         """EventsTreeCollection constructor.
 
@@ -61,8 +60,6 @@ class EventsTreeCollection(ABC):
             data_source: Provider Data Source object.
             preserve_body: If True it will preserve 'body' field in the Events.
             stub: If True it will create stub when event is broken.
-            resolver: It's function that solve which protocol command to choose.
-                Note that this parameter is only required during implementation.
         """
         self._id = id(self)
         self._preserve_body = preserve_body
@@ -71,9 +68,6 @@ class EventsTreeCollection(ABC):
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
         self._stub_status = stub
         self._data_source = data_source
-        if resolver is None:
-            raise ValueError("Parameter 'resolver' must be not None.")
-        self._resolver = resolver
         self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
 
         events_nodes = self._build_event_nodes(data)
@@ -370,6 +364,10 @@ class EventsTreeCollection(ABC):
     @abstractmethod
     def _get_event_name(self, event):
         """Gets event name from the event."""
+
+    @abstractmethod
+    def _get_resolver(self) -> Callable:
+        """Gets a function that solve which protocol command to choose."""
 
     def __len__(self) -> int:
         """Returns the number of all events, including detached events."""
@@ -780,7 +778,8 @@ class EventsTreeCollection(ABC):
         Args:
             data_source: Data Source.
         """
-        instance_command = self._resolver(data_source)
+        resolver = self._get_resolver()
+        instance_command = resolver(data_source)
 
         previous_detached_events = list(self._detached_events().keys())
         while previous_detached_events:

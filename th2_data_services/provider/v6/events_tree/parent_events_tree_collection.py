@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Union, Optional
+from typing import Union, Optional, Callable
 
 from th2_data_services import Data
 from th2_data_services.interfaces.events_tree import ParentEventsTreeCollection
@@ -51,8 +51,11 @@ class ParentEventsTreeCollectionProvider6(ParentEventsTreeCollection):
             data_source=data_source,
             preserve_body=preserve_body,
             stub=stub,
-            resolver=resolver_get_events_by_id,
         )
+
+    def _get_resolver(self) -> Callable:
+        """Gets a function that solve which protocol command to choose."""
+        return resolver_get_events_by_id
 
     def _get_event_id(self, event) -> str:
         """Gets event id from the event.
