@@ -27,8 +27,7 @@ __init__(
     data: Data,
     data_source: IProviderDataSource = None,
     preserve_body: bool = False,
-    stub: bool = False,
-    resolver: Callable = None
+    stub: bool = False
 )
 ```
 
@@ -42,7 +41,6 @@ ParentEventsTreeCollection constructor.
  - <b>`data_source`</b>:  Data Source object. 
  - <b>`preserve_body`</b>:  If True then save body of event. 
  - <b>`stub`</b>:  If True it will create stub when event is broken. 
- - <b>`resolver`</b>:  It's function that solve which protocol command to choose.  Note that this parameter is only required during implementation. 
 
 
 ---

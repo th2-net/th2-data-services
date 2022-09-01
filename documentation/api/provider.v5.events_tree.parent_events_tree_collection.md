@@ -41,7 +41,6 @@ ParentEventsTreeCollectionProvider5 constructor.
  - <b>`preserve_body`</b>:  If True it will preserve 'body' field in the Events. 
  - <b>`event_struct`</b>:  Event struct object. 
  - <b>`stub`</b>:  If True it will create stub when event is broken. 
- - <b>`resolver`</b>:  It's function that solve which protocol command to choose.  Note that this parameter is only required during implementation. 
 
 
 ---
