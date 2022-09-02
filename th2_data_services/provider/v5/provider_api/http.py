@@ -35,6 +35,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         chunk_length: int = 65536,
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         char_enc: str = "utf-8",
+        use_ssl: bool = True,
     ):
         """HTTP Provider5 API.
 
@@ -43,11 +44,13 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             chunk_length: How much of the content to read in one chunk.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
+            use_ssl: If False SSL/TSL certification is disable.
         """
         self._url = self.__normalize_url(url)
         self._char_enc = char_enc
         self._chunk_length = chunk_length
         self._decode_error_handler = decode_error_handler
+        self._use_ssl = use_ssl
 
     def __normalize_url(self, url):
         if url is None:
@@ -221,18 +224,17 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             url += filters
         return self.__encode_url(url)
 
-    def execute_sse_request(self, url: str, certification: bool = True) -> Generator[bytes, None, None]:
+    def execute_sse_request(self, url: str) -> Generator[bytes, None, None]:
         """Create stream connection.
 
         Args:
             url: Url.
-            certification: If False SSL certification is disable
 
         Yields:
              str: Response stream data.
         """
         headers = {"Accept": "text/event-stream"}
-        http = PoolManager() if certification else PoolManager(cert_reqs="CERT_NONE")
+        http = PoolManager() if self._use_ssl else PoolManager(cert_reqs="CERT_NONE")
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
 
         if response.status != HTTPStatus.OK:
@@ -246,14 +248,13 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
 
         response.release_conn()
 
-    def execute_request(self, url: str, verify: bool = True) -> Response:
+    def execute_request(self, url: str) -> Response:
         """Sends a GET request to provider.
 
         Args:
             url: Url for a get request to rpt-data-provider.
-            verify: If False SSL certification is disable
 
         Returns:
             requests.Response: Response data.
         """
-        return requests.get(url, verify=verify)
+        return requests.get(url, verify=self._use_ssl)
