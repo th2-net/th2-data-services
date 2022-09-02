@@ -72,7 +72,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
             message_struct: Struct of message from rpt-data-provider.
             event_stub_builder: Stub for event.
             message_stub_builder: Stub for message.
-            use_ssl: Checking SSL certification.
+            use_ssl: Checking SSL/TSL certification.
         """
         super().__init__(url, event_struct, message_struct, event_stub_builder, message_stub_builder)
 

@@ -56,7 +56,7 @@ HTTPProvider5DataSource constructor.
  - <b>`message_struct`</b>:  Struct of message from rpt-data-provider. 
  - <b>`event_stub_builder`</b>:  Stub for event. 
  - <b>`message_stub_builder`</b>:  Stub for message. 
- - <b>`use_ssl`</b>:  Checking SSL certification. 
+ - <b>`use_ssl`</b>:  Checking SSL/TSL certification. 
 
 
 ---
