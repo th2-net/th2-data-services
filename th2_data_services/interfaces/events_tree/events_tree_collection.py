@@ -69,7 +69,7 @@ class EventsTreeCollection(ABC):
         self._stub_status = stub
         self._data_source = data_source
         self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
-
+        
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
 
@@ -780,19 +780,31 @@ class EventsTreeCollection(ABC):
         """
         resolver = self._get_events_by_id_resolver()
         instance_command = resolver(data_source)
-
         previous_detached_events = list(self._detached_events().keys())
+
+        isProblem = False
+
         while previous_detached_events:
             called_command = instance_command(self._detached_events().keys(), use_stub=self._stub_status)
             events = data_source.command(called_command)
 
             for event in events:
                 if not self._get_event_name(event) == "Broken_Event":
+                    parentEventId = event['parentEventId']
+                    for root in self._roots:
+                        if root.get_root_id()==parentEventId:
+                            isProblem = True
+                    for detached in self._detached_events():
+                        if detached == parentEventId:
+                            isProblem = True
                     self.append_event(event)
 
             if previous_detached_events == list(self._detached_events().keys()):
                 break
             previous_detached_events = list(self._detached_events().keys())
+
+        if isProblem:                         #NEW
+            warnings.warn("PROBLEM CASE")     #NEW
 
     def get_parentless_tree_collection(self) -> "EventsTreeCollection":
         """Builds and returns parentless trees by detached events as EventsTreeCollection.
