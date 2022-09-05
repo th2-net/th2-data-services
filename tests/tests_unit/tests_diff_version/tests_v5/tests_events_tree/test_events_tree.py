@@ -56,7 +56,6 @@ def test_build_parentless_trees(general_data: List[dict]):
     collection = EventsTreeCollectionProvider5(general_data)
     trees = collection.get_parentless_trees()
 
-    print(trees)
     assert trees[1]._tree.get_node("a3779b94-d051-11eb-986f-1e8d42132387") and not collection.detached_events
 
 
