@@ -37,7 +37,7 @@ __init__(
     event_stub_builder: 'IEventStub' = Provider5EventStubBuilder,
     message_stub_builder: 'IMessageStub' = Provider5MessageStubBuilder,
     check_connect_timeout: '(int, float)' = 5,
-    certification: 'bool' = True
+    use_ssl: 'bool' = True
 )
 ```
 
@@ -56,7 +56,7 @@ HTTPProvider5DataSource constructor.
  - <b>`message_struct`</b>:  Struct of message from rpt-data-provider. 
  - <b>`event_stub_builder`</b>:  Stub for event. 
  - <b>`message_stub_builder`</b>:  Stub for message. 
- - <b>`certification`</b>:  Checking SSL certification. 
+ - <b>`use_ssl`</b>:  Checking SSL/TSL certification. 
 
 
 ---
@@ -99,7 +99,7 @@ str: URL of rpt-data-provider.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/data_source/http.py#L88"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/data_source/http.py#L94"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `command`
 

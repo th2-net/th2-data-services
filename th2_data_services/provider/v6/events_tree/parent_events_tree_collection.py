@@ -53,7 +53,7 @@ class ParentEventsTreeCollectionProvider6(ParentEventsTreeCollection):
             stub=stub,
         )
 
-    def _get_resolver(self) -> Callable:
+    def _get_events_by_id_resolver(self) -> Callable:
         """Gets a function that solve which protocol command to choose."""
         return resolver_get_events_by_id
 

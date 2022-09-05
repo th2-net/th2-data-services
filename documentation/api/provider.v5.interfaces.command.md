@@ -28,7 +28,7 @@ Rpt-data-provider version: 5.x.y Protocol: HTTP
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(data_source: HTTPProvider5DataSource, certification: bool)
+handle(data_source: HTTPProvider5DataSource)
 ```
 
 
