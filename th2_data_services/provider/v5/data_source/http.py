@@ -58,7 +58,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
         event_stub_builder: IEventStub = provider5_event_stub_builder,
         message_stub_builder: IMessageStub = provider5_message_stub_builder,
         check_connect_timeout: (int, float) = 5,
-        certification: bool = True,
+        use_ssl: bool = True,
     ):
         """HTTPProvider5DataSource constructor.
 
@@ -72,16 +72,22 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
             message_struct: Struct of message from rpt-data-provider.
             event_stub_builder: Stub for event.
             message_stub_builder: Stub for message.
-            certification: Checking SSL certification.
+            use_ssl: Checking SSL/TSL certification.
         """
         super().__init__(url, event_struct, message_struct, event_stub_builder, message_stub_builder)
 
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self.__chunk_length = chunk_length
-        self._certification = certification
-        self.check_connect(check_connect_timeout, certification)
-        self._provider_api = HTTPProvider5API(url, chunk_length, decode_error_handler, char_enc)
+        self._use_ssl = use_ssl
+        self.check_connect(check_connect_timeout, use_ssl)
+        self._provider_api = HTTPProvider5API(
+            url=url,
+            chunk_length=chunk_length,
+            decode_error_handler=decode_error_handler,
+            char_enc=char_enc,
+            use_ssl=use_ssl,
+        )
 
         logger.info(url)
 
@@ -98,7 +104,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
             CommandError: If the command was broken.
         """
         try:
-            return cmd.handle(data_source=self, certification=self._certification)
+            return cmd.handle(data_source=self)
         except Exception as e:
             raise CommandError(f"The command '{cmd.__class__.__name__}' was broken. Details of error:\n{e}")
 

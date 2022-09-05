@@ -60,7 +60,7 @@ GetEventById constructor.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(data_source: HTTPProvider5DataSource, certification: bool) → dict
+handle(data_source: HTTPProvider5DataSource) → dict
 ```
 
 
@@ -116,7 +116,7 @@ GetEventsById constructor.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(data_source: HTTPProvider5DataSource, certification: bool)
+handle(data_source: HTTPProvider5DataSource)
 ```
 
 
@@ -185,7 +185,7 @@ GetEventsSSEBytes constructor.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(data_source: HTTPProvider5DataSource, certification: bool)
+handle(data_source: HTTPProvider5DataSource)
 ```
 
 
@@ -258,7 +258,7 @@ GetEventsSSEEvents constructor.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(data_source: HTTPProvider5DataSource, certification: bool)
+handle(data_source: HTTPProvider5DataSource)
 ```
 
 
@@ -329,7 +329,7 @@ GetEvents constructor.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(data_source: HTTPProvider5DataSource, certification: bool) → Data
+handle(data_source: HTTPProvider5DataSource) → Data
 ```
 
 
@@ -387,7 +387,7 @@ GetMessageById constructor.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(data_source: HTTPProvider5DataSource, certification: bool) → dict
+handle(data_source: HTTPProvider5DataSource) → dict
 ```
 
 
@@ -445,7 +445,7 @@ GetMessagesById constructor.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(data_source: HTTPProvider5DataSource, certification: bool) → List[dict]
+handle(data_source: HTTPProvider5DataSource) → List[dict]
 ```
 
 
@@ -517,8 +517,7 @@ GetMessagesSSEBytes constructor.
 
 ```python
 handle(
-    data_source: HTTPProvider5DataSource,
-    certification: bool
+    data_source: HTTPProvider5DataSource
 ) → Generator[dict, NoneType, NoneType]
 ```
 
@@ -529,7 +528,7 @@ handle(
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L531"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L529"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessagesSSEEvents`
 A Class-Command for request to rpt-data-provider. 
@@ -542,7 +541,7 @@ It searches messages stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L540"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L538"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -589,14 +588,13 @@ GetMessagesSSEEvents constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L591"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L589"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
 ```python
 handle(
-    data_source: HTTPProvider5DataSource,
-    certification: bool
+    data_source: HTTPProvider5DataSource
 ) → Generator[dict, NoneType, NoneType]
 ```
 
@@ -607,7 +605,7 @@ handle(
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L619"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L615"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessages`
 A Class-Command for request to rpt-data-provider. 
@@ -620,7 +618,7 @@ It searches messages stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L628"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L624"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -669,12 +667,12 @@ GetMessages constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L682"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L678"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(data_source: HTTPProvider5DataSource, certification: bool) → Data
+handle(data_source: HTTPProvider5DataSource) → Data
 ```
 
 

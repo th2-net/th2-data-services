@@ -27,7 +27,7 @@ class IHTTPProvider5Command(IHTTPProviderCommand):
     """
 
     @abstractmethod
-    def handle(self, data_source: HTTPProvider5DataSource, certification: bool):
+    def handle(self, data_source: HTTPProvider5DataSource):
         pass
 
 
