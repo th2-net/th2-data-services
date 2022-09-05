@@ -35,6 +35,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         chunk_length: int = 65536,
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         char_enc: str = "utf-8",
+        use_ssl: bool = True,
     ):
         """HTTP Provider5 API.
 
@@ -43,11 +44,13 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             chunk_length: How much of the content to read in one chunk.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
+            use_ssl: If False SSL/TSL certification is disable.
         """
         self._url = self.__normalize_url(url)
         self._char_enc = char_enc
         self._chunk_length = chunk_length
         self._decode_error_handler = decode_error_handler
+        self._use_ssl = use_ssl
 
     def __normalize_url(self, url):
         if url is None:
@@ -231,7 +234,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
              str: Response stream data.
         """
         headers = {"Accept": "text/event-stream"}
-        http = PoolManager()
+        http = PoolManager() if self._use_ssl else PoolManager(cert_reqs="CERT_NONE")
         response = http.request(method="GET", url=url, headers=headers, preload_content=False)
 
         if response.status != HTTPStatus.OK:
@@ -254,4 +257,4 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         Returns:
             requests.Response: Response data.
         """
-        return requests.get(url)
+        return requests.get(url, verify=self._use_ssl)

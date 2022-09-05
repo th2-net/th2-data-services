@@ -32,6 +32,9 @@
 - [`provider.interfaces.source_api`](./provider.interfaces.source_api.md#module-providerinterfacessource_api)
 - [`provider.interfaces.struct`](./provider.interfaces.struct.md#module-providerinterfacesstruct)
 - [`provider.interfaces.stub_builder`](./provider.interfaces.stub_builder.md#module-providerinterfacesstub_builder)
+- [`provider.utils`](./provider.utils.md#module-providerutils)
+- [`provider.utils.converters`](./provider.utils.converters.md#module-providerutilsconverters)
+- [`provider.utils.version_checker`](./provider.utils.version_checker.md#module-providerutilsversion_checker)
 - [`provider.v5`](./provider.v5.md#module-providerv5)
 - [`provider.v5.adapters`](./provider.v5.adapters.md#module-providerv5adapters)
 - [`provider.v5.adapters.basic_adapters`](./provider.v5.adapters.basic_adapters.md#module-providerv5adaptersbasic_adapters)
@@ -57,8 +60,11 @@
 - [`provider.v5.provider_api.grpc`](./provider.v5.provider_api.grpc.md#module-providerv5provider_apigrpc)
 - [`provider.v5.provider_api.http`](./provider.v5.provider_api.http.md#module-providerv5provider_apihttp)
 - [`provider.v5.stub_builder`](./provider.v5.stub_builder.md#module-providerv5stub_builder)
-- [`provider.v5.utils`](./provider.v5.utils.md#module-providerv5utils)
-- [`provider.v5.utils.converters`](./provider.v5.utils.converters.md#module-providerv5utilsconverters)
+- [`provider.v6`](./provider.v6.md#module-providerv6)
+- [`provider.v6.commands`](./provider.v6.commands.md#module-providerv6commands)
+- [`provider.v6.filters`](./provider.v6.filters.md#module-providerv6filters)
+- [`provider.v6.struct`](./provider.v6.struct.md#module-providerv6struct)
+- [`provider.v6.stub_builder`](./provider.v6.stub_builder.md#module-providerv6stub_builder)
 - [`sse_client`](./sse_client.md#module-sse_client)
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 - [`utils`](./utils.md#module-utils)
@@ -100,6 +106,7 @@
 - [`stub_builder.IEventStub`](./provider.interfaces.stub_builder.md#class-ieventstub): Just to mark Event Stub class.
 - [`stub_builder.IMessageStub`](./provider.interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
 - [`stub_builder.IStub`](./provider.interfaces.stub_builder.md#class-istub)
+- [`converters.Th2TimestampConverter`](./provider.utils.converters.md#class-th2timestampconverter): Converts Th2 timestamps.
 - [`basic_adapters.GRPCObjectToDictAdapter`](./provider.v5.adapters.basic_adapters.md#class-grpcobjecttodictadapter): GRPC Adapter decodes a GRPC object into a Dict object.
 - [`event_adapters.DeleteEventWrappersAdapter`](./provider.v5.adapters.event_adapters.md#class-deleteeventwrappersadapter): Adapter that deletes unnecessary wrappers in events.
 - [`message_adapters.CodecPipelinesAdapter`](./provider.v5.adapters.message_adapters.md#class-codecpipelinesadapter): Adapter for codec-pipeline messages from provider v5.
@@ -148,7 +155,9 @@
 - [`http.HTTPProvider5API`](./provider.v5.provider_api.http.md#class-httpprovider5api)
 - [`stub_builder.Provider5EventStubBuilder`](./provider.v5.stub_builder.md#class-provider5eventstubbuilder)
 - [`stub_builder.Provider5MessageStubBuilder`](./provider.v5.stub_builder.md#class-provider5messagestubbuilder)
-- [`converters.Th2TimestampConverter`](./provider.v5.utils.converters.md#class-th2timestampconverter): Converts Th2 timestamps.
+- [`struct.GRPCProvider6EventStruct`](./provider.v6.struct.md#class-grpcprovider6eventstruct): Interface for Event of data-provider v6.
+- [`stub_builder.Provider6EventStubBuilder`](./provider.v6.stub_builder.md#class-provider6eventstubbuilder)
+- [`stub_builder.Provider6MessageStubBuilder`](./provider.v6.stub_builder.md#class-provider6messagestubbuilder)
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
@@ -156,6 +165,9 @@
 ## Functions
 
 - [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
+- [`version_checker.get_package_version`](./provider.utils.version_checker.md#function-get_package_version)
+- [`version_checker.get_version_by_pip`](./provider.utils.version_checker.md#function-get_version_by_pip)
+- [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
 - [`command_resolver.resolver_get_event_by_id`](./provider.v5.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
 - [`command_resolver.resolver_get_events_by_id`](./provider.v5.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
 

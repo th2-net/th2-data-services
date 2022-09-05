@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Union, Optional
+from typing import Optional, Union, Callable
 
 from th2_data_services import Data
 from th2_data_services.interfaces.events_tree import ParentEventsTreeCollection
@@ -21,6 +21,7 @@ from th2_data_services.provider.interfaces.struct import IEventStruct
 from th2_data_services.provider.v5.data_source import GRPCProvider5DataSource, HTTPProvider5DataSource
 from th2_data_services.provider.v5.struct import provider5_event_struct
 from th2_data_services.provider.v5.stub_builder import provider5_event_stub_builder
+from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
 
 class ParentEventsTreeCollectionProvider5(ParentEventsTreeCollection):
@@ -51,6 +52,10 @@ class ParentEventsTreeCollectionProvider5(ParentEventsTreeCollection):
             preserve_body=preserve_body,
             stub=stub,
         )
+
+    def _get_events_by_id_resolver(self) -> Callable:
+        """Gets a function that solve which protocol command to choose."""
+        return resolver_get_events_by_id
 
     def _get_event_id(self, event) -> str:
         """Gets event id from the event.

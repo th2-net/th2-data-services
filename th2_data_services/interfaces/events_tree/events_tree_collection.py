@@ -24,7 +24,6 @@ from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
-from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
 
 import logging
 
@@ -48,7 +47,11 @@ class EventsTreeCollection(ABC):
     """
 
     def __init__(
-        self, data: Data, data_source: IProviderDataSource = None, preserve_body: bool = False, stub: bool = False
+        self,
+        data: Data,
+        data_source: IProviderDataSource = None,
+        preserve_body: bool = False,
+        stub: bool = False,
     ):
         """EventsTreeCollection constructor.
 
@@ -69,13 +72,14 @@ class EventsTreeCollection(ABC):
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
+
+        if data_source is not None:
+            self.recover_unknown_events(self._data_source)
+
         if self._detached_nodes:
             w = "The collection were built with detached events because there are no some events in the source"
             self._logger.warning(w)
             warnings.warn(w)
-
-        if data_source is not None:
-            self.recover_unknown_events(self._data_source)
 
     def get_parentless_trees(self) -> List[EventsTree]:
         """Builds and returns parentless trees by detached events.
@@ -360,6 +364,10 @@ class EventsTreeCollection(ABC):
     @abstractmethod
     def _get_event_name(self, event):
         """Gets event name from the event."""
+
+    @abstractmethod
+    def _get_events_by_id_resolver(self) -> Callable:
+        """Gets a function that solve which protocol command to choose."""
 
     def __len__(self) -> int:
         """Returns the number of all events, including detached events."""
@@ -770,7 +778,8 @@ class EventsTreeCollection(ABC):
         Args:
             data_source: Data Source.
         """
-        instance_command = resolver_get_events_by_id(data_source)
+        resolver = self._get_events_by_id_resolver()
+        instance_command = resolver(data_source)
 
         previous_detached_events = list(self._detached_events().keys())
         while previous_detached_events:

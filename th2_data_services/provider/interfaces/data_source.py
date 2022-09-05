@@ -99,17 +99,18 @@ class IHTTPProviderDataSource(IProviderDataSource):
     def command(self, cmd: IHTTPProviderCommand):
         """Execute the transmitted HTTP command."""
 
-    def check_connect(self, timeout: (int, float)) -> None:
+    def check_connect(self, timeout: (int, float), certification: bool = True) -> None:
         """Checks whether url is working.
 
         Args:
             timeout: How many seconds to wait for the server to send data before giving up.
+            certification: Checking SSL certification.
 
         Raises:
             urllib3.exceptions.HTTPError: If unable to connect to host.
         """
         try:
-            requests.get(self.url, timeout=timeout)
+            requests.get(self.url, timeout=timeout, verify=certification)
         except ConnectionError as error:
             raise urllib3.exceptions.HTTPError(f"Unable to connect to host '{self.url}'\nReason: {error}")
 

@@ -18,10 +18,14 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install importlib importlib-metadata
       - name: Test with pytest
         run: |
           pip install pytest
-          pytest -k "not test_parent_events_tree_local and not test_data_source_local and not test_data_local and not test_events_tree_local and not test_adapter_sse_local"
+          cd tests
+          python unittestV5.py
+          python unittestV6.py
+          cd ..
       - name: Build package
         run: |
           python setup.py sdist

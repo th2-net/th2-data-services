@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from treelib import Node, Tree
 
@@ -29,7 +29,11 @@ class ParentEventsTreeCollection(EventsTreeCollection):
     """
 
     def __init__(
-        self, data: Data, data_source: IProviderDataSource = None, preserve_body: bool = False, stub: bool = False
+        self,
+        data: Data,
+        data_source: IProviderDataSource = None,
+        preserve_body: bool = False,
+        stub: bool = False,
     ):
         """ParentEventsTreeCollection constructor.
 

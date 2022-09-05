@@ -20,7 +20,10 @@ from th2_data_services import Filter, Data
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
 from th2_data_services.provider.v5.interfaces.command import IHTTPProvider5Command
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.filters.filter import Provider5EventFilter, Provider5MessageFilter
+from th2_data_services.provider.v5.filters.filter import (
+    Provider5EventFilter,
+    Provider5MessageFilter,
+)
 from th2_data_services.provider.v5.provider_api import HTTPProvider5API
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.sse_client import SSEClient
@@ -30,7 +33,6 @@ from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 import logging
 
 logger = logging.getLogger(__name__)
-
 
 EventFilters = Union[Filter, Provider5EventFilter, Sequence[Union[Filter, Provider5EventFilter]]]
 MessageFilters = Union[Filter, Provider5MessageFilter, Sequence[Union[Filter, Provider5MessageFilter]]]
@@ -58,13 +60,12 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
         EventNotFound: If event by Id wasn't found.
     """
 
-    def __init__(self, id: str, use_stub=False):
+    def __init__(self, id: str, use_stub: bool = False):
         """GetEventById constructor.
 
         Args:
             id: Event id.
             use_stub: If True the command returns stub instead of exception.
-
         """
         super().__init__()
         self._id = id
@@ -99,13 +100,12 @@ class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
         EventNotFound: If any event by Id wasn't found.
     """
 
-    def __init__(self, ids: List[str], use_stub=False):
+    def __init__(self, ids: List[str], use_stub: bool = False):
         """GetEventsById constructor.
 
         Args:
             ids: Event id list.
             use_stub: If True the command returns stub instead of exception.
-
         """
         super().__init__()
         self._ids: ids = ids
@@ -237,7 +237,6 @@ class GetEventsSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters: Filters using in search for messages.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
-
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -266,7 +265,11 @@ class GetEventsSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             attached_messages=self._attached_messages,
             filters=self._filters,
         ).handle(data_source)
-        client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
+        client = SSEClient(
+            response,
+            char_enc=self._char_enc,
+            decode_errors_handler=self._decode_error_handler,
+        )
         for record in client.events():
             record = self._handle_adapters(record)
             if record is not None:
@@ -312,7 +315,6 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
-
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -366,13 +368,12 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         MessageNotFound: If message by id wasn't found.
     """
 
-    def __init__(self, id: str, use_stub=False):
+    def __init__(self, id: str, use_stub: bool = False):
         """GetMessageById constructor.
 
         Args:
             id: Message id.
             use_stub: If True the command returns stub instead of exception.
-
         """
         super().__init__()
         self._id = id
@@ -410,13 +411,12 @@ class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
         MessageNotFound: If any message by id wasn't found.
     """
 
-    def __init__(self, ids: List[str], use_stub=False):
+    def __init__(self, ids: List[str], use_stub: bool = False):
         """GetMessagesById constructor.
 
         Args:
             ids: Message id list.
             use_stub: If True the command returns stub instead of exception.
-
         """
         super().__init__()
         self._ids: ids = ids
@@ -425,7 +425,10 @@ class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
     def handle(self, data_source: HTTPProvider5DataSource) -> List[dict]:  # noqa: D102
         result = []
         for message_id in self._ids:
-            message = GetMessageById(message_id, use_stub=self._stub_status).handle(data_source)
+            message = GetMessageById(
+                message_id,
+                use_stub=self._stub_status,
+            ).handle(data_source)
             result.append(self._handle_adapters(message))
 
         return result
@@ -597,7 +600,11 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters=self._filters,
         ).handle(data_source)
 
-        client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
+        client = SSEClient(
+            response,
+            char_enc=self._char_enc,
+            decode_errors_handler=self._decode_error_handler,
+        )
 
         for record in client.events():
             record = self._handle_adapters(record)

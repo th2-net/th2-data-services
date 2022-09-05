@@ -283,3 +283,29 @@ This release is not required any additional steps to use.
 10. [TH2-3732] Log message in http.GetMessages contains name of the stream.
 11. [TH2-3734] EventsTreeCollection append_event method doesn't add duplicate event.
 12. [TH2-3596][TH2-3594][TH2-3473] EventsTreeCollections. Get or find methods includes parentless results, if parentless exists.
+
+# v1.1.1
+
+## BugFixes
+1. [TH2-4039] An empty filter is validated.
+
+# v1.2.0
+
+## User impact and migration instructions
+This release implements rdp v6 support that requres new grpc version. It means you cannot connect to rdp5.grpc and rdp6.grpc via the same environment. This DS lib version will have grpc version for rdp v6 == th2-grpc-data-provider v1.1.0.
+
+1. [I] The new version of grpc has been added.  
+   [M] If you require the rdp v6 version of the interface, you do not need to do anything. 
+       Otherwise, you need to reinstall th2-grpc-data-provider lib to the required one for your rdp.
+
+More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.0#grpc-provider-warning)
+
+## Features
+1. [TH2-3083] The problem with several versions of the grpc interface is solved.
+2. [TH2-3512] Provider V6 module is developed.
+3. [TH2-4141] Option to disable ssl certificate for rdp5 is added
+4. [TH2-4098] Added Streams class for the param 'stream'.
+
+# BugFixes
+1. [TH2-4072] Now ETC doesn't raise a warning for missing detached_events.
+2. GRPC requests (start_timestamp, end_timestamp) are now made in UTC.
