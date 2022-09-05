@@ -14,7 +14,7 @@
 
 
 class EventIdNotInTree(Exception):
-    def __init__(self, id_):
+    def __init__(self, id_: str):
         """Exception for the case when the tree hasn't the event.
 
         Args:
@@ -27,7 +27,7 @@ class EventIdNotInTree(Exception):
 
 
 class FieldIsNotExist(Exception):
-    def __init__(self, field_name):
+    def __init__(self, field_name: str):
         """Exception for the case when event as dict hasn't field.
 
         Args:
@@ -40,7 +40,7 @@ class FieldIsNotExist(Exception):
 
 
 class EventAlreadyExist(Exception):
-    def __init__(self, event_id):
+    def __init__(self, event_id: str):
         """Exception for the case when event already exist in tree.
 
         Args:
@@ -53,7 +53,7 @@ class EventAlreadyExist(Exception):
 
 
 class EventRootExist(Exception):
-    def __init__(self, event_id):
+    def __init__(self, event_id: str):
         """Exception for the case when root already added in tree.
 
         Args:
@@ -63,3 +63,21 @@ class EventRootExist(Exception):
 
     def __str__(self):
         return f"Event with the id '{self._event_id}' can't be added in tree. Root event already exist."
+
+
+class TreeLoop(Exception):
+    def __init__(self, event_id: str, parent_id: str):
+        """Exception for the case when an event has link to a parent which is its descendant.
+
+        Args:
+            event_id: Event id.
+            parent_id: Parent id.
+        """
+        self._event_id = event_id
+        self._parent_id = parent_id
+
+    def __str__(self):
+        return (
+            f"Event with the id '{self._event_id}' can't link to parent with id '{self._parent_id}'. "
+            f"The parent is descendant."
+        )

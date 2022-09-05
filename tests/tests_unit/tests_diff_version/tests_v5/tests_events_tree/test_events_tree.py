@@ -1,7 +1,7 @@
 from typing import List, NamedTuple
 
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
-from th2_data_services.interfaces.events_tree.events_tree import EventsTree
+from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.provider.v5.struct import provider5_event_struct
 
 

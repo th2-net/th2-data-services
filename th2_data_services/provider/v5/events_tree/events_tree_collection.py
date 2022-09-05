@@ -16,11 +16,9 @@ from typing import Union, Optional, Callable
 
 from th2_data_services import Data
 from th2_data_services.interfaces.events_tree import EventsTreeCollection
-from th2_data_services.interfaces.events_tree.events_tree import EventsTree
-from th2_data_services.interfaces.events_tree.exceptions import FieldIsNotExist
+from th2_data_services.events_tree.exceptions import FieldIsNotExist
 from th2_data_services.provider.interfaces.struct import IEventStruct
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource, GRPCProvider5DataSource
-from th2_data_services.provider.v5.events_tree.events_tree import EventsTreeProvider5
 from th2_data_services.provider.v5.struct import provider5_event_struct
 from th2_data_services.provider.v5.stub_builder import provider5_event_stub_builder
 from th2_data_services.provider.v5.command_resolver import resolver_get_events_by_id
@@ -105,7 +103,3 @@ class EventsTreeCollectionProvider5(EventsTreeCollection):
             Stub event.
         """
         return provider5_event_stub_builder.build({self._event_struct.EVENT_ID: id_})
-
-    def _create_events_tree(self) -> EventsTree:
-        """Creates a EventsTree."""
-        return EventsTreeProvider5()

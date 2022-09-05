@@ -6,15 +6,16 @@
 
 - [`data`](./data.md#module-data)
 - [`decode_error_handler`](./decode_error_handler.md#module-decode_error_handler)
+- [`events_tree`](./events_tree.md#module-events_tree)
+- [`events_tree.events_tree`](./events_tree.events_tree.md#module-events_treeevents_tree)
+- [`events_tree.exceptions`](./events_tree.exceptions.md#module-events_treeexceptions)
 - [`filter`](./filter.md#module-filter)
 - [`interfaces`](./interfaces.md#module-interfaces)
 - [`interfaces.adapter`](./interfaces.adapter.md#module-interfacesadapter)
 - [`interfaces.command`](./interfaces.command.md#module-interfacescommand)
 - [`interfaces.data_source`](./interfaces.data_source.md#module-interfacesdata_source)
 - [`interfaces.events_tree`](./interfaces.events_tree.md#module-interfacesevents_tree)
-- [`interfaces.events_tree.events_tree`](./interfaces.events_tree.events_tree.md#module-interfacesevents_treeevents_tree)
 - [`interfaces.events_tree.events_tree_collection`](./interfaces.events_tree.events_tree_collection.md#module-interfacesevents_treeevents_tree_collection)
-- [`interfaces.events_tree.exceptions`](./interfaces.events_tree.exceptions.md#module-interfacesevents_treeexceptions)
 - [`interfaces.events_tree.parent_events_tree_collection`](./interfaces.events_tree.parent_events_tree_collection.md#module-interfacesevents_treeparent_events_tree_collection)
 - [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
 - [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
@@ -47,7 +48,6 @@
 - [`provider.v5.data_source.grpc`](./provider.v5.data_source.grpc.md#module-providerv5data_sourcegrpc)
 - [`provider.v5.data_source.http`](./provider.v5.data_source.http.md#module-providerv5data_sourcehttp)
 - [`provider.v5.events_tree`](./provider.v5.events_tree.md#module-providerv5events_tree)
-- [`provider.v5.events_tree.events_tree`](./provider.v5.events_tree.events_tree.md#module-providerv5events_treeevents_tree)
 - [`provider.v5.events_tree.events_tree_collection`](./provider.v5.events_tree.events_tree_collection.md#module-providerv5events_treeevents_tree_collection)
 - [`provider.v5.events_tree.parent_events_tree_collection`](./provider.v5.events_tree.parent_events_tree_collection.md#module-providerv5events_treeparent_events_tree_collection)
 - [`provider.v5.filters`](./provider.v5.filters.md#module-providerv5filters)
@@ -73,18 +73,19 @@
 ## Classes
 
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
+- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree is a tree-based data structure of events.
+- [`exceptions.EventAlreadyExist`](./events_tree.exceptions.md#class-eventalreadyexist)
+- [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
+- [`exceptions.EventRootExist`](./events_tree.exceptions.md#class-eventrootexist)
+- [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
+- [`exceptions.TreeLoop`](./events_tree.exceptions.md#class-treeloop)
 - [`filter.Filter`](./filter.md#class-filter): The class for using rpt-data-provider filters API.
 - [`adapter.IAdapter`](./interfaces.adapter.md#class-iadapter): High level interface for Adapter.
 - [`adapter.IEventAdapter`](./interfaces.adapter.md#class-ieventadapter): Interface of Adapter for events.
 - [`adapter.IMessageAdapter`](./interfaces.adapter.md#class-imessageadapter): Interface of Adapter for messages.
 - [`command.ICommand`](./interfaces.command.md#class-icommand): High level interface for Command.
 - [`data_source.IDataSource`](./interfaces.data_source.md#class-idatasource)
-- [`events_tree.EventsTree`](./interfaces.events_tree.events_tree.md#class-eventstree): EventsTree is a tree-based data structure of events.
 - [`events_tree_collection.EventsTreeCollection`](./interfaces.events_tree.events_tree_collection.md#class-eventstreecollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
-- [`exceptions.EventAlreadyExist`](./interfaces.events_tree.exceptions.md#class-eventalreadyexist)
-- [`exceptions.EventIdNotInTree`](./interfaces.events_tree.exceptions.md#class-eventidnotintree)
-- [`exceptions.EventRootExist`](./interfaces.events_tree.exceptions.md#class-eventrootexist)
-- [`exceptions.FieldIsNotExist`](./interfaces.events_tree.exceptions.md#class-fieldisnotexist)
 - [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
@@ -135,7 +136,6 @@
 - [`http.GetMessagesSSEEvents`](./provider.v5.commands.http.md#class-getmessagessseevents): A Class-Command for request to rpt-data-provider.
 - [`grpc.GRPCProvider5DataSource`](./provider.v5.data_source.grpc.md#class-grpcprovider5datasource): DataSource class which provide work with rpt-data-provider.
 - [`http.HTTPProvider5DataSource`](./provider.v5.data_source.http.md#class-httpprovider5datasource): DataSource class which provide work with rpt-data-provider.
-- [`events_tree.EventsTreeProvider5`](./provider.v5.events_tree.events_tree.md#class-eventstreeprovider5): EventsTree for data-provider v5.
 - [`events_tree_collection.EventsTreeCollectionProvider5`](./provider.v5.events_tree.events_tree_collection.md#class-eventstreecollectionprovider5): EventsTreesCollections for data-provider v5.
 - [`parent_events_tree_collection.ParentEventsTreeCollectionProvider5`](./provider.v5.events_tree.parent_events_tree_collection.md#class-parenteventstreecollectionprovider5): ParentEventsTreeCollection for data-provider v5.
 - [`event_filters.AttachedMessageIdFilter`](./provider.v5.filters.event_filters.md#class-attachedmessageidfilter): Filters the events that are linked to the specified message id.

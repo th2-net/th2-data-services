@@ -3,6 +3,7 @@ from datetime import datetime
 import pytest
 
 from th2_data_services import Data
+from th2_data_services.events_tree import EventsTree
 from . import HTTPProviderAPI, HTTPProviderDataSource, http, CodecPipelinesAdapter, Filter, DEMO_PORT  # noqa  # noqa
 
 
@@ -79,7 +80,7 @@ def demo_events_from_data_source(demo_data_source: HTTPProviderDataSource) -> Da
             end_timestamp=END_TIME,
         )
     )
-    # Returns 49 events #TODO
+    # Returns 49 events #TODO change comments
     # Failed = 6
     return events
 
@@ -102,7 +103,7 @@ def demo_events_from_data_source_with_cache_status(
     demo_data_source: HTTPProviderDataSource,
 ) -> Data:
     events = demo_data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
-    # Returns 49 events #TODO
+    # Returns 49 events #TODO change comments
     # Failed = 6
     return events
 
@@ -155,3 +156,15 @@ def demo_messages_from_data_source_with_test_streams(
         )
     )
     return messages
+
+
+@pytest.fixture
+def events_tree_for_test():
+    tree = EventsTree()
+    tree.create_root_event(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
+    tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
+    tree.append_event(event_name="B", event_id="B_id", data=None, parent_id="root_id")
+    tree.append_event(event_name="C", event_id="C_id", data={"data": "test data"}, parent_id="B_id")
+    tree.append_event(event_name="D", event_id="D_id", data=None, parent_id="B_id")
+    tree.append_event(event_name="D1", event_id="D1_id", data={"key1": "value1", "key2": "value2"}, parent_id="D_id")
+    return tree

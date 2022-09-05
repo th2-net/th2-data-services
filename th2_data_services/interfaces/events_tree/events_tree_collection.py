@@ -19,9 +19,9 @@ from typing import List, Dict, Optional, Union, Generator, Tuple, Callable
 from treelib.exceptions import NodeIDAbsentError
 
 from th2_data_services import Data
-from th2_data_services.interfaces.events_tree.events_tree import EventsTree
-from th2_data_services.interfaces.events_tree.events_tree import Th2Event
-from th2_data_services.interfaces.events_tree.exceptions import EventIdNotInTree
+from th2_data_services.events_tree.events_tree import EventsTree
+from th2_data_services.events_tree.events_tree import Th2Event
+from th2_data_services.events_tree.exceptions import EventIdNotInTree
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 
 import logging
@@ -110,10 +110,10 @@ class EventsTreeCollection(ABC):
                     stub_roots.remove(event_id)
 
         for id_ in stub_roots:
-            tree = self._create_events_tree()
+            tree = EventsTree()
             stub_event = self._build_stub_event(id_)
-            # stub_event
-            tree.append_event(stub_event)
+            event_id, event_name = self._get_event_id(stub_event), self._get_event_name(stub_event)
+            tree.create_root_event(event_id=event_id, event_name=event_name, data=stub_event)
             self._fill_tree(self._detached_nodes, tree, id_)
             self._parentless.append(tree)
 
@@ -152,11 +152,12 @@ class EventsTreeCollection(ABC):
         """
         roots = []
         for root_event in events_store[None]:  # None - is parent_event_id for root events.
-            tree = self._create_events_tree()
+            tree = EventsTree()
             roots.append(tree)
-            tree.append_event(root_event)
-            root_event_id: str = self._get_event_id(root_event)
-            self._fill_tree(events_store, tree, root_event_id)
+
+            event_name, event_id = self._get_event_name(root_event), self._get_event_id(root_event)
+            tree.create_root_event(event_name=event_name, event_id=event_id, data=root_event)
+            self._fill_tree(events_store, tree, event_id)
         events_store.pop(None)
 
         self._roots = roots
@@ -173,9 +174,11 @@ class EventsTreeCollection(ABC):
             parent_id: Parent even id.
         """
         for event in events_store[parent_id].copy():
-            event_id: str = self._get_event_id(event)
+            event_name, event_id, = self._get_event_name(
+                event
+            ), self._get_event_id(event)
             if event_id not in current_tree:
-                current_tree.append_event(event)
+                current_tree.append_event(event_name=event_name, event_id=event_id, parent_id=parent_id, data=event)
             events_store[parent_id].remove(event)
             self._fill_tree(events_store, current_tree, event_id)  # Recursive fill.
         events_store.pop(parent_id)
@@ -222,17 +225,20 @@ class EventsTreeCollection(ABC):
             events_trees = list(filter(lambda tree: parent_event_id in tree, self._roots))
             if events_trees:
                 event_tree = events_trees[0]
-                event_id = self._get_event_id(event)
+                event_id, event_name = self._get_event_id(event), self._get_event_name(event)
                 if event_id in event_tree:
                     pass
                 else:
-                    event_tree.append_event(event)
+                    event_tree.append_event(
+                        event_name=event_name, event_id=event_id, parent_id=parent_event_id, data=event
+                    )
                     self._fill_tree(self._detached_nodes, event_tree, parent_event_id)
             else:
                 self._detached_nodes[parent_event_id].append(event)
         else:
-            tree = self._create_events_tree()
-            tree.append_event(event)
+            tree = EventsTree()
+            event_id, event_name = self._get_event_id(event), self._get_event_name(event)
+            tree.create_root_event(event_id=event_id, event_name=event_name, data=event)
             self._roots.append(tree)
 
             event_id = self._get_event_id(event)
@@ -357,10 +363,6 @@ class EventsTreeCollection(ABC):
     @abstractmethod
     def _get_resolver(self) -> Callable:
         """Gets a function that solve which protocol command to choose."""
-
-    @abstractmethod
-    def _create_events_tree(self) -> EventsTree:
-        """Creates a EventsTree."""
 
     def __len__(self) -> int:
         """Returns the number of all events, including detached events."""

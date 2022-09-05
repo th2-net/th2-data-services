@@ -11,18 +11,17 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from abc import ABC, abstractmethod
-from typing import List, Tuple, Generator, Callable, Optional, Union, Iterable
+from typing import List, Tuple, Generator, Callable, Optional, Union
 
 from treelib import Tree, Node
-from treelib.exceptions import NodeIDAbsentError
+from treelib.exceptions import NodeIDAbsentError, LoopError
 
-from th2_data_services.interfaces.events_tree.exceptions import EventIdNotInTree, EventAlreadyExist, EventRootExist
+from th2_data_services.events_tree.exceptions import EventIdNotInTree, EventAlreadyExist, EventRootExist, TreeLoop
 
 Th2Event = dict
 
 
-class EventsTree(ABC):
+class EventsTree:
     """EventsTree is a tree-based data structure of events.
 
     - get_x methods raise Exceptions if no result is found.
@@ -45,56 +44,49 @@ class EventsTree(ABC):
     ```
     """
 
-    def __init__(self, data: Iterable = None, tree: Tree = None):
+    def __init__(self, tree: Tree = None):
         """EventsTree constructor.
 
         Args:
-            data: Events.
             tree: Tree.
         """
         self._tree = Tree() if tree is None else tree
-        data = [] if data is None else data
 
-        self._build_tree(data)
-
-    def _build_tree(self, data: Iterable):
-        for event in data:
-            self.append_event(event)
-
-    def append_event(self, event: dict) -> None:
-        """Appends a node to the tree.
+    def create_root_event(self, event_name: str, event_id: str, data: dict = None) -> None:
+        """Appends a root event to the tree.
 
         Args:
-            event: Event. #TODO
+            event_name: Event Name.
+            event_id: Event Id.
+            data: Data of event.
         """
-        event_name = self._get_event_name(event)
-        event_id = self._get_event_id(event)
-        parent_id = self._get_parent_event_id(event)
-        # parent_id = parent_id if parent_id != "Broken_Event" else None
-
+        if self._tree.root is not None:
+            raise EventRootExist(event_id)
         if event_id in self._tree:
             raise EventAlreadyExist(event_id)
-        elif self._tree.root is not None and not parent_id:
-            raise EventRootExist(event_id)
+
+        self._tree.create_node(tag=event_name, identifier=event_id, parent=None, data=data)
+
+    def append_event(self, event_name: str, event_id: str, parent_id: str, data: dict = None) -> None:
+        """Appends a event to the tree.
+
+        Args:
+            event_name: Event Name.
+            event_id: Event Id.
+            parent_id: Parent Id.
+            data: Data of event.
+        """
+        if event_id in self._tree:
+            raise EventAlreadyExist(event_id)
+        if parent_id is None:
+            raise ValueError(
+                "The param 'parent_id' must be not None. If you want create root event then use 'create_root_event'"
+            )
 
         try:
-            self._tree.create_node(
-                tag=event_name, identifier=event_id, parent=parent_id if parent_id else None, data=event
-            )
+            self._tree.create_node(tag=event_name, identifier=event_id, parent=parent_id, data=data)
         except NodeIDAbsentError:
-            pass
-
-    @abstractmethod
-    def _get_parent_event_id(self, event):
-        """Gets parent event id from the event."""
-
-    @abstractmethod
-    def _get_event_id(self, event):
-        """Gets event id from the event."""
-
-    @abstractmethod
-    def _get_event_name(self, event):
-        """Gets event name from the event."""
+            raise EventIdNotInTree(parent_id)
 
     def get_all_events_iter(self) -> Generator[Th2Event, None, None]:
         """Returns all events from the tree as iterator."""
@@ -119,9 +111,50 @@ class EventsTree(ABC):
             raise EventIdNotInTree(id)
         return node.data
 
-    # TODO: In future it will be added.
-    # def __getitem__(self, item):
-    #     pass
+    def __getitem__(self, id_: str) -> Th2Event:
+        try:
+            return self._tree[id_].data
+        except NodeIDAbsentError:
+            raise EventIdNotInTree(id_)
+
+    def __setitem__(self, id_: str, data: dict) -> None:
+        try:
+            self._tree[id_].data = data
+        except NodeIDAbsentError:
+            raise EventIdNotInTree(id_)
+
+    def update_event_name(self, event_id: str, event_name: str) -> None:
+        """Updates Event name in the tree. Note that it doesn't change internal data.
+
+        Args:
+            event_id: Event id.
+            event_name: Event name.
+
+        Raises:
+            EventIdNotInTree: If event id is not in the tree.
+        """
+        try:
+            self._tree.update_node(event_id, tag=event_name)
+        except NodeIDAbsentError:
+            raise EventIdNotInTree(event_id)
+
+    def update_parent_link(self, event_id: str, parent_id: str) -> None:
+        """Updates the link to parent.
+
+        Args:
+            event_id: Event id.
+            parent_id: New parent id.
+
+        Raises:
+            EventIdNotInTree: If event id is not in the tree.
+            TreeLoop: If parent id will point to the descendant event.
+        """
+        try:
+            self._tree.move_node(event_id, parent_id)
+        except NodeIDAbsentError:
+            raise EventIdNotInTree(event_id)
+        except LoopError:
+            raise TreeLoop(event_id, parent_id)
 
     def get_root_id(self) -> str:
         """Returns the root id."""
@@ -387,7 +420,22 @@ class EventsTree(ABC):
         subtree = self._tree.subtree(id)
         if not subtree:
             raise EventIdNotInTree(id)
-        return self.__class__(tree=subtree)
+        return EventsTree(tree=subtree)
+
+    def merge_tree(self, parent_id: str, other_tree: "EventsTree", use_deepcopy: bool = False) -> None:
+        """Merges a EventsTree to specified identifier.
+
+        Args:
+            parent_id: Event id to which merge.
+            other_tree: EventsTree.
+            use_deepcopy: True if you need deepcopy for your objects in event.
+
+        Raises:
+             EventIdNotInTree: If event id is not in the tree.
+        """
+        if parent_id not in self._tree:
+            raise EventIdNotInTree(parent_id)
+        self._tree.merge(parent_id, other_tree._tree, use_deepcopy)
 
     def show(self) -> None:
         """Prints the EventsTree as tree view.

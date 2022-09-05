@@ -14,10 +14,9 @@
 
 from typing import Dict, List, Optional
 
-from treelib import Node, Tree
 
 from th2_data_services import Data
-from th2_data_services.interfaces.events_tree.events_tree import EventsTree
+from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.interfaces.events_tree.events_tree_collection import EventsTreeCollection
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 
@@ -45,26 +44,28 @@ class ParentEventsTreeCollection(EventsTreeCollection):
         """
         super().__init__(data, data_source, preserve_body, stub)
 
-    def _build_trees(self, events_store: Dict[Optional[str], List[Node]]) -> None:
+    def _build_trees(self, events_store: Dict[Optional[str], List[dict]]) -> None:
         """Builds trees and saves detached events.
 
         Args:
             events_store: Events nodes.
         """
         roots = []
-        for node in events_store[None]:  # None - is parent_event_id for root events.
-            if events_store[node.identifier]:
-                tree = Tree()
-                tree.add_node(node)
+        for event in events_store[None]:  # None - is parent_event_id for root events.
+            event_id, event_name = self._get_event_id(event), self._get_event_name(event)
+            if events_store[event_id]:
+                tree = EventsTree()
+                tree.create_root_event(event_name=event_name, event_id=event_id, data=event)
                 roots.append(tree)
-                event_id: str = node.identifier
                 self._fill_tree(events_store, tree, event_id)
         events_store.pop(None)
 
-        self._roots = [EventsTree(root) for root in roots]
+        self._roots = roots
         self._detached_nodes = events_store
 
-    def _fill_tree(self, events_store: Dict[Optional[str], List[Node]], current_tree: Tree, parent_id: str) -> None:
+    def _fill_tree(
+        self, events_store: Dict[Optional[str], List[dict]], current_tree: EventsTree, parent_id: str
+    ) -> None:
         """Fills tree recursively.
 
         Args:
@@ -72,9 +73,9 @@ class ParentEventsTreeCollection(EventsTreeCollection):
             current_tree: Tree for fill.
             parent_id: Parent even id.
         """
-        for node in events_store[parent_id]:
-            event_id: str = node.identifier
+        for event in events_store[parent_id]:
+            event_id, event_name = self._get_event_id(event), self._get_event_name(event)
             if events_store.get(event_id):
-                current_tree.add_node(node, parent=parent_id)
+                current_tree.append_event(event_name=event_name, event_id=event_id, parent_id=parent_id, data=event)
                 self._fill_tree(events_store, current_tree, event_id)  # recursive fill
         events_store.pop(parent_id)
