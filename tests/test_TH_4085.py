@@ -2,7 +2,7 @@ from distutils.dep_util import newer
 from th2_data_services import Data
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http as commands
-from ..th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
+from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
 import th2_data_services
 import warnings
 from datetime import datetime
