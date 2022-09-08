@@ -1,8 +1,0 @@
-pytest
-pytest-xdist
-pytest-mock
-pre-commit
-black
-lazydocs
-pydocstyle
-autoflake
