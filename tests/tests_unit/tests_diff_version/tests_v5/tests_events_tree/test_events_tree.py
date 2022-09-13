@@ -241,6 +241,11 @@ def test_get_parent(general_data: List[dict]):
         "parentEventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
     }
 
+def test_get_invalid_parent(general_data: List[dict]):
+    id_ = "84db48fc-d1b4-11eb-b0fb-199708acc7bc"
+    collection = EventsTreeCollectionProvider5(general_data)
+    with pytest.raises(EventIdNotInTree):
+        collection.get_parent(id_)
 
 def test_get_invalid_parent(general_data: List[dict]):
     id_ = "84db48fc-d1b4-11eb-b0fb-199708acc7bc"
