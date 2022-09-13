@@ -314,3 +314,8 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 
 # BugFixes
 1. Added missing library importlib_metadata
+
+# v1.2.2
+
+## BugFixes
+1. [TH2-4195] EventsTree without parent raises `EventIdNotInTree` exception when trying to use `get_parent()` method
