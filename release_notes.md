@@ -157,6 +157,14 @@
 
 1. [TH2-2922] Fixed infinite loop in events tree.
 
+# v0.6.3
+
+## BugFixes
+
+1. [TH2-3168] Fixed iterations in nested loops for Data object with limit.
+2. [TH2-3336] Url now uses the utf-8 encoding.
+3. [TH2-3700] Filter iterate values only once - fixed.
+
 # v1.0.0
 
 The main goal of the release 1.0.0 is to implement new architecture that solves many of extension's problems. 
