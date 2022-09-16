@@ -31,7 +31,7 @@ with open("requirements.txt", "r") as file:
 
 CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
     'rdp': [
-        'th2_data_services_rdp==6.*',
+        'th2_data_services_rdp',
     ],
     'rdp5': [
         'th2_data_services_rdp==5.*',
@@ -43,7 +43,7 @@ CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
         'th2_data_services_lwdp',
     ],
     'lwdp1': [
-        'th2_data_services_lwdp',
+        'th2_data_services_lwdp==1.*',
     ]
 }
 
