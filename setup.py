@@ -31,19 +31,19 @@ with open("requirements.txt", "r") as file:
 
 CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
     'rdp': [
-        'th2_grpc_data_provider==1.1.0',
+        'th2_data_services_rdp==6.*',
     ],
     'rdp5': [
-        'th2_grpc_data_provider==0.1.6',
+        'th2_data_services_rdp==5.*',
     ],
     'rdp6': [
-        'th2_grpc_data_provider==1.1.0',
+        'th2_data_services_rdp==6.*',
     ],
     'lwdp': [
-        '',
+        'th2_data_services_lwdp',
     ],
     'lwdp1': [
-        '',
+        'th2_data_services_lwdp',
     ]
 }
 
