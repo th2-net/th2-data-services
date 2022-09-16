@@ -13,6 +13,7 @@
 #   limitations under the License.
 
 import json
+from typing import Dict, List
 
 from setuptools import setup, find_packages
 
@@ -28,6 +29,24 @@ with open("README.md", "r") as file:
 with open("requirements.txt", "r") as file:
     requirements = [line.strip() for line in file.readlines() if not line.startswith("#") and line != "\n"]
 
+CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
+    'rdp': [
+        'th2_grpc_data_provider==1.1.0',
+    ],
+    'rdp5': [
+        'th2_grpc_data_provider==0.1.6',
+    ],
+    'rdp6': [
+        'th2_grpc_data_provider==1.1.0',
+    ],
+    'lwdp': [
+        '',
+    ],
+    'lwdp1': [
+        '',
+    ]
+}
+
 setup(
     name=package_name,
     version=package_version,
@@ -40,6 +59,11 @@ setup(
     license="Apache License 2.0",
     python_requires=">=3.7",
     install_requires=requirements,
-    packages=find_packages(include=["th2_data_services", "th2_data_services.*"]),
+    packages=find_packages(
+        include=[
+            "th2_data_services*",
+        ],
+    ),
+    extras_require=CORE_EXTRAS_DEPENDENCIES,
     include_package_data=True,
 )
