@@ -328,3 +328,23 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 
 ## BugFixes
 1. [TH2-4195] EventsTree without parent raises `EventIdNotInTree` exception when trying to use `get_parent()` method 
+
+# v2.1.0
+
+# User impact and migration instructions
+
+By installing the package you will no longer get RDP package. If you want to use RDP you should specify dependency in square brackets `[ ]`
+
+# Features
+1. [TH2-4128] pip no longer installs RDP by default
+2. [TH2-4128] extra dependencies can be installed using square brackets after package name.
+    - Example: `pip install th2-data-services[rdp]`
+3. [TH2-4128] dependencies: 
+
+| provider | version                            |
+|:--------:|------------------------------------|
+|   rdp    | latest version of rdp              |
+|   rdp5   | latest version of rdp (version 5)  |
+|   rdp6   | latest version of rdp (version 6)  |
+|   lwdp   | latest version of lwdp             |
+|  lwdp1   | latest version of lwdp (version 1) |
