@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 from th2_data_services.data import Data
-from th2_data_services.filter import Filter
 import logging
 from logging import NullHandler
 
