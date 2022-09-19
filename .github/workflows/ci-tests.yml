@@ -28,3 +28,4 @@ jobs:
       - name: Install dependencies
         run: |
           pip install th2-data-services[${{ matrix.providers }}]
+          python tests/test_dependency_install.py ${{ matrix.providers }}
