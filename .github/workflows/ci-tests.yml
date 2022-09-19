@@ -5,6 +5,9 @@ on:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        providers: [rdp, rdp5, rdp6, lwdp, lwdp1]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -24,8 +27,4 @@ jobs:
           python unittestV6.py
       - name: Install dependencies
         run: |
-          pip install th2-data-services[rdp]
-          pip install th2-data-services[rdp5]
-          pip install th2-data-services[rdp6]
-          pip install th2-data-services[lwdp]
-          pip install th2-data-services[lwdp1]
+          pip install th2-data-services[${{ matrix.providers }}]
