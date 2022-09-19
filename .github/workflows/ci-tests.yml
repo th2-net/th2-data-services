@@ -7,7 +7,7 @@ jobs:
   test:
     strategy:
       matrix:
-        providers: [rdp, rdp5, rdp6, lwdp, lwdp1]
+        providers: [ rdp, rdp5, rdp6, lwdp, lwdp1 ]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
