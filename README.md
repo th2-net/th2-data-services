@@ -77,24 +77,27 @@ There is also another part of _data services_
     pip install th2-data-services/
     ```
 
-## 2.2 Dependencies
+### Data sources (providers)
 
-- By default library doesn't provide data provider.
-- Install dependency (pip)
-    ```
-    pip install th2-data-services[dependency_name]
-    ```
-- Dependencies List
+By default the library doesn't provide any data source.
+
+You should install it via dependency (pip)
+```
+pip install th2-data-services[dependency_name]
+```
+
+Dependencies List
 
 | provider | version                            |
 |:--------:|------------------------------------|
-|   rdp    | latest version of rdp              |
-|   rdp5   | latest version of rdp (version 5)  |
-|   rdp6   | latest version of rdp (version 6)  |
 |   lwdp   | latest version of lwdp             |
-|  lwdp1   | latest version of lwdp (version 1) |
+|  lwdp1   | latest version of lwdp v1 |
 
-&nbsp;
+E.g. the following command will install `th2-data-services-lwdp` library in addition to core part.
+```
+pip install th2-data-services[lwdp1]
+```
+
 
 ### GRPC provider warning
 This library has ability to interact with several versions of grpc providers, but it's limited by installed version of
