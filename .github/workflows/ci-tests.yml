@@ -27,6 +27,5 @@ jobs:
           python unittestV6.py
       - name: Install dependencies
         run: |
-          ${{ each provider in matrix.providers }}:
-            pip install th2-data-services[${{ provider }}]
-            python tests/test_dependency_install.py ${{ provider }}
+          pip install th2-data-services[${{ matrix.providers }}]
+          python tests/test_dependency_install.py ${{ matrix.providers }}
