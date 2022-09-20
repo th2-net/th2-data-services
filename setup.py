@@ -34,16 +34,16 @@ CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
         'th2-data-services-rdp',
     ],
     'rdp5': [
-        'th2-data-services-rdp==5.*',
+        'th2-data-services-rdp>=5.*,<6.*',
     ],
     'rdp6': [
-        'th2-data-services-rdp==6.*',
+        'th2-data-services-rdp>=6.*,<7.*',
     ],
     'lwdp': [
         'th2-data-services-lwdp',
     ],
     'lwdp1': [
-        'th2-data-services-lwdp==1.*',
+        'th2-data-services-lwdp>=1.*,<2.*',
     ],
 }
 
