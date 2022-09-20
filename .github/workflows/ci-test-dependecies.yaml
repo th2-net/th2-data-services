@@ -13,7 +13,7 @@ jobs:
         providers: [ lwdp, lwdp1 ]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@2
+      - uses: actions/checkout@v2
       - name: Install dependencies
         run: |
           pip install pytest -q
