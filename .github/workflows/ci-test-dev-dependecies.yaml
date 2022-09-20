@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - dev_*
-      - TH2-4222*
+      - TH2-*
 
 jobs:
   test:
