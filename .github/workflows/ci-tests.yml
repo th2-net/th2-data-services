@@ -7,7 +7,7 @@ jobs:
   test:
     strategy:
       matrix:
-#        providers: [ rdp, rdp5, rdp6, lwdp, lwdp1 ]
+        #        providers: [ rdp, rdp5, rdp6, lwdp, lwdp1 ]
         providers: [ lwdp, lwdp1 ]
     runs-on: ubuntu-20.04
     steps:
@@ -28,5 +28,7 @@ jobs:
           python unittestV6.py
       - name: Install dependencies
         run: |
+          pip install pytest -q
           pip install th2-data-services[${{ matrix.providers }}]
-          python tests/test_dependency_install.py ${{ matrix.providers }}
+          pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }} -s
+
