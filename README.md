@@ -79,19 +79,20 @@ There is also another part of _data services_
 
 ### Data sources (providers)
 
-By default the library doesn't provide any data source.
+By default, the library doesn't provide any data source.
 
-You should install it via dependency (pip)
+You should install it via dependency
 ```
 pip install th2-data-services[dependency_name]
 ```
 
 Dependencies List
 
-| provider | version                            |
-|:--------:|------------------------------------|
-|   lwdp   | latest version of lwdp             |
-|  lwdp1   | latest version of lwdp v1 |
+| provider | version                     |
+|:--------:|-----------------------------|
+|   lwdp   | latest version of lwdp      |
+|  lwdp1   | latest version of lwdp v1   |
+
 
 E.g. the following command will install `th2-data-services-lwdp` library in addition to core part.
 ```
