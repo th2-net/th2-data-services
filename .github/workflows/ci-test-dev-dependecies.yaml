@@ -1,0 +1,22 @@
+name: CI Dev Dependencies Test
+
+on:
+  pull_request:
+    branches:
+      - dev_*
+
+jobs:
+  test:
+    strategy:
+      matrix:
+#        providers: [ rdp-dev, rdp5-dev, rdp6-dev, lwdp-dev, lwdp1-dev ]
+        providers: [ lwdp-dev, lwdp1-dev ]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@2
+      - name: Install dependencies
+        run: |
+          pip install pytest -q
+          # Install Package From Local << . == th2-data-services >>
+          pip install -e .[${{ matrix.providers }}] 
+          pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }} -s
