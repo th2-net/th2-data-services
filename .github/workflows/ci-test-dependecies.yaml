@@ -3,7 +3,8 @@ name: CI Dependencies Test
 on:
   pull_request:
     branches:
-      - pypi_*
+      - master
+      - release_*
 
 jobs:
   test:
@@ -15,7 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
+        stage: install_dependencies
         run: |
           pip install pytest -q
           pip install th2-data-services[${{ matrix.providers }}]
-          pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }} -s
+      - name: Test Dependencies
+        stage: test_dependencies
+        run: |
+          pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}

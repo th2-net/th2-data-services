@@ -12,7 +12,7 @@ rdp = "th2-data-services-rdp"
 lwdp = "th2-data-services-lwdp"
 
 
-def test_provider_install(provider):
+def test_major_version_of_provider(provider):
     if provider in ['rdp', 'rdp-dev']:
         assert metadata(rdp)
     elif provider in ['rdp5', 'rdp5-dev']:
@@ -24,4 +24,4 @@ def test_provider_install(provider):
     elif provider in ['lwdp1', 'lwdp1-dev']:
         assert metadata(lwdp)['version'].startswith('1')
     else:
-        pytest.skip("Skipping Test")
+        raise AssertionError("Unexpected Provider")
