@@ -4,9 +4,9 @@ on:
   pull_request:
     branches:
       - dev_*
-      - pypi_*
       - TH2-*
       - th2-*
+      - pypi_*
 
 jobs:
   test:
@@ -16,15 +16,15 @@ jobs:
         providers: [ lwdp-dev, lwdp1-dev ]
     runs-on: ubuntu-20.04
     steps:
-      uses: actions/checkout@v2
-      install_dep:
-        - name: Install dependencies
-          stage: install_dependencies
-          run: |
-            pip install pytest -q
-            # Install Package From Local << . == th2-data-services >>
-      test_dep:
-        - name: Test dependencies
-          needs:
-          run: |
-            pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}
+      - uses: actions/checkout@v2
+        install_dep:
+          - name: Install dependencies
+            stage: install_dependencies
+            run: |
+              pip install pytest -q
+              # Install Package From Local << . == th2-data-services >>
+        test_dep:
+          - name: Test dependencies
+            needs: install_dep
+            run: |
+              pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}
