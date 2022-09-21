@@ -9,21 +9,23 @@ on:
       - pypi_*
 
 jobs:
-  test:
+  providers_matrix:
     strategy:
       matrix:
-#        providers: [ rdp-dev, rdp5-dev, rdp6-dev, lwdp-dev, lwdp1-dev ]
+        #        providers: [ rdp-dev, rdp5-dev, rdp6-dev, lwdp-dev, lwdp1-dev ]
         providers: [ lwdp-dev, lwdp1-dev ]
+  install:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - install_dep:
-          - name: Install dependencies
-            run: |
-              pip install pytest -q
-              # Install Package From Local << . == th2-data-services >>
-      - test_dep:
-          - name: Test dependencies
-            needs: install_dep
-            run: |
-              pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}
+      - name: Install dependencies
+        run: |
+          pip install pytest -q
+          # Install Package From Local << . == th2-data-services >>
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Test dependencies
+        needs: install
+        run: |
+          pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}
