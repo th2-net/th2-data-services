@@ -17,13 +17,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-        install_dep:
+      - install_dep:
           - name: Install dependencies
-            stage: install_dependencies
             run: |
               pip install pytest -q
               # Install Package From Local << . == th2-data-services >>
-        test_dep:
+      - test_dep:
           - name: Test dependencies
             needs: install_dep
             run: |
