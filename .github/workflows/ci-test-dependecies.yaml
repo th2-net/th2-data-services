@@ -19,6 +19,4 @@ jobs:
         run: |
           pip install pytest -q
           pip install th2-data-services[${{ matrix.providers }}]
-      - name: Test Dependencies
-        run: |
-          pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}
+          pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }} -s
