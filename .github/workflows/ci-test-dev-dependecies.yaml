@@ -9,12 +9,11 @@ on:
       - pypi_*
 
 jobs:
-  providers_matrix:
+  test:
     strategy:
       matrix:
 #        providers: [ rdp-dev, rdp5-dev, rdp6-dev, lwdp-dev, lwdp1-dev ]
         providers: [ lwdp-dev, lwdp1-dev ]
-  install:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -22,11 +21,6 @@ jobs:
         run: |
           # Install Package From Local Directory << . == th2-data-services >>
           pip install -e .[${{ matrix.providers }}]
-  test:
-    runs-on: ubuntu-20.04
-    needs: install
-    steps:
-      - uses: actions/checkout@v2
       - name: Test dependencies
         run: |
           pip install pytest -q          
