@@ -13,6 +13,7 @@
 #   limitations under the License.
 
 import json
+from typing import Dict, List
 
 from setuptools import setup, find_packages
 
@@ -28,18 +29,12 @@ with open("README.md", "r") as file:
 with open("requirements.txt", "r") as file:
     requirements = [line.strip() for line in file.readlines() if not line.startswith("#") and line != "\n"]
 
-EXTRAS_DEPENDENCIES = {
-    "rdp5": [
-        "protobuf==3.20.3",
-        "mypy-protobuf==3.2.0",
-        "th2-grpc-common==3.11.1",
-        "th2-grpc-data-provider==0.1.6",
-    ],
-    "rdp6": [
-        "mypy-protobuf==2.5",
-        "th2-grpc-common==3.4.0",
-        "th2_grpc_data_provider==1.1.0",
-    ],
+CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
+    'rdp':   ['th2-data-services-rdp', ],
+    'rdp5':  ['th2-data-services-rdp>=5,<6', ],
+    'rdp6':  ['th2-data-services-rdp>=6,<7', ],
+    'lwdp':  ['th2-data-services-lwdp', ],
+    'lwdp1': ['th2-data-services-lwdp>=1,<2', ]
 }
 
 setup(
@@ -55,6 +50,6 @@ setup(
     python_requires=">=3.7",
     install_requires=requirements,
     packages=find_packages(include=["th2_data_services*"]),
-    extras_require=EXTRAS_DEPENDENCIES,
+    extras_require=CORE_EXTRAS_DEPENDENCIES,
     include_package_data=True,
 )
