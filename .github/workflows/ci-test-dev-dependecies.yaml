@@ -24,5 +24,5 @@ jobs:
       - name: Test dependencies
         run: |
           pip install pytest -q          
-          pip freeze
+          pip install -e .[${{ matrix.providers }}]
           pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}
