@@ -17,6 +17,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: |
-          pip install pytest -q
           pip install th2-data-services[${{ matrix.providers }}]
-          pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }} -s
+      - name: Test dependencies
+        run: |
+          pip install pytest -q          
+          pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}
