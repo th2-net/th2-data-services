@@ -13,15 +13,15 @@ lwdp = "th2-data-services-lwdp"
 
 
 def test_major_version_of_provider(provider):
-    if provider in ['rdp', 'rdp-dev']:
+    if provider == 'rdp':
         assert metadata(rdp)
-    elif provider in ['rdp5', 'rdp5-dev']:
+    elif provider == 'rdp5':
         assert metadata(rdp)['version'].startswith('5')
-    elif provider in ['rdp6', 'rdp6-dev']:
+    elif provider == 'rdp6':
         assert metadata(rdp)['version'].startswith('6')
-    elif provider in ['lwdp', 'lwdp-dev']:
+    elif provider == 'lwdp':
         assert metadata(lwdp)
-    elif provider in ['lwdp1', 'lwdp1-dev']:
+    elif provider == 'lwdp1':
         assert metadata(lwdp)['version'].startswith('1')
     else:
         raise AssertionError("Unexpected Provider")
