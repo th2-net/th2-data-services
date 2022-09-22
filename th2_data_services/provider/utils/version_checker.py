@@ -16,7 +16,7 @@ def get_version_by_pip(package_name: str):  # noqa: D103
 
 
 def get_package_version(package_name: str):  # noqa: D103
-    version = get_version_by_pip(package_name)
+    version = get_version_by_pip(package_name).strip()
     # TODO: get version in case of conda
     return version
 
