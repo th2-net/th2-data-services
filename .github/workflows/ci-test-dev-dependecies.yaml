@@ -20,14 +20,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: |
-          # Install Package From Local << . == th2-data-services >>
+          # Install Package From Local Directory << . == th2-data-services >>
           pip install -e .[${{ matrix.providers }}]
   test:
     runs-on: ubuntu-20.04
+    needs: install
     steps:
       - uses: actions/checkout@v2
       - name: Test dependencies
-        needs: install
         run: |
           pip install pytest -q          
           pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}
