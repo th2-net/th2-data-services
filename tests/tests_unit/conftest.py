@@ -32,7 +32,7 @@ def general_data() -> List[dict]:
             "batchId": None,
             "eventId": "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
             "eventName": 'placeOrderFIX demo-conn1 - STEP1: Trader "DEMO-CONN1" sends '
-            "request to create passive Order.",
+                         "request to create passive Order.",
             "eventType": "placeOrderFIX",
             "isBatched": False,
             "parentEventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
@@ -49,7 +49,7 @@ def general_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a4-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'th2-hand-demo' direction 'FIRST' "
-            "sequence '1623852603564709030'",
+                         "sequence '1623852603564709030'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -58,7 +58,7 @@ def general_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a5-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'demo-conn1' direction 'SECOND' "
-            "sequence '1624005455622140289'",
+                         "sequence '1624005455622140289'",
             "eventType": "Checkpoint for session",
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
         },
@@ -82,7 +82,7 @@ def general_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a8-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'demo-conn2' direction 'FIRST' "
-            "sequence '1624005448022245399'",
+                         "sequence '1624005448022245399'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -91,7 +91,7 @@ def general_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a9-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'demo-conn2' direction 'SECOND' "
-            "sequence '1624005448022426113'",
+                         "sequence '1624005448022426113'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -116,7 +116,7 @@ def general_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ac-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'demo-conn1' direction 'FIRST' "
-            "sequence '1624005455622011522'",
+                         "sequence '1624005455622011522'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -149,9 +149,9 @@ def general_data() -> List[dict]:
             "batchId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf",
             "eventId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf:8ca20288-d1b4-11eb-986f-1e8d42132387",
             "eventName": "Remove 'NewOrderSingle' "
-            "id='demo-conn1:SECOND:1624005455622135205' "
-            "Hash='7009491514226292581' Group='NOS_CONN' "
-            "Hash['SecondaryClOrdID': 11111, 'SecurityID': INSTR1]",
+                         "id='demo-conn1:SECOND:1624005455622135205' "
+                         "Hash='7009491514226292581' Group='NOS_CONN' "
+                         "Hash['SecondaryClOrdID': 11111, 'SecurityID': INSTR1]",
             "isBatched": True,
             "eventType": "",
             "parentEventId": "a3779b94-d051-11eb-986f-1e8d42132387",
@@ -184,8 +184,8 @@ def general_data() -> List[dict]:
             "batchId": None,
             "eventId": "8d6e0c9e-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Check sequence rule SessionKey{sessionAlias='demo-conn1', "
-            'direction=FIRST} - STEP2: Trader "DEMO-CONN1" receives '
-            "Execution Report. The order stands on book in status NEW",
+                         'direction=FIRST} - STEP2: Trader "DEMO-CONN1" receives '
+                         "Execution Report. The order stands on book in status NEW",
             "isBatched": False,
             "eventType": "Checkpoint for session",
             "parentEventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
@@ -217,7 +217,7 @@ def detached_data() -> List[dict]:
             "batchId": None,
             "eventId": "8bc787fe-d1b4-11eb-bae5-57b0c4472880",
             "eventName": 'placeOrderFIX demo-conn1 - STEP1: Trader "DEMO-CONN1" sends '
-            "request to create passive Order.",
+                         "request to create passive Order.",
             "eventType": "placeOrderFIX",
             "isBatched": False,
             "parentEventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
@@ -234,7 +234,7 @@ def detached_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a4-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'th2-hand-demo' direction 'FIRST' "
-            "sequence '1623852603564709030'",
+                         "sequence '1623852603564709030'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -243,7 +243,7 @@ def detached_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a5-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'demo-conn1' direction 'SECOND' "
-            "sequence '1624005455622140289'",
+                         "sequence '1624005455622140289'",
             "eventType": "Checkpoint for session",
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
         },
@@ -267,7 +267,7 @@ def detached_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a8-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'demo-conn2' direction 'FIRST' "
-            "sequence '1624005448022245399'",
+                         "sequence '1624005448022245399'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -276,7 +276,7 @@ def detached_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a9-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'demo-conn2' direction 'SECOND' "
-            "sequence '1624005448022426113'",
+                         "sequence '1624005448022426113'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -301,7 +301,7 @@ def detached_data() -> List[dict]:
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ac-d1b4-11eb-9278-591e568ad66e",
             "eventName": "Checkpoint for session alias 'demo-conn1' direction 'FIRST' "
-            "sequence '1624005455622011522'",
+                         "sequence '1624005455622011522'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -334,9 +334,9 @@ def detached_data() -> List[dict]:
             "batchId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf",
             "eventId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf:8ca20288-d1b4-11eb-986f-1e8d42132387",
             "eventName": "Remove 'NewOrderSingle' "
-            "id='demo-conn1:SECOND:1624005455622135205' "
-            "Hash='7009491514226292581' Group='NOS_CONN' "
-            "Hash['SecondaryClOrdID': 11111, 'SecurityID': INSTR1]",
+                         "id='demo-conn1:SECOND:1624005455622135205' "
+                         "Hash='7009491514226292581' Group='NOS_CONN' "
+                         "Hash['SecondaryClOrdID': 11111, 'SecurityID': INSTR1]",
             "isBatched": True,
             "eventType": "",
             "parentEventId": None,

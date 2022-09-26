@@ -351,4 +351,3 @@ By installing the package you will no longer get RDP package. If you want to use
    |:--------:|------------------------------------|
    |   lwdp   | latest version of lwdp             |
    |  lwdp1   | latest version of lwdp (version 1) |
-   
