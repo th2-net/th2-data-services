@@ -442,6 +442,42 @@ your source can be the data source, the parent cache, or own cache:
 
 Note that the cache state of the Data object is not inherited.
 
+#### Forced caching
+You can tell DS to cache data to specific cache file, which won't be deleted after script end:
+```python
+import datetime
+
+from th2_data_services import Data
+from th2_data_services.provider.v5.commands import http
+from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
+
+
+data_source = HTTPProvider5DataSource("http://HOST:PORT")
+events: Data = data_source.command(
+    http.GetEvents(
+        start_timestamp=datetime.datetime.utcnow() - datetime.timedelta(minutes=5),
+        end_timestamp=datetime.datetime.utcnow(),
+        attached_messages=True,
+        cache=True,
+    )
+)
+events.build_cache("my_cache.pickle")
+```
+
+Later you can create _Data_ object from this cache file and use it as usual:
+```python
+from th2_data_services import Data
+
+events = Data.from_cache_file("my_cache.pickle")
+if events is None:
+    raise SystemError("Cache not found (mycache.pickle)")
+
+for event_id in events.filter(lambda x: x["eventType"] == "Verification").map(lambda x: x["eventId"]):
+    print(event_id)
+```
+
+Reading and writing cache files are performed in the `temp/` directory.
+
 ### EventsTree and collections
 
 #### EventsTree
