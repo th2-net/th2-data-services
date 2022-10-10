@@ -14,6 +14,7 @@
 import copy
 import pickle
 import pprint
+import warnings
 from functools import partial
 from os import rename
 from pathlib import Path
@@ -58,7 +59,8 @@ class Data:
 
         self._id = id(self)
         self._cache_filename = f"{self._id}_{time()}.pickle"
-        self._cache_path = Path(f"./temp/{self._cache_filename}").resolve()
+        self._cache_path = None
+        self._setup_cache_path()
         self._len = None
         self._workflow = [] if workflow is None else workflow  # Normally it has empty list or one Step.
         self._length_hint = None  # The value is populated when we use limit method.
@@ -69,15 +71,20 @@ class Data:
         # It's required if the same instance iterates several times in for-in loops.
         self.iter_num = 0
         self.stop_iteration = None
+        self._delete_cache_flag = True
 
         self._logger.info(
             "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
         )
 
+    def _setup_cache_path(self):
+        self._cache_path = Path(f"./temp/{self._cache_filename}").resolve()
+
     def __remove(self):
         """Data class destructor."""
-        if self.__is_cache_file_exists():
-            self.__delete_cache()
+        if self._delete_cache_flag:
+            if self.__is_cache_file_exists():
+                self.__delete_cache()
         del self._data_stream
 
     def __delete_cache(self) -> None:
@@ -542,3 +549,17 @@ class Data:
 
     def __add__(self, other_data: Iterable) -> "Data":
         return Data(self._create_data_set_from_iterables([self, other_data]))
+
+    def set_custom_cache_destination(self, filename):
+        self._cache_filename = filename
+        self._cache_status = True
+        self._delete_cache_flag = False
+        self._setup_cache_path()
+
+    @classmethod
+    def from_cache_file(cls, filename):
+        if not Path("temp", filename).exists():
+            return None
+        obj = cls([], cache=True)
+        obj.set_custom_cache_destination(filename=filename)
+        return obj
