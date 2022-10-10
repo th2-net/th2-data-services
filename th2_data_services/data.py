@@ -559,7 +559,8 @@ class Data:
     def build_cache(self):
         if not self._cache_status:
             raise SystemError("An attempt was made to build a cache with cache disabled")
-        return self.len
+        if not self.__is_cache_file_exists():
+            res = self.len
 
     @classmethod
     def from_cache_file(cls, filename):
