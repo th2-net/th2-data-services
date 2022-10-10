@@ -556,6 +556,11 @@ class Data:
         self._delete_cache_flag = False
         self._setup_cache_path()
 
+    def build_cache(self):
+        if not self._cache_status:
+            raise SystemError("An attempt was made to build a cache with cache disabled")
+        return self.len
+
     @classmethod
     def from_cache_file(cls, filename):
         if not Path("temp", filename).exists():
@@ -563,3 +568,4 @@ class Data:
         obj = cls([], cache=True)
         obj.set_custom_cache_destination(filename=filename)
         return obj
+
