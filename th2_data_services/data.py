@@ -469,7 +469,7 @@ class Data:
         skipped = 0
         pushed = 0
 
-        for record in self.__load_data():
+        for record in self.__load_data(self._cache_status):
             if skip is not None and skipped < skip:
                 skipped += 1
                 continue
