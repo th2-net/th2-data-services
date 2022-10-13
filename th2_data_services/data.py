@@ -59,8 +59,7 @@ class Data:
 
         self._id = id(self)
         self._cache_filename = f"{self._id}_{time()}.pickle"
-        self._cache_path = None
-        self._setup_cache_path()
+        self._cache_path = Path("temp", self._cache_filename).resolve()
         self._len = None
         self._workflow = [] if workflow is None else workflow  # Normally it has empty list or one Step.
         self._length_hint = None  # The value is populated when we use limit method.
@@ -76,9 +75,6 @@ class Data:
         self._logger.info(
             "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
         )
-
-    def _setup_cache_path(self):
-        self._cache_path = Path(f"./temp/{self._cache_filename}").resolve()
 
     def __remove(self):
         """Data class destructor."""
@@ -551,10 +547,11 @@ class Data:
         return Data(self._create_data_set_from_iterables([self, other_data]))
 
     def set_custom_cache_destination(self, filename):
-        self._cache_filename = filename
+        path = Path(filename).resolve()
+        self._cache_filename = path.name
+        self._cache_path = path
         self._cache_status = True
         self._delete_cache_flag = False
-        self._setup_cache_path()
 
     def build_cache(self, filename=None):
         if not self._cache_status:
@@ -566,7 +563,7 @@ class Data:
 
     @classmethod
     def from_cache_file(cls, filename):
-        if not Path("temp", filename).exists():
+        if not Path(filename).resolve().exists():
             return None
         obj = cls([], cache=True)
         obj.set_custom_cache_destination(filename=filename)
