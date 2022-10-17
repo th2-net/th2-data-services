@@ -23,6 +23,8 @@ from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, I
 from weakref import finalize
 import logging
 
+import th2_data_services
+
 logger = logging.getLogger(__name__)
 
 
@@ -556,6 +558,9 @@ class Data:
     def build_cache(self, filename=None):
         if not self._cache_status:
             raise SystemError("An attempt was made to build a cache with cache disabled")
+
+        th2_data_services.INTERACTIVE_MODE = True
+
         if filename:
             self.set_custom_cache_destination(filename=filename)
         if not self.__is_cache_file_exists():
@@ -563,6 +568,8 @@ class Data:
 
     @classmethod
     def from_cache_file(cls, filename):
+        th2_data_services.INTERACTIVE_MODE = True
+
         if not Path(filename).resolve().exists():
             return None
         obj = cls([], cache=True)
