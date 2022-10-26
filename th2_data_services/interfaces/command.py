@@ -36,7 +36,9 @@ class IAdaptableCommand(ICommand):
 
     def apply_adapter(self, adapter: Callable) -> "IAdaptableCommand":
         """Adds adapter to the Command workflow.
+        
         Note, sequence that you will add adapters make sense.
+        
         Args:
             adapter: Callable function that will be used as adapter.
         Returns:
