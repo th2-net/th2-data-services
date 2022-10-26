@@ -330,9 +330,9 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._filters = filters
         self._cache = cache
 
-    def handle(self, data_source: HTTPProvider5DataSource) -> List[dict]:  # noqa: D102
+    def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
-        return [event for event in source() if event is not None]
+        return Data(source).filter(lambda event: event is not None)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetEventsSSEEvents(
@@ -678,9 +678,9 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._decode_error_handler = decode_error_handler
         self._cache = cache
 
-    def handle(self, data_source: HTTPProvider5DataSource) -> List[dict]:  # noqa: D102
+    def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
-        return [msg for msg in source() if msg is not None]
+        return Data(source).filter(lambda event: event is not None)
 
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
