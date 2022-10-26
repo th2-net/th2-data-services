@@ -11,7 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import json
 from typing import Generator, List, Sequence, Union
 from datetime import datetime, timezone
 from functools import partial
@@ -80,7 +80,8 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+            stub = data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+            return self._handle_adapters(stub)
         elif response.status_code == 404:
             logger.error(f"Unable to find the message. Id: {self._id}")
             raise EventNotFound(self._id)
@@ -115,7 +116,7 @@ class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
         result = []
         for event_id in self._ids:
             event = GetEventById(event_id, use_stub=self._stub_status).handle(data_source)
-            result.append(self._handle_adapters(event))
+            result.append(event)
 
         return result
 
@@ -329,10 +330,9 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._filters = filters
         self._cache = cache
 
-    def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
+    def handle(self, data_source: HTTPProvider5DataSource) -> List[dict]:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
-        adapter = SSEAdapter()
-        return Data(source).map(adapter.handle).use_cache(self._cache)
+        return [event for event in source() if event is not None]
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetEventsSSEEvents(
@@ -348,6 +348,8 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters=self._filters,
         ).handle(data_source)
 
+        adapter = SSEAdapter()
+        self.apply_adapter(adapter.handle)
         for event in stream:
             event = self._handle_adapters(event)
             yield event
@@ -388,7 +390,8 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+            stub = data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+            return self._handle_adapters(stub)
         elif response.status_code == 404:
             logger.error(f"Unable to find the message. Id: {self._id}")
             raise MessageNotFound(self._id)
@@ -427,9 +430,9 @@ class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
         for message_id in self._ids:
             message = GetMessageById(
                 message_id,
-                use_stub=self._stub_status,
+                use_stub=self._stub_status
             ).handle(data_source)
-            result.append(self._handle_adapters(message))
+            result.append(message)
 
         return result
 
@@ -675,10 +678,10 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._decode_error_handler = decode_error_handler
         self._cache = cache
 
-    def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
+    def handle(self, data_source: HTTPProvider5DataSource) -> List[dict]:  # noqa: D102
         source = partial(self.__handle_stream, data_source)
-        adapter = SSEAdapter()
-        return Data(source).map(adapter.handle).use_cache(self._cache)
+        return [msg for msg in source() if msg is not None]
+
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetMessagesSSEEvents(
@@ -694,6 +697,8 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters=self._filters,
         ).handle(data_source)
 
+        adapter = SSEAdapter()
+        self.apply_adapter(adapter.handle)
         for message in stream:
             message = self._handle_adapters(message)
             yield message
