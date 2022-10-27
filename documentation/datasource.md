@@ -8,13 +8,14 @@ But we can have other components that simplify repetitive tasks
 - Commands - Collection of pre-made command classes that use SourceAPI's requests to return refined data
 - Adapters - Classes/Methods that allow objects with one interface to convert to another
 
+All of these classes are inheriting from [TH2 Core Interfaces](https://github.com/th2-net/th2-data-services/tree/master/th2_data_services/interfaces)
 Now let's go over basic ideas on how to create them:
 
 ## Data Source
 DataSource is the main component which ties together everything from gathering data to processing it, so that the processed data has the interface we need.
 
 ```python
-class DataSource():
+class DataSource(IDataSource):
     def init(self,sourceAddress):
         self.source = SourceAPI(sourceAddress)
     
@@ -32,7 +33,7 @@ command method takes in a pre-made custom command class. Method then runs the co
 How SourceAPI will be structured might be different based on our needs.
 But it will still follow some structure:
 ```python
-class SourceAPI():
+class SourceAPI(ISourceAPI):
     def init(self, sourceAddress):
         self.connect(sourceAddress)
         
@@ -63,7 +64,7 @@ Commands are a great way to call SourceAPI methods indirectly and utilizing raw 
 Let's take an example of a command that finds an element in data by it's ID.
 
 ```python
-class GetItemByID():
+class GetItemByID(ICommand):
     def __init__(self, id):
         self.id = id
         self.adapter = OneTypeToOtherAdapter()
@@ -82,7 +83,7 @@ This way we can create many commands that we can reuse and in the long term is b
 Adapters handle converting interface of one class to another.
 
 ```python
-class AdapterFromXtoY():
+class AdapterFromXtoY(IAdapter):
     def handle(self, X):
         return convert(X)
     
