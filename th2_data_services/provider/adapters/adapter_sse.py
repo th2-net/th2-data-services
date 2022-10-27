@@ -57,6 +57,7 @@ class StreamingSSEAdapter(IAdapter):
                 raise HTTPError(event.data)
             if event.event not in self.events_types_blacklist:
                 yield from self.json_processor.decode(event.data)
+        yield from self.json_processor.fin()
 
 
 def get_default_sse_adapter():
