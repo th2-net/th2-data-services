@@ -426,7 +426,7 @@ flexible.
 
 Thus, the native `ProviderDataSource` and the set of commands for it are described. This approach provides great
 opportunities for extension. You can easily create your own unique commands for _ProviderDataSource_, as well as entire
-_DataSource_ classes.
+_DataSource_ classes. [Here is a documentation](documentation/datasource.md) on how to implement these interfaces.
 
 ![Data stream pipeline](documentation/img/concept.png)
 

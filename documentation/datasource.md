@@ -66,7 +66,7 @@ Let's take an example of a command that finds an element in data by it's ID.
 class GetItemByID(ICommand):
     def __init__(self, id):
         self.id = id
-        self.adapter = OneTypeToOtherAdapter()
+        self.adapter = AdapterFromXtoY()
     
     def handle(self, data_source: DataSource):
         source: SourceAPI = data_source.source
@@ -84,8 +84,7 @@ Adapters handle converting interface of one class to another.
 ```python
 class AdapterFromXtoY(IAdapter):
     def handle(self, X):
-        return convert(X)
-    
-    def convert(X):
-        # Implementation based on what X and Y are
+        Y = # Implementation based on what X and Y are
+        return Y
+        
 ```
