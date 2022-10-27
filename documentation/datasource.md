@@ -1,10 +1,9 @@
 # How to develop data source
 ## Features
-Every data source must have at least these two components
-- Data Source - Object storing or utilizing every other component in one way or other
-- Source API - API that fetches us data from some kind of database
+Technically we only need Source API for fully functional data source. Source API fetches us data from some kind of database.
 
 But we can have other components that simplify repetitive tasks
+- Data Source - Object storing or utilizing every other component in one way or other
 - Commands - Collection of pre-made command classes that use SourceAPI's requests to return refined data
 - Adapters - Classes/Methods that allow objects with one interface to convert to another
 
