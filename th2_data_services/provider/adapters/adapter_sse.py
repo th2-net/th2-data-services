@@ -16,6 +16,7 @@ from typing import Generator
 
 from sseclient import Event as SSEEvent
 from urllib3.exceptions import HTTPError
+import orjson as json
 
 from th2_data_services.interfaces import IAdapter
 from th2_data_services.utils.json import BufferedJSONProcessor
@@ -27,8 +28,22 @@ class SSEAdapter(IAdapter):
     def __init__(self):
         warnings.warn("This class is deprecated please use StreamingSSEAdapter")
 
-    def handle(self, record: SSEEvent):
-        return record
+    def handle(self, record: SSEEvent) -> dict:
+        """Adapter handler.
+
+        Args:
+            record: SSE Event.
+
+        Returns:
+            Dict object.
+        """
+        if record.event == "error":
+            raise HTTPError(record.data)
+        if record.event not in ["close", "keep_alive", "message_ids"]:
+            try:
+                return json.loads(record.data)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{record.data}")
 
 
 class StreamingSSEAdapter(IAdapter):
