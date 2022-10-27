@@ -12,11 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Generator, List, Union
+from typing import Generator, List, Union, Optional
 from datetime import datetime, timezone
 from functools import partial
 
 from th2_data_services import Data
+from th2_data_services.interfaces import IAdapter
 from th2_data_services.provider.v6.adapters.event_adapters import DeleteSystemEvents
 from th2_data_services.provider.v6.filters.filter import Provider6Filter as Filter
 from th2_data_services.provider.exceptions import EventNotFound, MessageNotFound
@@ -26,7 +27,7 @@ from th2_data_services.provider.v6.provider_api import HTTPProvider6API
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.provider.v6.streams import Streams
 from th2_data_services.sse_client import SSEClient
-from th2_data_services.provider.adapters.adapter_sse import SSEAdapter
+from th2_data_services.provider.adapters.adapter_sse import SSEAdapter, get_default_sse_adapter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 import logging
@@ -648,6 +649,7 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         cache: bool = False,
+        sse_handler: Optional[IAdapter] = None
     ):
         """GetMessages constructor.
 
@@ -685,11 +687,11 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self._cache = cache
+        self.sse_handler = sse_handler or get_default_sse_adapter()
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
-        source = partial(self.__handle_stream, data_source)
-        adapter = SSEAdapter()
-        return Data(source).map(adapter.handle).use_cache(self._cache)
+        source = partial(self.sse_handler.handle, self.__handle_stream(data_source))
+        return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
         stream = GetMessagesSSEEvents(
