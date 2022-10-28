@@ -20,9 +20,9 @@ from pathlib import Path
 from time import time
 from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Iterator, Any
 from weakref import finalize
-import logging
+#LOG import logging
 
-logger = logging.getLogger(__name__)
+#LOG logger = logging.getLogger(__name__)
 
 
 class _DataLogger(logging.LoggerAdapter):
@@ -64,15 +64,15 @@ class Data:
         self._length_hint = None  # The value is populated when we use limit method.
         self._cache_status = cache
         self._finalizer = finalize(self, self.__remove)
-        self._logger = _DataLogger(logger, {"id": self._id})
+#LOG         self._logger = _DataLogger(logger, {"id": self._id})
         # It used to indicate the number of current iteration of the Data object.
         # It's required if the same instance iterates several times in for-in loops.
         self.iter_num = 0
         self.stop_iteration = None
 
-        self._logger.info(
-            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
-        )
+#LOG         self._logger.info(
+#LOG            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
+#LOG        )
 
     def __remove(self):
         """Data class destructor."""
@@ -84,14 +84,14 @@ class Data:
         """Removes cache file."""
         path = self.get_cache_filepath()
         if path.exists():
-            self._logger.debug("Deleting cache file '%s'" % path)
+#LOG             self._logger.debug("Deleting cache file '%s'" % path)
             path.unlink()
 
     def __delete_pending_cache(self) -> None:
         """Removes cache file."""
         path = self.get_pending_cache_filepath()
         if path.exists():
-            self._logger.debug("Deleting cache file '%s'" % path)
+#LOG             self._logger.debug("Deleting cache file '%s'" % path)
             path.unlink()
 
     def _create_data_set_from_iterables(self, iterables_list: List[Iterable]) -> DataSet:
@@ -155,7 +155,7 @@ class Data:
                 yield record
             else:
                 # Loop successfully finished. Do not delete cache file.
-                self._logger.debug("Successfully iterated")
+#LOG                 self._logger.debug("Successfully iterated")
                 interruption = False
 
         finally:
@@ -163,10 +163,10 @@ class Data:
 
                 if self.stop_iteration:  # When limit was reached.
                     # You can save _len in this case because iteration was stopped by limit.
-                    self._logger.info("Iteration was interrupted because limit reached")
-
+#LOG                     self._logger.info("Iteration was interrupted because limit reached")
+                    pass
                 else:  # When something went wrong but NOT StopIteration
-                    self._logger.info("Iteration was interrupted")
+#LOG                     self._logger.info("Iteration was interrupted")
                     # You shouldn't save _len in this case because iteration was interrupted.
                     if self.iter_num == 1:
                         self._len = None
@@ -174,7 +174,7 @@ class Data:
                 # Delete cache if it was interrupted and the file was not complete.
                 # https://exactpro.atlassian.net/browse/TH2-3546
                 if is_data_writes_cache:
-                    self._logger.info("The cache file is not written to the end. Delete tmp cache file")
+#LOG                     self._logger.info("The cache file is not written to the end. Delete tmp cache file")
                     self.__delete_pending_cache()
                 else:  # Data reads cache.
                     from th2_data_services import INTERACTIVE_MODE  # To escape circular import problem.
@@ -189,7 +189,7 @@ class Data:
     def __iter__(self) -> DataGenerator:
         self.stop_iteration = False
         self.iter_num += 1
-        self._logger.info("Starting iteration, iter_num = %s", self.iter_num)
+#LOG         self._logger.info("Starting iteration, iter_num = %s", self.iter_num)
         if self._len is None and self.iter_num == 1:
             self._len = 0
             for record in self._iter_logic():
@@ -221,7 +221,7 @@ class Data:
             obj: Generator
         """
         if cache and self.__is_cache_file_exists():
-            self._logger.info("Iterating using own cache file '%s'" % self.get_cache_filepath())
+#LOG             self._logger.info("Iterating using own cache file '%s'" % self.get_cache_filepath())
             data_stream = self.__load_file(self.get_cache_filepath())
             yield from data_stream
         else:
@@ -258,12 +258,12 @@ class Data:
 
         StopIteration from limit function will be handled here.
         """
-        self._logger.debug("Iterating data stream = '%s'", id(data_stream))
+#LOG         self._logger.debug("Iterating data stream = '%s'", id(data_stream))
         for record in data_stream:
             try:
                 modified_records = self.__apply_workflow(record, workflow)
             except StopIteration as e:
-                self._logger.debug("Handle StopIteration")
+#LOG                 self._logger.debug("Handle StopIteration")
                 modified_records = e.value
 
                 if modified_records is not None:
@@ -298,7 +298,7 @@ class Data:
         if cache:
             filepath = self.get_pending_cache_filepath()
             filepath.parent.mkdir(exist_ok=True)  # Create dir if does not exist.
-            self._logger.debug("Recording cache file '%s'" % filepath)
+#LOG             self._logger.debug("Recording cache file '%s'" % filepath)
             file = open(filepath, "wb")
 
             for modified_record in self._iterate_modified_data_stream(data_stream, workflow):
@@ -307,7 +307,7 @@ class Data:
 
             file.close()
             rename(file.name, str(self.get_cache_filepath()))
-            self._logger.debug("Cache file was created '%s'" % self.get_cache_filepath())
+#LOG             self._logger.debug("Cache file was created '%s'" % self.get_cache_filepath())
         else:
             yield from self._iterate_modified_data_stream(data_stream, workflow)
 
@@ -315,7 +315,7 @@ class Data:
         """Checks whether cache file exist."""
         path = self.get_cache_filepath()
         r = path.is_file()
-        self._logger.debug("Cache file exists" if r else "Cache file doesn't exist")
+#LOG         self._logger.debug("Cache file exists" if r else "Cache file doesn't exist")
         return r
 
     def __load_file(self, filepath: Path) -> DataGenerator:
@@ -346,7 +346,7 @@ class Data:
 
     def _process_step(self, step: dict, record):
         res = step["callback"](record)
-        self._logger.debug("    - step '%s' -> %s", step["type"], res)
+#LOG         self._logger.debug("    - step '%s' -> %s", step["type"], res)
         return res
 
     def __apply_workflow(self, record: Any, workflow: WorkFlow) -> Optional[Union[dict, List[dict]]]:
@@ -356,7 +356,7 @@ class Data:
             obj: Generator records.
 
         """
-        self._logger.debug("Apply workflow for %s", record)
+#LOG         self._logger.debug("Apply workflow for %s", record)
         for step in workflow:
             if isinstance(record, (list, tuple)):
                 result = []
@@ -386,7 +386,7 @@ class Data:
                 except StopIteration:
                     raise
 
-        self._logger.debug("-> %s", record)
+#LOG         self._logger.debug("-> %s", record)
         return record
 
     def filter(self, callback: Callable) -> "Data":
@@ -401,7 +401,7 @@ class Data:
             Data: Data object.
 
         """
-        self._logger.info("Apply filter")
+#LOG         self._logger.info("Apply filter")
         new_workflow = [
             {"type": "filter", "callback": lambda record: record if callback(record) else None},
         ]
@@ -417,18 +417,18 @@ class Data:
             Data: Data object.
 
         """
-        self._logger.info("Apply map")
+#LOG         self._logger.info("Apply map")
         new_workflow = [{"type": "map", "callback": callback}]
         return Data(data=self, workflow=new_workflow)
 
     def _build_limit_callback(self, num) -> Callable:
-        self._logger.debug("Build limit callback with limit = %s", num)
+#LOG         self._logger.debug("Build limit callback with limit = %s", num)
 
         def callback(r):
             callback.pushed += 1
             if callback.pushed == num:
                 callback.pushed = 0
-                self._logger.debug("Limit reached - raise StopIteration")
+#LOG                 self._logger.debug("Limit reached - raise StopIteration")
                 raise StopIteration(r)
             else:
                 return r
@@ -446,7 +446,7 @@ class Data:
         Returns:
             Data: Data object.
         """
-        self._logger.info("Apply limit = %s", num)
+#LOG         self._logger.info("Apply limit = %s", num)
         new_workflow = [{"type": "limit", "callback": self._build_limit_callback(num)}]
         data_obj = Data(data=self, workflow=new_workflow)
         data_obj._length_hint = num
@@ -486,7 +486,7 @@ class Data:
             Data: Data object.
 
         """
-        self._logger.info("Cache using activated" if status else "Cache using deactivated")
+#LOG         self._logger.info("Cache using activated" if status else "Cache using deactivated")
         self._cache_status = status
         return self
 
