@@ -23,7 +23,7 @@ from th2_data_services import Data
 from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
-from th2_data_services.provider.interfaces.data_source import IProviderDataSource
+from th2_data_services.interfaces import IDataSource
 
 #LOG import logging
 
@@ -49,7 +49,7 @@ class EventsTreeCollection(ABC):
     def __init__(
         self,
         data: Data,
-        data_source: IProviderDataSource = None,
+        data_source: IDataSource = None,
         preserve_body: bool = False,
         stub: bool = False,
     ):
@@ -772,7 +772,7 @@ class EventsTreeCollection(ABC):
                     continue
         raise EventIdNotInTree(id)
 
-    def recover_unknown_events(self, data_source: IProviderDataSource) -> None:
+    def recover_unknown_events(self, data_source: IDataSource) -> None:
         """Loads missed events and recover events.
 
         Args:
