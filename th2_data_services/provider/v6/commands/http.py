@@ -690,7 +690,7 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
         self.sse_handler = sse_handler or get_default_sse_adapter()
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
-        source = partial(self.sse_handler.handle, self.__handle_stream(data_source))
+        source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
         return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:

@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 import warnings
-from typing import Generator
+from typing import Generator, Callable
 
 from sseclient import Event as SSEEvent
 from urllib3.exceptions import HTTPError
@@ -51,8 +51,12 @@ class StreamingSSEAdapter(IAdapter):
         self.json_processor = json_processor
         self.events_types_blacklist = {"close", "keep_alive", "message_ids"}
 
-    def handle(self, record: Generator[SSEEvent, None, None]) -> Generator[dict, None, None]:
-        for event in record:
+    def handle(self, record: (Generator[SSEEvent, None, None], Callable)) -> Generator[dict, None, None]:
+        if callable(record):
+            stream = record()
+        else:
+            stream = record
+        for event in stream:
             if event.event == "error":
                 raise HTTPError(event.data)
             if event.event not in self.events_types_blacklist:
