@@ -15,7 +15,7 @@
 from th2_data_services.data import Data
 import logging
 from logging import NullHandler
-
+'''LOG
 # Set default logging handler to avoid "No handler found" warnings.
 logging.getLogger(__name__).addHandler(NullHandler())
 
@@ -58,3 +58,4 @@ def add_file_logger(filename="dslib.log", mode="w", level=logging.DEBUG):
     logger.setLevel(level)
     logger.debug("Added a file logging handler to logger: %s", __name__)
     return handler
+'''
