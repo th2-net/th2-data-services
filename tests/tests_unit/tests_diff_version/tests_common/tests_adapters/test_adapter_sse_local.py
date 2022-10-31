@@ -1,4 +1,7 @@
 from sseclient import Event
+
+from th2_data_services.provider.adapters import SSEAdapter
+
 import pytest
 
 from th2_data_services import Data
@@ -82,3 +85,21 @@ class TestSSEFlagFalse:
 
         for e in data:
             assert isinstance(e, Event)
+
+
+def test_adapter_stream_handling(demo_data_source: HTTPProviderDataSource):
+    ds = demo_data_source
+    adapter = SSEAdapter()
+    data: Data = ds.command(
+        http.GetEventsSSEEvents(
+            start_timestamp=START_TIME,
+            end_timestamp=END_TIME,
+        )
+    )
+
+    for e in data:
+        assert isinstance(e, Event)
+        e = adapter.handle(e)
+        if e is None:  # closed event,
+            continue
+        assert isinstance(e, dict)

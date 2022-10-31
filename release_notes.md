@@ -325,7 +325,7 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 ## BugFixes
 1. [TH2-4234] The library can now be run on Windows.
 
-# v1.2.4
+# v1.3.0
 
 ## BugFixes
 
