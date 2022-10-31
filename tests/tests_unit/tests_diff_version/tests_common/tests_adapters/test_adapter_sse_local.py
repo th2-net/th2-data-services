@@ -1,6 +1,6 @@
-from sseclient import Event
+from sseclient import Event as SSEEvent
 
-from th2_data_services.provider.adapters import SSEAdapter
+from th2_data_services.interfaces import IAdapter
 
 import pytest
 
@@ -71,7 +71,7 @@ class TestSSEFlagFalse:
         )
 
         for e in data:
-            assert isinstance(e, Event)
+            assert isinstance(e, SSEEvent)
 
     def test_messages_provider_none(self, demo_data_source: HTTPProviderDataSource):
         ds = demo_data_source
@@ -84,22 +84,43 @@ class TestSSEFlagFalse:
         )
 
         for e in data:
-            assert isinstance(e, Event)
+            assert isinstance(e, SSEEvent)
 
 
-def test_adapter_stream_handling(demo_data_source: HTTPProviderDataSource):
+class TestAdapterForEvents(IAdapter):
+    def handle(self, record: SSEEvent) -> SSEEvent:
+        if record.event == "event":
+            return record
+        else:
+            return SSEEvent(event="close")
+
+
+class TestAdapterForMessages(IAdapter):
+    def handle(self, record: SSEEvent) -> SSEEvent:
+        print(record.event)
+        if record.event == "message":
+            return record
+        else:
+            return SSEEvent(event="close")
+
+
+def test_adapter(demo_data_source):
     ds = demo_data_source
-    adapter = SSEAdapter()
-    data: Data = ds.command(
-        http.GetEventsSSEEvents(
+    ev_adapter = TestAdapterForEvents()
+    msg_adapter = TestAdapterForMessages()
+
+    events = ds.command(
+        http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
+        ).apply_adapter(ev_adapter.handle)
+    )
+    messages = ds.command(
+        http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME, stream=["demo-conn2"]).apply_adapter(
+            msg_adapter.handle
         )
     )
-
-    for e in data:
-        assert isinstance(e, Event)
-        e = adapter.handle(e)
-        if e is None:  # closed event,
-            continue
-        assert isinstance(e, dict)
+    for event in events:
+        assert isinstance(event, dict)
+    for message in messages:
+        assert isinstance(message, dict)
