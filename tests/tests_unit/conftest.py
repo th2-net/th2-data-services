@@ -1815,3 +1815,10 @@ def parentless_data() -> List[dict]:
         {"type": "event", "eventId": "t", "eventName": "t", "parentEventId": "d"},
     ]
     return data
+
+
+@pytest.fixture(params=[True, False])
+def interactive_mod(request):
+    """INTERACTIVE_MODE or script mod"""
+    INTERACTIVE_MODE = request.param
+    return INTERACTIVE_MODE

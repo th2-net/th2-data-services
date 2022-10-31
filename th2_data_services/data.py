@@ -14,7 +14,6 @@
 import copy
 import pickle
 import pprint
-import warnings
 from functools import partial
 from os import rename
 from pathlib import Path
@@ -23,7 +22,6 @@ from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, I
 from weakref import finalize
 import logging
 
-import th2_data_services
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +70,7 @@ class Data:
         # It's required if the same instance iterates several times in for-in loops.
         self.iter_num = 0
         self.stop_iteration = None
-        self._delete_cache_flag = True
+        self._read_from_external_cache_file = False
 
         self._logger.info(
             "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
@@ -80,9 +78,8 @@ class Data:
 
     def __remove(self):
         """Data class destructor."""
-        if self._delete_cache_flag:
-            if self.__is_cache_file_exists():
-                self.__delete_cache()
+        if self.__is_cache_file_exists() and not self._read_from_external_cache_file:
+            self.__delete_cache()
         del self._data_stream
 
     def __delete_cache(self) -> None:
@@ -125,6 +122,7 @@ class Data:
         """
         return self._len if self._len is not None else self.__calc_len()
 
+    # Actually it should be a function, not a property.
     @property
     def is_empty(self) -> bool:
         """bool: Indicates that the Data object doesn't contain data."""
@@ -184,9 +182,11 @@ class Data:
                 else:  # Data reads cache.
                     from th2_data_services import INTERACTIVE_MODE  # To escape circular import problem.
 
-                    # Do not delete cache file if it's interactive mode and Data has read cache.
-                    if not INTERACTIVE_MODE:
-                        self.__delete_cache()
+                    # Do not delete cache file if it reads an external cache file.
+                    if not self._read_from_external_cache_file:
+                        # Do not delete cache file if it's an interactive mode and Data has read cache.
+                        if not INTERACTIVE_MODE:
+                            self.__delete_cache()
 
             self.iter_num -= 1
             self.stop_iteration = False
@@ -337,9 +337,6 @@ class Data:
 
         if not filepath.is_file():
             raise FileExistsError(f"{filepath} isn't file")
-
-        if filepath.suffix != ".pickle":
-            raise FileNotFoundError(f"File hasn't pickle extension")
 
         with open(filepath, "rb") as file:
             while True:
@@ -534,7 +531,7 @@ class Data:
 
     def __str__(self):
         output = "------------- Printed first 5 records -------------\n"
-        for index, record in enumerate(self.__load_data()):
+        for index, record in enumerate(self.__load_data(cache=self._cache_status)):
             if index == 5:
                 break
             output += pprint.pformat(record) + "\n"
@@ -548,31 +545,49 @@ class Data:
     def __add__(self, other_data: Iterable) -> "Data":
         return Data(self._create_data_set_from_iterables([self, other_data]))
 
-    def set_custom_cache_destination(self, filename):
+    def _set_custom_cache_destination(self, filename):
         path = Path(filename).resolve()
         self._cache_filename = path.name
         self._cache_path = path
         self._cache_status = True
-        self._delete_cache_flag = False
+        self._read_from_external_cache_file = True
 
-    def build_cache(self, filename=None):
-        if not self._cache_status:
-            raise SystemError("An attempt was made to build a cache with cache disabled")
+    def _copy_cache_file(self, new_name):
+        from shutil import copy2
 
-        th2_data_services.INTERACTIVE_MODE = True
+        copy2(self.get_cache_filepath(), new_name)
 
-        if filename:
-            self.set_custom_cache_destination(filename=filename)
-        if not self.__is_cache_file_exists():
-            _ = self.len
+    def build_cache(self, filename):
+        """Creates cache file with provided name.
+
+        Args:
+            filename: Name or path to cache file.
+
+        """
+        if self.__is_cache_file_exists():
+            self._copy_cache_file(filename)
+        else:
+            if self._cache_status:
+                _ = self.len  # Just to iterate
+                self._copy_cache_file(filename)
+            else:
+                file = open(filename, "wb")
+
+                for record in self:
+                    pickle.dump(record, file)
+
+                file.close()
 
     @classmethod
     def from_cache_file(cls, filename):
-        th2_data_services.INTERACTIVE_MODE = True
+        """Creates Data object from cache file with provided name.
 
+        Args:
+            filename: Name or path to cache file.
+
+        """
         if not Path(filename).resolve().exists():
-            return None
+            raise FileExistsError
         obj = cls([], cache=True)
-        obj.set_custom_cache_destination(filename=filename)
+        obj._set_custom_cache_destination(filename=filename)
         return obj
-
