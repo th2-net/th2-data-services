@@ -324,3 +324,9 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 
 ## BugFixes
 1. [TH2-4234] The library can now be run on Windows. 
+
+# v.1.3.0
+
+1. [TH2-4379] StreamingSSEAdapter will now handle bytes from sse-stream into Dict objects
+2. [TH2-4379] SSEAdapter is now deprecated class.
+

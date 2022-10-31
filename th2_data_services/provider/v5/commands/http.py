@@ -299,7 +299,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         attached_messages: bool = False,
         filters: EventFilters = None,
         cache: bool = False,
-        sse_handler: Optional[IAdapter] = None
+        sse_handler: Optional[IAdapter] = None,
     ):
         """GetEvents constructor.
 
@@ -317,6 +317,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
+            sse_handler: SSEEvents handler
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -639,7 +640,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         cache: bool = False,
-        sse_handler: Optional[IAdapter] = None
+        sse_handler: Optional[IAdapter] = None,
     ):
         """GetMessages constructor.
 
@@ -661,6 +662,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
+            sse_handler: SSEEvents handler
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -681,6 +683,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
+        return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
         stream = GetMessagesSSEEvents(
