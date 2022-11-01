@@ -19,4 +19,4 @@ jobs:
           pip install pytest
       - name: Test with pytest
         run: |
-          ./run_unit_tests.sh
+          bash run_unit_tests.sh
