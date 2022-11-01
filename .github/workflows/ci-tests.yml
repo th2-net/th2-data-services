@@ -22,6 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          set PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           pip install -r requirements.txt
           pip install importlib importlib-metadata
           pip install pytest
