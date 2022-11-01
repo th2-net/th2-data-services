@@ -25,9 +25,9 @@ from weakref import finalize
 #LOG logger = logging.getLogger(__name__)
 
 
-class _DataLogger(logging.LoggerAdapter):
-    def process(self, msg, kwargs):
-        return "Data[%s] %s" % (self.extra["id"], msg), kwargs
+#LOG class _DataLogger(logging.LoggerAdapter):
+#LOG     def process(self, msg, kwargs):
+#LOG         return "Data[%s] %s" % (self.extra["id"], msg), kwargs
 
 
 DataGenerator = Generator[dict, None, None]
@@ -71,8 +71,8 @@ class Data:
         self.stop_iteration = None
 
 #LOG         self._logger.info(
-            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
-        )
+#LOG             "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
+#LOG         )
 
     def __remove(self):
         """Data class destructor."""
