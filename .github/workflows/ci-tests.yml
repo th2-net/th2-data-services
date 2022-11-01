@@ -31,5 +31,5 @@ jobs:
 
       - name: Test with pytest
         run: |
-          export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+          set PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           bash run_unit_tests.sh
