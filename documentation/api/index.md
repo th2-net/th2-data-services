@@ -69,6 +69,7 @@
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 - [`utils`](./utils.md#module-utils)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
+- [`utils.json`](./utils.json.md#module-utilsjson)
 
 ## Classes
 
@@ -87,6 +88,7 @@
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
 - [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
+- [`adapter_sse.StreamingSSEAdapter`](./provider.adapters.adapter_sse.md#class-streamingsseadapter)
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
 - [`exceptions.CommandError`](./provider.exceptions.md#class-commanderror): Exception raised for errors in the command.
 - [`exceptions.EventNotFound`](./provider.exceptions.md#class-eventnotfound)
@@ -161,10 +163,12 @@
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
+- [`json.BufferedJSONProcessor`](./utils.json.md#class-bufferedjsonprocessor)
 
 ## Functions
 
 - [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
+- [`adapter_sse.get_default_sse_adapter`](./provider.adapters.adapter_sse.md#function-get_default_sse_adapter)
 - [`version_checker.get_package_version`](./provider.utils.version_checker.md#function-get_package_version)
 - [`version_checker.get_version_by_pip`](./provider.utils.version_checker.md#function-get_version_by_pip)
 - [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
