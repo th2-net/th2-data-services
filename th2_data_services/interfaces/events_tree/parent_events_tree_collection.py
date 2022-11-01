@@ -19,7 +19,7 @@ from treelib import Node, Tree
 from th2_data_services import Data
 from th2_data_services.events_tree import EventsTree
 from th2_data_services.interfaces.events_tree.events_tree_collection import EventsTreeCollection
-from th2_data_services.provider.interfaces.data_source import IProviderDataSource
+from th2_data_services.interfaces import IDataSource
 
 
 class ParentEventsTreeCollection(EventsTreeCollection):
@@ -31,7 +31,7 @@ class ParentEventsTreeCollection(EventsTreeCollection):
     def __init__(
         self,
         data: Data,
-        data_source: IProviderDataSource = None,
+        data_source: IDataSource = None,
         preserve_body: bool = False,
         stub: bool = False,
     ):
