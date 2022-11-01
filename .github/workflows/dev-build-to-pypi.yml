@@ -11,6 +11,8 @@ jobs:
     name: Dev build and Python distributions to PyPI
     runs-on: ubuntu-20.04
     steps:
+      - uses: actions/checkout@v2
+
       - name: Wait for tests to succeed
         uses: lewagon/wait-on-check-action@v1.2.0
         with:
@@ -18,8 +20,6 @@ jobs:
           check-name: 'Run tests'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 300
-
-      - uses: actions/checkout@v2
 
       # Prepare custom build version
       - name: Get package version
