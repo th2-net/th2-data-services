@@ -20,6 +20,7 @@ jobs:
           pip install -r requirements.txt
           pip install importlib importlib-metadata
           pip install pytest
+          pip install pytest-xdist
       - name: Test with pytest
         run: |
           bash run_unit_tests.sh
