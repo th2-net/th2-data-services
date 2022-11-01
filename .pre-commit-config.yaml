@@ -21,9 +21,6 @@ repos:
     hooks:
       - id: autoflake
         name: autoflake
-        entry: autoflake
-        language: system
-        types: [ python ]
         args: [ --in-place, --remove-all-unused-imports, --ignore-init-module-imports ]
 
   - repo: https://github.com/pycqa/pydocstyle

@@ -5,6 +5,12 @@ import pytest
 from th2_data_services import Data
 from . import HTTPProviderAPI, HTTPProviderDataSource, http, CodecPipelinesAdapter, Filter, DEMO_PORT  # noqa  # noqa
 
+"""
+Because a trick in __init__.py HTTPProviderAPI, HTTPProviderDataSource 
+and other classes will import classes for RDP5 or RDP6 depending on
+the installed th2-grpc-data-provider version.
+"""
+
 
 @pytest.fixture
 def demo_data_source():

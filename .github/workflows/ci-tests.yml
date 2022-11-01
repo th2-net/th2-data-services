@@ -16,9 +16,7 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install importlib importlib-metadata
+          pip install pytest
       - name: Test with pytest
         run: |
-          pip install pytest
-          cd tests
-          python unittestV5.py
-          python unittestV6.py
+          ./run_unit_tests.sh

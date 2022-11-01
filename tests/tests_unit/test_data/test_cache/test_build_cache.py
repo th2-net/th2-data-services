@@ -8,7 +8,7 @@ import pytest
     ["cache_file"],
     [
         ("my_cache_file",),
-        ("dir_for_test/file_path",),
+        (Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/file_path",),
     ],
 )
 def test_build_cache_file_created(general_data: List[dict], cache_file):

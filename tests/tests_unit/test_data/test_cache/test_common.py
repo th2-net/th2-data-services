@@ -1,6 +1,7 @@
 import os
 from typing import List
 
+from tests.tests_unit.conftest import EXTERNAL_CACHE_FILE, DataCase
 from tests.tests_unit.utils import (
     is_cache_file_exists,
     iterate_data_and_do_checks,
@@ -35,7 +36,7 @@ def new_data_with_map_keyboard_interrupt(data: Data) -> Data:
 ##########
 
 
-EXTERNAL_CACHE_FILE = "external_cache_file"
+# Expected that you run pytest from the lib root.
 
 
 def test_data_iterates_own_cache_file(log_checker, general_data: List[dict]):
@@ -81,19 +82,30 @@ def test_cache_file_isnt_created_after_using_magic_function(general_data: List[d
     """
     data = Data(general_data, cache=True)
     magic_func(data)  # It shouldn't create cache file.
+    assert not is_pending_cache_file_exists(data)
+    assert not is_cache_file_exists(data)
+
+    # It should create cache file after full iteration
     output = list(data)
     assert output == general_data
 
 
-def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker):
+def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_case: DataCase):
     """Issue related test: https://exactpro.atlassian.net/browse/TH2-3545"""
-    data = Data([1, 2, 3], cache=True)
-    dl = iterate_data_and_do_checks(data, log_checker)
+    data = data_case.data
+    create_type = data_case.create_type
+    if create_type in ["list", "join"]:
+        if create_type == "join":
+            data.use_cache()
+        dl = iterate_data_and_do_checks(data, log_checker)
+    elif create_type == "external_cache_file":
+        dl = iterate_data(data, to_return=True)  # Just to iterate and create cache files.
+        assert is_cache_file_exists(data)
 
     cwd = os.getcwd()
     os.chdir("/")
     data._data_stream = []
-    assert list(data) == dl
+    assert list(data) == dl  # Data obj should read from cache
     log_checker.used_own_cache_file(data)
     os.chdir(cwd)
 

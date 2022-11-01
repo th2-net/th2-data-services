@@ -126,7 +126,7 @@ class Data:
     @property
     def is_empty(self) -> bool:
         """bool: Indicates that the Data object doesn't contain data."""
-        for _ in self.__load_data():
+        for _ in self:
             return False
         return True
 
@@ -216,7 +216,7 @@ class Data:
 
         return new_workflow
 
-    def __load_data(self, cache: bool = False) -> DataGenerator:
+    def __load_data(self, cache) -> DataGenerator:
         """Loads data from cache or data.
 
         Args:
@@ -468,7 +468,7 @@ class Data:
         skipped = 0
         pushed = 0
 
-        for record in self.__load_data(self._cache_status):
+        for record in self:
             if skip is not None and skipped < skip:
                 skipped += 1
                 continue
@@ -531,18 +531,19 @@ class Data:
 
     def __str__(self):
         output = "------------- Printed first 5 records -------------\n"
-        for index, record in enumerate(self.__load_data(cache=self._cache_status)):
+        for index, record in enumerate(self):
             if index == 5:
                 break
             output += pprint.pformat(record) + "\n"
         return output
 
     def __bool__(self):
-        for _ in self.__load_data():
+        for _ in self:
             return True
         return False
 
     def __add__(self, other_data: Iterable) -> "Data":
+        """Joining feature."""
         return Data(self._create_data_set_from_iterables([self, other_data]))
 
     def _set_custom_cache_destination(self, filename):
