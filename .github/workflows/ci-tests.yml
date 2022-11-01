@@ -24,7 +24,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           pip install -r requirements.txt
           pip install importlib importlib-metadata
           pip install pytest
@@ -32,4 +31,5 @@ jobs:
 
       - name: Test with pytest
         run: |
+          export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           bash run_unit_tests.sh
