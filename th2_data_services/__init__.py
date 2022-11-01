@@ -25,37 +25,37 @@ from th2_data_services.filter import Filter
 INTERACTIVE_MODE = False  # Script mode by default.
 
 
-def add_stderr_logger(level=logging.DEBUG):
-    """Helper for quickly adding a StreamHandler to the logger.
+#LOG def add_stderr_logger(level=logging.DEBUG):
+#LOG     """Helper for quickly adding a StreamHandler to the logger.
 
-    Useful for debugging.
+#LOG     Useful for debugging.
 
-    Returns the handler after adding it.
-    """
-    # This method needs to be in this __init__.py to get the __name__ correct
-    # even if the lib is vendored within another package.
+#LOG     Returns the handler after adding it.
+#LOG     """
+#LOG     # This method needs to be in this __init__.py to get the __name__ correct
+#LOG     # even if the lib is vendored within another package.
 #LOG     logger = logging.getLogger(__name__)
 #LOG     handler = logging.StreamHandler()
 #LOG     handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s : %(message)s"))
 #LOG     logger.addHandler(handler)
 #LOG     logger.setLevel(level)
 #LOG     logger.debug("Added a stderr logging handler to logger: %s", __name__)
-    return handler
+#LOG     return handler
 
 
-def add_file_logger(filename="dslib.log", mode="w", level=logging.DEBUG):
-    """Helper for quickly adding a StreamHandler to the logger.
-
-    Useful for debugging.
-
-    Returns the handler after adding it.
-    """
-    # This method needs to be in this __init__.py to get the __name__ correct
-    # even if the lib is vendored within another package.
+#LOG def add_file_logger(filename="dslib.log", mode="w", level=logging.DEBUG):
+#LOG     """Helper for quickly adding a StreamHandler to the logger.
+#LOG
+#LOG     Useful for debugging.
+#LOG
+#LOG     Returns the handler after adding it.
+#LOG     """
+#LOG     # This method needs to be in this __init__.py to get the __name__ correct
+#LOG     # even if the lib is vendored within another package.
 #LOG     logger = logging.getLogger(__name__)
 #LOG     handler = logging.FileHandler(filename, mode=mode)
 #LOG     handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s : %(message)s"))
 #LOG     logger.addHandler(handler)
 #LOG     logger.setLevel(level)
 #LOG     logger.debug("Added a file logging handler to logger: %s", __name__)
-    return handler
+#LOG     return handler
