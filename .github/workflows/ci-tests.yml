@@ -2,9 +2,11 @@ name: CI tests
 
 on:
   pull_request:
+  push:
 
 jobs:
   test:
+    name: Run tests
     runs-on: ubuntu-20.04
 
     strategy:
