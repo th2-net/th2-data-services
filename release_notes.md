@@ -329,11 +329,9 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 # v1.3.0
 
 ## Improvements
+
 1. [TH2-4379] Speed improvements in json deserialization.
    - StreamingSSEAdapter will now handle bytes from sse-stream into Dict objects.
    - SSEAdapter is now deprecated class.
-
-# v.1.3.1
-
-1. [TH2-4380] Streams are now being handled by correct adapters
+2. [TH2-4380] Streams are now handled by correct adapters
    - Custom adapter handler can be applied to GetEvents/GetMessages
