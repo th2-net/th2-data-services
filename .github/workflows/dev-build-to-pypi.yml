@@ -18,6 +18,7 @@ jobs:
         with:
           ref: ${{ github.ref }}
           check-name: 'Run tests'
+          check-regexp: 'Run tests'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 300
 
