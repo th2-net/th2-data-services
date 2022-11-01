@@ -133,17 +133,17 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
     """
 
     def __init__(
-            self,
-            start_timestamp: datetime,
-            end_timestamp: datetime = None,
-            parent_event: str = None,
-            search_direction: str = "next",
-            resume_from_id: str = None,
-            result_count_limit: int = None,
-            keep_open: bool = False,
-            limit_for_parent: int = None,
-            attached_messages: bool = False,
-            filters: EventFilters = None,
+        self,
+        start_timestamp: datetime,
+        end_timestamp: datetime = None,
+        parent_event: str = None,
+        search_direction: str = "next",
+        resume_from_id: str = None,
+        result_count_limit: int = None,
+        keep_open: bool = False,
+        limit_for_parent: int = None,
+        attached_messages: bool = False,
+        filters: EventFilters = None,
     ):
         """GetEventsSSEBytes constructor.
 
@@ -209,19 +209,19 @@ class GetEventsSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
     """
 
     def __init__(
-            self,
-            start_timestamp: datetime,
-            end_timestamp: datetime = None,
-            parent_event: str = None,
-            search_direction: str = "next",
-            resume_from_id: str = None,
-            result_count_limit: int = None,
-            keep_open: bool = False,
-            limit_for_parent: int = None,
-            attached_messages: bool = False,
-            filters: EventFilters = None,
-            char_enc: str = "utf-8",
-            decode_error_handler: str = UNICODE_REPLACE_HANDLER,
+        self,
+        start_timestamp: datetime,
+        end_timestamp: datetime = None,
+        parent_event: str = None,
+        search_direction: str = "next",
+        resume_from_id: str = None,
+        result_count_limit: int = None,
+        keep_open: bool = False,
+        limit_for_parent: int = None,
+        attached_messages: bool = False,
+        filters: EventFilters = None,
+        char_enc: str = "utf-8",
+        decode_error_handler: str = UNICODE_REPLACE_HANDLER,
     ):
         """GetEventsSSEEvents constructor.
 
@@ -289,18 +289,18 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
     """
 
     def __init__(
-            self,
-            start_timestamp: datetime,
-            end_timestamp: datetime = None,
-            parent_event: str = None,
-            search_direction: str = "next",
-            resume_from_id: str = None,
-            result_count_limit: int = None,
-            keep_open: bool = False,
-            limit_for_parent: int = None,
-            attached_messages: bool = False,
-            filters: EventFilters = None,
-            cache: bool = False,
+        self,
+        start_timestamp: datetime,
+        end_timestamp: datetime = None,
+        parent_event: str = None,
+        search_direction: str = "next",
+        resume_from_id: str = None,
+        result_count_limit: int = None,
+        keep_open: bool = False,
+        limit_for_parent: int = None,
+        attached_messages: bool = False,
+        filters: EventFilters = None,
+        cache: bool = False,
     ):
         """GetEvents constructor.
 
@@ -351,13 +351,11 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         ).handle(data_source)
 
         adapter = SSEAdapter()
-        self.apply_adapter(adapter.handle)
-
         for event in stream:
-            event = self._handle_adapters(event)
-            if event is None:
+            event = adapter.handle(event)
+            if not event:
                 continue
-
+            event = self._handle_adapters(event)
             yield event
 
 
@@ -453,18 +451,18 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
     """
 
     def __init__(
-            self,
-            start_timestamp: datetime,
-            stream: List[str],
-            end_timestamp: datetime = None,
-            resume_from_id: str = None,
-            search_direction: str = "next",
-            result_count_limit: int = None,
-            keep_open: bool = False,
-            message_id: List[str] = None,
-            attached_events: bool = False,
-            lookup_limit_days: int = None,
-            filters: MessageFilters = None,
+        self,
+        start_timestamp: datetime,
+        stream: List[str],
+        end_timestamp: datetime = None,
+        resume_from_id: str = None,
+        search_direction: str = "next",
+        result_count_limit: int = None,
+        keep_open: bool = False,
+        message_id: List[str] = None,
+        attached_events: bool = False,
+        lookup_limit_days: int = None,
+        filters: MessageFilters = None,
     ):
         """GetMessagesSSEBytes constructor.
 
@@ -545,20 +543,20 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
     """
 
     def __init__(
-            self,
-            start_timestamp: datetime,
-            stream: List[str],
-            end_timestamp: datetime = None,
-            resume_from_id: str = None,
-            search_direction: str = "next",
-            result_count_limit: int = None,
-            keep_open: bool = False,
-            message_id: List[str] = None,
-            attached_events: bool = False,
-            lookup_limit_days: int = None,
-            filters: MessageFilters = None,
-            char_enc: str = "utf-8",
-            decode_error_handler: str = UNICODE_REPLACE_HANDLER,
+        self,
+        start_timestamp: datetime,
+        stream: List[str],
+        end_timestamp: datetime = None,
+        resume_from_id: str = None,
+        search_direction: str = "next",
+        result_count_limit: int = None,
+        keep_open: bool = False,
+        message_id: List[str] = None,
+        attached_events: bool = False,
+        lookup_limit_days: int = None,
+        filters: MessageFilters = None,
+        char_enc: str = "utf-8",
+        decode_error_handler: str = UNICODE_REPLACE_HANDLER,
     ):
         """GetMessagesSSEEvents constructor.
 
@@ -631,21 +629,21 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
     """
 
     def __init__(
-            self,
-            start_timestamp: datetime,
-            stream: List[str],
-            end_timestamp: datetime = None,
-            resume_from_id: str = None,
-            search_direction: str = "next",
-            result_count_limit: int = None,
-            keep_open: bool = False,
-            message_id: List[str] = None,
-            attached_events: bool = False,
-            lookup_limit_days: int = None,
-            filters: MessageFilters = None,
-            char_enc: str = "utf-8",
-            decode_error_handler: str = UNICODE_REPLACE_HANDLER,
-            cache: bool = False,
+        self,
+        start_timestamp: datetime,
+        stream: List[str],
+        end_timestamp: datetime = None,
+        resume_from_id: str = None,
+        search_direction: str = "next",
+        result_count_limit: int = None,
+        keep_open: bool = False,
+        message_id: List[str] = None,
+        attached_events: bool = False,
+        lookup_limit_days: int = None,
+        filters: MessageFilters = None,
+        char_enc: str = "utf-8",
+        decode_error_handler: str = UNICODE_REPLACE_HANDLER,
+        cache: bool = False,
     ):
         """GetMessages constructor.
 
@@ -703,12 +701,9 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         ).handle(data_source)
 
         adapter = SSEAdapter()
-        self.apply_adapter(adapter.handle)
-
         for message in stream:
-            message = self._handle_adapters(message)
-
-            if message is None:
+            message = adapter.handle(message)
+            if not message:
                 continue
-
+            message = self._handle_adapters(message)
             yield message

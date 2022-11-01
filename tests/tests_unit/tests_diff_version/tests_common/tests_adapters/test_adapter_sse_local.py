@@ -1,7 +1,5 @@
 from sseclient import Event as SSEEvent
 
-from th2_data_services.interfaces import IAdapter
-
 import pytest
 
 from th2_data_services import Data
@@ -85,42 +83,3 @@ class TestSSEFlagFalse:
 
         for e in data:
             assert isinstance(e, SSEEvent)
-
-
-class TestAdapterForEvents(IAdapter):
-    def handle(self, record: SSEEvent) -> SSEEvent:
-        if record.event == "event":
-            return record
-        else:
-            return SSEEvent(event="close")
-
-
-class TestAdapterForMessages(IAdapter):
-    def handle(self, record: SSEEvent) -> SSEEvent:
-        print(record.event)
-        if record.event == "message":
-            return record
-        else:
-            return SSEEvent(event="close")
-
-
-def test_adapter(demo_data_source):
-    ds = demo_data_source
-    ev_adapter = TestAdapterForEvents()
-    msg_adapter = TestAdapterForMessages()
-
-    events = ds.command(
-        http.GetEvents(
-            start_timestamp=START_TIME,
-            end_timestamp=END_TIME,
-        ).apply_adapter(ev_adapter.handle)
-    )
-    messages = ds.command(
-        http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME, stream=["demo-conn2"]).apply_adapter(
-            msg_adapter.handle
-        )
-    )
-    for event in events:
-        assert isinstance(event, dict)
-    for message in messages:
-        assert isinstance(message, dict)
