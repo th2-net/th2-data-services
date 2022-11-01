@@ -81,8 +81,7 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            stub = data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
-            return self._handle_adapters(stub)
+            return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
         elif response.status_code == 404:
             logger.error(f"Unable to find the message. Id: {self._id}")
             raise EventNotFound(self._id)
@@ -117,10 +116,7 @@ class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
         result = []
         for event_id in self._ids:
             event = GetEventById(event_id, use_stub=self._stub_status).handle(data_source)
-            event = self._handle_adapters(event)
-            if event is None:
-                continue
-            result.append(event)
+            result.append(self._handle_adapters(event))
 
         return result
 
@@ -339,6 +335,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
+        source = (self._handle_adapters(record) for record in source() if record is not None)
         return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
@@ -355,12 +352,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters=self._filters,
         ).handle(data_source)
 
-        adapter = SSEAdapter()
         for event in stream:
-            event = adapter.handle(event)
-            if event is None:
-                continue
-            event = self._handle_adapters(event)
             yield event
 
 
@@ -399,8 +391,7 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            stub = data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
-            return self._handle_adapters(stub)
+            return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
         elif response.status_code == 404:
             logger.error(f"Unable to find the message. Id: {self._id}")
             raise MessageNotFound(self._id)
@@ -437,11 +428,11 @@ class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
     def handle(self, data_source: HTTPProvider5DataSource) -> List[dict]:  # noqa: D102
         result = []
         for message_id in self._ids:
-            message = GetMessageById(message_id, use_stub=self._stub_status).handle(data_source)
-            message = self._handle_adapters(message)
-            if message is None:
-                continue
-            result.append(message)
+            message = GetMessageById(
+                message_id,
+                use_stub=self._stub_status,
+            ).handle(data_source)
+            result.append(self._handle_adapters(message))
 
         return result
 
@@ -692,6 +683,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
+        source = (self._handle_adapters(record) for record in source() if record is not None)
         return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
@@ -708,10 +700,5 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters=self._filters,
         ).handle(data_source)
 
-        adapter = SSEAdapter()
         for message in stream:
-            message = adapter.handle(message)
-            if message is None:
-                continue
-            message = self._handle_adapters(message)
             yield message
