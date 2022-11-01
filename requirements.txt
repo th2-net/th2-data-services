@@ -9,3 +9,4 @@ grpcio==1.46.3
 grpcio-tools==1.38.1
 types-protobuf==3.19.22
 importlib_metadata
+orjson
