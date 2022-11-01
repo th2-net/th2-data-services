@@ -353,7 +353,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         adapter = SSEAdapter()
         for event in stream:
             event = adapter.handle(event)
-            if not event:
+            if event is None:
                 continue
             event = self._handle_adapters(event)
             yield event
@@ -703,7 +703,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         adapter = SSEAdapter()
         for message in stream:
             message = adapter.handle(message)
-            if not message:
+            if message is None:
                 continue
             message = self._handle_adapters(message)
             yield message
