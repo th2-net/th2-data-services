@@ -329,3 +329,8 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 
 ## Features
 1. [TH2-4289] Data.build_cache and Data.from_cache_file features were added.
+
+## Improvements
+1. [TH2-4379] Speed improvements in json deserialization.
+   - StreamingSSEAdapter will now handle bytes from sse-stream into Dict objects.
+   - [TH2-4379] SSEAdapter is now deprecated class.
