@@ -13,7 +13,7 @@
 #  limitations under the License.
 from __future__ import annotations
 
-import logging
+#LOG import logging
 
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 from typing import TYPE_CHECKING
@@ -37,7 +37,7 @@ from th2_data_services.provider.v5.stub_builder import (
 )
 from th2_data_services.provider.v5.provider_api.http import HTTPProvider5API
 
-logger = logging.getLogger(__name__)
+#LOG logger = logging.getLogger(__name__)
 
 
 class HTTPProvider5DataSource(IHTTPProviderDataSource):
@@ -89,7 +89,7 @@ class HTTPProvider5DataSource(IHTTPProviderDataSource):
             use_ssl=use_ssl,
         )
 
-        logger.info(url)
+#LOG         logger.info(url)
 
     def command(self, cmd: IHTTPProvider5Command):
         """HTTP Provider5 command processor.

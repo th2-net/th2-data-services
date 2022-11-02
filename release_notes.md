@@ -323,9 +323,17 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 # v1.2.3
 
 ## BugFixes
+
 1. [TH2-4234] The library can now be run on Windows. 
 
 # v1.3.0
+
+## User impact and migration instructions
+This release implements performance bug fixes and provides Data object cache file saving and loading. 
+
+1. [I] Logging were removed from library. Only special builds will have logging. 
+      User cannot use `add_stderr_logger` and  `add_file_logger` logging functions.
+   [M] Remove DS lib logging usage anywhere.
 
 ## Features
 1. [TH2-4289] Data.build_cache and Data.from_cache_file features were added.
@@ -333,4 +341,10 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 ## Improvements
 1. [TH2-4379] Speed improvements in json deserialization.
    - StreamingSSEAdapter will now handle bytes from sse-stream into Dict objects.
-   - [TH2-4379] SSEAdapter is now deprecated class.
+   - SSEAdapter is now deprecated class.
+
+## BugFixes
+1. [TH2-4385] Logging in Data object slows down the ds library very much. 
+   - Logging was removed.
+   - `add_stderr_logger` and  `add_file_logger` are not available anymore.
+2. [TH2-4380] Streams are now handled by correct adapters

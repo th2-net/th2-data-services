@@ -140,14 +140,6 @@ import th2_data_services
 
 th2_data_services.INTERACTIVE_MODE = True
 
-# [0.2] Logging
-# Import helper function to setup logging.
-from th2_data_services import add_stderr_logger, add_file_logger
-
-add_stderr_logger()  # Just execute it to activate DS lib logging. Debug level by default.
-# or if you want to put logs to the file
-add_file_logger()
-
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.

@@ -31,9 +31,9 @@ from th2_data_services.sse_client import SSEClient
 from th2_data_services.provider.adapters.adapter_sse import get_default_sse_adapter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
-import logging
+# LOG import logging
 
-logger = logging.getLogger(__name__)
+# LOG logger = logging.getLogger(__name__)
 
 EventFilters = Union[Filter, Provider5EventFilter, Sequence[Union[Filter, Provider5EventFilter]]]
 MessageFilters = Union[Filter, Provider5MessageFilter, Sequence[Union[Filter, Provider5MessageFilter]]]
@@ -76,14 +76,15 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
         api: HTTPProvider5API = data_source.source_api
         url = api.get_url_find_event_by_id(self._id)
 
-        logger.info(url)
+        # LOG         logger.info(url)
 
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+            stub = data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+            return self._handle_adapters(stub)
         elif response.status_code == 404:
-            logger.error(f"Unable to find the message. Id: {self._id}")
+            # LOG             logger.error(f"Unable to find the message. Id: {self._id}")
             raise EventNotFound(self._id)
         else:
             return self._handle_adapters(response.json())
@@ -116,7 +117,12 @@ class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
         result = []
         for event_id in self._ids:
             event = GetEventById(event_id, use_stub=self._stub_status).handle(data_source)
-            result.append(self._handle_adapters(event))
+            if event is None:
+                continue
+            event = self._handle_adapters(event)
+            if event is None:
+                continue
+            result.append(event)
 
         return result
 
@@ -189,7 +195,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters=_convert_filters_to_string(self._filters),
         )
 
-        logger.info(url)
+        # LOG         logger.info(url)
 
         for response in api.execute_sse_request(url):
             response = self._handle_adapters(response)
@@ -335,6 +341,7 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
+        source = (self._handle_adapters(record) for record in source() if record is not None)
         return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
@@ -352,7 +359,6 @@ class GetEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         ).handle(data_source)
 
         for event in stream:
-            event = self._handle_adapters(event)
             yield event
 
 
@@ -386,14 +392,15 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         api: HTTPProvider5API = data_source.source_api
         url = api.get_url_find_message_by_id(self._id)
 
-        logger.info(url)
+        # LOG         logger.info(url)
 
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+            stub = data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+            return self._handle_adapters(stub)
         elif response.status_code == 404:
-            logger.error(f"Unable to find the message. Id: {self._id}")
+            # LOG             logger.error(f"Unable to find the message. Id: {self._id}")
             raise MessageNotFound(self._id)
         else:
             return self._handle_adapters(response.json())
@@ -432,7 +439,12 @@ class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
                 message_id,
                 use_stub=self._stub_status,
             ).handle(data_source)
-            result.append(self._handle_adapters(message))
+            if message is None:
+                continue
+            message = self._handle_adapters(message)
+            if message is None:
+                continue
+            result.append(message)
 
         return result
 
@@ -522,7 +534,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             resulting_urls.append(url + current_url)
 
         for url in resulting_urls:
-            logger.info(url)
+            # LOG             logger.info(url)
             for response in api.execute_sse_request(url):
                 response = self._handle_adapters(response)
                 if response is not None:
@@ -683,6 +695,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
+        source = (self._handle_adapters(record) for record in source() if record is not None)
         return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:
@@ -700,5 +713,4 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         ).handle(data_source)
 
         for message in stream:
-            message = self._handle_adapters(message)
             yield message
