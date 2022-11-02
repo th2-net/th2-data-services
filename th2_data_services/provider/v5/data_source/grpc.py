@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 from th2_data_services.provider.interfaces.data_source import IGRPCProviderDataSource
 
-import logging
+#LOG import logging
 
 from th2_data_services.provider.interfaces.stub_builder import IEventStub, IMessageStub
 from th2_data_services.provider.v5.provider_api import GRPCProvider5API
@@ -41,7 +41,7 @@ from th2_data_services.provider.v5.stub_builder import (
     provider5_message_stub_builder,
 )
 
-logger = logging.getLogger(__name__)
+#LOG logger = logging.getLogger(__name__)
 
 
 class GRPCProvider5DataSource(IGRPCProviderDataSource):
@@ -78,7 +78,7 @@ class GRPCProvider5DataSource(IGRPCProviderDataSource):
 
         self.__provider_api = GRPCProvider5API(url)
 
-        logger.info(url)
+#LOG         logger.info(url)
 
     def command(self, cmd: IGRPCProvider5Command) -> Any:
         """Execute the transmitted GRPC command.

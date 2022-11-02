@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import logging
+#LOG import logging
 from http import HTTPStatus
 from typing import List, Generator, Optional, Union
 
@@ -24,8 +24,8 @@ from urllib.parse import quote
 from th2_data_services.provider.interfaces.source_api import IHTTPProviderSourceAPI
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
-logger = logging.getLogger("th2_data_services")
-logger.setLevel(logging.DEBUG)
+#LOG logger = logging.getLogger("th2_data_services")
+#LOG logger.setLevel(logging.DEBUG)
 
 
 class HTTPProvider6API(IHTTPProviderSourceAPI):
