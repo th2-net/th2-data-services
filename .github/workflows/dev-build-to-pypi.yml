@@ -20,7 +20,6 @@ jobs:
           check-name: 'Run tests'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 300
-          per_page: 100
 
       # Prepare custom build version
       - name: Get package version
