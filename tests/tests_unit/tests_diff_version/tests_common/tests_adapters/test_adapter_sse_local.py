@@ -1,4 +1,5 @@
-from sseclient import Event
+from sseclient import Event as SSEEvent
+
 import pytest
 
 from th2_data_services import Data
@@ -68,7 +69,7 @@ class TestSSEFlagFalse:
         )
 
         for e in data:
-            assert isinstance(e, Event)
+            assert isinstance(e, SSEEvent)
 
     def test_messages_provider_none(self, demo_data_source: HTTPProviderDataSource):
         ds = demo_data_source
@@ -81,4 +82,4 @@ class TestSSEFlagFalse:
         )
 
         for e in data:
-            assert isinstance(e, Event)
+            assert isinstance(e, SSEEvent)

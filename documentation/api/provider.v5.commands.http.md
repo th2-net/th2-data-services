@@ -70,7 +70,7 @@ handle(data_source: HTTPProvider5DataSource) → dict
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L92"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L93"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetEventsById`
 A Class-Command for request to rpt-data-provider. 
@@ -89,7 +89,7 @@ It retrieves the events by ids with `attachedMessageIds` list.
  
  - <b>`EventNotFound`</b>:  If any event by Id wasn't found. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L104"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L105"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -111,7 +111,7 @@ GetEventsById constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L115"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L116"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -126,7 +126,7 @@ handle(data_source: HTTPProvider5DataSource)
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L124"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L130"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetEventsSSEBytes`
 A Class-Command for request to rpt-data-provider. 
@@ -139,7 +139,7 @@ It searches events stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 events. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L133"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L139"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -180,7 +180,7 @@ GetEventsSSEBytes constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L176"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L182"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -195,7 +195,7 @@ handle(data_source: HTTPProvider5DataSource)
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L200"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L206"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetEventsSSEEvents`
 A Class-Command for request to rpt-data-provider. 
@@ -208,7 +208,7 @@ It searches events stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 events. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L209"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L215"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -253,7 +253,7 @@ GetEventsSSEEvents constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L256"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L262"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -268,7 +268,7 @@ handle(data_source: HTTPProvider5DataSource)
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L280"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L286"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetEvents`
 A Class-Command for request to rpt-data-provider. 
@@ -281,7 +281,7 @@ It searches events stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 events. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L289"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L295"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -326,7 +326,7 @@ GetEvents constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L336"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L342"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -341,7 +341,7 @@ handle(data_source: HTTPProvider5DataSource) → Data
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L359"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L365"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessageById`
 A Class-Command for request to rpt-data-provider. 
@@ -362,7 +362,7 @@ Please note, Provider5 doesn't return `attachedEventIds`. It will be == []. It's
  
  - <b>`MessageNotFound`</b>:  If message by id wasn't found. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L374"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L380"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -384,7 +384,7 @@ GetMessageById constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L385"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L391"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -399,7 +399,7 @@ handle(data_source: HTTPProvider5DataSource) → dict
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L402"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L409"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessagesById`
 A Class-Command for request to rpt-data-provider. 
@@ -420,7 +420,7 @@ Please note, Provider5 doesn't return `attachedEventIds`. It will be == []. It's
  
  - <b>`MessageNotFound`</b>:  If any message by id wasn't found. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L417"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L424"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -442,7 +442,7 @@ GetMessagesById constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L428"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L435"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -457,7 +457,7 @@ handle(data_source: HTTPProvider5DataSource) → List[dict]
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L440"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L452"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessagesSSEBytes`
 A Class-Command for request to rpt-data-provider. 
@@ -470,7 +470,7 @@ It searches messages stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L449"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L461"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -513,7 +513,7 @@ GetMessagesSSEBytes constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L498"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L510"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -530,7 +530,7 @@ handle(
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L532"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L544"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessagesSSEEvents`
 A Class-Command for request to rpt-data-provider. 
@@ -543,7 +543,7 @@ It searches messages stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L541"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L553"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -590,7 +590,7 @@ GetMessagesSSEEvents constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L592"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L604"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -607,7 +607,7 @@ handle(
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L618"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L630"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GetMessages`
 A Class-Command for request to rpt-data-provider. 
@@ -620,7 +620,7 @@ It searches messages stream by options.
  
  - <b>`Iterable[dict]`</b>:  Stream of Th2 messages. 
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L627"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L639"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -671,7 +671,7 @@ GetMessages constructor.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/commands/http.py#L684"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/commands/http.py#L696"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
