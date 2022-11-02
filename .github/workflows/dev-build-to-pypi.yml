@@ -17,9 +17,11 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.2.0
         with:
           ref: ${{ github.ref }}
-          check-name: 'Run tests'
+#          check-name: 'Run tests'
+          running-workflow-name: 'Dev build and Python distributions to PyPI'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 300
+          wait-interval: 10
+          allowed-conclusions: success
 
       # Prepare custom build version
       - name: Get package version
