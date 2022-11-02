@@ -81,7 +81,8 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+            stub = data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+            return self._handle_adapters(stub)
         elif response.status_code == 404:
             logger.error(f"Unable to find the message. Id: {self._id}")
             raise EventNotFound(self._id)
@@ -116,7 +117,12 @@ class GetEventsById(IHTTPProvider5Command, ProviderAdaptableCommand):
         result = []
         for event_id in self._ids:
             event = GetEventById(event_id, use_stub=self._stub_status).handle(data_source)
-            result.append(self._handle_adapters(event))
+            if event is None:
+                continue
+            event = self._handle_adapters(event)
+            if event is None:
+                continue
+            result.append(event)
 
         return result
 
@@ -391,7 +397,8 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+            stub = data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+            return self._handle_adapters(stub)
         elif response.status_code == 404:
             logger.error(f"Unable to find the message. Id: {self._id}")
             raise MessageNotFound(self._id)
@@ -432,7 +439,12 @@ class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
                 message_id,
                 use_stub=self._stub_status,
             ).handle(data_source)
-            result.append(self._handle_adapters(message))
+            if message is None:
+                continue
+            message = self._handle_adapters(message)
+            if message is None:
+                continue
+            result.append(message)
 
         return result
 
