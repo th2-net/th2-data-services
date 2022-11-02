@@ -1,7 +1,7 @@
 name: CI tests
 
 on:
-  pull_request:
+#  pull_request:  # It duplicates push in PRs
   push:
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        py_version: [ '3.7', '3.8', '3.9' ]
+        py_version: [ '3.7', '3.8', '3.9', '3.10' ]
 
     steps:
       - uses: actions/checkout@v2

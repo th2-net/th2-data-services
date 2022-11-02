@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-n-publish:
-    name: Dev build and Python distributions to PyPI
+    name: Dev build and publish Python distributions to PyPI
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -18,7 +18,7 @@ jobs:
         with:
           ref: ${{ github.ref }}
 #          check-name: 'Run tests'
-          running-workflow-name: 'Dev build and Python distributions to PyPI'
+          running-workflow-name: 'Dev build and publish Python distributions to PyPI'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
           allowed-conclusions: success
