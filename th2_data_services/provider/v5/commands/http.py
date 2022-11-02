@@ -31,9 +31,9 @@ from th2_data_services.sse_client import SSEClient
 from th2_data_services.provider.adapters.adapter_sse import get_default_sse_adapter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
-import logging
+#LOG import logging
 
-logger = logging.getLogger(__name__)
+#LOG logger = logging.getLogger(__name__)
 
 EventFilters = Union[Filter, Provider5EventFilter, Sequence[Union[Filter, Provider5EventFilter]]]
 MessageFilters = Union[Filter, Provider5MessageFilter, Sequence[Union[Filter, Provider5MessageFilter]]]
@@ -76,14 +76,14 @@ class GetEventById(IHTTPProvider5Command, ProviderAdaptableCommand):
         api: HTTPProvider5API = data_source.source_api
         url = api.get_url_find_event_by_id(self._id)
 
-        logger.info(url)
+#LOG         logger.info(url)
 
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
             return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
         elif response.status_code == 404:
-            logger.error(f"Unable to find the message. Id: {self._id}")
+#LOG             logger.error(f"Unable to find the message. Id: {self._id}")
             raise EventNotFound(self._id)
         else:
             return self._handle_adapters(response.json())
@@ -189,7 +189,7 @@ class GetEventsSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             filters=_convert_filters_to_string(self._filters),
         )
 
-        logger.info(url)
+#LOG         logger.info(url)
 
         for response in api.execute_sse_request(url):
             response = self._handle_adapters(response)
@@ -386,14 +386,14 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         api: HTTPProvider5API = data_source.source_api
         url = api.get_url_find_message_by_id(self._id)
 
-        logger.info(url)
+#LOG         logger.info(url)
 
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
             return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
         elif response.status_code == 404:
-            logger.error(f"Unable to find the message. Id: {self._id}")
+#LOG             logger.error(f"Unable to find the message. Id: {self._id}")
             raise MessageNotFound(self._id)
         else:
             return self._handle_adapters(response.json())
@@ -522,7 +522,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             resulting_urls.append(url + current_url)
 
         for url in resulting_urls:
-            logger.info(url)
+#LOG             logger.info(url)
             for response in api.execute_sse_request(url):
                 response = self._handle_adapters(response)
                 if response is not None:
