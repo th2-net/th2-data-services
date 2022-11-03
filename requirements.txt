@@ -2,7 +2,7 @@ sseclient-py~=1.7
 requests~=2.28
 setuptools~=58.1.0
 urllib3~=1.26
-# protobuf==3.20.3  # Do not setup > than 3.20 for grpc 0.1.6
+protobuf==3.20.3  # Do not setup > than 3.20 for grpc 0.1.6
 # th2-grpc-common==3.11.1
 # th2-grpc-common 3.4.0 has requirement mypy-protobuf==2.5
 #th2-grpc-data-provider==1.1.0  # Req th2_grpc_common==3.4.0
