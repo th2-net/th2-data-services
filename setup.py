@@ -31,9 +31,14 @@ with open("requirements.txt", "r") as file:
 EXTRAS_DEPENDENCIES = {
     "rdp5": [
         "protobuf==3.20.3",
+        "mypy-protobuf==3.2.0",
+        "th2-grpc-common==3.11.1",
         "th2-grpc-data-provider==0.1.6",
+        
     ],
     "rdp6": [
+        "mypy-protobuf==2.5",
+        "th2-grpc-common==3.4.0",
         "th2_grpc_data_provider==1.1.0",
     ],
 }
