@@ -334,6 +334,7 @@ This release implements performance bug fixes and provides Data object cache fil
 1. [I] Logging were removed from library. Only special builds will have logging. 
       User cannot use `add_stderr_logger` and  `add_file_logger` logging functions.
    [M] Remove DS lib logging usage anywhere.
+2. By default, the library doesn't provide any data source and should be installed using dependency.
 
 ## Improvements
 
