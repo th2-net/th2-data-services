@@ -11,5 +11,5 @@ treelib==1.6.1
 # grpcio~=1.50
 # grpcio-tools~=1.50
 types-protobuf==3.19.22
-importlib_metadata
+# importlib_metadata
 orjson~=3.8
