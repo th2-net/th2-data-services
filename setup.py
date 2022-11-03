@@ -29,7 +29,7 @@ with open("requirements.txt", "r") as file:
     requirements = [line.strip() for line in file.readlines() if not line.startswith("#") and line != "\n"]
 
 EXTRAS_DEPENDENCIES = {
-    "rdp5": ["th2-grpc-data-provider==0.1.6", "protobuf==3.20.3"],
+    "rdp5": ["protobuf==3.20.3", "th2-grpc-data-provider==0.1.6"],
     "rdp6": [
         "th2_grpc_data_provider==1.1.0",
     ],
