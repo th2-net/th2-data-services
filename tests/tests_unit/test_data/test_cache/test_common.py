@@ -4,7 +4,7 @@ from typing import List
 from tests.tests_unit.conftest import EXTERNAL_CACHE_FILE, DataCase
 from tests.tests_unit.utils import (
     is_cache_file_exists,
-    iterate_data_and_do_checks,
+    iterate_data_and_do_cache_checks,
     iterate_data,
     is_pending_cache_file_exists,
 )
@@ -41,7 +41,7 @@ def new_data_with_map_keyboard_interrupt(data: Data) -> Data:
 
 def test_data_iterates_own_cache_file(log_checker, general_data: List[dict]):
     data = Data(general_data, cache=True)
-    output1: List = iterate_data_and_do_checks(data, log_checker)  # It'll create a cache file.
+    output1: List = iterate_data_and_do_cache_checks(data, log_checker)  # It'll create a cache file.
 
     # Deactivate cache and set empty data source.
     data.use_cache(False)
@@ -53,7 +53,7 @@ def test_data_iterates_own_cache_file(log_checker, general_data: List[dict]):
     data.use_cache(True)
     output3 = list(data)
     assert output1 == output3
-    log_checker.used_own_cache_file(data)
+    # log_checker.used_own_cache_file(data)
 
 
 def test_data_iterates_own_external_cache_file(log_checker, general_data: List[dict]):
@@ -70,7 +70,7 @@ def test_data_iterates_own_external_cache_file(log_checker, general_data: List[d
     data.use_cache(True)
     output3 = list(data)
     assert output1 == output3
-    log_checker.used_own_cache_file(data)
+    # log_checker.used_own_cache_file(data)
 
 
 @pytest.mark.parametrize("magic_func", [bool, str])
@@ -97,7 +97,7 @@ def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_c
     if create_type in ["list", "join"]:
         if create_type == "join":
             data.use_cache()
-        dl = iterate_data_and_do_checks(data, log_checker)
+        dl = iterate_data_and_do_cache_checks(data, log_checker)
     elif create_type == "external_cache_file":
         dl = iterate_data(data, to_return=True)  # Just to iterate and create cache files.
         assert is_cache_file_exists(data)
@@ -106,7 +106,7 @@ def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_c
     os.chdir("/")
     data._data_stream = []
     assert list(data) == dl  # Data obj should read from cache
-    log_checker.used_own_cache_file(data)
+    # log_checker.used_own_cache_file(data)
     os.chdir(cwd)
 
 
@@ -119,7 +119,7 @@ def test_data_doesnt_left_their_cache_file_if_you_change_dir_external_cache(log_
     os.chdir("/")
     data._data_stream = []
     assert list(data) == dl
-    log_checker.used_own_cache_file(data)
+    # log_checker.used_own_cache_file(data)
     os.chdir(cwd)
 
 

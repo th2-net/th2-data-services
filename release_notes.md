@@ -337,6 +337,7 @@ This release implements performance bug fixes and provides Data object cache fil
 
 ## Features
 1. [TH2-4289] Data.build_cache and Data.from_cache_file features were added.
+2. Added `Data.cache_status` property
 
 ## Improvements
 1. [TH2-4379] Speed improvements in json deserialization.

@@ -130,6 +130,10 @@ class Data:
             return False
         return True
 
+    @property
+    def cache_status(self) -> bool:
+        return self._cache_status
+
     def __calc_len(self) -> int:
         for _ in self:
             pass

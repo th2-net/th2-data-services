@@ -1,3 +1,4 @@
+
 PATH_DIFF_VERSION="tests_unit/tests_diff_version"
 
 # RDP 6
