@@ -28,6 +28,21 @@ with open("README.md", "r") as file:
 with open("requirements.txt", "r") as file:
     requirements = [line.strip() for line in file.readlines() if not line.startswith("#") and line != "\n"]
 
+EXTRAS_DEPENDENCIES = {
+    "rdp5": [
+        "protobuf==3.20.3",
+        "mypy-protobuf==3.2.0",
+        "th2-grpc-common==3.11.1",
+        "th2-grpc-data-provider==0.1.6",
+        
+    ],
+    "rdp6": [
+        "mypy-protobuf==2.5",
+        "th2-grpc-common==3.4.0",
+        "th2_grpc_data_provider==1.1.0",
+    ],
+}
+
 setup(
     name=package_name,
     version=package_version,
@@ -40,6 +55,7 @@ setup(
     license="Apache License 2.0",
     python_requires=">=3.7",
     install_requires=requirements,
-    packages=find_packages(include=["th2_data_services", "th2_data_services.*"]),
+    packages=find_packages(include=["th2_data_services*"]),
+    extras_require=EXTRAS_DEPENDENCIES,
     include_package_data=True,
 )

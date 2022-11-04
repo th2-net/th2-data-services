@@ -334,6 +334,27 @@ This release implements performance bug fixes and provides Data object cache fil
 1. [I] Logging were removed from library. Only special builds will have logging. 
       User cannot use `add_stderr_logger` and  `add_file_logger` logging functions.
    [M] Remove DS lib logging usage anywhere.
+2. [I] Since `v1.3.0`, the library doesn't provide data source dependencies.
+   
+   [M] You should provide it manually during installation. 
+      You just need to add square brackets after library name and put dependency name.
+
+      ```
+      pip install th2-data-services[dependency_name]
+      ```
+
+      **Dependencies list** 
+
+      | dependency name | provider version |
+      |:--------:|:-------:|
+      |   RDP5   |    5    |
+      |   RDP6   |    6    |
+
+      **Example**
+
+      ```
+      pip install th2-data-services[rdp5]
+      ```
 
 ## Features
 1. [TH2-4289] Data.build_cache and Data.from_cache_file features were added.
@@ -348,4 +369,4 @@ This release implements performance bug fixes and provides Data object cache fil
 1. [TH2-4385] Logging in Data object slows down the ds library very much. 
    - Logging was removed.
    - `add_stderr_logger` and  `add_file_logger` are not available anymore.
-2. [TH2-4380] Streams are now handled by correct adapters
+2. [TH2-4380] Fix apply_adpater feature for GetMessages / GetEvents / GetEventById / GetMessageById
