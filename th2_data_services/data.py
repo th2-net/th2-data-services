@@ -94,6 +94,7 @@ class Data:
         path = self.get_pending_cache_filepath()
         if path.exists():
             # LOG             self._logger.debug("Deleting cache file '%s'" % path)
+            self.__pending_file.close()
             path.unlink()
 
     def _create_data_set_from_iterables(self, iterables_list: List[Iterable]) -> DataSet:
@@ -311,7 +312,9 @@ class Data:
             file = open(filepath, "wb")
 
             for modified_record in self._iterate_modified_data_stream(data_stream, workflow):
-                pickle.dump(modified_record, file)
+                self.__pending_file = file
+                if not file.closed:
+                    pickle.dump(modified_record, file)
                 yield modified_record
 
             file.close()
