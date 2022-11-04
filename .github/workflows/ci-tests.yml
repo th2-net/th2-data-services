@@ -26,10 +26,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
           pip install pytest
           pip install pytest-xdist
 
-      - name: Test with pytest
+      - name: rdp5 tests
         run: |
-          bash run_unit_tests.sh
+          pip install --pre -e .[rdp5]
+          pytest tests/tests_unit -n auto --ignore tests/tests_unit/tests_diff_version/tests_v6
+
+      - name: rdp6 tests
+        run: |
+          pip install --pre -e .[rdp6]
+          pytest tests/tests_unit -n auto --ignore tests/tests_unit/tests_diff_version/tests_v5
