@@ -64,6 +64,8 @@ There is also another part of _data services_
 
 ## 2.1. Installation
 
+### Core
+
 - From PyPI (pip)   
   This package can be found on [PyPI](https://pypi.org/project/th2-data-services/ "th2-data-services").
     ```
@@ -78,22 +80,23 @@ There is also another part of _data services_
 
 ### Data sources (providers)
 
-By default, the library doesn't provide any data source.
+Since `v1.3.0`, the library doesn't provide data source dependencies.
 
-You should install it via dependency
+You should provide it manually during installation. 
+You just need to add square brackets after library name and put dependency name.
 
 ```
 pip install th2-data-services[dependency_name]
 ```
 
-Dependencies List 
+**Dependencies list** 
 
-| provider | version |
+| dependency name | provider version |
 |:--------:|:-------:|
 |   RDP5   |    5    |
 |   RDP6   |    6    |
 
-E.g. the following command will install `th2_grpc_data_provider` library in addition to core part.
+**Example**
 
 ```
 pip install th2-data-services[rdp5]
