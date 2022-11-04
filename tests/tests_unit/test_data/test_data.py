@@ -205,7 +205,8 @@ def test_limit_in_loops(cache):
     assert data.len == len(data_stream)  # It'll create cache.
 
 
-def test_limit_before_loops(cache):
+def test_limit_before_loops(cache=True):
+    """There is known Windows bug: https://exactpro.atlassian.net/browse/TH2-3767"""
     data_stream = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     data = Data(data_stream, cache)
     limit = 5
@@ -225,7 +226,7 @@ def test_limit_before_loops(cache):
     assert res5 == [limit, limit**2, limit**3, limit**4]
     assert not is_cache_file_exists(data)
     assert not is_pending_cache_file_exists(data)
-    assert data.len == len(data_stream)  # It'll creates cache.
+    assert data.len == len(data_stream)  # It'll create cache.
 
 
 def test_new_limit_is_less(general_data: List[dict], cache):
