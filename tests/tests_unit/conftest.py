@@ -1,4 +1,5 @@
 import logging
+import os
 from collections import namedtuple
 from datetime import datetime
 from pathlib import Path
@@ -1860,3 +1861,13 @@ def data_case(request) -> DataCase:
 
     """
     return request.param
+
+
+@pytest.fixture
+def tmp_test_folder() -> Path:
+    """."""
+    cwd = Path.cwd().resolve()
+    new_dir = cwd / "test_dir"
+    new_dir.mkdir(exist_ok=True)
+    yield new_dir
+    os.chdir(cwd)

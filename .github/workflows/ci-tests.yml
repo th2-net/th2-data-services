@@ -31,10 +31,12 @@ jobs:
 
       - name: rdp5 tests
         run: |
-          pip install --pre -e .[rdp5]
+          pip install --pre -e .[rdp5] -q
+          pip list
           pytest tests/tests_unit -n auto --ignore tests/tests_unit/tests_diff_version/tests_v6
 
       - name: rdp6 tests
         run: |
-          pip install --pre -e .[rdp6]
+          pip install --pre -e .[rdp6] -q
+          pip list
           pytest tests/tests_unit -n auto --ignore tests/tests_unit/tests_diff_version/tests_v5

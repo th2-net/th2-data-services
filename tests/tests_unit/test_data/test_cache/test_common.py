@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import List
 
 from tests.tests_unit.conftest import EXTERNAL_CACHE_FILE, DataCase
@@ -90,7 +91,7 @@ def test_cache_file_isnt_created_after_using_magic_function(general_data: List[d
     assert output == general_data
 
 
-def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_case: DataCase):
+def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_case: DataCase, tmp_test_folder: Path):
     """Issue related test: https://exactpro.atlassian.net/browse/TH2-3545"""
     data = data_case.data
     create_type = data_case.create_type
@@ -102,25 +103,23 @@ def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_c
         dl = iterate_data(data, to_return=True)  # Just to iterate and create cache files.
         assert is_cache_file_exists(data)
 
-    cwd = os.getcwd()
-    os.chdir("/")
+    old_cwd = Path.cwd()
+    os.chdir(tmp_test_folder)
     data._data_stream = []
-    assert list(data) == dl  # Data obj should read from cache
+    assert list(data) == dl, f"old dir: {old_cwd}, new dir: {tmp_test_folder}"  # Data obj should read from cache
     # log_checker.used_own_cache_file(data)
-    os.chdir(cwd)
 
 
-def test_data_doesnt_left_their_cache_file_if_you_change_dir_external_cache(log_checker):
+def test_data_doesnt_left_their_cache_file_if_you_change_dir_external_cache(log_checker, tmp_test_folder: Path):
     """Issue related test: https://exactpro.atlassian.net/browse/TH2-3545"""
     data = Data.from_cache_file(EXTERNAL_CACHE_FILE)
     dl: List = list(data)
 
-    cwd = os.getcwd()
-    os.chdir("/")
+    cwd = Path.cwd()
+    os.chdir(tmp_test_folder)
     data._data_stream = []
     assert list(data) == dl
     # log_checker.used_own_cache_file(data)
-    os.chdir(cwd)
 
 
 @pytest.mark.parametrize(
