@@ -367,4 +367,4 @@ This release implements performance bug fixes and provides Data object cache fil
 1. [TH2-4385] Logging in Data object slows down the ds library very much. 
    - Logging was removed.
    - `add_stderr_logger` and  `add_file_logger` are not available anymore.
-2. [TH2-4380] Streams are now handled by correct adapters
+2. [TH2-4380] Fix apply_adpater feature for GetMessages / GetEvents / GetEventById / GetMessageById
