@@ -356,15 +356,18 @@ This release implements performance bug fixes and provides Data object cache fil
       pip install th2-data-services[rdp5]
       ```
 
-## Improvements
+## Features
+1. [TH2-4289] Data.build_cache and Data.from_cache_file features were added.
+2. Added `Data.cache_status` property
 
+## Improvements
 1. [TH2-4379] Speed improvements in json deserialization.
    - StreamingSSEAdapter will now handle bytes from sse-stream into Dict objects.
    - SSEAdapter is now deprecated class.
 
 ## BugFixes
-
 1. [TH2-4385] Logging in Data object slows down the ds library very much. 
    - Logging was removed.
    - `add_stderr_logger` and  `add_file_logger` are not available anymore.
-2. [TH2-4380] Fix apply_adpater feature for GetMessages / GetEvents / GetEventById / GetMessageById
+2. [TH2-4380] Fixed apply_adpater feature for GetMessages / GetEvents / GetEventById / GetMessageById
+3. [TH2-3767] Fixed bug with limit of Data object in Windows.
