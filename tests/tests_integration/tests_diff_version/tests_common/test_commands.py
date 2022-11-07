@@ -12,7 +12,7 @@ def test_break_iteration_get_events(demo_events_from_data_source: Data):
     for _ in demo_events_from_data_source:
         count += 1
 
-    assert count == 6 # Length of demo_events_from_data_source
+    assert count == 49 # Length of demo_events_from_data_source
 
 def test_break_iteration_get_messages(demo_messages_from_data_source: Data):
     iterated_one_item = False
