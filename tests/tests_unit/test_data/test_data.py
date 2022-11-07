@@ -206,7 +206,7 @@ def test_limit_in_loops(cache):
 
 
 def test_limit_before_loops(cache=True):
-    """There is known Windows bug: https://exactpro.atlassian.net/browse/TH2-3767"""
+    """Related Windows bug: https://exactpro.atlassian.net/browse/TH2-3767"""
     data_stream = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     data = Data(data_stream, cache)
     limit = 5
