@@ -227,6 +227,7 @@ def test_limit_before_loops(cache=True):
     assert not is_cache_file_exists(data)
     assert not is_pending_cache_file_exists(data)
     assert data.len == len(data_stream)  # It'll create cache.
+    assert is_cache_file_exists(data)
 
 
 def test_new_limit_is_less(general_data: List[dict], cache):

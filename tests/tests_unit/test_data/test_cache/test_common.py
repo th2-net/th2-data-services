@@ -106,7 +106,6 @@ def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_c
     old_cwd = Path.cwd()
     os.chdir(tmp_test_folder)
     data._data_stream = ["kek"]
-    os.chdir(old_cwd)
     assert list(data) == dl, f"old dir: {old_cwd}, new dir: {tmp_test_folder}, "  # Data obj should read from cache
     # log_checker.used_own_cache_file(data)
 

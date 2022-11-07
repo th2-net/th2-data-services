@@ -60,6 +60,8 @@ class Data:
         self._id = id(self)
         self._cache_filename = f"{self._id}_{time()}.pickle"
         self._cache_path = Path("temp", self._cache_filename).resolve()
+        self._pending_cache_path = self._cache_path.with_name("[PENDING]" + self._cache_filename)
+        self._cache_file_obj = None
         self._len = None
         self._workflow = [] if workflow is None else workflow  # Normally it has empty list or one Step.
         self._length_hint = None  # The value is populated when we use limit method.
@@ -68,7 +70,7 @@ class Data:
         # LOG         self._logger = _DataLogger(logger, {"id": self._id})
         # It used to indicate the number of current iteration of the Data object.
         # It's required if the same instance iterates several times in for-in loops.
-        self.iter_num = 0
+        self.iter_num = 0  # Indicates what level of the loop the Data object is in.
         self.stop_iteration = None
         self._read_from_external_cache_file = False
 
@@ -94,7 +96,7 @@ class Data:
         path = self.get_pending_cache_filepath()
         if path.exists():
             # LOG             self._logger.debug("Deleting cache file '%s'" % path)
-            self.__pending_file.close()
+            self._cache_file_obj.close()
             path.unlink()
 
     def _create_data_set_from_iterables(self, iterables_list: List[Iterable]) -> DataSet:
@@ -181,7 +183,8 @@ class Data:
 
                 # Delete cache if it was interrupted and the file was not complete.
                 # https://exactpro.atlassian.net/browse/TH2-3546
-                if is_data_writes_cache:
+                # Do not delete cache if iter_num != 1 (loop level > 1).
+                if is_data_writes_cache and self.iter_num == 1:
                     # LOG                     self._logger.info("The cache file is not written to the end. Delete tmp cache file")
                     self.__delete_pending_cache()
                 else:  # Data reads cache.
@@ -256,10 +259,9 @@ class Data:
 
     def get_pending_cache_filepath(self) -> Path:
         """Returns filepath for a pending cache file."""
-        filepath = self.get_cache_filepath()
-        return filepath.with_name("[PENDING]" + self._cache_filename)
+        return self._pending_cache_path
 
-    def get_cache_filepath(self) -> Optional[Path]:
+    def get_cache_filepath(self) -> Path:
         """Returns filepath for a cache file."""
         return self._cache_path
 
@@ -285,6 +287,8 @@ class Data:
                 # There is some magic.
                 # It'll stop data stream and will be handled in the finally statements.
                 # If you put return not under except block it will NOT work.
+                #
+                # It happens because python returns control to data_stream here due to `yield`.
                 return
 
             if modified_records is None:
@@ -294,7 +298,7 @@ class Data:
             else:  # Just one record.
                 yield modified_records
 
-    def __change_data(self, data_stream: DataGenerator, workflow: WorkFlow, cache: bool = False) -> DataGenerator:
+    def __change_data(self, data_stream: DataGenerator, workflow: WorkFlow, cache: bool) -> DataGenerator:
         """Applies workflow for data.
 
         Args:
@@ -307,18 +311,16 @@ class Data:
         """
         if cache:
             filepath = self.get_pending_cache_filepath()
-            filepath.parent.mkdir(exist_ok=True)  # Create dir if does not exist.
+            filepath.parent.mkdir(exist_ok=True)  # Create dir if it does not exist.
             # LOG             self._logger.debug("Recording cache file '%s'" % filepath)
-            file = open(filepath, "wb")
+            self._cache_file_obj = open(filepath, "wb")
 
             for modified_record in self._iterate_modified_data_stream(data_stream, workflow):
-                self.__pending_file = file
-                if not file.closed:
-                    pickle.dump(modified_record, file)
+                pickle.dump(modified_record, self._cache_file_obj)
                 yield modified_record
 
-            file.close()
-            rename(file.name, str(self.get_cache_filepath()))
+            self._cache_file_obj.close()
+            rename(self._cache_file_obj.name, str(self.get_cache_filepath()))
         # LOG             self._logger.debug("Cache file was created '%s'" % self.get_cache_filepath())
         else:
             yield from self._iterate_modified_data_stream(data_stream, workflow)
