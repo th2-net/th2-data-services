@@ -59,8 +59,8 @@ class Data:
 
         self._id = id(self)
         self._cache_filename = f"{self._id}_{time()}.pickle"
-        self._cache_path = Path("temp", self._cache_filename).resolve()
-        self._pending_cache_path = self._cache_path.with_name("[PENDING]" + self._cache_filename)
+        self._cache_path = Path("temp", self._cache_filename).resolve().absolute()
+        self._pending_cache_path = self._cache_path.with_name("[PENDING]" + self._cache_filename).resolve().absolute()
         self._cache_file_obj = None
         self._len = None
         self._workflow = [] if workflow is None else workflow  # Normally it has empty list or one Step.
