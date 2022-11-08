@@ -472,14 +472,11 @@ Later you can create _Data_ object from this cache file and use it as usual:
 from th2_data_services import Data
 
 events = Data.from_cache_file("my_cache.pickle")
-if events is None:
-    raise SystemError("Cache not found (mycache.pickle)")
 
 for event_id in events.filter(lambda x: x["eventType"] == "Verification").map(lambda x: x["eventId"]):
     print(event_id)
 ```
 
-Reading and writing cache files are performed in the `temp/` directory.
 
 ### EventsTree and collections
 
