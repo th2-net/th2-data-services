@@ -8,62 +8,52 @@ def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProviderData
     data_source = demo_data_source
 
     expected_event = {
-        "attachedMessageIds": [],
-        "batchId": None,
-        "body": {},
-        "endTimestamp": {"epochSecond": 1656599851, "nano": 420806000},
-        "eventId": "2c4b3a58-f882-11ec-b952-0a1e730db2c6",
-        "eventName": "Recon: Test",
-        "eventType": "",
-        "isBatched": False,
-        "parentEventId": None,
-        "startTimestamp": {"epochSecond": 1656599851, "nano": 420806000},
-        "successful": False,
-        "type": "event",
+        'attachedMessageIds': [],
+        'batchId': None,
+        'body': {},
+        'endTimestamp': {'epochSecond': 1667988803, 'nano': 83601000},
+        'eventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
+        'eventName': 'Set of auto-generated events for ds lib testing',
+        'eventType': 'ds-lib-test-event',
+        'isBatched': False,
+        'parentEventId': None,
+        'startTimestamp': {'epochSecond': 1667988803, 'nano': 83601000},
+        'successful': True,
+        'type': 'event'
     }
 
     expected_events = []
     expected_events.append(expected_event)
     expected_events.append(
         {
-            "type": "event",
-            "eventId": "a5586d90-b83b-48a4-bd2b-b2059fb79374:b84cff2c-f883-11ec-b070-0a1e730db2c6",
-            "batchId": "a5586d90-b83b-48a4-bd2b-b2059fb79374",
-            "isBatched": True,
-            "eventName": "Match by ClOrdID: '7706360'",
-            "eventType": "",
-            "endTimestamp": {"nano": 809998000, "epochSecond": 1656600515},
-            "startTimestamp": {"nano": 809998000, "epochSecond": 1656600515},
-            "parentEventId": "b21a03c0-f883-11ec-b070-0a1e730db2c6",
-            "successful": True,
-            "attachedMessageIds": ["arfq01fix08:first:1656599887515453583", "arfq01fix08:second:1656599887515499581"],
-            "body": {
-                "type": "table",
-                "rows": [
-                    {"Name": "ClOrdId", "Value": "7706360"},
-                    {"Name": "Message Response", "Value": "ExecutionReport"},
-                    {"Name": "Message Request", "Value": "NewOrderSingle"},
-                    {"Name": "Latency type", "Value": "Trade"},
-                    {"Name": "Latency", "Value": 29000.0},
-                ],
-                "_TableComponent__column_names": ["Name", "Value"],
-            },
+            'attachedMessageIds': [],
+            'batchId': None,
+            'body': 'ds-lib test body',
+            'endTimestamp': {'epochSecond': 1667988803, 'nano': 404786000},
+            'eventId': '24aae778-6017-11ed-b87c-b48c9dc9ebfa',
+            'eventName': 'Plain event 1',
+            'eventType': 'ds-lib-test-event',
+            'isBatched': False,
+            'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
+            'startTimestamp': {'epochSecond': 1667988803, 'nano': 404786000},
+            'successful': True,
+            'type': 'event'
         }
     )
 
-    event = data_source.command(http.GetEventById("2c4b3a58-f882-11ec-b952-0a1e730db2c6"))
+    event = data_source.command(http.GetEventById("2479e531-6017-11ed-9d54-b48c9dc9ebfa"))
     events = data_source.command(
         http.GetEventsById(
             [
-                "2c4b3a58-f882-11ec-b952-0a1e730db2c6",
-                "a5586d90-b83b-48a4-bd2b-b2059fb79374:b84cff2c-f883-11ec-b070-0a1e730db2c6",
+                "2479e531-6017-11ed-9d54-b48c9dc9ebfa",
+                "24aae778-6017-11ed-b87c-b48c9dc9ebfa",
             ]
         )
     )
     events_with_one_element = data_source.command(
         http.GetEventsById(
             [
-                "2c4b3a58-f882-11ec-b952-0a1e730db2c6",
+                "2479e531-6017-11ed-9d54-b48c9dc9ebfa",
             ]
         )
     )
@@ -108,10 +98,10 @@ def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProviderData
     assert broken_event == plug_for_broken_event
     assert broken_events == plug_for_broken_events
     assert [event, broken_event] == data_source.command(
-        http.GetEventsById(["2c4b3a58-f882-11ec-b952-0a1e730db2c6", "id"], use_stub=True)
+        http.GetEventsById(["2479e531-6017-11ed-9d54-b48c9dc9ebfa", "id"], use_stub=True)
     )
     with pytest.raises(CommandError):
-        data_source.command(http.GetEventsById(["2c4b3a58-f882-11ec-b952-0a1e730db2c6", "id"]))
+        data_source.command(http.GetEventsById(["2479e531-6017-11ed-9d54-b48c9dc9ebfa", "id"]))
     with pytest.raises(CommandError):
         data_source.command(http.GetEventById("id"))
 
@@ -233,137 +223,26 @@ def test_get_x_with_filters(
     case = [
         {
             "type": "event",
-            "eventId": "a2321a5b-f883-11ec-8225-52540095fac0",
-            "batchId": None,
+            "eventId": "24ab19ed-6017-11ed-98bf-b48c9dc9ebfa",
+            "batchId": "None",
             "isBatched": False,
-            "eventName": "[TS_1]5 partfill trades and cancel.",
-            "eventType": "",
-            "endTimestamp": {"nano": 735114000, "epochSecond": 1656600478},
-            "startTimestamp": {"nano": 735039000, "epochSecond": 1656600478},
-            "parentEventId": None,
-            "successful": False,
+            "eventName": "Event for Filter test. FilterString-3",
+            "eventType": "ds-lib-test-event",
+            "endTimestamp": {
+                "nano": 406077000,
+                "epochSecond": 1667988803
+            },
+            "startTimestamp": {
+                "nano": 406077000,
+                "epochSecond": 1667988803
+            },
+            "parentEventId": "2479e531-6017-11ed-9d54-b48c9dc9ebfa",
+            "successful": True,
             "attachedMessageIds": [],
-            "body": {},
+            "body": "ds-lib test body. FilterString-3"                                                          
         }
     ]
     case1 = [
-        {
-            "type": "event",
-            "eventId": "bb0da3a9-f883-11ec-aeb3-adf8526f5eec",
-            "batchId": None,
-            "isBatched": False,
-            "eventName": "Received 'ExecutionReport' response message",
-            "eventType": "message",
-            "endTimestamp": {"nano": 428471000, "epochSecond": 1656600520},
-            "startTimestamp": {"nano": 428350000, "epochSecond": 1656600520},
-            "parentEventId": "ba4e7257-f883-11ec-aeb3-adf8526f5eec",
-            "successful": True,
-            "attachedMessageIds": [],
-            "body": [
-                {
-                    "type": "treeTable",
-                    "rows": {
-                        "ExecID": {"type": "row", "columns": {"fieldValue": "E0AmqxctTQGw"}},
-                        "OrderQty": {"type": "row", "columns": {"fieldValue": "20"}},
-                        "LastQty": {"type": "row", "columns": {"fieldValue": "20"}},
-                        "OrderID": {"type": "row", "columns": {"fieldValue": "00Amr2Sw36j1"}},
-                        "TransactTime": {"type": "row", "columns": {"fieldValue": "2022-06-30T14:48:39.526758"}},
-                        "GroupID": {"type": "row", "columns": {"fieldValue": "0"}},
-                        "trailer": {
-                            "type": "collection",
-                            "rows": {"CheckSum": {"type": "row", "columns": {"fieldValue": "136"}}},
-                        },
-                        "Side": {"type": "row", "columns": {"fieldValue": "2"}},
-                        "OrdStatus": {"type": "row", "columns": {"fieldValue": "2"}},
-                        "TimeInForce": {"type": "row", "columns": {"fieldValue": "0"}},
-                        "SecurityID": {"type": "row", "columns": {"fieldValue": "5221001"}},
-                        "ExecType": {"type": "row", "columns": {"fieldValue": "F"}},
-                        "TradeLiquidityIndicator": {"type": "row", "columns": {"fieldValue": "R"}},
-                        "LastLiquidityInd": {"type": "row", "columns": {"fieldValue": "2"}},
-                        "LeavesQty": {"type": "row", "columns": {"fieldValue": "0"}},
-                        "CumQty": {"type": "row", "columns": {"fieldValue": "20"}},
-                        "LastPx": {"type": "row", "columns": {"fieldValue": "55"}},
-                        "TypeOfTrade": {"type": "row", "columns": {"fieldValue": "2"}},
-                        "TrdMatchID": {"type": "row", "columns": {"fieldValue": "L2N1AYTNPW"}},
-                        "OrdType": {"type": "row", "columns": {"fieldValue": "2"}},
-                        "ClOrdID": {"type": "row", "columns": {"fieldValue": "1985282"}},
-                        "SecurityIDSource": {"type": "row", "columns": {"fieldValue": "8"}},
-                        "LastMkt": {"type": "row", "columns": {"fieldValue": "XLOM"}},
-                        "OrderCapacity": {"type": "row", "columns": {"fieldValue": "A"}},
-                        "SecondaryClOrdID": {"type": "row", "columns": {"fieldValue": "33333"}},
-                        "AccountType": {"type": "row", "columns": {"fieldValue": "1"}},
-                        "Price": {"type": "row", "columns": {"fieldValue": "55"}},
-                        "MDEntryID": {"type": "row", "columns": {"fieldValue": "00Amr2Sw36j1"}},
-                        "TradingParty": {
-                            "type": "collection",
-                            "rows": {
-                                "NoPartyIDs": {
-                                    "type": "collection",
-                                    "rows": {
-                                        "0": {
-                                            "type": "collection",
-                                            "rows": {
-                                                "PartyRole": {"type": "row", "columns": {"fieldValue": "76"}},
-                                                "PartyID": {"type": "row", "columns": {"fieldValue": "ARFQ01FIX08"}},
-                                                "PartyIDSource": {"type": "row", "columns": {"fieldValue": "D"}},
-                                            },
-                                        },
-                                        "1": {
-                                            "type": "collection",
-                                            "rows": {
-                                                "PartyRole": {"type": "row", "columns": {"fieldValue": "17"}},
-                                                "PartyID": {"type": "row", "columns": {"fieldValue": "ARFQ01"}},
-                                                "PartyIDSource": {"type": "row", "columns": {"fieldValue": "D"}},
-                                            },
-                                        },
-                                        "2": {
-                                            "type": "collection",
-                                            "rows": {
-                                                "PartyRole": {"type": "row", "columns": {"fieldValue": "3"}},
-                                                "PartyID": {"type": "row", "columns": {"fieldValue": "0"}},
-                                                "PartyIDSource": {"type": "row", "columns": {"fieldValue": "P"}},
-                                            },
-                                        },
-                                        "3": {
-                                            "type": "collection",
-                                            "rows": {
-                                                "PartyRole": {"type": "row", "columns": {"fieldValue": "122"}},
-                                                "PartyID": {"type": "row", "columns": {"fieldValue": "0"}},
-                                                "PartyIDSource": {"type": "row", "columns": {"fieldValue": "P"}},
-                                            },
-                                        },
-                                        "4": {
-                                            "type": "collection",
-                                            "rows": {
-                                                "PartyRole": {"type": "row", "columns": {"fieldValue": "12"}},
-                                                "PartyID": {"type": "row", "columns": {"fieldValue": "3"}},
-                                                "PartyIDSource": {"type": "row", "columns": {"fieldValue": "P"}},
-                                            },
-                                        },
-                                    },
-                                }
-                            },
-                        },
-                        "header": {
-                            "type": "collection",
-                            "rows": {
-                                "BeginString": {"type": "row", "columns": {"fieldValue": "FIXT.1.1"}},
-                                "SenderCompID": {"type": "row", "columns": {"fieldValue": "FGW"}},
-                                "SendingTime": {"type": "row", "columns": {"fieldValue": "2022-06-30T14:48:39.530311"}},
-                                "TargetCompID": {"type": "row", "columns": {"fieldValue": "ARFQ01FIX08"}},
-                                "ApplVerID": {"type": "row", "columns": {"fieldValue": "9"}},
-                                "MsgType": {"type": "row", "columns": {"fieldValue": "8"}},
-                                "MsgSeqNum": {"type": "row", "columns": {"fieldValue": "589"}},
-                                "BodyLength": {"type": "row", "columns": {"fieldValue": "432"}},
-                            },
-                        },
-                        "DisplayQty": {"type": "row", "columns": {"fieldValue": "0"}},
-                    },
-                }
-            ],
-        }
-    ]
-    case3 = [
         {
             "type": "message",
             "timestamp": {"nano": 422000000, "epochSecond": 1656600504},
@@ -464,7 +343,7 @@ def test_get_x_with_filters(
             "bodyBase64": "OD1GSVhULjEuMQE5PTI2MwEzNT1EATM0PTYyNgE0OT1BUkZRMDFGSVgwNwE1Mj0yMDIyMDYzMC0xNDo0ODoyNC4zMzAwMDABNTY9RkdXATExPTE4MzA0MTABMjI9OAEzOD0yMDABNDA9MgE0ND01NQE0OD01MjIxMDAxATU0PTEBNjA9MjAyMjA2MzAtMTQ6NDc6NTkuMDMyMjc2ATUyNj0xMTExMQE1Mjg9QQE1ODE9MQExMTM4PTIwMAE0NTM9NAE0NDg9QVJGUTAxRklYMDcBNDQ3PUQBNDUyPTc2ATQ0OD0wATQ0Nz1QATQ1Mj0zATQ0OD0wATQ0Nz1QATQ1Mj0xMjIBNDQ4PTMBNDQ3PVABNDUyPTEyATEwPTE1MgE=",
         }
     ]
-    assert list(demo_get_messages_with_one_filter) == case3
-    assert list(demo_get_messages_with_filters) == case3
+    assert list(demo_get_messages_with_one_filter) == case1
+    assert list(demo_get_messages_with_filters) == case1
     assert list(demo_get_events_with_one_filter) == case and len(case) is 1
-    assert list(demo_get_events_with_filters) == case1 and len(case1) is 1
+    assert list(demo_get_events_with_filters) == case

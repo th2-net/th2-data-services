@@ -23,10 +23,10 @@ def demo_get_events_with_one_filter(demo_data_source: HTTPProviderDataSource) ->
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            filters=[Filter("name", "Event for Filter test.")],
+            filters=[Filter("name", "Event for Filter test. FilterString-3")],
         )
     )
-    # Returns 10 events
+
     return case
 
 
@@ -36,10 +36,9 @@ def demo_get_events_with_filters(demo_data_source: HTTPProviderDataSource) -> Da
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            filters=[Filter("name", "FilterString"), Filter("type", "ds-lib-test-event"), Filter("body", ["2","3"])],
+            filters=[Filter("name", "FilterString"), Filter("type", "ds-lib-test-event"), Filter("body", ["3"])],
         )
     )
-    # Returns 2 events
     return case
 
 
