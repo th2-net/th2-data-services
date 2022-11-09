@@ -19,4 +19,4 @@ elif v == "0.1.6":  # v5
     from th2_data_services.provider.v5.adapters.message_adapters import CodecPipelinesAdapter  # noqa
     from th2_data_services.filter import Filter  # noqa
 
-    DEMO_PORT = "31787"  # HTTP provider v5
+    DEMO_PORT = "31915"  # HTTP provider v5

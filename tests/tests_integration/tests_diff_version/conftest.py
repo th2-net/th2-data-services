@@ -13,8 +13,8 @@ def demo_data_source():
     return data_source
 
 
-START_TIME = datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0)
-END_TIME = datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+START_TIME = datetime(year=2022, month=11, day=9, hour=10, minute=13, second=17, microsecond=0)
+END_TIME   = datetime(year=2022, month=11, day=9, hour=10, minute=13, second=24, microsecond=0)
 
 
 @pytest.fixture
@@ -23,10 +23,10 @@ def demo_get_events_with_one_filter(demo_data_source: HTTPProviderDataSource) ->
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            filters=[Filter("name", "TS_1")],
+            filters=[Filter("name", "Event for Filter test.")],
         )
     )
-
+    # Returns 10 events
     return case
 
 
@@ -36,10 +36,10 @@ def demo_get_events_with_filters(demo_data_source: HTTPProviderDataSource) -> Da
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            filters=[Filter("name", "ExecutionReport"), Filter("type", "message"), Filter("body", "589")],
+            filters=[Filter("name", "FilterString"), Filter("type", "ds-lib-test-event"), Filter("body", ["2","3"])],
         )
     )
-
+    # Returns 2 events
     return case
 
 
@@ -79,8 +79,7 @@ def demo_events_from_data_source(demo_data_source: HTTPProviderDataSource) -> Da
             end_timestamp=END_TIME,
         )
     )
-    # Returns 49 events #TODO
-    # Failed = 6
+    # Returns 21 events
     return events
 
 
@@ -102,8 +101,7 @@ def demo_events_from_data_source_with_cache_status(
     demo_data_source: HTTPProviderDataSource,
 ) -> Data:
     events = demo_data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
-    # Returns 49 events #TODO
-    # Failed = 6
+    # Returns 21 events
     return events
 
 
