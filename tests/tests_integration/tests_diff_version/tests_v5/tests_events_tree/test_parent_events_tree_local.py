@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from th2_data_services import Data
-from th2_data_services.provider.v5.commands.http import GetEvents
+from th2_data_services.provider.v5.commands import http
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
 from th2_data_services.provider.v5.events_tree.parent_events_tree_collection import (
     ParentEventsTreeCollectionProvider5,
@@ -9,15 +9,12 @@ from th2_data_services.provider.v5.events_tree.parent_events_tree_collection imp
 
 
 def test_recover_unknown_events():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31787/")
-    events: Data = data_source.command(
-        GetEvents(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
-        )
+    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+    events = data_source.command(
+        http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa","24aae779-6017-11ed-9cb4-b48c9dc9ebfa"])
     )
 
-    before_tree = events.len
+    before_tree = len(events)
     collection = ParentEventsTreeCollectionProvider5(events, data_source=data_source)
     after_tree = len(collection)
 
@@ -25,12 +22,9 @@ def test_recover_unknown_events():
 
 
 def test_recover_unknown_events_with_stub_events():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31787/")
-    events: Data = data_source.command(
-        GetEvents(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
-        )
+    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+    events = data_source.command(
+        http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa","24aae779-6017-11ed-9cb4-b48c9dc9ebfa"])
     )
 
     broken_event = {
@@ -56,12 +50,9 @@ def test_recover_unknown_events_with_stub_events():
 
 
 def test_preserve_body():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31787/")
-    events: Data = data_source.command(
-        GetEvents(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
-        )
+    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+    events = data_source.command(
+        http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa","24aae779-6017-11ed-9cb4-b48c9dc9ebfa"])
     )
 
     collection = ParentEventsTreeCollectionProvider5(events, data_source=data_source, preserve_body=True)

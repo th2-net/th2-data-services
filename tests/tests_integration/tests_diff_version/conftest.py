@@ -46,10 +46,10 @@ def demo_get_events_with_filters(demo_data_source: HTTPProviderDataSource) -> Da
 def demo_get_messages_with_one_filter(demo_data_source: HTTPProviderDataSource) -> Data:
     case = demo_data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=20, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=25, microsecond=0),
-            stream=["arfq01fix07"],
-            filters=Filter("type", "NewOrderSingle"),
+            start_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0),
+            end_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0),
+            stream=["ds-lib-session1"],
+            filters=Filter("type", "Incoming"),
         )
     )
 
@@ -60,10 +60,10 @@ def demo_get_messages_with_one_filter(demo_data_source: HTTPProviderDataSource) 
 def demo_get_messages_with_filters(demo_data_source: HTTPProviderDataSource) -> Data:
     case = demo_data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=20, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=25, microsecond=0),
-            stream=["arfq01fix07"],
-            filters=[Filter("type", "NewOrderSingle"), Filter("body", "200")],
+            start_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0),
+            end_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0),
+            stream=["ds-lib-session1","ds-lib-session2"],
+            filters=[Filter("type", "Incoming"), Filter("body", "1668068118435545201")],
         )
     )
 
@@ -86,12 +86,12 @@ def demo_events_from_data_source(demo_data_source: HTTPProviderDataSource) -> Da
 def demo_messages_from_data_source(demo_data_source: HTTPProviderDataSource) -> Data:
     messages = demo_data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=58, second=0, microsecond=0),
-            end_timestamp=END_TIME,
-            stream=["arfq01fix07"],
+            start_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0),
+            end_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0),
+            stream=["ds-lib-session1"],
         )
     )
-    # Returns 239 messages
+    # Returns 2 messages
     return messages
 
 

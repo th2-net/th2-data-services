@@ -110,99 +110,76 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: HTTPProviderDa
     data_source = demo_data_source
 
     expected_message = {
-        "attachedEventIds": [],
-        "body": {
-            "fields": {
-                "header": {
-                    "messageValue": {
-                        "fields": {
-                            "BeginString": {"simpleValue": "FIXT.1.1"},
-                            "BodyLength": {"simpleValue": "61"},
-                            "MsgSeqNum": {"simpleValue": "33"},
-                            "MsgType": {"simpleValue": "0"},
-                            "SenderCompID": {"simpleValue": "ARFQ01FIX08"},
-                            "SendingTime": {"simpleValue": "2022-06-30T14:39:27.111"},
-                            "TargetCompID": {"simpleValue": "FGW"},
-                        }
-                    }
-                },
-                "trailer": {"messageValue": {"fields": {"CheckSum": {"simpleValue": "160"}}}},
-            },
-            "metadata": {
-                "id": {
-                    "connectionId": {"sessionAlias": "arfq01fix08"},
-                    "direction": "SECOND",
-                    "sequence": "1656599887515499033",
-                    "subsequence": [1],
-                },
-                "messageType": "Heartbeat",
-                "protocol": "FIX",
-                "timestamp": "2022-06-30T14:39:27.112Z",
-            },
+        'type': 'message',
+        'timestamp': {
+            'nano': 435545000,
+            'epochSecond': 1668068118
         },
-        "bodyBase64": "OD1GSVhULjEuMQE5PTYxATM1PTABMzQ9MzMBNDk9QVJGUTAxRklYMDgBNTI9MjAyMjA2MzAtMTQ6Mzk6MjcuMTExMDAwATU2PUZHVwExMD0xNjAB",
-        "direction": "OUT",
-        "messageId": "arfq01fix08:second:1656599887515499033",
-        "messageType": "Heartbeat",
-        "sessionId": "arfq01fix08",
-        "timestamp": {"epochSecond": 1656599967, "nano": 112000000},
-        "type": "message",
+        'messageType': 'Incoming',
+        'direction': 'IN',
+        'sessionId': 'ds-lib-session1',
+        'attachedEventIds': [],
+        'messageId': 'ds-lib-session1:first:1668068118435545201',
+        'body': {
+            'metadata': {
+                'id': {
+                    'connectionId': {
+                        'sessionAlias': 'ds-lib-session1'
+                    },
+                    'sequence': '1668068118435545201'
+                },
+                'messageType': 'Incoming',
+                'protocol': 'json'
+            },
+            'fields': {
+                'a': {
+                    'simpleValue': '123'
+                }
+            }
+        },
+        'bodyBase64': 'eyJhIjogIjEyMyJ9'
     }
 
     expected_messages = []
     expected_messages.append(expected_message)
     expected_messages.append(
         {
-            "attachedEventIds": [],
-            "body": {
-                "fields": {
-                    "DefaultApplVerID": {"simpleValue": "9"},
-                    "EncryptMethod": {"simpleValue": "0"},
-                    "HeartBtInt": {"simpleValue": "5"},
-                    "Password": {"simpleValue": "mit123"},
-                    "ResetSeqNumFlag": {"simpleValue": "true"},
-                    "header": {
-                        "messageValue": {
-                            "fields": {
-                                "BeginString": {"simpleValue": "FIXT.1.1"},
-                                "BodyLength": {"simpleValue": "91"},
-                                "MsgSeqNum": {"simpleValue": "1"},
-                                "MsgType": {"simpleValue": "A"},
-                                "SenderCompID": {"simpleValue": "ARFQ01DC03"},
-                                "SendingTime": {"simpleValue": "2022-06-30T14:46:03.911"},
-                                "TargetCompID": {"simpleValue": "FGW"},
-                            }
-                        }
-                    },
-                    "trailer": {"messageValue": {"fields": {"CheckSum": {"simpleValue": "161"}}}},
-                },
-                "metadata": {
-                    "id": {
-                        "connectionId": {"sessionAlias": "arfq01dc03"},
-                        "direction": "SECOND",
-                        "sequence": "1656599850628059096",
-                        "subsequence": [1],
-                    },
-                    "messageType": "Logon",
-                    "protocol": "FIX",
-                    "timestamp": "2022-06-30T14:46:03.915Z",
-                },
+            'type': 'message',
+            'timestamp': {
+                'nano': 802350000,
+                'epochSecond': 1668068118
             },
-            "bodyBase64": "OD1GSVhULjEuMQE5PTkxATM1PUEBMzQ9MQE0OT1BUkZRMDFEQzAzATUyPTIwMjIwNjMwLTE0OjQ2OjAzLjkxMQE1Nj1GR1cBOTg9MAExMDg9NQExNDE9WQE1NTQ9bWl0MTIzATExMzc9OQExMD0xNjEB",
-            "direction": "OUT",
-            "messageId": "arfq01dc03:second:1656599850628059096",
-            "messageType": "Logon",
-            "sessionId": "arfq01dc03",
-            "timestamp": {"epochSecond": 1656600363, "nano": 915000000},
-            "type": "message",
+            'messageType': 'Incoming',
+            'direction': 'IN',
+            'sessionId': 'ds-lib-session2',
+            'attachedEventIds': [],
+            'messageId': 'ds-lib-session2:first:1668068118435545202',
+            'body': {
+                'metadata': {
+                    'id': {
+                        'connectionId': {
+                            'sessionAlias': 'ds-lib-session2'
+                        },
+                        'sequence': '1668068118435545202'
+                    },
+                    'messageType': 'Incoming',
+                    'protocol': 'json'
+                },
+                'fields': {
+                    'a': {
+                        'simpleValue': '123'
+                    }
+                }
+            },
+            'bodyBase64': 'eyJhIjogIjEyMyJ9'
         }
     )
 
-    message = data_source.command(http.GetMessageById("arfq01fix08:second:1656599887515499033"))
+    message = data_source.command(http.GetMessageById("ds-lib-session1:first:1668068118435545201"))
     messages = data_source.command(
-        http.GetMessagesById(["arfq01fix08:second:1656599887515499033", "arfq01dc03:second:1656599850628059096"])
+        http.GetMessagesById(["ds-lib-session1:first:1668068118435545201", "'ds-lib-session1:first:1668068118435545202"])
     )
-    messages_with_one_element = data_source.command(http.GetMessagesById(["arfq01fix08:second:1656599887515499033"]))
+    messages_with_one_element = data_source.command(http.GetMessagesById(["ds-lib-session1:first:1668068118435545201"]))
     # Check types
     assert isinstance(message, dict)
     assert isinstance(messages, list)
@@ -244,103 +221,34 @@ def test_get_x_with_filters(
     ]
     case1 = [
         {
-            "type": "message",
-            "timestamp": {"nano": 422000000, "epochSecond": 1656600504},
-            "messageType": "NewOrderSingle",
-            "direction": "OUT",
-            "sessionId": "arfq01fix07",
-            "attachedEventIds": [],
-            "messageId": "arfq01fix07:second:1656599837520228626",
-            "body": {
-                "metadata": {
-                    "id": {
-                        "connectionId": {"sessionAlias": "arfq01fix07"},
-                        "direction": "SECOND",
-                        "sequence": "1656599837520228626",
-                        "subsequence": [1],
-                    },
-                    "timestamp": "2022-06-30T14:48:24.422Z",
-                    "messageType": "NewOrderSingle",
-                    "protocol": "FIX",
-                },
-                "fields": {
-                    "OrderQty": {"simpleValue": "200"},
-                    "OrdType": {"simpleValue": "2"},
-                    "ClOrdID": {"simpleValue": "1830410"},
-                    "SecurityIDSource": {"simpleValue": "8"},
-                    "OrderCapacity": {"simpleValue": "A"},
-                    "TransactTime": {"simpleValue": "2022-06-30T14:47:59.032276"},
-                    "SecondaryClOrdID": {"simpleValue": "11111"},
-                    "AccountType": {"simpleValue": "1"},
-                    "trailer": {"messageValue": {"fields": {"CheckSum": {"simpleValue": "152"}}}},
-                    "Side": {"simpleValue": "1"},
-                    "Price": {"simpleValue": "55"},
-                    "TradingParty": {
-                        "messageValue": {
-                            "fields": {
-                                "NoPartyIDs": {
-                                    "listValue": {
-                                        "values": [
-                                            {
-                                                "messageValue": {
-                                                    "fields": {
-                                                        "PartyRole": {"simpleValue": "76"},
-                                                        "PartyID": {"simpleValue": "ARFQ01FIX07"},
-                                                        "PartyIDSource": {"simpleValue": "D"},
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                "messageValue": {
-                                                    "fields": {
-                                                        "PartyRole": {"simpleValue": "3"},
-                                                        "PartyID": {"simpleValue": "0"},
-                                                        "PartyIDSource": {"simpleValue": "P"},
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                "messageValue": {
-                                                    "fields": {
-                                                        "PartyRole": {"simpleValue": "122"},
-                                                        "PartyID": {"simpleValue": "0"},
-                                                        "PartyIDSource": {"simpleValue": "P"},
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                "messageValue": {
-                                                    "fields": {
-                                                        "PartyRole": {"simpleValue": "12"},
-                                                        "PartyID": {"simpleValue": "3"},
-                                                        "PartyIDSource": {"simpleValue": "P"},
-                                                    }
-                                                }
-                                            },
-                                        ]
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "SecurityID": {"simpleValue": "5221001"},
-                    "header": {
-                        "messageValue": {
-                            "fields": {
-                                "BeginString": {"simpleValue": "FIXT.1.1"},
-                                "SenderCompID": {"simpleValue": "ARFQ01FIX07"},
-                                "SendingTime": {"simpleValue": "2022-06-30T14:48:24.330"},
-                                "TargetCompID": {"simpleValue": "FGW"},
-                                "MsgType": {"simpleValue": "D"},
-                                "MsgSeqNum": {"simpleValue": "626"},
-                                "BodyLength": {"simpleValue": "263"},
-                            }
-                        }
-                    },
-                    "DisplayQty": {"simpleValue": "200"},
-                },
+            'type': 'message',
+            'timestamp': {
+                'nano': 435545000,
+                'epochSecond': 1668068118
             },
-            "bodyBase64": "OD1GSVhULjEuMQE5PTI2MwEzNT1EATM0PTYyNgE0OT1BUkZRMDFGSVgwNwE1Mj0yMDIyMDYzMC0xNDo0ODoyNC4zMzAwMDABNTY9RkdXATExPTE4MzA0MTABMjI9OAEzOD0yMDABNDA9MgE0ND01NQE0OD01MjIxMDAxATU0PTEBNjA9MjAyMjA2MzAtMTQ6NDc6NTkuMDMyMjc2ATUyNj0xMTExMQE1Mjg9QQE1ODE9MQExMTM4PTIwMAE0NTM9NAE0NDg9QVJGUTAxRklYMDcBNDQ3PUQBNDUyPTc2ATQ0OD0wATQ0Nz1QATQ1Mj0zATQ0OD0wATQ0Nz1QATQ1Mj0xMjIBNDQ4PTMBNDQ3PVABNDUyPTEyATEwPTE1MgE=",
+            'messageType': 'Incoming',
+            'direction': 'IN',
+            'sessionId': 'ds-lib-session1',
+            'attachedEventIds': [],
+            'messageId': 'ds-lib-session1:first:1668068118435545201',
+            'body': {
+                'metadata': {
+                    'id': {
+                        'connectionId': {
+                            'sessionAlias': 'ds-lib-session1'
+                        },
+                        'sequence': '1668068118435545201'
+                    },
+                    'messageType': 'Incoming',
+                    'protocol': 'json'
+                },
+                'fields': {
+                    'a': {
+                        'simpleValue': '123'
+                    }
+                }
+            },
+            'bodyBase64': 'eyJhIjogIjEyMyJ9'
         }
     ]
     assert list(demo_get_messages_with_one_filter) == case1
