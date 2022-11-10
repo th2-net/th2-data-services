@@ -8,8 +8,8 @@ from th2_data_services.provider.v5.events_tree.parent_events_tree_collection imp
 )
 
 
-def test_recover_unknown_events():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+def test_recover_unknown_events(demo_data_source: HTTPProvider5DataSource):
+    data_source = demo_data_source
     events = data_source.command(
         http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa","24aae779-6017-11ed-9cb4-b48c9dc9ebfa"])
     )
@@ -21,8 +21,8 @@ def test_recover_unknown_events():
     assert not collection.detached_events and before_tree != after_tree
 
 
-def test_recover_unknown_events_with_stub_events():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+def test_recover_unknown_events_with_stub_events(demo_data_source: HTTPProvider5DataSource):
+    data_source = demo_data_source
     events = data_source.command(
         http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa","24aae779-6017-11ed-9cb4-b48c9dc9ebfa"])
     )
@@ -49,8 +49,8 @@ def test_recover_unknown_events_with_stub_events():
     assert collection.detached_events == {"Broken_Event": [broken_event]} and before_tree != after_tree
 
 
-def test_preserve_body():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+def test_preserve_body(demo_data_source: HTTPProvider5DataSource):
+    data_source = demo_data_source
     events = data_source.command(
         http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa","24aae779-6017-11ed-9cb4-b48c9dc9ebfa"])
     )

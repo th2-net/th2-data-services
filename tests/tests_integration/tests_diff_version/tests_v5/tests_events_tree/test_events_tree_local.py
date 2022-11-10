@@ -5,8 +5,8 @@ from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 
 
-def test_recover_unknown_events():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+def test_recover_unknown_events(demo_data_source: HTTPProvider5DataSource):
+    data_source = demo_data_source
     events: Data = data_source.command(
         http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa"])
     )
@@ -18,8 +18,8 @@ def test_recover_unknown_events():
     assert not collection.detached_events and before_tree != after_tree
 
 
-def test_recover_unknown_events_ds_passed_into_method():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+def test_recover_unknown_events_ds_passed_into_method(demo_data_source: HTTPProvider5DataSource):
+    data_source = demo_data_source
     events: Data = data_source.command(
         http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa"])
     )
@@ -31,8 +31,8 @@ def test_recover_unknown_events_ds_passed_into_method():
     assert not collection.detached_events and before_tree != after_tree
 
 
-def test_recover_unknown_events_with_stub_events():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+def test_recover_unknown_events_with_stub_events(demo_data_source: HTTPProvider5DataSource):
+    data_source = demo_data_source
     events: Data = data_source.command(
         http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa"])
     )
@@ -59,8 +59,8 @@ def test_recover_unknown_events_with_stub_events():
     assert collection.detached_events == {"Broken_Event": [broken_event]} and before_tree != after_tree
 
 
-def test_preserve_body():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+def test_preserve_body(demo_data_source: HTTPProvider5DataSource):
+    data_source = demo_data_source
     events: Data = data_source.command(
         http.GetEventsById(["24aae778-6017-11ed-b87c-b48c9dc9ebfa"])
     )
@@ -72,8 +72,8 @@ def test_preserve_body():
     )
 
 # NEEDS REFACTORING
-def test_create_subtree_incoming_data_stream():
-    data_source = HTTPProvider5DataSource("http://10.100.66.114:31915/")
+def test_create_subtree_incoming_data_stream(demo_data_source: HTTPProvider5DataSource):
+    data_source = demo_data_source
     events: Data = data_source.command(
         http.GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
