@@ -391,15 +391,17 @@ supports aggregate operations.
 - **Sequence of elements**:
   A _Data object_ provides an interface to a sequenced set of values of a specific element type. Stream inside the _Data
   object_ **don’t actually store** elements; they are computed on demand.
-- **DataSource**:
+- **data source** (exactly in small letters):
   Any source of data. E.g. [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider), collections,
   arrays, or I/O resources.
+- **DataSource**:
+  A class that is an intermediate link between the SourceAPI and Commands.
 - **ProviderDataSource**:
   The DataSource object whose source is [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider).
 - **SourceAPI**:
   Each source has its own API to retrieve data. SourceAPI is a class that provide API for some data source.
 - **Commands**:
-  Objects that provide user-friendly interfaces for getting some data from DataSource. Commands use _SourceAPI_ to
+  Classes that provide user-friendly interfaces for getting some data from DataSource. Commands use _SourceAPI_ to
   achieve it.
 - **Adapters**:
   It's similar to function for `Data.map` method. Adoptable commands used it to update the data stream.
@@ -411,8 +413,8 @@ supports aggregate operations.
 
 The library describes the high-level interfaces `ISourceAPI`, `IDataSource`, `ICommand`, `IAdapter`.
 
-Any data source must be described by the `IDataSource` abstract class. These can be _FileDataSource_, _CSVDataSource_, _
-DBDataSource_ and other.
+Any data source must be described by the `IDataSource` abstract class. These can be _FileDataSource_, 
+_CSVDataSource_, _DBDataSource_ and other.
 
 Usually, data sources have some kind of API. Databases - provide SQL language, when working with a file, you can read
 line by line, etc. This API is described by the `ISourceAPI` class. Because different versions of the same data source
