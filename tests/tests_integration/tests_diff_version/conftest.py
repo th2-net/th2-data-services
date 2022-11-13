@@ -13,16 +13,19 @@ def data_source():
     return data_source
 
 
-START_TIME = datetime(year=2022, month=11, day=9, hour=10, minute=13, second=17, microsecond=0)
-END_TIME   = datetime(year=2022, month=11, day=9, hour=10, minute=13, second=24, microsecond=0)
+START_TIME_EVENT = datetime(year=2022, month=11, day=9, hour=10, minute=13, second=17, microsecond=0)
+END_TIME_EVENT   = datetime(year=2022, month=11, day=9, hour=10, minute=13, second=24, microsecond=0)
+
+START_TIME_MESSAGE = datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0)
+END_TIME_MESSAGE   = datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0)
 
 
 @pytest.fixture
 def get_events_with_one_filter(data_source: HTTPProviderDataSource) -> Data:
     case = data_source.command(
         http.GetEvents(
-            start_timestamp=START_TIME,
-            end_timestamp=END_TIME,
+            start_timestamp=START_TIME_EVENT,
+            end_timestamp=END_TIME_EVENT,
             filters=[Filter("name", "Event for Filter test. FilterString-3")],
         )
     )
@@ -34,8 +37,8 @@ def get_events_with_one_filter(data_source: HTTPProviderDataSource) -> Data:
 def get_events_with_filters(data_source: HTTPProviderDataSource) -> Data:
     case = data_source.command(
         http.GetEvents(
-            start_timestamp=START_TIME,
-            end_timestamp=END_TIME,
+            start_timestamp=START_TIME_EVENT,
+            end_timestamp=END_TIME_EVENT,
             filters=[Filter("name", "FilterString"), Filter("type", "ds-lib-test-event"), Filter("body", ["3"])],
         )
     )
@@ -46,8 +49,8 @@ def get_events_with_filters(data_source: HTTPProviderDataSource) -> Data:
 def get_messages_with_one_filter(data_source: HTTPProviderDataSource) -> Data:
     case = data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0),
-            end_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0),
+            start_timestamp=START_TIME_MESSAGE,
+            end_timestamp=END_TIME_MESSAGE,
             stream=["ds-lib-session1"],
             filters=Filter("type", "Incoming"),
         )
@@ -60,8 +63,8 @@ def get_messages_with_one_filter(data_source: HTTPProviderDataSource) -> Data:
 def get_messages_with_filters(data_source: HTTPProviderDataSource) -> Data:
     case = data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0),
-            end_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0),
+            start_timestamp=START_TIME_MESSAGE,
+            end_timestamp=END_TIME_MESSAGE,
             stream=["ds-lib-session1","ds-lib-session2"],
             filters=[Filter("type", "Incoming"), Filter("body", "1668068118435545201")],
         )
@@ -74,8 +77,8 @@ def get_messages_with_filters(data_source: HTTPProviderDataSource) -> Data:
 def events_from_data_source(data_source: HTTPProviderDataSource) -> Data:
     events = data_source.command(
         http.GetEvents(
-            start_timestamp=START_TIME,
-            end_timestamp=END_TIME,
+            start_timestamp=START_TIME_EVENT,
+            end_timestamp=END_TIME_EVENT,
         )
     )
     # Returns 21 events
@@ -86,8 +89,8 @@ def events_from_data_source(data_source: HTTPProviderDataSource) -> Data:
 def messages_from_data_source(data_source: HTTPProviderDataSource) -> Data:
     messages = data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0),
-            end_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0),
+            start_timestamp=START_TIME_MESSAGE,
+            end_timestamp=END_TIME_MESSAGE,
             stream=["ds-lib-session1"],
         )
     )
@@ -99,7 +102,7 @@ def messages_from_data_source(data_source: HTTPProviderDataSource) -> Data:
 def events_from_data_source_with_cache_status(
     data_source: HTTPProviderDataSource,
 ) -> Data:
-    events = data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
+    events = data_source.command(http.GetEvents(start_timestamp=START_TIME_EVENT, end_timestamp=END_TIME_EVENT, cache=True))
     # Returns 21 events
     return events
 
@@ -110,8 +113,8 @@ def messages_from_data_source_with_test_streams(
 ) -> Data:
     messages = data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=58, second=0, microsecond=0),
-            end_timestamp=END_TIME,
+            start_timestamp=START_TIME_MESSAGE,
+            end_timestamp=END_TIME_MESSAGE,
             stream=[
                 "Test-123",
                 "Test-1234",
