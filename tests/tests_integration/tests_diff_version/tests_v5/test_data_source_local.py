@@ -4,8 +4,8 @@ from ..conftest import HTTPProviderDataSource, http, Data
 from th2_data_services.provider.exceptions import CommandError
 
 
-def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProviderDataSource):
-    data_source = demo_data_source
+def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSource):
+    data_source = data_source
 
     expected_event = {
         'attachedMessageIds': [],
@@ -106,8 +106,8 @@ def test_find_events_by_id_from_data_provider(demo_data_source: HTTPProviderData
         data_source.command(http.GetEventById("id"))
 
 
-def test_find_messages_by_id_from_data_provider(demo_data_source: HTTPProviderDataSource):
-    data_source = demo_data_source
+def test_find_messages_by_id_from_data_provider(data_source: HTTPProviderDataSource):
+    data_source = data_source
 
     expected_message = {
         'type': 'message',
@@ -192,10 +192,10 @@ def test_find_messages_by_id_from_data_provider(demo_data_source: HTTPProviderDa
 
 
 def test_get_x_with_filters(
-    demo_get_events_with_one_filter: Data,
-    demo_get_messages_with_one_filter: Data,
-    demo_get_events_with_filters: Data,
-    demo_get_messages_with_filters: Data,
+    get_events_with_one_filter: Data,
+    get_messages_with_one_filter: Data,
+    get_events_with_filters: Data,
+    get_messages_with_filters: Data,
 ):
     case = [
         {
@@ -251,7 +251,7 @@ def test_get_x_with_filters(
             'bodyBase64': 'eyJhIjogIjEyMyJ9'
         }
     ]
-    assert list(demo_get_messages_with_one_filter) == case1
-    assert list(demo_get_messages_with_filters) == case1
-    assert list(demo_get_events_with_one_filter) == case and len(case) is 1
-    assert list(demo_get_events_with_filters) == case
+    assert list(get_messages_with_one_filter) == case1
+    assert list(get_messages_with_filters) == case1
+    assert list(get_events_with_one_filter) == case and len(case) is 1
+    assert list(get_events_with_filters) == case

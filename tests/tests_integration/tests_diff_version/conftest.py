@@ -3,13 +3,13 @@ from datetime import datetime
 import pytest
 
 from th2_data_services import Data
-from . import HTTPProviderAPI, HTTPProviderDataSource, http, CodecPipelinesAdapter, Filter, DEMO_PORT  # noqa  # noqa
+from . import HTTPProviderAPI, HTTPProviderDataSource, http, CodecPipelinesAdapter, Filter, PORT  # noqa  # noqa
 
 
 @pytest.fixture
-def demo_data_source():
-    DEMO_HOST = "10.100.66.114"  # de-th2-qa
-    data_source = HTTPProviderDataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+def data_source():
+    HOST = "10.100.66.114"  # de-th2-qa
+    data_source = HTTPProviderDataSource(f"http://{HOST}:{PORT}")
     return data_source
 
 
@@ -18,8 +18,8 @@ END_TIME   = datetime(year=2022, month=11, day=9, hour=10, minute=13, second=24,
 
 
 @pytest.fixture
-def demo_get_events_with_one_filter(demo_data_source: HTTPProviderDataSource) -> Data:
-    case = demo_data_source.command(
+def get_events_with_one_filter(data_source: HTTPProviderDataSource) -> Data:
+    case = data_source.command(
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
@@ -31,8 +31,8 @@ def demo_get_events_with_one_filter(demo_data_source: HTTPProviderDataSource) ->
 
 
 @pytest.fixture
-def demo_get_events_with_filters(demo_data_source: HTTPProviderDataSource) -> Data:
-    case = demo_data_source.command(
+def get_events_with_filters(data_source: HTTPProviderDataSource) -> Data:
+    case = data_source.command(
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
@@ -43,8 +43,8 @@ def demo_get_events_with_filters(demo_data_source: HTTPProviderDataSource) -> Da
 
 
 @pytest.fixture
-def demo_get_messages_with_one_filter(demo_data_source: HTTPProviderDataSource) -> Data:
-    case = demo_data_source.command(
+def get_messages_with_one_filter(data_source: HTTPProviderDataSource) -> Data:
+    case = data_source.command(
         http.GetMessages(
             start_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0),
             end_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0),
@@ -57,8 +57,8 @@ def demo_get_messages_with_one_filter(demo_data_source: HTTPProviderDataSource) 
 
 
 @pytest.fixture
-def demo_get_messages_with_filters(demo_data_source: HTTPProviderDataSource) -> Data:
-    case = demo_data_source.command(
+def get_messages_with_filters(data_source: HTTPProviderDataSource) -> Data:
+    case = data_source.command(
         http.GetMessages(
             start_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0),
             end_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0),
@@ -71,8 +71,8 @@ def demo_get_messages_with_filters(demo_data_source: HTTPProviderDataSource) -> 
 
 
 @pytest.fixture
-def demo_events_from_data_source(demo_data_source: HTTPProviderDataSource) -> Data:
-    events = demo_data_source.command(
+def events_from_data_source(data_source: HTTPProviderDataSource) -> Data:
+    events = data_source.command(
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
@@ -83,8 +83,8 @@ def demo_events_from_data_source(demo_data_source: HTTPProviderDataSource) -> Da
 
 
 @pytest.fixture
-def demo_messages_from_data_source(demo_data_source: HTTPProviderDataSource) -> Data:
-    messages = demo_data_source.command(
+def messages_from_data_source(data_source: HTTPProviderDataSource) -> Data:
+    messages = data_source.command(
         http.GetMessages(
             start_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=11, microsecond=0),
             end_timestamp=datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0),
@@ -96,19 +96,19 @@ def demo_messages_from_data_source(demo_data_source: HTTPProviderDataSource) -> 
 
 
 @pytest.fixture
-def demo_events_from_data_source_with_cache_status(
-    demo_data_source: HTTPProviderDataSource,
+def events_from_data_source_with_cache_status(
+    data_source: HTTPProviderDataSource,
 ) -> Data:
-    events = demo_data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
+    events = data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
     # Returns 21 events
     return events
 
 
 @pytest.fixture
-def demo_messages_from_data_source_with_test_streams(
-    demo_data_source: HTTPProviderDataSource,
+def messages_from_data_source_with_test_streams(
+    data_source: HTTPProviderDataSource,
 ) -> Data:
-    messages = demo_data_source.command(
+    messages = data_source.command(
         http.GetMessages(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=58, second=0, microsecond=0),
             end_timestamp=END_TIME,
