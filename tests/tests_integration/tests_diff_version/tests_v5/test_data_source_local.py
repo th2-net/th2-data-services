@@ -3,6 +3,10 @@ import pytest
 from ..conftest import HTTPProviderDataSource, http, Data
 from th2_data_services.provider.exceptions import CommandError
 
+EVENT_ID_1 = '2479e531-6017-11ed-9d54-b48c9dc9ebfa'
+EVENT_ID_2 = '24aae778-6017-11ed-b87c-b48c9dc9ebfa'
+MESSAGE_ID_1 = 'ds-lib-session1:first:1668068118435545201'
+MESSAGE_ID_2 = 'ds-lib-session1:first:1668068118435545202'
 
 def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSource):
     data_source = data_source
@@ -41,19 +45,19 @@ def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSourc
         }
     )
 
-    event = data_source.command(http.GetEventById("2479e531-6017-11ed-9d54-b48c9dc9ebfa"))
+    event = data_source.command(http.GetEventById(EVENT_ID_1))
     events = data_source.command(
         http.GetEventsById(
             [
-                "2479e531-6017-11ed-9d54-b48c9dc9ebfa",
-                "24aae778-6017-11ed-b87c-b48c9dc9ebfa",
+                EVENT_ID_1,
+                EVENT_ID_2,
             ]
         )
     )
     events_with_one_element = data_source.command(
         http.GetEventsById(
             [
-                "2479e531-6017-11ed-9d54-b48c9dc9ebfa",
+                EVENT_ID_1,
             ]
         )
     )
@@ -98,10 +102,10 @@ def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSourc
     assert broken_event == plug_for_broken_event
     assert broken_events == plug_for_broken_events
     assert [event, broken_event] == data_source.command(
-        http.GetEventsById(["2479e531-6017-11ed-9d54-b48c9dc9ebfa", "id"], use_stub=True)
+        http.GetEventsById([EVENT_ID_1, "id"], use_stub=True)
     )
     with pytest.raises(CommandError):
-        data_source.command(http.GetEventsById(["2479e531-6017-11ed-9d54-b48c9dc9ebfa", "id"]))
+        data_source.command(http.GetEventsById([EVENT_ID_1, "id"]))
     with pytest.raises(CommandError):
         data_source.command(http.GetEventById("id"))
 
@@ -175,11 +179,11 @@ def test_find_messages_by_id_from_data_provider(data_source: HTTPProviderDataSou
         }
     )
 
-    message = data_source.command(http.GetMessageById("ds-lib-session1:first:1668068118435545201"))
+    message = data_source.command(http.GetMessageById(MESSAGE_ID_1))
     messages = data_source.command(
-        http.GetMessagesById(["ds-lib-session1:first:1668068118435545201", "'ds-lib-session1:first:1668068118435545202"])
+        http.GetMessagesById([MESSAGE_ID_1, MESSAGE_ID_2])
     )
-    messages_with_one_element = data_source.command(http.GetMessagesById(["ds-lib-session1:first:1668068118435545201"]))
+    messages_with_one_element = data_source.command(http.GetMessagesById([MESSAGE_ID_1]))
     # Check types
     assert isinstance(message, dict)
     assert isinstance(messages, list)
