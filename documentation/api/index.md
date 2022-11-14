@@ -70,6 +70,7 @@
 - [`utils`](./utils.md#module-utils)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
 - [`utils.json`](./utils.json.md#module-utilsjson)
+- [`utils.misc_utils`](./utils.misc_utils.md#module-utilsmisc_utils)
 
 ## Classes
 
@@ -174,6 +175,8 @@
 - [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
 - [`command_resolver.resolver_get_event_by_id`](./provider.v5.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
 - [`command_resolver.resolver_get_events_by_id`](./provider.v5.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
+- [`misc_utils.extract_time`](./utils.misc_utils.md#function-extract_time): Extracts Time From TH2-Event/Message.
+- [`misc_utils.print_stats_dict`](./utils.misc_utils.md#function-print_stats_dict)
 
 
 ---
