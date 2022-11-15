@@ -3,10 +3,9 @@ import pytest
 from ..conftest import HTTPProviderDataSource, http, Data
 from th2_data_services.provider.exceptions import CommandError
 
-EVENT_ID_1 = '2479e531-6017-11ed-9d54-b48c9dc9ebfa'
-EVENT_ID_2 = '24aae778-6017-11ed-b87c-b48c9dc9ebfa'
-MESSAGE_ID_1 = 'ds-lib-session1:first:1668068118435545201'
-MESSAGE_ID_2 = 'ds-lib-session1:first:1668068118435545202'
+from .. import EVENT_ID_TEST_DATA_ROOT, EVENT_ID_PLAIN_EVENT_1, MESSAGE_ID_1, MESSAGE_ID_2
+
+
 
 def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSource):
     data_source = data_source
@@ -45,19 +44,19 @@ def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSourc
         }
     )
 
-    event = data_source.command(http.GetEventById(EVENT_ID_1))
+    event = data_source.command(http.GetEventById(EVENT_ID_TEST_DATA_ROOT))
     events = data_source.command(
         http.GetEventsById(
             [
-                EVENT_ID_1,
-                EVENT_ID_2,
+                EVENT_ID_TEST_DATA_ROOT,
+                EVENT_ID_PLAIN_EVENT_1,
             ]
         )
     )
     events_with_one_element = data_source.command(
         http.GetEventsById(
             [
-                EVENT_ID_1,
+                EVENT_ID_TEST_DATA_ROOT,
             ]
         )
     )
@@ -102,10 +101,10 @@ def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSourc
     assert broken_event == plug_for_broken_event
     assert broken_events == plug_for_broken_events
     assert [event, broken_event] == data_source.command(
-        http.GetEventsById([EVENT_ID_1, "id"], use_stub=True)
+        http.GetEventsById([EVENT_ID_TEST_DATA_ROOT, "id"], use_stub=True)
     )
     with pytest.raises(CommandError):
-        data_source.command(http.GetEventsById([EVENT_ID_1, "id"]))
+        data_source.command(http.GetEventsById([EVENT_ID_TEST_DATA_ROOT, "id"]))
     with pytest.raises(CommandError):
         data_source.command(http.GetEventById("id"))
 

@@ -7,12 +7,11 @@ from th2_data_services.provider.v5.events_tree.parent_events_tree_collection imp
     ParentEventsTreeCollectionProvider5,
 )
 
-EVENT_ID_CHILD1 = '24aae778-6017-11ed-b87c-b48c9dc9ebfa'
-EVENT_ID_CHILD2 = '24aae779-6017-11ed-9cb4-b48c9dc9ebfa'
+from ... import EVENT_ID_PLAIN_EVENT_1, EVENT_ID_PLAIN_EVENT_2
 
 def test_recover_unknown_events(demo_data_source: HTTPProvider5DataSource):
     events = demo_data_source.command(
-        http.GetEventsById([EVENT_ID_CHILD1,EVENT_ID_CHILD2])
+        http.GetEventsById([EVENT_ID_PLAIN_EVENT_1,EVENT_ID_PLAIN_EVENT_2])
     )
 
     before_tree = len(events)
@@ -24,7 +23,7 @@ def test_recover_unknown_events(demo_data_source: HTTPProvider5DataSource):
 
 def test_recover_unknown_events_with_stub_events(demo_data_source: HTTPProvider5DataSource):
     events = demo_data_source.command(
-        http.GetEventsById([EVENT_ID_CHILD1,EVENT_ID_CHILD2])
+        http.GetEventsById([EVENT_ID_PLAIN_EVENT_1,EVENT_ID_PLAIN_EVENT_2])
     )
 
     broken_event = {
@@ -51,7 +50,7 @@ def test_recover_unknown_events_with_stub_events(demo_data_source: HTTPProvider5
 
 def test_preserve_body(demo_data_source: HTTPProvider5DataSource):
     events = demo_data_source.command(
-        http.GetEventsById([EVENT_ID_CHILD1,EVENT_ID_CHILD2])
+        http.GetEventsById([EVENT_ID_PLAIN_EVENT_1,EVENT_ID_PLAIN_EVENT_2])
     )
 
     collection = ParentEventsTreeCollectionProvider5(events, data_source=demo_data_source, preserve_body=True)
