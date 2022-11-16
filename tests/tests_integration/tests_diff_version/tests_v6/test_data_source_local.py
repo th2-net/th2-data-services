@@ -4,19 +4,23 @@ from ..conftest import HTTPProviderDataSource, http, Data
 from th2_data_services.provider.exceptions import CommandError
 
 from .. import EVENT_ID_TEST_DATA_ROOT, EVENT_ID_PLAIN_EVENT_1, MESSAGE_ID_1, MESSAGE_ID_2
-from ..test_bodies.v5.test_event_bodies import root_event_body, plain_event_1_body, filter_event_3_body
+from ..test_bodies.v6.test_event_bodies import root_event_body, plain_event_1_body, filter_event_3_body
 from ..test_bodies.v6.test_message_bodies import message_1_body, message_2_body
 
+<<<<<<< HEAD
 
 def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSource):
     data_source = data_source
 
+=======
+def test_find_events_by_id_from_data_provider(http_data_source: HTTPProviderDataSource):
+>>>>>>> 382d800 (Updated v6 tests)
     expected_event = root_event_body
 
     expected_events = [expected_event, plain_event_1_body]
 
-    event = data_source.command(http.GetEventById(EVENT_ID_TEST_DATA_ROOT))
-    events = data_source.command(
+    event = http_data_source.command(http.GetEventById(EVENT_ID_TEST_DATA_ROOT))
+    events = http_data_source.command(
         http.GetEventsById(
             [
                 EVENT_ID_TEST_DATA_ROOT,
@@ -24,7 +28,7 @@ def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSourc
             ]
         )
     )
-    events_with_one_element = data_source.command(
+    events_with_one_element = http_data_source.command(
         http.GetEventsById(
             [
                 EVENT_ID_TEST_DATA_ROOT,
@@ -34,8 +38,8 @@ def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSourc
     for event_ in events:
         event_["attachedMessageIds"].sort()
 
-    broken_event: dict = data_source.command(http.GetEventById("id", use_stub=True))
-    broken_events: list = data_source.command(http.GetEventsById(["id", "ids"], use_stub=True))
+    broken_event: dict = http_data_source.command(http.GetEventById("id", use_stub=True))
+    broken_events: list = http_data_source.command(http.GetEventsById(["id", "ids"], use_stub=True))
 
     plug_for_broken_event: dict = {
         "attachedMessageIds": [],
@@ -71,24 +75,31 @@ def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSourc
     # Check Broken_Events
     assert broken_event == plug_for_broken_event
     assert broken_events == plug_for_broken_events
-    assert [event, broken_event] == data_source.command(
+    assert [event, broken_event] == http_data_source.command(
         http.GetEventsById([EVENT_ID_TEST_DATA_ROOT, "id"], use_stub=True)
     )
     with pytest.raises(CommandError):
-        data_source.command(http.GetEventsById([EVENT_ID_TEST_DATA_ROOT, "id"]))
+        http_data_source.command(http.GetEventsById([EVENT_ID_TEST_DATA_ROOT, "id"]))
     with pytest.raises(CommandError):
-        data_source.command(http.GetEventById("id"))
+        http_data_source.command(http.GetEventById("id"))
 
 
-def test_find_messages_by_id_from_data_provider(data_source: HTTPProviderDataSource):
-
+def test_find_messages_by_id_from_data_provider(http_data_source: HTTPProviderDataSource):
     expected_message = message_1_body
 
     expected_messages = [expected_message, message_2_body]
 
+<<<<<<< HEAD
     message = data_source.command(http.GetMessageById(MESSAGE_ID_1))
     messages = data_source.command(http.GetMessagesById([MESSAGE_ID_1, MESSAGE_ID_2]))
     messages_with_one_element = data_source.command(http.GetMessagesById([MESSAGE_ID_1]))
+=======
+    message = http_data_source.command(http.GetMessageById(MESSAGE_ID_1))
+    messages = http_data_source.command(
+        http.GetMessagesById([MESSAGE_ID_1, MESSAGE_ID_2])
+    )
+    messages_with_one_element = http_data_source.command(http.GetMessagesById([MESSAGE_ID_1]))
+>>>>>>> 382d800 (Updated v6 tests)
     # Check types
     assert isinstance(message, dict)
     assert isinstance(messages, list)

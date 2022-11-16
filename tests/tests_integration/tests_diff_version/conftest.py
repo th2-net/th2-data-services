@@ -98,6 +98,17 @@ def get_messages_with_filters(http_data_source: HTTPProviderDataSource) -> Data:
 
     return case
 
+@pytest.fixture
+def messages_from_data_source(http_data_source: HTTPProviderDataSource) -> Data:
+    messages = http_data_source.command(
+        http.GetMessages(
+            start_timestamp=START_TIME,
+            end_timestamp=END_TIME,
+            stream=[STREAM_1,STREAM_2],
+        )
+    )
+    # Returns 6 messages
+    return messages
 
 @pytest.fixture
 def events_from_data_source_with_cache_status(

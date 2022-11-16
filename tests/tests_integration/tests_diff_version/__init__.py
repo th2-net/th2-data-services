@@ -27,7 +27,7 @@ if v == "1.1.0":  # v6
     END_TIME   = datetime(year=2022, month=11, day=14, hour=12, minute=41, second=19, microsecond=0)
 
 
-    HTTP_PORT = "31788"  # HTTP provider v6
+    HTTP_PORT = "32154"  # HTTP provider v6
     GRPC_PORT = "32419"
 
 elif v == "0.1.6":  # v5

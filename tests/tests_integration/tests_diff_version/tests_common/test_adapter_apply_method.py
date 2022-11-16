@@ -14,8 +14,8 @@ class TestAdapterForMessages(IAdapter):
             return record
 
 
-def test_apply_for_GetEvents(data_source):
-    ds = data_source
+def test_apply_for_GetEvents(http_data_source):
+    ds = http_data_source
     ev_adapter = TestAdapterForEvents()
     events = ds.command(
         http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, attached_messages=True).apply_adapter(
@@ -26,12 +26,12 @@ def test_apply_for_GetEvents(data_source):
         assert isinstance(event, dict)
 
 
-def test_apply_for_GetMessages(data_source):
-    ds = data_source
+def test_apply_for_GetMessages(http_data_source):
+    ds = http_data_source
     msg_adapter = TestAdapterForMessages()
 
     messages = ds.command(
-        http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME, stream=["demo-conn2"]).apply_adapter(
+        http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME, stream=["ds-lib-session1"]).apply_adapter(
             msg_adapter.handle
         )
     )
