@@ -1,359 +1,400 @@
-
-
 test_event_bodies = [{
-	'eventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 83601000
-	},
-	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 83601000
-	},
+	'type': 'event',
+	'eventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Set of auto-generated events for ds lib testing',
 	'eventType': 'ds-lib-test-event',
-	'body': {},
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae778-6017-11ed-b87c-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 307080000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 307080000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': None,
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': {}
+}, {
+	'type': 'event',
+	'eventId': '9e02c395-65ad-11ed-83f9-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 1',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae779-6017-11ed-9cb4-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c396-65ad-11ed-819d-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 2',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae77a-6017-11ed-b8fb-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c397-65ad-11ed-960a-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 3',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae77b-6017-11ed-922f-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c398-65ad-11ed-8310-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 4',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae77c-6017-11ed-8d36-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c399-65ad-11ed-8318-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 5',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae77d-6017-11ed-b0a9-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c39a-65ad-11ed-b0ab-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 6',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae77e-6017-11ed-96ef-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c39b-65ad-11ed-9e89-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 7',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae77f-6017-11ed-afcf-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c39c-65ad-11ed-b379-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 8',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae780-6017-11ed-b368-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c39d-65ad-11ed-88cc-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 9',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24aae781-6017-11ed-ae42-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c39e-65ad-11ed-a811-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 10',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19eb-6017-11ed-ab2e-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
+}, {
+	'type': 'event',
+	'eventId': '9e02c39f-65ad-11ed-ae56-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-1',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-1',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19ec-6017-11ed-9e89-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-1'
+}, {
+	'type': 'event',
+	'eventId': '9e02c3a0-65ad-11ed-8803-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-2',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-2',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19ed-6017-11ed-98bf-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-2'
+}, {
+	'type': 'event',
+	'eventId': '9e02c3a1-65ad-11ed-9475-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-3',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-3',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19ee-6017-11ed-928c-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-3'
+}, {
+	'type': 'event',
+	'eventId': '9e02c3a2-65ad-11ed-ad52-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-4',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-4',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19ef-6017-11ed-9288-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-4'
+}, {
+	'type': 'event',
+	'eventId': '9e02c3a3-65ad-11ed-b509-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-5',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-5',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19f0-6017-11ed-93ef-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-5'
+}, {
+	'type': 'event',
+	'eventId': '9e02c3a4-65ad-11ed-ba1f-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-6',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-6',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19f1-6017-11ed-b83a-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-6'
+}, {
+	'type': 'event',
+	'eventId': '9e02c3a5-65ad-11ed-accc-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-7',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-7',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19f2-6017-11ed-9af3-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-7'
+}, {
+	'type': 'event',
+	'eventId': '9e02c3a6-65ad-11ed-bd9e-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-8',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-8',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19f3-6017-11ed-8b63-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-8'
+}, {
+	'type': 'event',
+	'eventId': '9e02c3a7-65ad-11ed-99c7-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-9',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-9',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
-}, {
-	'eventId': '24ab19f4-6017-11ed-af7c-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
 	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
+		'nano': 308226000,
+		'epochSecond': 1668603187
 	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-9'
+}, {
+	'type': 'event',
+	'eventId': '9e02c3a8-65ad-11ed-905f-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-10',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-10',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
+	'endTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-10'
 }]

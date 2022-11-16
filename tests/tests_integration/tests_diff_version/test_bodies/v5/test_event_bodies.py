@@ -1,68 +1,62 @@
 root_event_body = {
-	'type': 'message',
-	'timestamp': {
-		'nano': 435545000,
-		'epochSecond': 1668068118
+	'type': 'event',
+	'eventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
+	'eventName': 'Set of auto-generated events for ds lib testing',
+	'eventType': 'ds-lib-test-event',
+	'endTimestamp': {
+		'nano': 307080000,
+		'epochSecond': 1668603187
 	},
-	'messageType': 'Incoming',
-	'direction': 'IN',
-	'sessionId': 'ds-lib-session1',
-	'attachedEventIds': [],
-	'messageId': 'ds-lib-session1:first:1668068118435545201',
-	'body': {
-		'metadata': {
-			'id': {
-				'connectionId': {
-					'sessionAlias': 'ds-lib-session1'
-				},
-				'sequence': '1668068118435545201'
-			},
-			'messageType': 'Incoming',
-			'protocol': 'json'
-		},
-		'fields': {
-			'a': {
-				'simpleValue': '123'
-			}
-		}
+	'startTimestamp': {
+		'nano': 307080000,
+		'epochSecond': 1668603187
 	},
-	'bodyBase64': 'eyJhIjogIjEyMyJ9'
+	'parentEventId': None,
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': {}
 }
 
 plain_event_1_body = {
-	'eventId': '24aae778-6017-11ed-b87c-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
-	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 404786000
-	},
+	'type': 'event',
+	'eventId': '9e02c395-65ad-11ed-83f9-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Plain event 1',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
+	'endTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body'
 }
 
 filter_event_3_body = {
-	'eventId': '24ab19ed-6017-11ed-98bf-b48c9dc9ebfa',
-	'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-	'startTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
-	'endTimestamp': {
-		'epochSecond': 1667988803,
-		'nano': 406077000
-	},
+	'type': 'event',
+	'eventId': '9e02c3a1-65ad-11ed-9475-b48c9dc9ebfb',
+	'batchId': None,
+	'isBatched': False,
 	'eventName': 'Event for Filter test. FilterString-3',
 	'eventType': 'ds-lib-test-event',
-	'body': 'ds-lib test body. FilterString-3',
-	'isBatched': False,
-	'successful': 'SUCCESS',
-	'attachedMessageIds': []
+	'endTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'startTimestamp': {
+		'nano': 308226000,
+		'epochSecond': 1668603187
+	},
+	'parentEventId': '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb',
+	'successful': True,
+	'attachedMessageIds': [],
+	'body': 'ds-lib test body. FilterString-3'
 }

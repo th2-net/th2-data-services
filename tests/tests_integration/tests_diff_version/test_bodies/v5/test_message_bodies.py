@@ -1,61 +1,61 @@
 message_1_body = {
 	'type': 'message',
 	'timestamp': {
-		'nano': 435545000,
-		'epochSecond': 1668068118
+		'nano': 307080000,
+		'epochSecond': 1668603187
 	},
 	'messageType': 'Incoming',
 	'direction': 'IN',
 	'sessionId': 'ds-lib-session1',
 	'attachedEventIds': [],
-	'messageId': 'ds-lib-session1:first:1668068118435545201',
+	'messageId': 'ds-lib-session1:first:1668603186732416805',
 	'body': {
 		'metadata': {
 			'id': {
 				'connectionId': {
 					'sessionAlias': 'ds-lib-session1'
 				},
-				'sequence': '1668068118435545201'
+				'sequence': '1668603186732416805'
 			},
 			'messageType': 'Incoming',
 			'protocol': 'json'
 		},
 		'fields': {
-			'a': {
-				'simpleValue': '123'
+			'msg_for_get_by_id_num': {
+				'simpleValue': '1'
 			}
 		}
 	},
-	'bodyBase64': 'eyJhIjogIjEyMyJ9'
+	'bodyBase64': 'eyJtc2dfZm9yX2dldF9ieV9pZF9udW0iOiAiMSJ9'
 }
 
 message_2_body = {
 	'type': 'message',
 	'timestamp': {
-		'nano': 802350000,
-		'epochSecond': 1668068118
+		'nano': 307080000,
+		'epochSecond': 1668603187
 	},
 	'messageType': 'Incoming',
 	'direction': 'IN',
-	'sessionId': 'ds-lib-session2',
+	'sessionId': 'ds-lib-session1',
 	'attachedEventIds': [],
-	'messageId': 'ds-lib-session2:first:1668068118435545202',
+	'messageId': 'ds-lib-session1:first:1668603186732416806',
 	'body': {
 		'metadata': {
 			'id': {
 				'connectionId': {
-					'sessionAlias': 'ds-lib-session2'
+					'sessionAlias': 'ds-lib-session1'
 				},
-				'sequence': '1668068118435545202'
+				'sequence': '1668603186732416806'
 			},
 			'messageType': 'Incoming',
 			'protocol': 'json'
 		},
 		'fields': {
-			'a': {
-				'simpleValue': '123'
+			'msg_for_get_by_id_num': {
+				'simpleValue': '2'
 			}
 		}
 	},
-	'bodyBase64': 'eyJhIjogIjEyMyJ9'
+	'bodyBase64': 'eyJtc2dfZm9yX2dldF9ieV9pZF9udW0iOiAiMiJ9'
 }

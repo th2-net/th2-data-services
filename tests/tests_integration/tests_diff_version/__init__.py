@@ -40,15 +40,15 @@ elif v == "0.1.6":  # v5
 
     from .test_bodies.v5 import all_test_event_bodies, all_test_message_bodies
 
-    EVENT_ID_TEST_DATA_ROOT = '2479e531-6017-11ed-9d54-b48c9dc9ebfa'
-    EVENT_ID_PLAIN_EVENT_1 = '24aae778-6017-11ed-b87c-b48c9dc9ebfa'
-    EVENT_ID_PLAIN_EVENT_2 = '24aae779-6017-11ed-9cb4-b48c9dc9ebfa'
+    START_TIME = datetime(year=2022, month=11, day=16, hour=12, minute=53, second=1, microsecond=0)
+    END_TIME   = datetime(year=2022, month=11, day=16, hour=12, minute=53, second=8, microsecond=0)
 
-    MESSAGE_ID_1 = 'ds-lib-session1:first:1668068118435545201'
-    MESSAGE_ID_2 = 'ds-lib-session1:first:1668068118435545202'
+    EVENT_ID_TEST_DATA_ROOT = '9daac0e5-65ad-11ed-a742-b48c9dc9ebfb'
+    EVENT_ID_PLAIN_EVENT_1 = '9e02c395-65ad-11ed-83f9-b48c9dc9ebfb'
+    EVENT_ID_PLAIN_EVENT_2 = '9e02c396-65ad-11ed-819d-b48c9dc9ebfb'
 
-    START_TIME = datetime(year=2022, month=11, day=9, hour=10, minute=13, second=17, microsecond=0)
-    END_TIME   = datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0)
+    MESSAGE_ID_1 = 'ds-lib-session1:first:1668603186732416805'
+    MESSAGE_ID_2 = 'ds-lib-session1:first:1668603186732416806'
 
     HTTP_PORT = "31915"  # HTTP provider v5
     GRPC_PORT = "31916"
