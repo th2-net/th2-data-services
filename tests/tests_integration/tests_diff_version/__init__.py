@@ -3,6 +3,9 @@ from importlib.metadata import version, PackageNotFoundError
 
 v = version("th2_grpc_data_provider")
 
+STREAM_1 = "ds-lib-session1"
+STREAM_2 = "ds-lib-session2"
+
 if v == "1.1.0":  # v6
     from th2_data_services.provider.v6.data_source.http import HTTPProvider6DataSource as HTTPProviderDataSource  # noqa
     from th2_data_services.provider.v6.data_source.grpc import GRPCProvider6DataSource as GRPCProviderDataSource
@@ -23,7 +26,9 @@ if v == "1.1.0":  # v6
     START_TIME = datetime(year=2022, month=11, day=14, hour=12, minute=41, second=12, microsecond=0)
     END_TIME   = datetime(year=2022, month=11, day=14, hour=12, minute=41, second=19, microsecond=0)
 
+
     HTTP_PORT = "31788"  # HTTP provider v6
+    GRPC_PORT = "32419"
 
 elif v == "0.1.6":  # v5
     from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource as HTTPProviderDataSource  # noqa
@@ -33,7 +38,7 @@ elif v == "0.1.6":  # v5
     from th2_data_services.provider.v5.adapters.message_adapters import CodecPipelinesAdapter  # noqa
     from th2_data_services.filter import Filter  # noqa
 
-    from .test_bodies.v6 import all_test_event_bodies, all_test_message_bodies
+    from .test_bodies.v5 import all_test_event_bodies, all_test_message_bodies
 
     EVENT_ID_TEST_DATA_ROOT = '2479e531-6017-11ed-9d54-b48c9dc9ebfa'
     EVENT_ID_PLAIN_EVENT_1 = '24aae778-6017-11ed-b87c-b48c9dc9ebfa'
