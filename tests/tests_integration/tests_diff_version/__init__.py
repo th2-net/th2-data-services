@@ -15,7 +15,6 @@ if v == "1.1.0":  # v6
     EVENT_ID_TEST_DATA_ROOT = 'a26078a4-6419-11ed-bfec-b48c9dc9ebfb'
     EVENT_ID_PLAIN_EVENT_1 = 'a275f396-6419-11ed-a9e6-b48c9dc9ebfb'
     EVENT_ID_PLAIN_EVENT_2 = 'a275f397-6419-11ed-b8a7-b48c9dc9ebfb'
-    EVENT_ID_FILTER_EVENT_1 = '24ab19eb-6017-11ed-ab2e-b48c9dc9ebfa'
 
     MESSAGE_ID_1 = 'ds-lib-session1:first:1668429677955474105'
     MESSAGE_ID_2 = 'ds-lib-session1:first:1668429677955474106'
@@ -36,7 +35,6 @@ elif v == "0.1.6":  # v5
     EVENT_ID_TEST_DATA_ROOT = '2479e531-6017-11ed-9d54-b48c9dc9ebfa'
     EVENT_ID_PLAIN_EVENT_1 = '24aae778-6017-11ed-b87c-b48c9dc9ebfa'
     EVENT_ID_PLAIN_EVENT_2 = '24aae779-6017-11ed-9cb4-b48c9dc9ebfa'
-    EVENT_ID_FILTER_EVENT_1 = 'a2761ac8-6419-11ed-aec3-b48c9dc9ebfb'
 
     MESSAGE_ID_1 = 'ds-lib-session1:first:1668068118435545201'
     MESSAGE_ID_2 = 'ds-lib-session1:first:1668068118435545202'
