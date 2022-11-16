@@ -1,25 +1,24 @@
-
-
 all_message_bodies = [{
-	'messageId': 'ds-lib-session1:FIRST:1668068118435545201',
+	'type': 'message',
 	'timestamp': {
-		'epochSecond': 0,
-		'nano': 0
+		'nano': 435545000,
+		'epochSecond': 1668068118
 	},
 	'messageType': 'Incoming',
-	'message': {
+	'direction': 'IN',
+	'sessionId': 'ds-lib-session1',
+	'attachedEventIds': [],
+	'messageId': 'ds-lib-session1:first:1668068118435545201',
+	'body': {
 		'metadata': {
 			'id': {
 				'connectionId': {
 					'sessionAlias': 'ds-lib-session1'
 				},
-				'sequence': '1668068118435545201',
-				'direction': 'FIRST',
-				'subsequence': []
+				'sequence': '1668068118435545201'
 			},
 			'messageType': 'Incoming',
-			'protocol': 'json',
-			'properties': {}
+			'protocol': 'json'
 		},
 		'fields': {
 			'a': {
@@ -27,30 +26,28 @@ all_message_bodies = [{
 			}
 		}
 	},
-	'direction': 'FIRST',
-	'body': '',
-	'bodyBase64': '',
-	'attachedEventIds': []
+	'bodyBase64': 'eyJhIjogIjEyMyJ9'
 }, {
-	'messageId': 'ds-lib-session2:FIRST:1668068118435545202',
+	'type': 'message',
 	'timestamp': {
-		'epochSecond': 0,
-		'nano': 0
+		'nano': 802350000,
+		'epochSecond': 1668068118
 	},
 	'messageType': 'Incoming',
-	'message': {
+	'direction': 'IN',
+	'sessionId': 'ds-lib-session2',
+	'attachedEventIds': [],
+	'messageId': 'ds-lib-session2:first:1668068118435545202',
+	'body': {
 		'metadata': {
 			'id': {
 				'connectionId': {
 					'sessionAlias': 'ds-lib-session2'
 				},
-				'sequence': '1668068118435545202',
-				'direction': 'FIRST',
-				'subsequence': []
+				'sequence': '1668068118435545202'
 			},
 			'messageType': 'Incoming',
-			'protocol': 'json',
-			'properties': {}
+			'protocol': 'json'
 		},
 		'fields': {
 			'a': {
@@ -58,30 +55,29 @@ all_message_bodies = [{
 			}
 		}
 	},
-	'direction': 'FIRST',
-	'body': '',
-	'bodyBase64': '',
-	'attachedEventIds': []
+	'bodyBase64': 'eyJhIjogIjEyMyJ9'
 }, {
-	'messageId': 'ds-lib-session1:SECOND:1668068118435545203',
+	'type': 'message',
 	'timestamp': {
-		'epochSecond': 0,
-		'nano': 0
+		'nano': 803361000,
+		'epochSecond': 1668068118
 	},
 	'messageType': 'Outgoing',
-	'message': {
+	'direction': 'OUT',
+	'sessionId': 'ds-lib-session1',
+	'attachedEventIds': [],
+	'messageId': 'ds-lib-session1:second:1668068118435545203',
+	'body': {
 		'metadata': {
 			'id': {
 				'connectionId': {
 					'sessionAlias': 'ds-lib-session1'
 				},
 				'direction': 'SECOND',
-				'sequence': '1668068118435545203',
-				'subsequence': []
+				'sequence': '1668068118435545203'
 			},
 			'messageType': 'Outgoing',
-			'protocol': 'json',
-			'properties': {}
+			'protocol': 'json'
 		},
 		'fields': {
 			'a': {
@@ -89,30 +85,29 @@ all_message_bodies = [{
 			}
 		}
 	},
-	'direction': 'FIRST',
-	'body': '',
-	'bodyBase64': '',
-	'attachedEventIds': []
+	'bodyBase64': 'eyJhIjogIjEyMyJ9'
 }, {
-	'messageId': 'ds-lib-session2:SECOND:1668068118435545204',
+	'type': 'message',
 	'timestamp': {
-		'epochSecond': 0,
-		'nano': 0
+		'nano': 803361000,
+		'epochSecond': 1668068118
 	},
 	'messageType': 'Outgoing',
-	'message': {
+	'direction': 'OUT',
+	'sessionId': 'ds-lib-session2',
+	'attachedEventIds': [],
+	'messageId': 'ds-lib-session2:second:1668068118435545204',
+	'body': {
 		'metadata': {
 			'id': {
 				'connectionId': {
 					'sessionAlias': 'ds-lib-session2'
 				},
 				'direction': 'SECOND',
-				'sequence': '1668068118435545204',
-				'subsequence': []
+				'sequence': '1668068118435545204'
 			},
 			'messageType': 'Outgoing',
-			'protocol': 'json',
-			'properties': {}
+			'protocol': 'json'
 		},
 		'fields': {
 			'a': {
@@ -120,8 +115,5 @@ all_message_bodies = [{
 			}
 		}
 	},
-	'direction': 'FIRST',
-	'body': '',
-	'bodyBase64': '',
-	'attachedEventIds': []
+	'bodyBase64': 'eyJhIjogIjEyMyJ9'
 }]

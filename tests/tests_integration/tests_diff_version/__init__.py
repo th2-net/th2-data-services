@@ -1,7 +1,7 @@
+from datetime import datetime
 from importlib.metadata import version, PackageNotFoundError
 
 v = version("th2_grpc_data_provider")
-PORT = "31789"  # GRPC provider v6
 
 if v == "1.1.0":  # v6
     from th2_data_services.provider.v6.data_source.http import HTTPProvider6DataSource as HTTPProviderDataSource  # noqa
@@ -12,11 +12,16 @@ if v == "1.1.0":  # v6
     from th2_data_services.provider.v6.provider_api import HTTPProvider6API as HTTPProviderAPI  # noqa
     from th2_data_services.provider.v6.adapters.message_adapters import CodecPipelinesAdapter  # noqa
 
-    EVENT_ID_TEST_DATA_ROOT = '2479e531-6017-11ed-9d54-b48c9dc9ebfa'
-    EVENT_ID_PLAIN_EVENT_1 = '24aae778-6017-11ed-b87c-b48c9dc9ebfa'
-    EVENT_ID_PLAIN_EVENT_2 = '24aae779-6017-11ed-9cb4-b48c9dc9ebfa'
-    MESSAGE_ID_1 = 'ds-lib-session1:first:1668068118435545201'
-    MESSAGE_ID_2 = 'ds-lib-session1:first:1668068118435545202'
+    EVENT_ID_TEST_DATA_ROOT = 'a26078a4-6419-11ed-bfec-b48c9dc9ebfb'
+    EVENT_ID_PLAIN_EVENT_1 = 'a275f396-6419-11ed-a9e6-b48c9dc9ebfb'
+    EVENT_ID_PLAIN_EVENT_2 = 'a275f397-6419-11ed-b8a7-b48c9dc9ebfb'
+    EVENT_ID_FILTER_EVENT_1 = '24ab19eb-6017-11ed-ab2e-b48c9dc9ebfa'
+
+    MESSAGE_ID_1 = 'ds-lib-session1:first:1668429677955474105'
+    MESSAGE_ID_2 = 'ds-lib-session1:first:1668429677955474106'
+
+    START_TIME = datetime(year=2022, month=11, day=14, hour=12, minute=41, second=12, microsecond=0)
+    END_TIME   = datetime(year=2022, month=11, day=14, hour=12, minute=41, second=19, microsecond=0)
 
     HTTP_PORT = "31788"  # HTTP provider v6
 
@@ -31,8 +36,13 @@ elif v == "0.1.6":  # v5
     EVENT_ID_TEST_DATA_ROOT = '2479e531-6017-11ed-9d54-b48c9dc9ebfa'
     EVENT_ID_PLAIN_EVENT_1 = '24aae778-6017-11ed-b87c-b48c9dc9ebfa'
     EVENT_ID_PLAIN_EVENT_2 = '24aae779-6017-11ed-9cb4-b48c9dc9ebfa'
+    EVENT_ID_FILTER_EVENT_1 = 'a2761ac8-6419-11ed-aec3-b48c9dc9ebfb'
+
     MESSAGE_ID_1 = 'ds-lib-session1:first:1668068118435545201'
     MESSAGE_ID_2 = 'ds-lib-session1:first:1668068118435545202'
+
+    START_TIME = datetime(year=2022, month=11, day=9, hour=10, minute=13, second=17, microsecond=0)
+    END_TIME   = datetime(year=2022, month=11, day=10, hour=8, minute=15, second=20, microsecond=0)
 
     HTTP_PORT = "31915"  # HTTP provider v5
     GRPC_PORT = "31916"

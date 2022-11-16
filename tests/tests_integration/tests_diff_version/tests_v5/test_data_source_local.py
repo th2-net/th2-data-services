@@ -4,45 +4,16 @@ from ..conftest import HTTPProviderDataSource, http, Data
 from th2_data_services.provider.exceptions import CommandError
 
 from .. import EVENT_ID_TEST_DATA_ROOT, EVENT_ID_PLAIN_EVENT_1, MESSAGE_ID_1, MESSAGE_ID_2
-
+from ..test_bodies.v5.test_event_bodies import root_event_body, plain_event_1_body, filter_event_3_body
+from ..test_bodies.v5.test_message_bodies import message_1_body, message_2_body
 
 
 def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSource):
     data_source = data_source
 
-    expected_event = {
-        'attachedMessageIds': [],
-        'batchId': None,
-        'body': {},
-        'endTimestamp': {'epochSecond': 1667988803, 'nano': 83601000},
-        'eventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-        'eventName': 'Set of auto-generated events for ds lib testing',
-        'eventType': 'ds-lib-test-event',
-        'isBatched': False,
-        'parentEventId': None,
-        'startTimestamp': {'epochSecond': 1667988803, 'nano': 83601000},
-        'successful': True,
-        'type': 'event'
-    }
+    expected_event = root_event_body
 
-    expected_events = []
-    expected_events.append(expected_event)
-    expected_events.append(
-        {
-            'attachedMessageIds': [],
-            'batchId': None,
-            'body': 'ds-lib test body',
-            'endTimestamp': {'epochSecond': 1667988803, 'nano': 404786000},
-            'eventId': '24aae778-6017-11ed-b87c-b48c9dc9ebfa',
-            'eventName': 'Plain event 1',
-            'eventType': 'ds-lib-test-event',
-            'isBatched': False,
-            'parentEventId': '2479e531-6017-11ed-9d54-b48c9dc9ebfa',
-            'startTimestamp': {'epochSecond': 1667988803, 'nano': 404786000},
-            'successful': True,
-            'type': 'event'
-        }
-    )
+    expected_events = [expected_event, plain_event_1_body]
 
     event = data_source.command(http.GetEventById(EVENT_ID_TEST_DATA_ROOT))
     events = data_source.command(
@@ -112,71 +83,9 @@ def test_find_events_by_id_from_data_provider(data_source: HTTPProviderDataSourc
 def test_find_messages_by_id_from_data_provider(data_source: HTTPProviderDataSource):
     data_source = data_source
 
-    expected_message = {
-        'type': 'message',
-        'timestamp': {
-            'nano': 435545000,
-            'epochSecond': 1668068118
-        },
-        'messageType': 'Incoming',
-        'direction': 'IN',
-        'sessionId': 'ds-lib-session1',
-        'attachedEventIds': [],
-        'messageId': 'ds-lib-session1:first:1668068118435545201',
-        'body': {
-            'metadata': {
-                'id': {
-                    'connectionId': {
-                        'sessionAlias': 'ds-lib-session1'
-                    },
-                    'sequence': '1668068118435545201'
-                },
-                'messageType': 'Incoming',
-                'protocol': 'json'
-            },
-            'fields': {
-                'a': {
-                    'simpleValue': '123'
-                }
-            }
-        },
-        'bodyBase64': 'eyJhIjogIjEyMyJ9'
-    }
+    expected_message = message_1_body
 
-    expected_messages = []
-    expected_messages.append(expected_message)
-    expected_messages.append(
-        {
-            'type': 'message',
-            'timestamp': {
-                'nano': 802350000,
-                'epochSecond': 1668068118
-            },
-            'messageType': 'Incoming',
-            'direction': 'IN',
-            'sessionId': 'ds-lib-session2',
-            'attachedEventIds': [],
-            'messageId': 'ds-lib-session2:first:1668068118435545202',
-            'body': {
-                'metadata': {
-                    'id': {
-                        'connectionId': {
-                            'sessionAlias': 'ds-lib-session2'
-                        },
-                        'sequence': '1668068118435545202'
-                    },
-                    'messageType': 'Incoming',
-                    'protocol': 'json'
-                },
-                'fields': {
-                    'a': {
-                        'simpleValue': '123'
-                    }
-                }
-            },
-            'bodyBase64': 'eyJhIjogIjEyMyJ9'
-        }
-    )
+    expected_messages = [message_1_body, message_2_body]
 
     message = data_source.command(http.GetMessageById(MESSAGE_ID_1))
     messages = data_source.command(
@@ -200,61 +109,9 @@ def test_get_x_with_filters(
     get_events_with_filters: Data,
     get_messages_with_filters: Data,
 ):
-    case = [
-        {
-            "type": "event",
-            "eventId": "24ab19ed-6017-11ed-98bf-b48c9dc9ebfa",
-            "batchId": "None",
-            "isBatched": False,
-            "eventName": "Event for Filter test. FilterString-3",
-            "eventType": "ds-lib-test-event",
-            "endTimestamp": {
-                "nano": 406077000,
-                "epochSecond": 1667988803
-            },
-            "startTimestamp": {
-                "nano": 406077000,
-                "epochSecond": 1667988803
-            },
-            "parentEventId": "2479e531-6017-11ed-9d54-b48c9dc9ebfa",
-            "successful": True,
-            "attachedMessageIds": [],
-            "body": "ds-lib test body. FilterString-3"                                                          
-        }
-    ]
-    case1 = [
-        {
-            'type': 'message',
-            'timestamp': {
-                'nano': 435545000,
-                'epochSecond': 1668068118
-            },
-            'messageType': 'Incoming',
-            'direction': 'IN',
-            'sessionId': 'ds-lib-session1',
-            'attachedEventIds': [],
-            'messageId': 'ds-lib-session1:first:1668068118435545201',
-            'body': {
-                'metadata': {
-                    'id': {
-                        'connectionId': {
-                            'sessionAlias': 'ds-lib-session1'
-                        },
-                        'sequence': '1668068118435545201'
-                    },
-                    'messageType': 'Incoming',
-                    'protocol': 'json'
-                },
-                'fields': {
-                    'a': {
-                        'simpleValue': '123'
-                    }
-                }
-            },
-            'bodyBase64': 'eyJhIjogIjEyMyJ9'
-        }
-    ]
-    assert list(get_messages_with_one_filter) == case1
-    assert list(get_messages_with_filters) == case1
-    assert list(get_events_with_one_filter) == case and len(case) is 1
-    assert list(get_events_with_filters) == case
+    event_case   = [filter_event_3_body]
+    message_case = [message_1_body]
+    assert list(get_messages_with_one_filter) == message_case
+    assert list(get_messages_with_filters) == message_case
+    assert list(get_events_with_one_filter) == event_case and len(event_case) is 1
+    assert list(get_events_with_filters) == event_case
