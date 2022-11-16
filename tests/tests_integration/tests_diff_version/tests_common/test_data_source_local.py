@@ -55,10 +55,7 @@ def test_get_messages_with_multiple_url(
     messages_hand_expected = messages_from_data_source
     messages_hand_actual = messages.filter(lambda record: record.get("sessionId") == "arfq01fix07")
 
-    assert (
-        len(list(messages)) == 272
-        and len(list(messages_hand_actual)) == len(list(messages_hand_expected)) == 239
-    )
+    assert len(list(messages)) == 272 and len(list(messages_hand_actual)) == len(list(messages_hand_expected)) == 239
 
 
 # def test_unprintable_character(data_source: HTTPProviderDataSource):
