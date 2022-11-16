@@ -1,11 +1,10 @@
 from collections import namedtuple
 from datetime import datetime
-from test_bodies import all_test_event_bodies, all_test_message_bodies
 import pytest
 
 from th2_data_services import Data
 from . import HTTPProviderAPI, HTTPProviderDataSource, GRPCProviderDataSource, http, grpc, CodecPipelinesAdapter, Filter, HTTP_PORT, GRPC_PORT  # noqa  # noqa
-from . import START_TIME, END_TIME, MESSAGE_ID_1
+from . import START_TIME, END_TIME, MESSAGE_ID_1, all_test_message_bodies, all_test_event_bodies
 
 @pytest.fixture
 def http_data_source():
