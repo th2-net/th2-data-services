@@ -6,7 +6,7 @@ import requests
 from th2_data_services.data import Data
 from th2_data_services.provider.exceptions import CommandError
 from tests.tests_unit.tests_diff_version.conftest import http, HTTPProviderDataSource
-from ..conftest import START_TIME, END_TIME
+from ..conftest import START_TIME, END_TIME, STREAM_1, STREAM_2
 
 
 def test_find_message_by_id_from_data_provider_with_error(http_data_source: HTTPProviderDataSource):
@@ -51,9 +51,9 @@ def test_get_messages_with_multiple_url(
     messages = messages_from_data_source_with_test_streams.use_cache(True)
 
     messages_hand_expected = messages_from_data_source
-    messages_hand_actual = messages.filter(lambda record: record.get("sessionId") == "arfq01fix07")
+    messages_hand_actual = messages.filter(lambda record: record.get("sessionId") == STREAM_1 or record.get("sessionId") == STREAM_2)
 
-    assert len(list(messages)) == 272 and len(list(messages_hand_actual)) == len(list(messages_hand_expected)) == 239
+    assert len(list(messages)) == 6 and len(list(messages_hand_actual)) == len(list(messages_hand_expected)) == 6
 
 
 # def test_unprintable_character(http_data_source: HTTPProviderDataSource):

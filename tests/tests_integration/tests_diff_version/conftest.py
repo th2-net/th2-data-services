@@ -125,9 +125,11 @@ def messages_from_data_source_with_test_streams(
 ) -> Data:
     messages = http_data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=58, second=0, microsecond=0),
+            start_timestamp=START_TIME,
             end_timestamp=END_TIME,
             stream=[
+                STREAM_1,
+                STREAM_2,
                 "Test-123",
                 "Test-1234",
                 "Test-12345",

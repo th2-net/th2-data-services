@@ -27,12 +27,12 @@ from th2_data_services.provider.v6.provider_api import HTTPProvider6API
 from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.provider.v6.streams import Streams
 from th2_data_services.sse_client import SSEClient
-from th2_data_services.provider.adapters.adapter_sse import SSEAdapter, get_default_sse_adapter
+from th2_data_services.provider.adapters.adapter_sse import get_default_sse_adapter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
-#LOG import logging
+# LOG import logging
 
-#LOG logger = logging.getLogger(__name__)
+# LOG logger = logging.getLogger(__name__)
 
 
 class GetEventById(IHTTPProvider6Command, ProviderAdaptableCommand):
@@ -63,14 +63,15 @@ class GetEventById(IHTTPProvider6Command, ProviderAdaptableCommand):
         api: HTTPProvider6API = data_source.source_api
         url = api.get_url_find_event_by_id(self._id)
 
-#LOG         logger.info(url)
+        # LOG         logger.info(url)
 
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            return data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+            stub = data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
+            return self._handle_adapters(stub)
         elif response.status_code == 404:
-#LOG             logger.error(f"Unable to find the message. Id: {self._id}")
+            # LOG             logger.error(f"Unable to find the message. Id: {self._id}")
             raise EventNotFound(self._id)
         else:
             return self._handle_adapters(response.json())
@@ -104,7 +105,12 @@ class GetEventsById(IHTTPProvider6Command, ProviderAdaptableCommand):
         result = []
         for event_id in self._ids:
             event = GetEventById(event_id, use_stub=self._stub_status).handle(data_source)
-            result.append(self._handle_adapters(event))
+            if event is None:
+                continue
+            event = self._handle_adapters(event)
+            if event is None:
+                continue
+            result.append(event)
 
         return result
 
@@ -181,7 +187,7 @@ class GetEventsSSEBytes(IHTTPProvider6Command, ProviderAdaptableCommand):
             filters=self._filters,
         )
 
-#LOG         logger.info(url)
+        # LOG         logger.info(url)
 
         for response in api.execute_sse_request(url):
             response = self._handle_adapters(response)
@@ -288,6 +294,7 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
         attached_messages: bool = False,
         filters: (Filter, List[Filter]) = None,
         cache: bool = False,
+        sse_handler: Optional[IAdapter] = None,
     ):
         """GetEvents constructor.
 
@@ -305,7 +312,7 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
             attached_messages: Gets messages ids which linked to events.
             filters: Filters using in search for messages.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
-
+            sse_handler: SSEEvents handler, by default uses StreamingSSEAdapter
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -319,12 +326,12 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
         self._attached_messages = attached_messages
         self._filters = filters
         self._cache = cache
-
-        self._sse_adapter = SSEAdapter()
+        self.sse_handler = sse_handler or get_default_sse_adapter()
         self._event_system_adapter = DeleteSystemEvents()
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
-        source = partial(self.__handle_stream, data_source)
+        source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
+        source = (self._handle_adapters(record) for record in source() if record is not None)
         return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
@@ -342,15 +349,6 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
         ).handle(data_source)
 
         for event in stream:
-            event = self._sse_adapter.handle(event)
-            if event is None:
-                continue
-
-            event = self._event_system_adapter.handle(event)
-            if event is None:
-                continue
-
-            event = self._handle_adapters(event)
             yield event
 
 
@@ -385,14 +383,15 @@ class GetMessageById(IHTTPProvider6Command, ProviderAdaptableCommand):
         api: HTTPProvider6API = data_source.source_api
         url = api.get_url_find_message_by_id(self._id)
 
-#LOG         logger.info(url)
+        # LOG         logger.info(url)
 
         response = api.execute_request(url)
 
         if response.status_code == 404 and self._stub_status:
-            return data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+            stub = data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
+            return self._handle_adapters(stub)
         elif response.status_code == 404:
-#LOG             logger.error(f"Unable to find the message. Id: {self._id}")
+            # LOG             logger.error(f"Unable to find the message. Id: {self._id}")
             raise MessageNotFound(self._id)
         else:
             return self._handle_adapters(response.json())
@@ -428,8 +427,16 @@ class GetMessagesById(IHTTPProvider6Command, ProviderAdaptableCommand):
     def handle(self, data_source: HTTPProvider6DataSource) -> List[dict]:  # noqa: D102
         result = []
         for message_id in self._ids:
-            message = GetMessageById(message_id, use_stub=self._stub_status).handle(data_source)
-            result.append(self._handle_adapters(message))
+            message = GetMessageById(
+                message_id,
+                use_stub=self._stub_status,
+            ).handle(data_source)
+            if message is None:
+                continue
+            message = self._handle_adapters(message)
+            if message is None:
+                continue
+            result.append(message)
 
         return result
 
@@ -535,7 +542,7 @@ class GetMessagesSSEBytes(IHTTPProvider6Command, ProviderAdaptableCommand):
             resulting_urls.append(url + current_url)
 
         for url in resulting_urls:
-#LOG             logger.info(url)
+            # LOG             logger.info(url)
             for response in api.execute_sse_request(url):
                 response = self._handle_adapters(response)
                 if response is not None:
@@ -649,7 +656,7 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         cache: bool = False,
-        sse_handler: Optional[IAdapter] = None
+        sse_handler: Optional[IAdapter] = None,
     ):
         """GetMessages constructor.
 
@@ -671,6 +678,7 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
+            sse_handler: SSEEvents handler, by default uses StreamingSSEAdapter
         """
         super().__init__()
         self._start_timestamp = start_timestamp
@@ -688,10 +696,10 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
         self._decode_error_handler = decode_error_handler
         self._cache = cache
         self.sse_handler = sse_handler or get_default_sse_adapter()
-        self._sse_adapter = SSEAdapter()
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
-        source = partial(partial(self.__handle_stream, data_source))
+        source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
+        source = (self._handle_adapters(record) for record in source() if record is not None)
         return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
@@ -709,8 +717,4 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
         ).handle(data_source)
 
         for message in stream:
-            message = self._sse_adapter.handle(message)
-            if message is None:
-                continue
-            message = self._handle_adapters(message)
             yield message
