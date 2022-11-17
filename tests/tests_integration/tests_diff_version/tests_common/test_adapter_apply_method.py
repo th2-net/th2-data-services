@@ -1,5 +1,6 @@
 from th2_data_services.interfaces import IAdapter
 from tests.tests_unit.tests_diff_version.conftest import http, START_TIME, END_TIME
+from .. import message_struct
 
 
 class TestAdapterForEvents(IAdapter):
@@ -10,7 +11,7 @@ class TestAdapterForEvents(IAdapter):
 
 class TestAdapterForMessages(IAdapter):
     def handle(self, record: dict) -> dict:
-        if record.get("messageId"):
+        if record.get(message_struct.MESSAGE_ID):
             return record
 
 

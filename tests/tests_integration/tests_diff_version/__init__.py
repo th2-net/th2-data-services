@@ -13,6 +13,7 @@ if v == "1.1.0":  # v6
     from th2_data_services.provider.v6.filters.filter import Provider6Filter as Filter  # noqa
     from th2_data_services.provider.v6.provider_api import HTTPProvider6API as HTTPProviderAPI  # noqa
     from th2_data_services.provider.v6.adapters.message_adapters import CodecPipelinesAdapter  # noqa
+    from th2_data_services.provider.v6.struct import http_provider6_message_struct as message_struct
 
     from .test_bodies.v6 import all_test_event_bodies, all_test_message_bodies
 
@@ -36,7 +37,9 @@ elif v == "0.1.6":  # v5
     from th2_data_services.provider.v5.commands import http, grpc  # noqa
     from th2_data_services.provider.v5.provider_api import HTTPProvider5API as HTTPProviderAPI  # noqa
     from th2_data_services.provider.v5.adapters.message_adapters import CodecPipelinesAdapter  # noqa
+    from th2_data_services.provider.v5.struct import provider5_message_struct as message_struct
     from th2_data_services.filter import Filter  # noqa
+    
 
     from .test_bodies.v5 import all_test_event_bodies, all_test_message_bodies
 

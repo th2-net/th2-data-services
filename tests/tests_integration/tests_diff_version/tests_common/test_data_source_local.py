@@ -6,6 +6,7 @@ import requests
 from th2_data_services.data import Data
 from th2_data_services.provider.exceptions import CommandError
 from tests.tests_unit.tests_diff_version.conftest import http, HTTPProviderDataSource
+from ..conftest import START_TIME, END_TIME
 
 
 def test_find_message_by_id_from_data_provider_with_error(http_data_source: HTTPProviderDataSource):
@@ -60,14 +61,15 @@ def test_get_messages_with_multiple_url(
 #
 #     assert "\x80" in event["body"][0]["value"] and event["body"][0]["value"] == "nobJjpBJkTuQMmscc4R\x80"
 
-
+'''NO ATTACHED MESSAGES ON EVENTS YET
 def test_attached_messages(http_data_source: HTTPProviderDataSource):
     events = http_data_source.command(
         http.GetEvents(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
+            start_timestamp=START_TIME,
+            end_timestamp=END_TIME,
             attached_messages=True,
         )
     )
 
     assert events.filter(lambda event: event.get("attachedMessageIds")).len
+'''
