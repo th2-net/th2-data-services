@@ -30,44 +30,73 @@ def grpc_data_source():
     return data_source
 
 
-DataCase = namedtuple("DataCase", ["data", "expected_data_values"])
+DataCase = namedtuple("DataCase", ["data", "expected_data_values", "protocol"])
 
 
-@pytest.fixture(params=["http_data_source", "grpc_data_source"])
+@pytest.fixture(
+    params=[
+        ("http_data_source", all_test_event_bodies, 'http'),
+        ("grpc_data_source", all_test_event_bodies, 'grpc'),
+    ]
+)
 def all_events(request) -> DataCase:
+    protocol = request.param[2]
+    if protocol == 'http':
+        commands = http
+    elif protocol == 'grpc':
+        commands = grpc
+    else:
+        raise Exception('Unknown protocol')
+
     return DataCase(
-        request.getfixturevalue(request.param).command(
-            http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME)
+        data=request.getfixturevalue(request.param[0]).command(
+            commands.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME)
         ),
-        all_test_event_bodies,
+        expected_data_values=request.param[1],
+        protocol=protocol
     )
 
 
-@pytest.fixture(params=["http_data_source", "grpc_data_source"])
-def all_messages(request) -> Data:
-    return (
-        DataCase(
-            request.getfixturevalue(request.param).command(
-                http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME, stream=[STREAM_1, STREAM_2])
-            ),
-            all_test_message_bodies,
-        ),
-    )
+@pytest.fixture(
+    params=[
+        ("http_data_source", all_test_event_bodies, 'http'),
+        ("grpc_data_source", all_test_event_bodies, 'grpc'),
+    ]
+)
+def all_messages(request) -> DataCase:
+    protocol = request.param[2]
+    if protocol == 'http':
+        commands = http
+    elif protocol == 'grpc':
+        commands = grpc
+    else:
+        raise Exception('Unknown protocol')
 
-
-@pytest.fixture(params=["http_data_source", "grpc_data_source"])
-def messages_and_events_common(request):
     return DataCase(
-        {
-            "events": request.getfixturevalue(request.param).command(
-                http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME)
-            ),
-            "messages": request.getfixturevalue(request.param).command(
-                http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME)
-            ),
-        },
-        {"events": all_test_event_bodies, "messages": all_test_message_bodies},
+        data=request.getfixturevalue(request.param[0]).command(
+            commands.GetMessages(start_timestamp=START_TIME,
+                                 end_timestamp=END_TIME,
+                                 stream=[STREAM_1, STREAM_2])
+        ),
+        expected_data_values=request.param[1],
+        protocol=protocol
     )
+
+
+# TODO - temp comment the following block. That works not like expected
+# @pytest.fixture(params=["all_events", "all_messages"])
+# def messages_and_events_common(request) -> DataCase:
+#     return DataCase(
+#         {
+#             "events": request.getfixturevalue(request.param).command(
+#                 http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME)
+#             ),
+#             "messages": request.getfixturevalue(request.param).command(
+#                 http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME)
+#             ),
+#         },
+#         {"events": all_test_event_bodies, "messages": all_test_message_bodies},
+#     )
 
 
 @pytest.fixture
