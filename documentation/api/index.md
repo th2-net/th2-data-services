@@ -6,11 +6,17 @@
 
 - [`data`](./data.md#module-data)
 - [`decode_error_handler`](./decode_error_handler.md#module-decode_error_handler)
+- [`events_tree`](./events_tree.md#module-events_tree)
+- [`events_tree.events_tree`](./events_tree.events_tree.md#module-events_treeevents_tree)
+- [`events_tree.exceptions`](./events_tree.exceptions.md#module-events_treeexceptions)
 - [`filter`](./filter.md#module-filter)
 - [`interfaces`](./interfaces.md#module-interfaces)
 - [`interfaces.adapter`](./interfaces.adapter.md#module-interfacesadapter)
 - [`interfaces.command`](./interfaces.command.md#module-interfacescommand)
 - [`interfaces.data_source`](./interfaces.data_source.md#module-interfacesdata_source)
+- [`interfaces.events_tree`](./interfaces.events_tree.md#module-interfacesevents_tree)
+- [`interfaces.events_tree.events_tree_collection`](./interfaces.events_tree.events_tree_collection.md#module-interfacesevents_treeevents_tree_collection)
+- [`interfaces.events_tree.parent_events_tree_collection`](./interfaces.events_tree.parent_events_tree_collection.md#module-interfacesevents_treeparent_events_tree_collection)
 - [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
 - [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
 - [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
@@ -52,20 +58,25 @@
 - [`provider.v6.filters`](./provider.v6.filters.md#module-providerv6filters)
 - [`provider.v6.struct`](./provider.v6.struct.md#module-providerv6struct)
 - [`provider.v6.stub_builder`](./provider.v6.stub_builder.md#module-providerv6stub_builder)
+- [`sse_client`](./sse_client.md#module-sse_client)
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 - [`utils`](./utils.md#module-utils)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
-- [`utils.json`](./utils.json.md#module-utilsjson)
 
 ## Classes
 
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
+- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree is a tree-based data structure of events.
+- [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
+- [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
 - [`filter.Filter`](./filter.md#class-filter): The class for using rpt-data-provider filters API.
 - [`adapter.IAdapter`](./interfaces.adapter.md#class-iadapter): High level interface for Adapter.
 - [`adapter.IEventAdapter`](./interfaces.adapter.md#class-ieventadapter): Interface of Adapter for events.
 - [`adapter.IMessageAdapter`](./interfaces.adapter.md#class-imessageadapter): Interface of Adapter for messages.
 - [`command.ICommand`](./interfaces.command.md#class-icommand): High level interface for Command.
 - [`data_source.IDataSource`](./interfaces.data_source.md#class-idatasource)
+- [`events_tree_collection.EventsTreeCollection`](./interfaces.events_tree.events_tree_collection.md#class-eventstreecollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
+- [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
@@ -127,9 +138,9 @@
 - [`struct.GRPCProvider6EventStruct`](./provider.v6.struct.md#class-grpcprovider6eventstruct): Interface for Event of data-provider v6.
 - [`stub_builder.Provider6EventStubBuilder`](./provider.v6.stub_builder.md#class-provider6eventstubbuilder)
 - [`stub_builder.Provider6MessageStubBuilder`](./provider.v6.stub_builder.md#class-provider6messagestubbuilder)
+- [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
-- [`json.BufferedJSONProcessor`](./utils.json.md#class-bufferedjsonprocessor)
 
 ## Functions
 

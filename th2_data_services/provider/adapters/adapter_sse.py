@@ -26,6 +26,7 @@ class SSEAdapter(IAdapter):
     """SSE Adapter handles bytes from sse-stream into Dict object."""
 
     def __init__(self):
+        """SSEAdapter constructor."""
         warnings.warn("This class is deprecated please use StreamingSSEAdapter")
 
     def handle(self, record: SSEEvent) -> dict:
@@ -48,6 +49,11 @@ class SSEAdapter(IAdapter):
 
 class StreamingSSEAdapter(IAdapter):
     def __init__(self, json_processor: BufferedJSONProcessor):
+        """StreamingSSEAdapter constructor.
+
+        Args:
+            json_processor: BufferedJSONProcessor instance
+        """
         self.json_processor = json_processor
         self.events_types_blacklist = {"close", "keep_alive", "message_ids"}
 
@@ -65,4 +71,5 @@ class StreamingSSEAdapter(IAdapter):
 
 
 def get_default_sse_adapter():
+    """Returns StreamingSSEAdapter constructed with default BufferedJSONProcessor."""
     return StreamingSSEAdapter(BufferedJSONProcessor())
