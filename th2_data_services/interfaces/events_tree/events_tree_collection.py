@@ -25,16 +25,16 @@ from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
 from th2_data_services.provider.interfaces.data_source import IProviderDataSource
 
-#LOG import logging
+# LOG import logging
 
 import warnings
 
-#LOG logger = logging.getLogger(__name__)
+# LOG logger = logging.getLogger(__name__)
 
 
-#LOG class _EventsTreeCollectionLogger(logging.LoggerAdapter):
-#LOG     def process(self, msg, kwargs):
-#LOG         return "ETC[%s] %s" % (self.extra["id"], msg), kwargs
+# LOG class _EventsTreeCollectionLogger(logging.LoggerAdapter):
+# LOG     def process(self, msg, kwargs):
+# LOG         return "ETC[%s] %s" % (self.extra["id"], msg), kwargs
 
 
 class EventsTreeCollection(ABC):
@@ -68,7 +68,7 @@ class EventsTreeCollection(ABC):
         self._detached_nodes: Dict[Optional[str], List[Node]] = defaultdict(list)  # {parent_event_id: [Node1, ..]}
         self._stub_status = stub
         self._data_source = data_source
-#LOG         self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
+        # LOG         self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
 
         events_nodes = self._build_event_nodes(data)
         self._build_trees(events_nodes)
@@ -78,7 +78,7 @@ class EventsTreeCollection(ABC):
 
         if self._detached_nodes:
             w = "The collection were built with detached events because there are no some events in the source"
-#LOG             self._logger.warning(w)
+            # LOG             self._logger.warning(w)
             warnings.warn(w)
 
     def get_parentless_trees(self) -> List[EventsTree]:

@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-#LOG import logging
+# LOG import logging
 from collections import namedtuple
 from typing import Iterable, List, Optional, Union
 
@@ -44,7 +44,7 @@ from grpc import Channel, insecure_channel
 from th2_data_services.provider.interfaces.source_api import IGRPCProviderSourceAPI
 from th2_data_services.provider.v6.streams import Streams
 
-#LOG logger = logging.getLogger(__name__)
+# LOG logger = logging.getLogger(__name__)
 
 BasicRequest = namedtuple(
     "BasicRequest",
@@ -337,8 +337,8 @@ class GRPCProvider6API(IGRPCProviderSourceAPI):
         Returns:
             Timestamp object.
         """
-        nanos = timestamp % 10 ** 9
-        seconds = timestamp // 10 ** 9
+        nanos = timestamp % 10**9
+        seconds = timestamp // 10**9
         timestamp = Timestamp(seconds=seconds, nanos=nanos)
         return timestamp
 

@@ -9,7 +9,6 @@ from ..test_bodies.v5.message_bodies import message_1_body, message_2_body
 
 
 def test_find_events_by_id_from_data_provider(http_data_source: HTTPProviderDataSource):
-    
 
     expected_event = root_event_body
 
@@ -81,16 +80,13 @@ def test_find_events_by_id_from_data_provider(http_data_source: HTTPProviderData
 
 
 def test_find_messages_by_id_from_data_provider(http_data_source: HTTPProviderDataSource):
-    
 
     expected_message = message_1_body
 
     expected_messages = [message_1_body, message_2_body]
 
     message = http_data_source.command(http.GetMessageById(MESSAGE_ID_1))
-    messages = http_data_source.command(
-        http.GetMessagesById([MESSAGE_ID_1, MESSAGE_ID_2])
-    )
+    messages = http_data_source.command(http.GetMessagesById([MESSAGE_ID_1, MESSAGE_ID_2]))
     messages_with_one_element = http_data_source.command(http.GetMessagesById([MESSAGE_ID_1]))
     # Check types
     assert isinstance(message, dict)
@@ -109,7 +105,7 @@ def test_get_x_with_filters(
     get_events_with_filters: Data,
     get_messages_with_filters: Data,
 ):
-    event_case   = [filter_event_3_body]
+    event_case = [filter_event_3_body]
     message_case = [message_1_body]
     assert list(get_messages_with_one_filter) == message_case
     assert list(get_messages_with_filters) == message_case

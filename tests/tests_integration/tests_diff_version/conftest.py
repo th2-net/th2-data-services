@@ -1,16 +1,27 @@
 from collections import namedtuple
-from datetime import datetime
 import pytest
 
 from th2_data_services import Data
-from . import HTTPProviderAPI, HTTPProviderDataSource, GRPCProviderDataSource, http, grpc, CodecPipelinesAdapter, Filter, HTTP_PORT, GRPC_PORT  # noqa  # noqa
+from . import (
+    HTTPProviderAPI,
+    HTTPProviderDataSource,
+    GRPCProviderDataSource,
+    http,
+    grpc,
+    CodecPipelinesAdapter,
+    Filter,
+    HTTP_PORT,
+    GRPC_PORT,
+)  # noqa  # noqa
 from . import START_TIME, END_TIME, MESSAGE_ID_1, STREAM_1, STREAM_2, all_test_message_bodies, all_test_event_bodies
+
 
 @pytest.fixture
 def http_data_source():
     HOST = "10.100.66.114"  # de-th2-qa
     data_source = HTTPProviderDataSource(f"http://{HOST}:{HTTP_PORT}")
     return data_source
+
 
 @pytest.fixture
 def grpc_data_source():
@@ -22,27 +33,40 @@ def grpc_data_source():
 DataCase = namedtuple("DataCase", ["data", "expected_data_values"])
 
 
-@pytest.fixture(params=["http_data_source","grpc_data_source"])
+@pytest.fixture(params=["http_data_source", "grpc_data_source"])
 def all_events(request) -> DataCase:
-    return DataCase(request.getfixturevalue(request.param).command(http.GetEvents(start_timestamp=START_TIME,end_timestamp=END_TIME)), all_test_event_bodies)
+    return DataCase(
+        request.getfixturevalue(request.param).command(
+            http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME)
+        ),
+        all_test_event_bodies,
+    )
 
-@pytest.fixture(params=["http_data_source","grpc_data_source"])
+
+@pytest.fixture(params=["http_data_source", "grpc_data_source"])
 def all_messages(request) -> Data:
-    return DataCase(request.getfixturevalue(request.param).command(http.GetMessages(start_timestamp=START_TIME,end_timestamp=END_TIME,stream=[STREAM_1,STREAM_2])), all_test_message_bodies),
+    return (
+        DataCase(
+            request.getfixturevalue(request.param).command(
+                http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME, stream=[STREAM_1, STREAM_2])
+            ),
+            all_test_message_bodies,
+        ),
+    )
 
 
-@pytest.fixture(params=["http_data_source","grpc_data_source"])
+@pytest.fixture(params=["http_data_source", "grpc_data_source"])
 def messages_and_events_common(request):
     return DataCase(
         {
-            "events":request.getfixturevalue(request.param).command(http.GetEvents(start_timestamp=START_TIME,end_timestamp=END_TIME)),
-            "messages":request.getfixturevalue(request.param).command(http.GetMessages(start_timestamp=START_TIME,end_timestamp=END_TIME)),
-        
+            "events": request.getfixturevalue(request.param).command(
+                http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME)
+            ),
+            "messages": request.getfixturevalue(request.param).command(
+                http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME)
+            ),
         },
-        {
-            "events":all_test_event_bodies,
-            "messages":all_test_message_bodies
-        }
+        {"events": all_test_event_bodies, "messages": all_test_message_bodies},
     )
 
 
@@ -77,8 +101,8 @@ def get_messages_with_one_filter(http_data_source: HTTPProviderDataSource) -> Da
         http.GetMessages(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            stream=[STREAM_1,STREAM_2],
-            filters=Filter("body", MESSAGE_ID_1.split(":")[2]), # MESSAGE_ID_1.split(":")[2] to get the sequence number
+            stream=[STREAM_1, STREAM_2],
+            filters=Filter("body", MESSAGE_ID_1.split(":")[2]),  # MESSAGE_ID_1.split(":")[2] to get the sequence number
         )
     )
 
@@ -91,12 +115,16 @@ def get_messages_with_filters(http_data_source: HTTPProviderDataSource) -> Data:
         http.GetMessages(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            stream=[STREAM_1,STREAM_2],
-            filters=[Filter("type", "Incoming"), Filter("body",  MESSAGE_ID_1.split(":")[2])] # MESSAGE_ID_1.split(":")[2] to get the sequence number
+            stream=[STREAM_1, STREAM_2],
+            filters=[
+                Filter("type", "Incoming"),
+                Filter("body", MESSAGE_ID_1.split(":")[2]),
+            ],  # MESSAGE_ID_1.split(":")[2] to get the sequence number
         )
     )
 
     return case
+
 
 @pytest.fixture
 def messages_from_data_source(http_data_source: HTTPProviderDataSource) -> Data:
@@ -104,18 +132,19 @@ def messages_from_data_source(http_data_source: HTTPProviderDataSource) -> Data:
         http.GetMessages(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            stream=[STREAM_1,STREAM_2],
+            stream=[STREAM_1, STREAM_2],
         )
     )
     # Returns 6 messages
     return messages
+
 
 @pytest.fixture
 def events_from_data_source_with_cache_status(
     http_data_source: HTTPProviderDataSource,
 ) -> Data:
     events = http_data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
-    
+
     return events
 
 

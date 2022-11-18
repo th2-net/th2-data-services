@@ -33,9 +33,9 @@ from th2_data_services.provider.v5.interfaces.command import IGRPCProvider5Comma
 from th2_data_services.provider.v5.data_source.grpc import GRPCProvider5DataSource
 from th2_data_services.provider.v5.provider_api import GRPCProvider5API
 
-#LOG import logging
+# LOG import logging
 
-#LOG logger = logging.getLogger(__name__)
+# LOG logger = logging.getLogger(__name__)
 
 
 class GetEventByIdGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
@@ -100,7 +100,7 @@ class GetEventById(IGRPCProvider5Command, ProviderAdaptableCommand):
             if self._stub_status:
                 event = data_source.event_stub_builder.build({data_source.event_struct.EVENT_ID: self._id})
             else:
-#LOG                 logger.error(f"Unable to find the event. Id: {self._id}")
+                # LOG                 logger.error(f"Unable to find the event. Id: {self._id}")
                 raise EventNotFound(self._id)
 
         event = self._handle_adapters(event)
@@ -196,8 +196,8 @@ class GetEventsGRPCObjects(IGRPCProvider5Command, ProviderAdaptableCommand):
     def handle(self, data_source: GRPCProvider5DataSource) -> Iterable[EventData]:  # noqa: D102
         api: GRPCProvider5API = data_source.source_api
 
-        start_timestamp = int(self._start_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10 ** 9)
-        end_timestamp = int(self._end_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10 ** 9)
+        start_timestamp = int(self._start_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10**9)
+        end_timestamp = int(self._end_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10**9)
 
         stream_response = api.search_events(
             start_timestamp=start_timestamp,
@@ -364,7 +364,7 @@ class GetMessageById(IGRPCProvider5Command, ProviderAdaptableCommand):  # noqa: 
             if self._stub_status:
                 message = data_source.message_stub_builder.build({data_source.message_struct.MESSAGE_ID: self._id})
             else:
-#LOG                 logger.error(f"Unable to find the message. Id: {self._id}")
+                # LOG                 logger.error(f"Unable to find the message. Id: {self._id}")
                 raise MessageNotFound(self._id)
         message = self._handle_adapters(message)
         return message
@@ -459,8 +459,8 @@ class GetMessagesGRPCObject(IGRPCProvider5Command, ProviderAdaptableCommand):
     def handle(self, data_source: GRPCProvider5DataSource) -> List[MessageData]:
         api = data_source.source_api
 
-        start_timestamp = int(self._start_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10 ** 9)
-        end_timestamp = int(self._end_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10 ** 9)
+        start_timestamp = int(self._start_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10**9)
+        end_timestamp = int(self._end_timestamp.replace(tzinfo=timezone.utc).timestamp() * 10**9)
 
         stream_response = api.search_messages(
             start_timestamp=start_timestamp,

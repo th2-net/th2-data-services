@@ -1,4 +1,3 @@
-from datetime import datetime
 from th2_data_services import Data
 from th2_data_services.provider.v5.commands.http import GetEventsById
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
@@ -6,10 +5,9 @@ from th2_data_services.provider.v5.events_tree.events_tree_collection import Eve
 
 from ... import EVENT_ID_PLAIN_EVENT_1
 
+
 def test_recover_unknown_events(http_data_source: HTTPProvider5DataSource):
-    events = http_data_source.command(
-        GetEventsById([EVENT_ID_PLAIN_EVENT_1])
-    )
+    events = http_data_source.command(GetEventsById([EVENT_ID_PLAIN_EVENT_1]))
 
     before_tree = len(events)
     collection = EventsTreeCollectionProvider5(events, data_source=http_data_source)
@@ -19,9 +17,7 @@ def test_recover_unknown_events(http_data_source: HTTPProvider5DataSource):
 
 
 def test_recover_unknown_events_ds_passed_into_method(http_data_source: HTTPProvider5DataSource):
-    events = http_data_source.command(
-        GetEventsById([EVENT_ID_PLAIN_EVENT_1])
-    )
+    events = http_data_source.command(GetEventsById([EVENT_ID_PLAIN_EVENT_1]))
     before_tree = len(events)
     collection = EventsTreeCollectionProvider5(events)
     collection.recover_unknown_events(data_source=http_data_source)
@@ -31,9 +27,7 @@ def test_recover_unknown_events_ds_passed_into_method(http_data_source: HTTPProv
 
 
 def test_recover_unknown_events_with_stub_events(http_data_source: HTTPProvider5DataSource):
-    events: Data = http_data_source.command(
-        GetEventsById([EVENT_ID_PLAIN_EVENT_1])
-    )
+    events: Data = http_data_source.command(GetEventsById([EVENT_ID_PLAIN_EVENT_1]))
 
     broken_event = {
         "attachedMessageIds": [],
@@ -58,9 +52,7 @@ def test_recover_unknown_events_with_stub_events(http_data_source: HTTPProvider5
 
 
 def test_preserve_body(http_data_source: HTTPProvider5DataSource):
-    events: Data = http_data_source.command(
-        GetEventsById([EVENT_ID_PLAIN_EVENT_1])
-    )
+    events: Data = http_data_source.command(GetEventsById([EVENT_ID_PLAIN_EVENT_1]))
 
     collection = EventsTreeCollectionProvider5(events, data_source=http_data_source, preserve_body=True)
 
@@ -68,7 +60,8 @@ def test_preserve_body(http_data_source: HTTPProvider5DataSource):
         [True if event.get("body") is not None else False for event in collection.get_trees()[0].get_all_events()]
     )
 
-''' NEEDS REFACTORING
+
+""" NEEDS REFACTORING
 def test_create_subtree_incoming_data_stream(http_data_source: HTTPProvider5DataSource):
     events: Data = http_data_source.command(
         GetEvents(
@@ -87,4 +80,4 @@ def test_create_subtree_incoming_data_stream(http_data_source: HTTPProvider5Data
         root_sub_tree_0.get("body") == [{"data": "Root event", "type": "message"}]
         and etc_2.get_trees()[0].get_root().get("body") is None
     )
-'''
+"""

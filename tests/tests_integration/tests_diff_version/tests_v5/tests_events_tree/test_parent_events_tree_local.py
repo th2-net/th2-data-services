@@ -1,6 +1,3 @@
-from datetime import datetime
-
-from th2_data_services import Data
 from th2_data_services.provider.v5.commands.http import GetEventsById
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
 from th2_data_services.provider.v5.events_tree.parent_events_tree_collection import (
@@ -9,10 +6,9 @@ from th2_data_services.provider.v5.events_tree.parent_events_tree_collection imp
 
 from ... import EVENT_ID_PLAIN_EVENT_1, EVENT_ID_PLAIN_EVENT_2
 
+
 def test_recover_unknown_events(http_data_source: HTTPProvider5DataSource):
-    events = http_data_source.command(
-        GetEventsById([EVENT_ID_PLAIN_EVENT_1,EVENT_ID_PLAIN_EVENT_2])
-    )
+    events = http_data_source.command(GetEventsById([EVENT_ID_PLAIN_EVENT_1, EVENT_ID_PLAIN_EVENT_2]))
 
     before_tree = len(events)
     collection = ParentEventsTreeCollectionProvider5(events, data_source=http_data_source)
@@ -22,9 +18,7 @@ def test_recover_unknown_events(http_data_source: HTTPProvider5DataSource):
 
 
 def test_recover_unknown_events_with_stub_events(http_data_source: HTTPProvider5DataSource):
-    events = http_data_source.command(
-        GetEventsById([EVENT_ID_PLAIN_EVENT_1,EVENT_ID_PLAIN_EVENT_2])
-    )
+    events = http_data_source.command(GetEventsById([EVENT_ID_PLAIN_EVENT_1, EVENT_ID_PLAIN_EVENT_2]))
 
     broken_event = {
         "attachedMessageIds": [],
@@ -49,9 +43,7 @@ def test_recover_unknown_events_with_stub_events(http_data_source: HTTPProvider5
 
 
 def test_preserve_body(http_data_source: HTTPProvider5DataSource):
-    events = http_data_source.command(
-        GetEventsById([EVENT_ID_PLAIN_EVENT_1,EVENT_ID_PLAIN_EVENT_2])
-    )
+    events = http_data_source.command(GetEventsById([EVENT_ID_PLAIN_EVENT_1, EVENT_ID_PLAIN_EVENT_2]))
 
     collection = ParentEventsTreeCollectionProvider5(events, data_source=http_data_source, preserve_body=True)
 

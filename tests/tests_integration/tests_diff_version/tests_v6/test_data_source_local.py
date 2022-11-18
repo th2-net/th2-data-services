@@ -7,6 +7,7 @@ from .. import EVENT_ID_TEST_DATA_ROOT, EVENT_ID_PLAIN_EVENT_1, MESSAGE_ID_1, ME
 from ..test_bodies.v6.event_bodies import root_event_body, plain_event_1_body, filter_event_3_body
 from ..test_bodies.v6.message_bodies import message_1_body, message_2_body
 
+
 def test_find_events_by_id_from_data_provider(http_data_source: HTTPProviderDataSource):
     expected_event = root_event_body
 
@@ -83,9 +84,7 @@ def test_find_messages_by_id_from_data_provider(http_data_source: HTTPProviderDa
     expected_messages = [expected_message, message_2_body]
 
     message = http_data_source.command(http.GetMessageById(MESSAGE_ID_1))
-    messages = http_data_source.command(
-        http.GetMessagesById([MESSAGE_ID_1, MESSAGE_ID_2])
-    )
+    messages = http_data_source.command(http.GetMessagesById([MESSAGE_ID_1, MESSAGE_ID_2]))
     messages_with_one_element = http_data_source.command(http.GetMessagesById([MESSAGE_ID_1]))
     # Check types
     assert isinstance(message, dict)
