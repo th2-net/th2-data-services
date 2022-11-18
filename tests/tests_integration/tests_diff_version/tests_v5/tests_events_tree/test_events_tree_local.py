@@ -1,6 +1,6 @@
 from datetime import datetime
 from th2_data_services import Data
-from th2_data_services.provider.v5.commands import http
+from th2_data_services.provider.v5.commands.http import GetEventsById
 from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
 from th2_data_services.provider.v5.events_tree.events_tree_collection import EventsTreeCollectionProvider5
 
@@ -8,7 +8,7 @@ from ... import EVENT_ID_PLAIN_EVENT_1
 
 def test_recover_unknown_events(http_data_source: HTTPProvider5DataSource):
     events = http_data_source.command(
-        http.GetEventsById([EVENT_ID_PLAIN_EVENT_1])
+        GetEventsById([EVENT_ID_PLAIN_EVENT_1])
     )
 
     before_tree = len(events)
@@ -20,7 +20,7 @@ def test_recover_unknown_events(http_data_source: HTTPProvider5DataSource):
 
 def test_recover_unknown_events_ds_passed_into_method(http_data_source: HTTPProvider5DataSource):
     events = http_data_source.command(
-        http.GetEventsById([EVENT_ID_PLAIN_EVENT_1])
+        GetEventsById([EVENT_ID_PLAIN_EVENT_1])
     )
     before_tree = len(events)
     collection = EventsTreeCollectionProvider5(events)
@@ -32,7 +32,7 @@ def test_recover_unknown_events_ds_passed_into_method(http_data_source: HTTPProv
 
 def test_recover_unknown_events_with_stub_events(http_data_source: HTTPProvider5DataSource):
     events: Data = http_data_source.command(
-        http.GetEventsById([EVENT_ID_PLAIN_EVENT_1])
+        GetEventsById([EVENT_ID_PLAIN_EVENT_1])
     )
 
     broken_event = {
@@ -59,7 +59,7 @@ def test_recover_unknown_events_with_stub_events(http_data_source: HTTPProvider5
 
 def test_preserve_body(http_data_source: HTTPProvider5DataSource):
     events: Data = http_data_source.command(
-        http.GetEventsById([EVENT_ID_PLAIN_EVENT_1])
+        GetEventsById([EVENT_ID_PLAIN_EVENT_1])
     )
 
     collection = EventsTreeCollectionProvider5(events, data_source=http_data_source, preserve_body=True)
@@ -71,7 +71,7 @@ def test_preserve_body(http_data_source: HTTPProvider5DataSource):
 ''' NEEDS REFACTORING
 def test_create_subtree_incoming_data_stream(http_data_source: HTTPProvider5DataSource):
     events: Data = http_data_source.command(
-        http.GetEvents(
+        GetEvents(
             start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0),
             end_timestamp=datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0),
         )
