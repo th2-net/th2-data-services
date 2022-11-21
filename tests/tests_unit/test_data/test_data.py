@@ -300,6 +300,30 @@ def test_sift_skip_data(general_data: List[dict]):
     assert output1 != output2
 
 
+def test_data_loss_with_fixed_generator(general_data: List[dict]):
+    def general_data_gen():
+        return (item for item in general_data)
+
+    data = Data(general_data_gen())
+    for _ in range(3):
+        for _ in data:
+            pass
+
+    assert len(list(data)) == 0
+
+
+def test_data_loss_with_new_generator(general_data: List[dict]):
+    def general_data_gen():
+        return (item for item in general_data)
+
+    data = Data(general_data_gen)
+    for _ in range(3):
+        for _ in data:
+            pass
+
+    assert len(list(data)) == len(general_data)
+
+
 def test_big_modification_chain(log_checker):
     d1 = Data([1, 2, 3, 4, 5]).use_cache(True)
     d2 = d1.filter(lambda x: x == 1 or x == 2)
