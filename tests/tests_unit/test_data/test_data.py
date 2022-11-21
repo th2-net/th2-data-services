@@ -303,9 +303,10 @@ def test_sift_skip_data(general_data: List[dict]):
 def test_data_loss(general_data: List[dict]):
     # Iterating over and over object doesn't lose any data
     data = Data(general_data)
-    assert data.len == 21
-    assert data.len == 21
-    assert data.len == 21
+    general_data_len = len(general_data)
+    assert data.len == general_data_len
+    assert data.len == general_data_len
+    assert data.len == general_data_len
 
 
 def test_big_modification_chain(log_checker):
