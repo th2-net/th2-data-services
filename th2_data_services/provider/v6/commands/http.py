@@ -331,7 +331,7 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
         source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
-        source = (self._handle_adapters(record) for record in source() if record is not None)
+        source = [self._handle_adapters(record) for record in source() if record is not None]
         return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
@@ -699,7 +699,7 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
         source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
-        source = (self._handle_adapters(record) for record in source() if record is not None)
+        source = [self._handle_adapters(record) for record in source() if record is not None]
         return Data(source).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
