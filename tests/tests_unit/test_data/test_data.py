@@ -300,6 +300,14 @@ def test_sift_skip_data(general_data: List[dict]):
     assert output1 != output2
 
 
+def test_data_loss(general_data: List[dict]):
+    # Iterating over and over object doesn't lose any data
+    data = Data(general_data)
+    assert data.len == 21
+    assert data.len == 21
+    assert data.len == 21
+
+
 def test_big_modification_chain(log_checker):
     d1 = Data([1, 2, 3, 4, 5]).use_cache(True)
     d2 = d1.filter(lambda x: x == 1 or x == 2)
