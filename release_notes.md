@@ -371,5 +371,4 @@ This release implements performance bug fixes and provides Data object cache fil
    - `add_stderr_logger` and  `add_file_logger` are not available anymore.
 2. [TH2-4380] Fixed apply_adpater feature for GetMessages / GetEvents / GetEventById / GetMessageById
 3. [TH2-3767] Fixed bug with limit of Data object in Windows.
--source-lwdp/tree/TH2-4226_add_tests
 4. [TH2-4460] Fixed bug where GRPC omitted fields with None value in response.
