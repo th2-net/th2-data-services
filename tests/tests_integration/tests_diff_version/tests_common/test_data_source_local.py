@@ -6,10 +6,10 @@ from th2_data_services.provider.exceptions import CommandError
 from tests.tests_unit.tests_diff_version.conftest import http, HTTPProviderDataSource
 from ..conftest import STREAM_1, STREAM_2
 
-def issue_test_event(all_events):
+def test_issue_events(all_events):
     assert list(all_events.data) == all_events.expected_data_values
 
-def issue_test_messages(all_messages):
+def test_issue_messages(all_messages):
     assert list(all_messages.data) == all_messages.expected_data_values
 
 def test_find_message_by_id_from_data_provider_with_error(http_data_source: HTTPProviderDataSource):

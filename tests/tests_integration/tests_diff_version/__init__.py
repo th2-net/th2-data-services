@@ -32,7 +32,7 @@ if v == "1.1.0":  # v6
     END_TIME = datetime(year=2022, month=11, day=14, hour=12, minute=41, second=19, microsecond=0)
 
     HTTP_PORT = "32154"  # HTTP provider v6
-    GRPC_PORT = "32419"
+    GRPC_PORT = "31917"
 
 elif v == "0.1.6":  # v5
     from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource as HTTPProviderDataSource  # noqa

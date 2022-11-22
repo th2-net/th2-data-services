@@ -59,8 +59,8 @@ def all_events(request) -> DataCase:
 
 @pytest.fixture(
     params=[
-        ("http_data_source", all_event_bodies_http, 'http'),
-        ("grpc_data_source", all_event_bodies_grpc, 'grpc'),
+        ("http_data_source", all_message_bodies_http, 'http'),
+        ("grpc_data_source", all_message_bodies_grpc, 'grpc'),
     ]
 )
 def all_messages(request) -> DataCase:
