@@ -10,7 +10,7 @@
 
 ---
 
-<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L73"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L67"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `get_default_sse_adapter`
 
@@ -18,7 +18,9 @@
 get_default_sse_adapter()
 ```
 
-Returns StreamingSSEAdapter constructed with default BufferedJSONProcessor. 
+
+
+
 
 
 ---
@@ -36,14 +38,16 @@ SSE Adapter handles bytes from sse-stream into Dict object.
 __init__()
 ```
 
-SSEAdapter constructor. 
+
+
+
 
 
 
 
 ---
 
-<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L32"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L31"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -67,14 +71,14 @@ Adapter handler.
 
 ---
 
-<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L50"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L49"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `StreamingSSEAdapter`
 
 
 
 
-<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L51"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L50"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -82,20 +86,16 @@ Adapter handler.
 __init__(json_processor: BufferedJSONProcessor)
 ```
 
-StreamingSSEAdapter constructor. 
 
 
 
-**Args:**
- 
- - <b>`json_processor`</b>:  BufferedJSONProcessor instance 
 
 
 
 
 ---
 
-<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L60"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/adapters/adapter_sse.py#L54"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
