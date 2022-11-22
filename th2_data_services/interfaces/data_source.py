@@ -18,9 +18,9 @@ from abc import ABC, abstractmethod
 from th2_data_services.interfaces.command import ICommand
 from th2_data_services.interfaces.source_api import ISourceAPI
 
-# LOG import logging
+#LOG import logging
 
-# LOG logger = logging.getLogger(__name__)
+#LOG logger = logging.getLogger(__name__)
 
 
 class IDataSource(ABC):

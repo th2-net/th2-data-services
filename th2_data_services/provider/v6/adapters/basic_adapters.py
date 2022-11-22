@@ -43,6 +43,10 @@ class GRPCObjectToDictAdapter(IAdapter):
                 "epochSecond": record.end_timestamp.seconds,
                 "nano": record.end_timestamp.nanos,
             }
+            if "batchId" not in new_record:
+                new_record["batchId"] = None
+            if "parentEventId" not in new_record:
+                new_record["parentEventId"] = None
         elif isinstance(record, MessageGroupResponse):
             new_record["timestamp"] = {"epochSecond": record.timestamp.seconds, "nano": record.timestamp.nanos}
 

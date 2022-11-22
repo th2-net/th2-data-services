@@ -30,6 +30,7 @@ from th2_data_services.sse_client import SSEClient
 from th2_data_services.provider.adapters.adapter_sse import get_default_sse_adapter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
+
 # LOG import logging
 
 # LOG logger = logging.getLogger(__name__)
@@ -331,8 +332,11 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
         source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
-        source = (self._handle_adapters(record) for record in source() if record is not None)
-        return Data(source).use_cache(self._cache)
+
+        def src():
+            return (self._handle_adapters(record) for record in source() if record is not None)
+
+        return Data(src).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
         stream = GetEventsSSEEvents(
@@ -699,8 +703,11 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
         source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
-        source = (self._handle_adapters(record) for record in source() if record is not None)
-        return Data(source).use_cache(self._cache)
+
+        def src():
+            return (self._handle_adapters(record) for record in source() if record is not None)
+
+        return Data(src).use_cache(self._cache)
 
     def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
         stream = GetMessagesSSEEvents(
