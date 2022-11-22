@@ -21,8 +21,6 @@
 - [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
 - [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
 - [`provider`](./provider.md#module-provider)
-- [`provider.adapters`](./provider.adapters.md#module-provideradapters)
-- [`provider.adapters.adapter_sse`](./provider.adapters.adapter_sse.md#module-provideradaptersadapter_sse)
 - [`provider.command`](./provider.command.md#module-providercommand)
 - [`provider.exceptions`](./provider.exceptions.md#module-providerexceptions)
 - [`provider.interfaces`](./provider.interfaces.md#module-providerinterfaces)
@@ -40,16 +38,11 @@
 - [`provider.v5.adapters.basic_adapters`](./provider.v5.adapters.basic_adapters.md#module-providerv5adaptersbasic_adapters)
 - [`provider.v5.adapters.event_adapters`](./provider.v5.adapters.event_adapters.md#module-providerv5adaptersevent_adapters)
 - [`provider.v5.adapters.message_adapters`](./provider.v5.adapters.message_adapters.md#module-providerv5adaptersmessage_adapters)
-- [`provider.v5.command_resolver`](./provider.v5.command_resolver.md#module-providerv5command_resolver)
 - [`provider.v5.commands`](./provider.v5.commands.md#module-providerv5commands)
 - [`provider.v5.commands.grpc`](./provider.v5.commands.grpc.md#module-providerv5commandsgrpc)
-- [`provider.v5.commands.http`](./provider.v5.commands.http.md#module-providerv5commandshttp)
 - [`provider.v5.data_source`](./provider.v5.data_source.md#module-providerv5data_source)
 - [`provider.v5.data_source.grpc`](./provider.v5.data_source.grpc.md#module-providerv5data_sourcegrpc)
 - [`provider.v5.data_source.http`](./provider.v5.data_source.http.md#module-providerv5data_sourcehttp)
-- [`provider.v5.events_tree`](./provider.v5.events_tree.md#module-providerv5events_tree)
-- [`provider.v5.events_tree.events_tree_collection`](./provider.v5.events_tree.events_tree_collection.md#module-providerv5events_treeevents_tree_collection)
-- [`provider.v5.events_tree.parent_events_tree_collection`](./provider.v5.events_tree.parent_events_tree_collection.md#module-providerv5events_treeparent_events_tree_collection)
 - [`provider.v5.filters`](./provider.v5.filters.md#module-providerv5filters)
 - [`provider.v5.filters.event_filters`](./provider.v5.filters.event_filters.md#module-providerv5filtersevent_filters)
 - [`provider.v5.filters.filter`](./provider.v5.filters.filter.md#module-providerv5filtersfilter)
@@ -69,7 +62,6 @@
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 - [`utils`](./utils.md#module-utils)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
-- [`utils.json`](./utils.json.md#module-utilsjson)
 
 ## Classes
 
@@ -87,8 +79,6 @@
 - [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
-- [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
-- [`adapter_sse.StreamingSSEAdapter`](./provider.adapters.adapter_sse.md#class-streamingsseadapter)
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
 - [`exceptions.CommandError`](./provider.exceptions.md#class-commanderror): Exception raised for errors in the command.
 - [`exceptions.EventNotFound`](./provider.exceptions.md#class-eventnotfound)
@@ -123,20 +113,8 @@
 - [`grpc.GetMessages`](./provider.v5.commands.grpc.md#class-getmessages): A Class-Command for request to rpt-data-provider.
 - [`grpc.GetMessagesById`](./provider.v5.commands.grpc.md#class-getmessagesbyid): A Class-Command for request to rpt-data-provider.
 - [`grpc.GetMessagesGRPCObject`](./provider.v5.commands.grpc.md#class-getmessagesgrpcobject): A Class-Command for request to rpt-data-provider.
-- [`http.GetEventById`](./provider.v5.commands.http.md#class-geteventbyid): A Class-Command for request to rpt-data-provider.
-- [`http.GetEvents`](./provider.v5.commands.http.md#class-getevents): A Class-Command for request to rpt-data-provider.
-- [`http.GetEventsById`](./provider.v5.commands.http.md#class-geteventsbyid): A Class-Command for request to rpt-data-provider.
-- [`http.GetEventsSSEBytes`](./provider.v5.commands.http.md#class-geteventsssebytes): A Class-Command for request to rpt-data-provider.
-- [`http.GetEventsSSEEvents`](./provider.v5.commands.http.md#class-geteventssseevents): A Class-Command for request to rpt-data-provider.
-- [`http.GetMessageById`](./provider.v5.commands.http.md#class-getmessagebyid): A Class-Command for request to rpt-data-provider.
-- [`http.GetMessages`](./provider.v5.commands.http.md#class-getmessages): A Class-Command for request to rpt-data-provider.
-- [`http.GetMessagesById`](./provider.v5.commands.http.md#class-getmessagesbyid): A Class-Command for request to rpt-data-provider.
-- [`http.GetMessagesSSEBytes`](./provider.v5.commands.http.md#class-getmessagesssebytes): A Class-Command for request to rpt-data-provider.
-- [`http.GetMessagesSSEEvents`](./provider.v5.commands.http.md#class-getmessagessseevents): A Class-Command for request to rpt-data-provider.
 - [`grpc.GRPCProvider5DataSource`](./provider.v5.data_source.grpc.md#class-grpcprovider5datasource): DataSource class which provide work with rpt-data-provider.
 - [`http.HTTPProvider5DataSource`](./provider.v5.data_source.http.md#class-httpprovider5datasource): DataSource class which provide work with rpt-data-provider.
-- [`events_tree_collection.EventsTreeCollectionProvider5`](./provider.v5.events_tree.events_tree_collection.md#class-eventstreecollectionprovider5): EventsTreesCollections for data-provider v5.
-- [`parent_events_tree_collection.ParentEventsTreeCollectionProvider5`](./provider.v5.events_tree.parent_events_tree_collection.md#class-parenteventstreecollectionprovider5): ParentEventsTreeCollection for data-provider v5.
 - [`event_filters.AttachedMessageIdFilter`](./provider.v5.filters.event_filters.md#class-attachedmessageidfilter): Filters the events that are linked to the specified message id.
 - [`event_filters.BodyFilter`](./provider.v5.filters.event_filters.md#class-bodyfilter): Will match the events which body contains one of the given substrings.
 - [`event_filters.FailedStatusFilter`](./provider.v5.filters.event_filters.md#class-failedstatusfilter): Will match the events which status equals failed.
@@ -163,17 +141,13 @@
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
-- [`json.BufferedJSONProcessor`](./utils.json.md#class-bufferedjsonprocessor)
 
 ## Functions
 
 - [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
-- [`adapter_sse.get_default_sse_adapter`](./provider.adapters.adapter_sse.md#function-get_default_sse_adapter)
 - [`version_checker.get_package_version`](./provider.utils.version_checker.md#function-get_package_version)
 - [`version_checker.get_version_by_pip`](./provider.utils.version_checker.md#function-get_version_by_pip)
 - [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
-- [`command_resolver.resolver_get_event_by_id`](./provider.v5.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
-- [`command_resolver.resolver_get_events_by_id`](./provider.v5.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
 
 
 ---
