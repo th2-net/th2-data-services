@@ -6,6 +6,11 @@ from th2_data_services.provider.exceptions import CommandError
 from tests.tests_unit.tests_diff_version.conftest import http, HTTPProviderDataSource
 from ..conftest import STREAM_1, STREAM_2
 
+def issue_test_event(all_events):
+    assert list(all_events.data) == all_events.expected_data_values
+
+def issue_test_messages(all_messages):
+    assert list(all_messages.data) == all_messages.expected_data_values
 
 def test_find_message_by_id_from_data_provider_with_error(http_data_source: HTTPProviderDataSource):
     with pytest.raises(CommandError) as exc_info:
@@ -40,10 +45,10 @@ def test_messageIds_not_in_last_msg(messages_from_data_source: Data):
 
 
 def test_get_messages_with_multiple_url(
-    messages_from_data_source_with_test_streams: Data,
+    messages_from_data_source_with_streams: Data,
     messages_from_data_source: Data,
 ):
-    messages = messages_from_data_source_with_test_streams.use_cache(True)
+    messages = messages_from_data_source_with_streams.use_cache(True)
 
     messages_hand_expected = messages_from_data_source
     messages_hand_actual = messages.filter(
@@ -72,8 +77,8 @@ def test_attached_messages(http_data_source: HTTPProviderDataSource):
 """
 
 
-def test_events_for_data_loss(demo_get_events_with_one_filter):
-    events = demo_get_events_with_one_filter
+def test_events_for_data_loss(get_events_with_one_filter):
+    events = get_events_with_one_filter
     for _ in range(3):
         for _ in events:
             pass
@@ -81,8 +86,8 @@ def test_events_for_data_loss(demo_get_events_with_one_filter):
     assert len(list(events)) == events.len
 
 
-def test_messages_for_data_loss(demo_get_messages_with_one_filter):
-    messages = demo_get_messages_with_one_filter
+def test_messages_for_data_loss(get_messages_with_one_filter):
+    messages = get_messages_with_one_filter
     for _ in range(3):
         for _ in messages:
             pass

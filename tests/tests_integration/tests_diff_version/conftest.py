@@ -13,7 +13,7 @@ from . import (
     HTTP_PORT,
     GRPC_PORT,
 )  # noqa  # noqa
-from . import START_TIME, END_TIME, MESSAGE_ID_1, STREAM_1, STREAM_2, all_test_message_bodies, all_test_event_bodies
+from . import START_TIME, END_TIME, MESSAGE_ID_1, STREAM_1, STREAM_2, all_message_bodies_http,all_message_bodies_grpc, all_event_bodies_http,all_event_bodies_grpc
 
 
 @pytest.fixture
@@ -35,8 +35,8 @@ DataCase = namedtuple("DataCase", ["data", "expected_data_values", "protocol"])
 
 @pytest.fixture(
     params=[
-        ("http_data_source", all_test_event_bodies, 'http'),
-        ("grpc_data_source", all_test_event_bodies, 'grpc'),
+        ("http_data_source", all_event_bodies_http, 'http'),
+        ("grpc_data_source", all_event_bodies_grpc, 'grpc'),
     ]
 )
 def all_events(request) -> DataCase:
@@ -59,8 +59,8 @@ def all_events(request) -> DataCase:
 
 @pytest.fixture(
     params=[
-        ("http_data_source", all_test_event_bodies, 'http'),
-        ("grpc_data_source", all_test_event_bodies, 'grpc'),
+        ("http_data_source", all_event_bodies_http, 'http'),
+        ("grpc_data_source", all_event_bodies_grpc, 'grpc'),
     ]
 )
 def all_messages(request) -> DataCase:
@@ -95,7 +95,7 @@ def all_messages(request) -> DataCase:
 #                 http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME)
 #             ),
 #         },
-#         {"events": all_test_event_bodies, "messages": all_test_message_bodies},
+#         {"events": all_event_bodies, "messages": all_message_bodies},
 #     )
 
 
@@ -178,7 +178,7 @@ def events_from_data_source_with_cache_status(
 
 
 @pytest.fixture
-def messages_from_data_source_with_test_streams(
+def messages_from_data_source_with_streams(
     http_data_source: HTTPProviderDataSource,
 ) -> Data:
     messages = http_data_source.command(

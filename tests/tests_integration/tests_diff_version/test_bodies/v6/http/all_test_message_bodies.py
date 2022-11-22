@@ -1,4 +1,4 @@
-all_message_bodies = [
+all_message_bodies_http = [
     {
         "type": "message",
         "id": "ds-lib-session1:first:1668429677955474101",

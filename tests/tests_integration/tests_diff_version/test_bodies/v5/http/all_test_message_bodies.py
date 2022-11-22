@@ -1,4 +1,4 @@
-all_message_bodies = [
+all_message_bodies_http = [
     {
         "type": "message",
         "timestamp": {"nano": 732416000, "epochSecond": 1668603186},

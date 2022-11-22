@@ -15,7 +15,11 @@ if v == "1.1.0":  # v6
     from th2_data_services.provider.v6.adapters.message_adapters import CodecPipelinesAdapter  # noqa
     from th2_data_services.provider.v6.struct import http_provider6_message_struct as message_struct
 
-    from .test_bodies.v6 import all_test_event_bodies, all_test_message_bodies
+    from .test_bodies.v6.http.all_test_event_bodies import all_event_bodies_http
+    from .test_bodies.v6.http.all_test_message_bodies import all_message_bodies_http
+    from .test_bodies.v6.grpc.all_test_event_bodies import all_event_bodies_grpc
+    from .test_bodies.v6.grpc.all_test_message_bodies import all_message_bodies_grpc
+
 
     EVENT_ID_TEST_DATA_ROOT = "a26078a4-6419-11ed-bfec-b48c9dc9ebfb"
     EVENT_ID_PLAIN_EVENT_1 = "a275f396-6419-11ed-a9e6-b48c9dc9ebfb"
@@ -38,8 +42,11 @@ elif v == "0.1.6":  # v5
     from th2_data_services.provider.v5.adapters.message_adapters import CodecPipelinesAdapter  # noqa
     from th2_data_services.provider.v5.struct import provider5_message_struct as message_struct
     from th2_data_services.filter import Filter  # noqa
-
-    from .test_bodies.v5 import all_test_event_bodies, all_test_message_bodies
+    
+    from .test_bodies.v5.http.all_test_event_bodies import all_event_bodies_http
+    from .test_bodies.v5.http.all_test_message_bodies import all_message_bodies_http
+    from .test_bodies.v5.grpc.all_test_event_bodies import all_event_bodies_grpc
+    from .test_bodies.v5.grpc.all_test_message_bodies import all_message_bodies_grpc
 
     START_TIME = datetime(year=2022, month=11, day=16, hour=12, minute=53, second=1, microsecond=0)
     END_TIME = datetime(year=2022, month=11, day=16, hour=12, minute=53, second=8, microsecond=0)
