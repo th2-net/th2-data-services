@@ -8,13 +8,11 @@ from ..conftest import STREAM_1, STREAM_2
 
 
 def test_find_message_by_id_from_data_provider_with_error(http_data_source: HTTPProviderDataSource):
-
     with pytest.raises(CommandError) as exc_info:
         http_data_source.command(http.GetMessageById("demo-conn_not_exist:first:1624005448022245399"))
 
 
 def test_get_events_from_data_provider_with_error(http_data_source: HTTPProviderDataSource):
-
     events = http_data_source.command(http.GetEvents(start_timestamp="test", end_timestamp="test"))
     with pytest.raises(TypeError) as exc_info:
         list(events)
@@ -22,7 +20,6 @@ def test_get_events_from_data_provider_with_error(http_data_source: HTTPProvider
 
 
 def test_get_messages_from_data_provider_with_error(http_data_source: HTTPProviderDataSource):
-
     events = http_data_source.command(http.GetMessages(start_timestamp="test", end_timestamp="test", stream="test"))
     with pytest.raises(TypeError) as exc_info:
         list(events)
@@ -73,3 +70,21 @@ def test_attached_messages(http_data_source: HTTPProviderDataSource):
 
     assert events.filter(lambda event: event.get("attachedMessageIds")).len
 """
+
+
+def test_events_for_data_loss(demo_get_events_with_one_filter):
+    events = demo_get_events_with_one_filter
+    for _ in range(3):
+        for _ in events:
+            pass
+
+    assert len(list(events)) == events.len
+
+
+def test_messages_for_data_loss(demo_get_messages_with_one_filter):
+    messages = demo_get_messages_with_one_filter
+    for _ in range(3):
+        for _ in messages:
+            pass
+
+    assert len(list(messages)) == messages.len
