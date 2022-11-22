@@ -69,7 +69,6 @@
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 - [`utils`](./utils.md#module-utils)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
-- [`utils.json`](./utils.json.md#module-utilsjson)
 
 ## Classes
 
@@ -163,7 +162,6 @@
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
-- [`json.BufferedJSONProcessor`](./utils.json.md#class-bufferedjsonprocessor)
 
 ## Functions
 
