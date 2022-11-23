@@ -14,12 +14,14 @@
 import copy
 import pickle
 import pprint
+from warnings import warn
 from functools import partial
 from os import rename
 from pathlib import Path
 from time import time
 from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Iterator, Any
 from weakref import finalize
+import types
 
 # LOG import logging
 
@@ -48,10 +50,21 @@ class Data:
         """Data constructor.
 
         Args:
-            data: Data source. Any iterable, Data object or function that creates generator.
+            data: Data source. Any iterable, Data object or a function that creates generator.
             cache: Set True if you want to write and read from cache.
             workflow: Workflow.
+
         """
+        if isinstance(data, types.GeneratorType) and cache is False:
+            warn(
+                "Putted data has a generator type. "
+                "Data object will work wrong in non-cache mode because generators "
+                "are iterates only once. "
+                "Expected data types: Iterator, Callable[..., DataGenerator], List[Iterator]",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+
         if self._is_iterables_list(data):
             self._data_stream = self._create_data_set_from_iterables(data)
         else:
