@@ -6,11 +6,14 @@ from th2_data_services.provider.exceptions import CommandError
 from tests.tests_unit.tests_diff_version.conftest import http, HTTPProviderDataSource
 from ..conftest import STREAM_1, STREAM_2
 
+
 def test_issue_events(all_events):
     assert list(all_events.data) == all_events.expected_data_values
 
+
 def test_issue_messages(all_messages):
     assert list(all_messages.data) == all_messages.expected_data_values
+
 
 def test_find_message_by_id_from_data_provider_with_error(http_data_source: HTTPProviderDataSource):
     with pytest.raises(CommandError) as exc_info:
@@ -77,19 +80,29 @@ def test_attached_messages(http_data_source: HTTPProviderDataSource):
 """
 
 
-def test_events_for_data_loss(get_events_with_one_filter):
-    events = get_events_with_one_filter
+def test_events_for_data_loss(all_events):
+    """Check that Data object won't loss its stream.
+
+    It might happen if source inside of Data is object of generator instead of
+    generator function.
+    """
+    events = all_events.data
     for _ in range(3):
         for _ in events:
             pass
 
-    assert len(list(events)) == events.len
+    assert list(events) == all_events.expected_data_values
 
 
-def test_messages_for_data_loss(get_messages_with_one_filter):
-    messages = get_messages_with_one_filter
+def test_messages_for_data_loss(all_messages):
+    """Check that Data object won't loss its stream.
+
+    It might happen if source inside of Data is object of generator instead of
+    generator function.
+    """
+    messages = all_messages.data
     for _ in range(3):
         for _ in messages:
             pass
 
-    assert len(list(messages)) == messages.len
+    assert list(messages) == all_messages.expected_data_values
