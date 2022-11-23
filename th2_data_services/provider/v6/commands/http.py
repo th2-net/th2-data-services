@@ -190,10 +190,13 @@ class GetEventsSSEBytes(IHTTPProvider6Command, ProviderAdaptableCommand):
 
         # LOG         logger.info(url)
 
-        for response in api.execute_sse_request(url):
-            response = self._handle_adapters(response)
-            if response is not None:
-                yield response
+        if self._workflow:
+            for response in api.execute_sse_request(url):
+                response = self._handle_adapters(response)
+                if response is not None:
+                    yield response
+        else:
+            yield from api.execute_sse_request(url)
 
 
 class GetEventsSSEEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
@@ -266,11 +269,20 @@ class GetEventsSSEEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
             attached_messages=self._attached_messages,
             filters=self._filters,
         ).handle(data_source)
-        client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
-        for record in client.events():
-            record = self._handle_adapters(record)
-            if record is not None:
-                yield record
+
+        client = SSEClient(
+            response,
+            char_enc=self._char_enc,
+            decode_errors_handler=self._decode_error_handler,
+        )
+
+        if self._workflow:
+            for record in client.events():
+                record = self._handle_adapters(record)
+                if record is not None:
+                    yield record
+        else:
+            yield from client.events()
 
 
 class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
@@ -327,19 +339,11 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
         self._attached_messages = attached_messages
         self._filters = filters
         self._cache = cache
-        self.sse_handler = sse_handler or get_default_sse_adapter()
+        self._sse_handler = sse_handler or get_default_sse_adapter()
         self._event_system_adapter = DeleteSystemEvents()
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
-        source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
-
-        def src():
-            return (self._handle_adapters(record) for record in source() if record is not None)
-
-        return Data(src).use_cache(self._cache)
-
-    def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
-        stream = GetEventsSSEEvents(
+        sse_events_stream_obj = GetEventsSSEEvents(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
             parent_event=self._parent_event,
@@ -350,10 +354,19 @@ class GetEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
             limit_for_parent=self._limit_for_parent,
             attached_messages=self._attached_messages,
             filters=self._filters,
-        ).handle(data_source)
+        )
 
-        for event in stream:
-            yield event
+        sse_events_stream = partial(sse_events_stream_obj.handle, data_source)
+        source = partial(self._sse_handler.handle, sse_events_stream)
+
+        if self._workflow:
+
+            def src():
+                return (self._handle_adapters(record) for record in source() if record is not None)
+
+            return Data(src).use_cache(self._cache)
+        else:
+            return Data(source).use_cache(self._cache)
 
 
 class GetMessageById(IHTTPProvider6Command, ProviderAdaptableCommand):
@@ -547,10 +560,13 @@ class GetMessagesSSEBytes(IHTTPProvider6Command, ProviderAdaptableCommand):
 
         for url in resulting_urls:
             # LOG             logger.info(url)
-            for response in api.execute_sse_request(url):
-                response = self._handle_adapters(response)
-                if response is not None:
-                    yield response
+            if self._workflow:
+                for response in api.execute_sse_request(url):
+                    response = self._handle_adapters(response)
+                    if response is not None:
+                        yield response
+            else:
+                yield from api.execute_sse_request(url)
 
 
 class GetMessagesSSEEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
@@ -629,10 +645,13 @@ class GetMessagesSSEEvents(IHTTPProvider6Command, ProviderAdaptableCommand):
 
         client = SSEClient(response, char_enc=self._char_enc, decode_errors_handler=self._decode_error_handler)
 
-        for record in client.events():
-            record = self._handle_adapters(record)
-            if record is not None:
-                yield record
+        if self._workflow:
+            for record in client.events():
+                record = self._handle_adapters(record)
+                if record is not None:
+                    yield record
+        else:
+            yield from client.events()
 
 
 class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
@@ -699,18 +718,10 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self._cache = cache
-        self.sse_handler = sse_handler or get_default_sse_adapter()
+        self._sse_handler = sse_handler or get_default_sse_adapter()
 
     def handle(self, data_source: HTTPProvider6DataSource) -> Data:  # noqa: D102
-        source = partial(self.sse_handler.handle, partial(self.__handle_stream, data_source))
-
-        def src():
-            return (self._handle_adapters(record) for record in source() if record is not None)
-
-        return Data(src).use_cache(self._cache)
-
-    def __handle_stream(self, data_source: HTTPProvider6DataSource) -> Generator[dict, None, None]:
-        stream = GetMessagesSSEEvents(
+        sse_events_stream_obj = GetMessagesSSEEvents(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
             stream=self._stream,
@@ -721,7 +732,16 @@ class GetMessages(IHTTPProvider6Command, ProviderAdaptableCommand):
             attached_events=self._attached_events,
             lookup_limit_days=self._lookup_limit_days,
             filters=self._filters,
-        ).handle(data_source)
+        )
 
-        for message in stream:
-            yield message
+        sse_events_stream = partial(sse_events_stream_obj.handle, data_source)
+        source = partial(self._sse_handler.handle, sse_events_stream)
+
+        if self._workflow:
+
+            def src():
+                return (self._handle_adapters(record) for record in source() if record is not None)
+
+            return Data(src).use_cache(self._cache)
+        else:
+            return Data(source).use_cache(self._cache)

@@ -39,5 +39,8 @@ class ProviderAdaptableCommand(IProviderCommand):
 
     def _handle_adapters(self, data):
         for step in self._workflow:
+            # TODO - known issue. If the previous adapter returns None
+            #   the lib will raise exception
+            #   This class will be remove in dev 2.0.0
             data = step(data)
         return data
