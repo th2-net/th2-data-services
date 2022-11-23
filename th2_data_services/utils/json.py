@@ -29,7 +29,9 @@ class BufferedJSONProcessor:
                 yield i
         except JSONDecodeError as e:
             raise ValueError(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{self.buffer}")
-        self.buffer = []
+        finally:
+            # Prevents StopIteration issues
+            self.buffer = []
 
     def _decode_without_buffer(self, x: str) -> dict:
         """Decode JSON without buffer.
