@@ -364,6 +364,7 @@ This release implements performance bug fixes and provides Data object cache fil
 1. [TH2-4379] Speed improvements in json deserialization.
    - StreamingSSEAdapter will now handle bytes from sse-stream into Dict objects.
    - SSEAdapter is now deprecated class.
+2. Data object will generate a warning if you put to it an object that has generator type.
 
 ## BugFixes
 1. [TH2-4385] Logging in Data object slows down the ds library very much. 
