@@ -1,31 +1,17 @@
-from th2_data_services import Data
-
 def test_break_iteration_get_events(all_events):
+    """TH2-4411 related test."""
     data = all_events.data
-    iterated_one_item = False
-    for _ in data:
-        if iterated_one_item:
-            break
-        iterated_one_item = True
-
-    count = 0
 
     for _ in data:
-        count += 1
+        break
 
-    assert count ==  len(all_events.expected_data_values)
-1
+    assert list(data) == all_events.expected_data_values
+
+
 def test_break_iteration_get_messages(all_messages):
+    """TH2-4411 related test."""
     data = all_messages.data
-    iterated_one_item = False
     for _ in data:
-        if iterated_one_item:
-            break
-        iterated_one_item = True
+        break
 
-    count = 0
-
-    for _ in data:
-        count += 1
-
-    assert count == len(all_messages.expected_data_values)
+    assert list(data) == all_messages.expected_data_values

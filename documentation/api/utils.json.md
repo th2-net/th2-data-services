@@ -39,7 +39,7 @@ BufferedJSONProcessor constructor.
 
 ---
 
-<a href="../../th2_data_services/utils/json.py#L60"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/json.py#L62"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `fin`
 
