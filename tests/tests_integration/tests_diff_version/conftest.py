@@ -1,29 +1,111 @@
-from datetime import datetime
-
+from collections import namedtuple
 import pytest
 
 from th2_data_services import Data
-from . import HTTPProviderAPI, HTTPProviderDataSource, http, CodecPipelinesAdapter, Filter, DEMO_PORT  # noqa  # noqa
+from . import (
+    HTTPProviderAPI,
+    HTTPProviderDataSource,
+    GRPCProviderDataSource,
+    http,
+    grpc,
+    CodecPipelinesAdapter,
+    Filter,
+    HTTP_PORT,
+    GRPC_PORT,
+)  # noqa  # noqa
+from . import START_TIME, END_TIME, MESSAGE_ID_1, STREAM_1, STREAM_2, all_message_bodies_http,all_message_bodies_grpc, all_event_bodies_http,all_event_bodies_grpc
 
 
 @pytest.fixture
-def demo_data_source():
-    DEMO_HOST = "10.100.66.114"  # de-th2-qa
-    data_source = HTTPProviderDataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+def http_data_source():
+    HOST = "10.100.66.114"  # de-th2-qa
+    data_source = HTTPProviderDataSource(f"http://{HOST}:{HTTP_PORT}")
     return data_source
 
 
-START_TIME = datetime(year=2022, month=6, day=30, hour=14, minute=0, second=0, microsecond=0)
-END_TIME = datetime(year=2022, month=6, day=30, hour=15, minute=0, second=0, microsecond=0)
+@pytest.fixture
+def grpc_data_source():
+    HOST = "10.100.66.114"
+    data_source = GRPCProviderDataSource(f"{HOST}:{GRPC_PORT}")
+    return data_source
+
+
+DataCase = namedtuple("DataCase", ["data", "expected_data_values", "protocol"])
+
+
+@pytest.fixture(
+    params=[
+        ("http_data_source", all_event_bodies_http, 'http'),
+        ("grpc_data_source", all_event_bodies_grpc, 'grpc'),
+    ]
+)
+def all_events(request) -> DataCase:
+    protocol = request.param[2]
+    if protocol == 'http':
+        commands = http
+    elif protocol == 'grpc':
+        commands = grpc
+    else:
+        raise Exception('Unknown protocol')
+
+    return DataCase(
+        data=request.getfixturevalue(request.param[0]).command(
+            commands.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME)
+        ),
+        expected_data_values=request.param[1],
+        protocol=protocol
+    )
+
+
+@pytest.fixture(
+    params=[
+        ("http_data_source", all_message_bodies_http, 'http'),
+        ("grpc_data_source", all_message_bodies_grpc, 'grpc'),
+    ]
+)
+def all_messages(request) -> DataCase:
+    protocol = request.param[2]
+    if protocol == 'http':
+        commands = http
+    elif protocol == 'grpc':
+        commands = grpc
+    else:
+        raise Exception('Unknown protocol')
+
+    return DataCase(
+        data=request.getfixturevalue(request.param[0]).command(
+            commands.GetMessages(start_timestamp=START_TIME,
+                                 end_timestamp=END_TIME,
+                                 stream=[STREAM_1, STREAM_2])
+        ),
+        expected_data_values=request.param[1],
+        protocol=protocol
+    )
+
+
+# TODO - temp comment the following block. That works not like expected
+# @pytest.fixture(params=["all_events", "all_messages"])
+# def messages_and_events_common(request) -> DataCase:
+#     return DataCase(
+#         {
+#             "events": request.getfixturevalue(request.param).command(
+#                 http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME)
+#             ),
+#             "messages": request.getfixturevalue(request.param).command(
+#                 http.GetMessages(start_timestamp=START_TIME, end_timestamp=END_TIME)
+#             ),
+#         },
+#         {"events": all_event_bodies, "messages": all_message_bodies},
+#     )
 
 
 @pytest.fixture
-def demo_get_events_with_one_filter(demo_data_source: HTTPProviderDataSource) -> Data:
-    case = demo_data_source.command(
+def get_events_with_one_filter(http_data_source: HTTPProviderDataSource) -> Data:
+    case = http_data_source.command(
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            filters=[Filter("name", "TS_1")],
+            filters=[Filter("body", "FilterString-3")],
         )
     )
 
@@ -31,91 +113,81 @@ def demo_get_events_with_one_filter(demo_data_source: HTTPProviderDataSource) ->
 
 
 @pytest.fixture
-def demo_get_events_with_filters(demo_data_source: HTTPProviderDataSource) -> Data:
-    case = demo_data_source.command(
+def get_events_with_filters(http_data_source: HTTPProviderDataSource) -> Data:
+    case = http_data_source.command(
         http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            filters=[Filter("name", "ExecutionReport"), Filter("type", "message"), Filter("body", "589")],
+            filters=[Filter("name", "FilterString"), Filter("type", "ds-lib-test-event"), Filter("body", ["3"])],
         )
     )
-
     return case
 
 
 @pytest.fixture
-def demo_get_messages_with_one_filter(demo_data_source: HTTPProviderDataSource) -> Data:
-    case = demo_data_source.command(
+def get_messages_with_one_filter(http_data_source: HTTPProviderDataSource) -> Data:
+    case = http_data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=20, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=25, microsecond=0),
-            stream=["arfq01fix07"],
-            filters=Filter("type", "NewOrderSingle"),
-        )
-    )
-
-    return case
-
-
-@pytest.fixture
-def demo_get_messages_with_filters(demo_data_source: HTTPProviderDataSource) -> Data:
-    case = demo_data_source.command(
-        http.GetMessages(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=20, microsecond=0),
-            end_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=48, second=25, microsecond=0),
-            stream=["arfq01fix07"],
-            filters=[Filter("type", "NewOrderSingle"), Filter("body", "200")],
-        )
-    )
-
-    return case
-
-
-@pytest.fixture
-def demo_events_from_data_source(demo_data_source: HTTPProviderDataSource) -> Data:
-    events = demo_data_source.command(
-        http.GetEvents(
             start_timestamp=START_TIME,
             end_timestamp=END_TIME,
+            stream=[STREAM_1, STREAM_2],
+            filters=Filter("body", MESSAGE_ID_1.split(":")[2]),  # MESSAGE_ID_1.split(":")[2] to get the sequence number
         )
     )
-    # Returns 49 events #TODO
-    # Failed = 6
-    return events
+
+    return case
 
 
 @pytest.fixture
-def demo_messages_from_data_source(demo_data_source: HTTPProviderDataSource) -> Data:
-    messages = demo_data_source.command(
+def get_messages_with_filters(http_data_source: HTTPProviderDataSource) -> Data:
+    case = http_data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=58, second=0, microsecond=0),
+            start_timestamp=START_TIME,
             end_timestamp=END_TIME,
-            stream=["arfq01fix07"],
+            stream=[STREAM_1, STREAM_2],
+            filters=[
+                Filter("type", "Incoming"),
+                Filter("body", MESSAGE_ID_1.split(":")[2]),
+            ],  # MESSAGE_ID_1.split(":")[2] to get the sequence number
         )
     )
-    # Returns 239 messages
+
+    return case
+
+
+@pytest.fixture
+def messages_from_data_source(http_data_source: HTTPProviderDataSource) -> Data:
+    messages = http_data_source.command(
+        http.GetMessages(
+            start_timestamp=START_TIME,
+            end_timestamp=END_TIME,
+            stream=[STREAM_1, STREAM_2],
+        )
+    )
+    # Returns 6 messages
     return messages
 
 
 @pytest.fixture
-def demo_events_from_data_source_with_cache_status(
-    demo_data_source: HTTPProviderDataSource,
+def events_from_data_source_with_cache_status(
+    http_data_source: HTTPProviderDataSource,
 ) -> Data:
-    events = demo_data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
-    # Returns 49 events #TODO
-    # Failed = 6
+    events = http_data_source.command(http.GetEvents(start_timestamp=START_TIME, end_timestamp=END_TIME, cache=True))
+
     return events
 
 
 @pytest.fixture
-def demo_messages_from_data_source_with_test_streams(
-    demo_data_source: HTTPProviderDataSource,
+def messages_from_data_source_with_streams(
+    http_data_source: HTTPProviderDataSource,
 ) -> Data:
-    messages = demo_data_source.command(
+    messages = http_data_source.command(
         http.GetMessages(
-            start_timestamp=datetime(year=2022, month=6, day=30, hour=14, minute=58, second=0, microsecond=0),
+            start_timestamp=START_TIME,
             end_timestamp=END_TIME,
             stream=[
+                STREAM_1,
+                STREAM_2,
                 "Test-123",
                 "Test-1234",
                 "Test-12345",

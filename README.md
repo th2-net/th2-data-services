@@ -11,6 +11,7 @@ Table of Contents
 * [1. Introduction](#1-introduction)
 * [2. Getting started](#2-getting-started)
    * [2.1. Installation](#21-installation)
+      * [Core](#core)
       * [Data sources (providers)](#data-sources-providers)
       * [GRPC provider warning](#grpc-provider-warning)
          * [Reasons for the restriction](#reasons-for-the-restriction)
@@ -22,6 +23,7 @@ Table of Contents
          * [Pipelining](#pipelining)
          * [Internal iteration](#internal-iteration)
       * [Data caching](#data-caching)
+         * [Forced caching](#forced-caching)
       * [EventsTree and collections](#eventstree-and-collections)
          * [EventsTree](#eventstree)
          * [Collections](#collections)
@@ -209,14 +211,14 @@ only_first_10_events: Generator = events.sift(limit=10)
 # [3.5] Changing cache status.
 events.use_cache(True)
 # or just
-events.use_cache()
+events.use_cache()  # If you want to activate cache.
 
 # [3.6] Walk through data.
 for event in events:
     # Do something with event (event is a dict).
     print(event)
 # After first iteration the events has a cache file.
-# Now they will be used the cache in following iteration.
+# Now they will be used in the cache in the next iteration.
 
 # [3.7] Get number of the elements in the Data object.
 number_of_events = events.len
@@ -249,18 +251,19 @@ data_source.command(commands.GetMessagesById(desired_messages))  # Returns 2 mes
 
 # [3.11] The cache inheritance.
 # Creates a new Data object that will use cache from the events Data object.
-events_with_batch = events.filter(lambda record: record.get("batchId"))
+events_filtered: Data = events.filter(lambda record: record.get("batchId"))
 
 # New Data objects don't use their own cache by default but use the cache of the parent Data object.
-# Use use_cache method to activate caching. After that, the Data object will create its own cache file.
-events_with_batch.use_cache(True)
+# Use use_cache method to activate caching.
+# After that, the Data object will create its own cache file.
+events_filtered.use_cache()
 
-list(events_with_batch)
+list(events_filtered)  # Just to iterate Data object (cache file will be created).
 
-events_types_with_batch = events_with_batch.map(lambda record: {"eventType": record.get("eventType")})
+filtered_events_types = events_filtered.map(lambda record: {"eventType": record.get("eventType")})
 
-events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
-events_without_types_with_batch.use_cache(True)
+events_without_types_with_batch = filtered_events_types.filter(lambda record: not record.get("eventType"))
+events_without_types_with_batch.use_cache()
 
 # [3.12] Data objects joining.
 # You have the following 3 Data objects.
@@ -272,6 +275,11 @@ data_via_init = Data([d1, d2, d3])
 data_via_add = d1 + d2 + d3
 data_with_non_data_obj_via_init = Data([d1, ["a", {"id": 123}, "c"], d3])
 data_with_non_data_obj_via_add = d1 + ["a", {"id": 123}, "c"] + d3
+
+# [3.13] Build and read Data object cache files.
+events.build_cache("cache_filename_or_path")
+data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
+
 
 # [4] Working with EventsTree and EventsTreeCollection.
 # [4.1] Building the EventsTreeCollection.
@@ -438,6 +446,39 @@ your source can be the data source, the parent cache, or own cache:
   If it is not the first iteration of this Data object.
 
 Note that the cache state of the Data object is not inherited.
+
+#### Forced caching
+You can tell DS to cache data to specific cache file, which won't be deleted after script end:
+```python
+import datetime
+
+from th2_data_services import Data
+from th2_data_services.provider.v5.commands import http
+from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
+
+
+data_source = HTTPProvider5DataSource("http://HOST:PORT")
+events: Data = data_source.command(
+    http.GetEvents(
+        start_timestamp=datetime.datetime.utcnow() - datetime.timedelta(minutes=5),
+        end_timestamp=datetime.datetime.utcnow(),
+        attached_messages=True,
+        cache=True,
+    )
+)
+events.build_cache("my_cache.pickle")
+```
+
+Later you can create _Data_ object from this cache file and use it as usual:
+```python
+from th2_data_services import Data
+
+events = Data.from_cache_file("my_cache.pickle")
+
+for event_id in events.filter(lambda x: x["eventType"] == "Verification").map(lambda x: x["eventId"]):
+    print(event_id)
+```
+
 
 ### EventsTree and collections
 

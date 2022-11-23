@@ -1,11 +1,17 @@
 import logging
+import os
 from collections import namedtuple
 from datetime import datetime
+from pathlib import Path
 from typing import List, NamedTuple
 
 import pytest
 
 from tests.tests_unit.utils import LogsChecker
+from th2_data_services import Data
+
+
+EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
 
 
 @pytest.fixture
@@ -1815,3 +1821,53 @@ def parentless_data() -> List[dict]:
         {"type": "event", "eventId": "t", "eventName": "t", "parentEventId": "d"},
     ]
     return data
+
+
+@pytest.fixture(params=[True, False])
+def interactive_mod(request):
+    """INTERACTIVE_MODE or script mod"""
+    INTERACTIVE_MODE = request.param
+    return INTERACTIVE_MODE
+
+
+DataCase = namedtuple("DataCase", ["data", "create_type", "expected_data_values"])
+
+case1_values = ["a", "b", "c", "d", "e", "f", "g"]
+
+
+@pytest.fixture(
+    params=[
+        DataCase(Data(case1_values, cache=True), "list", case1_values),
+        DataCase(Data.from_cache_file(EXTERNAL_CACHE_FILE), "external_cache_file", general_data),
+        DataCase(Data([1, 2, 3]) + Data([4, 5, 6, "end", {"a": 123}]), "join", [1, 2, 3, 4, 5, 6, "end", {"a": 123}]),
+    ]
+)
+def data_case(request) -> DataCase:
+    """
+    Possible Data objects
+
+    STR_PRINT_LEN = 5
+
+    1. Init with list
+    1.1. With <= STR_PRINT_LEN args
+    1.2. With > STR_PRINT_LEN args
+
+    2. Init with joining
+    2.1. With <= STR_PRINT_LEN args
+    2.2. With > STR_PRINT_LEN args
+
+    3. Init with external cache file
+
+
+    """
+    return request.param
+
+
+@pytest.fixture
+def tmp_test_folder() -> Path:
+    """."""
+    cwd = Path.cwd().resolve()
+    new_dir = cwd / "test_dir"
+    new_dir.mkdir(exist_ok=True)
+    yield new_dir
+    os.chdir(cwd)

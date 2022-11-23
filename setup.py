@@ -34,7 +34,6 @@ EXTRAS_DEPENDENCIES = {
         "mypy-protobuf==3.2.0",
         "th2-grpc-common==3.11.1",
         "th2-grpc-data-provider==0.1.6",
-        
     ],
     "rdp6": [
         "mypy-protobuf==2.5",
