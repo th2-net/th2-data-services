@@ -1,22 +1,28 @@
 name: CI tests
 
 on:
-  pull_request:
+#  pull_request:  # It duplicates push in PRs
+  push:
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    name: Run tests
+
+    strategy:
+      matrix:
+        py_version: [ '3.7', '3.8', '3.9' ]
+        os: [ ubuntu-20.04, windows-latest ]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+
+      - name: Set up Python ${{ matrix.py_version }}
+        uses: actions/setup-python@v4
         with:
           python-version: 3.7
       - name: Install requirements
-        run: |
-          pip install -r requirements.txt
-          pip install importlib importlib-metadata
-      - name: Test with pytest
         run: |
           pip install pytest
           cd tests

@@ -2,6 +2,7 @@ from tests.tests_unit.tests_diff_version.conftest import Filter
 
 
 def test_filter_url():
+    """Old style filters."""
     filter_ = Filter("type", ["one", 2, "three"], False, False)
     assert (
         filter_.url()

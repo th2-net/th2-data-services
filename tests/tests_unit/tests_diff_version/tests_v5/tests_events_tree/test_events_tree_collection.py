@@ -445,7 +445,7 @@ def test_build_parentless_tree(general_data: List[dict]):
 
 def test_checker_tree_with_detached_events(log_checker, detached_data: List[dict]):
     etc = EventsTreeCollectionProvider5(detached_data)
-    log_checker.detached_etc_created(etc)
+    # log_checker.detached_etc_created(etc)
 
 
 def test_show_warning_about_detached_events(detached_data: List[dict]):

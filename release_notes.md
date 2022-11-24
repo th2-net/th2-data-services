@@ -311,7 +311,7 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 ## Features
 1. [TH2-3083] The problem with several versions of the grpc interface is solved.
 2. [TH2-3512] Provider V6 module is developed.
-3. [TH2-4141] Option to disable ssl certificate for rdp5 is added
+3. [TH2-4141] Option to disable ssl certificate for rdp5 is added.
 4. [TH2-4098] Added Streams class for the param 'stream'.
 
 # BugFixes
@@ -321,18 +321,65 @@ More detail in [here](https://github.com/th2-net/th2-data-services/tree/dev_1.2.
 # v1.2.1
 
 # BugFixes
-
 1. Added missing library importlib_metadata
 
 # v1.2.2
 
 ## BugFixes
-1. [TH2-4195] EventsTree without parent raises `EventIdNotInTree` exception when trying to use `get_parent()` method 
+1. [TH2-4195] EventsTree without parent raises `EventIdNotInTree` exception when trying to use `get_parent()` method.
 
 # v1.2.3
 
 ## BugFixes
 1. [TH2-4234] The library can now be run on Windows. 
+
+# v1.3.0
+
+## User impact and migration instructions
+This release implements performance bug fixes and provides Data object cache file saving and loading. 
+
+1. [I] Logging were removed from library. Only special builds will have logging. 
+      User cannot use `add_stderr_logger` and  `add_file_logger` logging functions.
+   [M] Remove DS lib logging usage anywhere.
+2. [I] Since `v1.3.0`, the library doesn't provide data source dependencies.
+   
+   [M] You should provide it manually during installation. 
+      You just need to add square brackets after library name and put dependency name.
+
+      ```
+      pip install th2-data-services[dependency_name]
+      ```
+
+      **Dependencies list** 
+
+      | dependency name | provider version |
+      |:--------:|:-------:|
+      |   RDP5   |    5    |
+      |   RDP6   |    6    |
+
+      **Example**
+
+      ```
+      pip install th2-data-services[rdp5]
+      ```
+
+## Features
+1. [TH2-4289] Data.build_cache and Data.from_cache_file features were added.
+2. Added `Data.cache_status` property
+
+## Improvements
+1. [TH2-4379] Speed improvements in json deserialization.
+   - StreamingSSEAdapter will now handle bytes from sse-stream into Dict objects.
+   - SSEAdapter is now deprecated class.
+2. Data object will generate a warning if you put to it an object that has generator type.
+
+## BugFixes
+1. [TH2-4385] Logging in Data object slows down the ds library very much. 
+   - Logging was removed.
+   - `add_stderr_logger` and  `add_file_logger` are not available anymore.
+2. [TH2-4380] Fixed apply_adpater feature for GetMessages / GetEvents / GetEventById / GetMessageById
+3. [TH2-3767] Fixed bug with limit of Data object in Windows.
+4. [TH2-4460] Fixed bug where GRPC omitted fields with None value in response.
 
 # v2.0.0
 
@@ -351,3 +398,5 @@ By installing the package you will no longer get RDP package. If you want to use
    |:--------:|------------------------------------|
    |   lwdp   | latest version of lwdp             |
    |  lwdp1   | latest version of lwdp (version 1) |
+
+1. [TH2-4234] The library can now be run on Windows. 

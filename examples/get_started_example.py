@@ -18,14 +18,6 @@ import th2_data_services
 
 th2_data_services.INTERACTIVE_MODE = True
 
-# [0.2] Logging
-# Import helper function to setup logging.
-from th2_data_services import add_stderr_logger, add_file_logger
-
-add_stderr_logger()  # Just execute it to activate DS lib logging. Debug level by default.
-# or if you want to put logs to the file
-add_file_logger()
-
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
@@ -90,14 +82,14 @@ only_first_10_events: Generator = events.sift(limit=10)
 # [3.5] Changing cache status.
 events.use_cache(True)
 # or just
-events.use_cache()
+events.use_cache()  # If you want to activate cache.
 
 # [3.6] Walk through data.
 for event in events:
     # Do something with event (event is a dict).
     print(event)
 # After first iteration the events has a cache file.
-# Now they will be used the cache in following iteration.
+# Now they will be used in the cache in the next iteration.
 
 # [3.7] Get number of the elements in the Data object.
 number_of_events = events.len
@@ -130,18 +122,19 @@ data_source.command(commands.GetMessagesById(desired_messages))  # Returns 2 mes
 
 # [3.11] The cache inheritance.
 # Creates a new Data object that will use cache from the events Data object.
-events_with_batch = events.filter(lambda record: record.get("batchId"))
+events_filtered: Data = events.filter(lambda record: record.get("batchId"))
 
 # New Data objects don't use their own cache by default but use the cache of the parent Data object.
-# Use use_cache method to activate caching. After that, the Data object will create its own cache file.
-events_with_batch.use_cache(True)
+# Use use_cache method to activate caching.
+# After that, the Data object will create its own cache file.
+events_filtered.use_cache()
 
-list(events_with_batch)
+list(events_filtered)  # Just to iterate Data object (cache file will be created).
 
-events_types_with_batch = events_with_batch.map(lambda record: {"eventType": record.get("eventType")})
+filtered_events_types = events_filtered.map(lambda record: {"eventType": record.get("eventType")})
 
-events_without_types_with_batch = events_types_with_batch.filter(lambda record: not record.get("eventType"))
-events_without_types_with_batch.use_cache(True)
+events_without_types_with_batch = filtered_events_types.filter(lambda record: not record.get("eventType"))
+events_without_types_with_batch.use_cache()
 
 # [3.12] Data objects joining.
 # You have the following 3 Data objects.
@@ -153,6 +146,11 @@ data_via_init = Data([d1, d2, d3])
 data_via_add = d1 + d2 + d3
 data_with_non_data_obj_via_init = Data([d1, ["a", {"id": 123}, "c"], d3])
 data_with_non_data_obj_via_add = d1 + ["a", {"id": 123}, "c"] + d3
+
+# [3.13] Build and read Data object cache files.
+events.build_cache("cache_filename_or_path")
+data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
+
 
 # [4] Working with EventsTree and EventsTreeCollection.
 # [4.1] Building the EventsTreeCollection.
