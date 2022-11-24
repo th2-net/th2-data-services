@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import logging
+# LOG import logging
 from http import HTTPStatus
 from typing import List, Generator, Optional, Union
 
@@ -24,8 +24,8 @@ from urllib.parse import quote
 from th2_data_services.provider.interfaces.source_api import IHTTPProviderSourceAPI
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
 
-logger = logging.getLogger("th2_data_services")
-logger.setLevel(logging.DEBUG)
+# LOG logger = logging.getLogger("th2_data_services")
+# LOG logger.setLevel(logging.DEBUG)
 
 
 class HTTPProvider6API(IHTTPProviderSourceAPI):
@@ -51,13 +51,13 @@ class HTTPProvider6API(IHTTPProviderSourceAPI):
 
     def __normalize_url(self, url):
         if url is None:
-                return url
+            return url
 
         pos = len(url) - 1
-        while url[pos] == '/' and pos >= 0:
+        while url[pos] == "/" and pos >= 0:
             pos -= 1
 
-        return url[:pos + 1]
+        return url[: pos + 1]
 
     def __encode_url(self, url: str) -> str:
         return quote(url.encode(), "/:&?=")
@@ -240,8 +240,7 @@ class HTTPProvider6API(IHTTPProviderSourceAPI):
                     raise exceptions.HTTPError(f"{s.value} {s.phrase} ({s.description})")
             raise exceptions.HTTPError(f"Http returned bad status: {response.status}")
 
-        for chunk in response.stream(self._chunk_length):
-            yield chunk
+        yield from response.stream(self._chunk_length)
 
         response.release_conn()
 
