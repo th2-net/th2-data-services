@@ -27,7 +27,7 @@ EventsTreeCollection objective is building 'EventsTree's and storing them.
 ```python
 __init__(
     data: Data,
-    data_source: IProviderDataSource = None,
+    data_source: IDataSource = None,
     preserve_body: bool = False,
     stub: bool = False
 )
@@ -645,7 +645,7 @@ If there are parentless trees, they also will be return.
 ### <kbd>method</kbd> `recover_unknown_events`
 
 ```python
-recover_unknown_events(data_source: IProviderDataSource) → None
+recover_unknown_events(data_source: IDataSource) → None
 ```
 
 Loads missed events and recover events. 

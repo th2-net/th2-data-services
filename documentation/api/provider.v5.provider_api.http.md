@@ -52,7 +52,7 @@ HTTP Provider5 API.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L251"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L250"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `execute_request`
 

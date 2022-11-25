@@ -1,7 +1,7 @@
 name: CI Unwelcome words
 
 on:
-  pull_request:
+  push:
 
 jobs:
   test:
