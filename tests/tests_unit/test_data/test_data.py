@@ -6,8 +6,8 @@ from tests.tests_unit.utils import (
     iterate_data,
     is_pending_cache_file_exists,
 )
-from th2_data_services.th2_gui_report import Th2GUIReport
 from th2_data_services.data import Data
+import pytest
 
 
 def test_iter_data(general_data: List[dict]):
@@ -304,7 +304,9 @@ def test_data_loss_with_fixed_generator(general_data: List[dict]):
     def general_data_gen():
         return (item for item in general_data)
 
-    data = Data(general_data_gen())
+    with pytest.warns(RuntimeWarning):
+        data = Data(general_data_gen())
+
     for _ in range(3):
         for _ in data:
             pass
@@ -410,42 +412,6 @@ def test_break_cycle(general_data: List[dict]):
         second_cycle += 1
 
     assert second_cycle == 21
-
-
-def test_link_provider():
-    link_gui1 = Th2GUIReport("host:port/th2-common/")
-    link_gui2 = Th2GUIReport("host:port/th2-common")
-    link_gui3 = Th2GUIReport("http://host:port/th2-common/")
-    link_gui4 = Th2GUIReport("http://host:port/th2-common")
-    link_gui5 = Th2GUIReport("host:port/th2-commonhttp")
-
-    result = "http://host:port/th2-common/"
-
-    assert (
-        link_gui1._provider_link == result
-        and link_gui2._provider_link == result
-        and link_gui3._provider_link == result
-        and link_gui4._provider_link == result
-        and link_gui5._provider_link == "http://host:port/th2-commonhttp/"
-    )
-
-
-def test_link_gui_with_event_id():
-    gui = Th2GUIReport("host:port/th2-common/")
-    link_event_id1 = gui.get_event_link("fcace9a4-8fd8-11ec-98fc-038f439375a0")
-
-    result = "http://host:port/th2-common/?eventId=fcace9a4-8fd8-11ec-98fc-038f439375a0"
-
-    assert link_event_id1 == result
-
-
-def test_link_gui_with_message_id():
-    gui = Th2GUIReport("host:port/th2-common/")
-    link_message_id1 = gui.get_message_link("fix01:first:1600854429908302153")
-
-    result = "http://host:port/th2-common/?messageId=fix01:first:1600854429908302153"
-
-    assert link_message_id1 == result
 
 
 def test_cache_filename():

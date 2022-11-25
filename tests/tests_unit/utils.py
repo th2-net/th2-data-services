@@ -1,12 +1,9 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 
 from _pytest.logging import LogCaptureFixture
 
 from th2_data_services import Data
-
-if TYPE_CHECKING:
-    from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
 
 
 class LogsChecker:
@@ -30,7 +27,7 @@ class LogsChecker:
         msg = f"Data[{data._id}] Iterating using own cache file '{path}'"
         assert msg in self.messages, self._exception_message(msg)
 
-    def detached_etc_created(self, etc: EventsTreeCollectionProvider5):
+    def detached_etc_created(self, etc):
         msg = "ETC[%s] %s" % (
             id(etc),
             "The collection were built with detached events because there are no some events in the source",
