@@ -8,10 +8,21 @@ on:
 
 jobs:
   build-n-publish:
-    name: Dev build and Python distributions to PyPI
+    name: Dev build and publish Python distributions to PyPI
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v1.2.0
+        with:
+          ref: ${{ github.ref }}
+#          check-name: 'Run tests'
+          running-workflow-name: 'Dev build and publish Python distributions to PyPI'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+          allowed-conclusions: success
+
       # Prepare custom build version
       - name: Get package version
         id: pack_ver
@@ -19,36 +30,35 @@ jobs:
         with:
           path: package_info.json
           prop_path: package_version
+
       - name: Build custom package version
         id: release_ver
         run: echo ::set-output name=value::"${{ steps.pack_ver.outputs.prop }}.dev${{ github.run_id }}"
+
       - name: Show package version
         run: echo ${{ steps.release_ver.outputs.value }}
+
       - name: Set version for current build in package_info.json
         uses: MerthinTechnologies/edit-json-action@v1
         with:
           filename: './package_info.json'
           key: 'package_version'
           value: ${{ steps.release_ver.outputs.value }}
+
       # Build and publish
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
           python-version: 3.7
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install importlib importlib-metadata
-      - name: Test with pytest
-        run: |
-          pip install pytest
-          cd tests
-          python unittestV5.py
-          python unittestV6.py
-          cd ..
+
       - name: Build package
         run: |
           python setup.py sdist
+
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
