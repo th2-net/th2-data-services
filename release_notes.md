@@ -385,8 +385,11 @@ This release implements performance bug fixes and provides Data object cache fil
 # v2.0.0
 
 ## User impact and migration instructions
+By installing the package you will no longer get RDP package. 
+If you want to use RDP you have to specify dependency in square brackets `[ ]`
 
-By installing the package you will no longer get RDP package. If you want to use RDP you should specify dependency in square brackets `[ ]`
+1. [I] Adapter interface got required handle_stream method.
+   [M] Implement new method for your adapters.
 
 ## Features
 1. [TH2-4128] pip no longer installs RDP by default
@@ -399,3 +402,5 @@ By installing the package you will no longer get RDP package. If you want to use
    |:--------:|------------------------------------|
    |   lwdp   | latest version of lwdp             |
    |  lwdp1   | latest version of lwdp (version 1) |
+
+3. [TH2-4493] Adapter interface got handle_stream method.
