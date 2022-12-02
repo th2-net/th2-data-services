@@ -1,19 +1,18 @@
-name: CI tests
+name: CI tests Py 3.10 (for master only)
 
 on:
-#  pull_request:  # It duplicates push in PRs
   push:
+    branches:
+      - master
 
 jobs:
   test:
     name: Run tests
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
-        py_version: [ '3.7', '3.8', '3.9' ]
-        os: [ ubuntu-20.04, windows-latest ]
-
-    runs-on: ${{ matrix.os }}
+        py_version: [ '3.10' ]
 
     steps:
       - uses: actions/checkout@v2
@@ -26,12 +25,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --pre -e . -q
+          pip install -r requirements.txt
           pip install pytest
           pip install pytest-xdist
 
-      - name: unit tests
+      - name: Test with pytest
         run: |
-          
-          pip list
-          pytest tests/tests_unit -n auto --ignore tests/tests_unit/test_dependencies/
+          export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+          bash run_unit_tests.sh

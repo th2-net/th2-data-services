@@ -1,12 +1,9 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 
 from _pytest.logging import LogCaptureFixture
 
 from th2_data_services import Data
-
-if TYPE_CHECKING:
-    from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5
 
 
 class LogsChecker:
@@ -30,7 +27,7 @@ class LogsChecker:
         msg = f"Data[{data._id}] Iterating using own cache file '{path}'"
         assert msg in self.messages, self._exception_message(msg)
 
-    def detached_etc_created(self, etc: EventsTreeCollectionProvider5):
+    def detached_etc_created(self, etc):
         msg = "ETC[%s] %s" % (
             id(etc),
             "The collection were built with detached events because there are no some events in the source",
@@ -46,10 +43,13 @@ def iterate_data(data: Data, *, to_return=True) -> Optional[list]:
             pass
 
 
-def iterate_data_and_do_checks(data: Data, log_checker: LogsChecker) -> list:
+def iterate_data_and_do_cache_checks(data: Data, log_checker: LogsChecker) -> list:
     r = iterate_data(data, to_return=True)  # Just to iterate and create cache files.
-    assert is_cache_file_exists(data)
-    log_checker.cache_file_created(data)
+    if data.cache_status:
+        assert is_cache_file_exists(data)
+    else:
+        assert not is_cache_file_exists(data)
+    # log_checker.cache_file_created(data)
     return r
 
 

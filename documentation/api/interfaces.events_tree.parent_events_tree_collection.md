@@ -25,7 +25,7 @@ ParentEventsTree contains all parent events that are referenced.
 ```python
 __init__(
     data: Data,
-    data_source: IProviderDataSource = None,
+    data_source: IDataSource = None,
     preserve_body: bool = False,
     stub: bool = False
 )

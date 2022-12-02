@@ -13,14 +13,21 @@
 #  limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Iterable
 
 
 class IAdapter(ABC):
-    """High level interface for Adapter."""
+    """High level interface for Adapter.
+
+    Adapters are classes that convert one data type to another.
+    """
 
     @abstractmethod
     def handle(self, record: Any) -> Any:
+        pass
+
+    @abstractmethod
+    def handle_stream(self, stream: Iterable):
         pass
 
 
