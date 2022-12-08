@@ -93,10 +93,11 @@ pip install th2-data-services[dependency_name]
 
 **Dependencies list** 
 
-| dependency name | provider version |
-|:--------:|-----------------------------|
-|   lwdp   | latest version of lwdp      |
-|  lwdp1   | latest version of lwdp v1   |
+| dependency name | provider version          |
+|:---------------:|---------------------------|
+|      lwdp       | latest version of lwdp    |
+|      lwdp1      | latest version of lwdp v1 |
+|      lwdp2      | latest version of lwdp v2 |
 
 **Example**
 
