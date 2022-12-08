@@ -45,6 +45,9 @@ CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
     "lwdp1": [
         "th2-data-services-lwdp>=1,<2",
     ],
+    "lwdp2": [
+        "th2-data-services-lwdp>=2,<3",
+    ],
 }
 
 setup(

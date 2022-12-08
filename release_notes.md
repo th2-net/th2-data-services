@@ -399,8 +399,9 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    Available data sources implementations:
 
    | provider | version                            |
-   |:--------:|------------------------------------|
-   |   lwdp   | latest version of lwdp             |
-   |  lwdp1   | latest version of lwdp (version 1) |
+----------|:--------:|------------------------------------|
+   | lwdp     | latest version of lwdp             |
+   | lwdp1    | latest version of lwdp (version 1) |
+   | lwdp2    | latest version of lwdp (version 2) |
 
 3. [TH2-4493] Adapter interface got handle_stream method.
