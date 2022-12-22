@@ -451,12 +451,12 @@ class Data:
             new_workflow = [{"type": "map", "callback": adapter.handle_stream}]
             for item in self:
                 yield self.__apply_workflow(item, new_workflow)
-        elif isinstance((adapter := adapter_or_generator), Generator):
+        elif isinstance((generator := adapter_or_generator), Generator):
             # new_workflow = [{"type": "map", "callback": generator}]
             # yield from Data(data=self, workflow=new_workflow)
             ...
         else:
-            raise Exception("map_stream Only accepts Adapter class or Generator")
+            raise Exception("map_stream Only accepts Adapter class or Generator function")
 
     def _build_limit_callback(self, num) -> Callable:
         # LOG         self._logger.debug("Build limit callback with limit = %s", num)
