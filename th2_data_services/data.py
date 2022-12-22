@@ -459,14 +459,14 @@ class Data:
         Returns:
             Data: Data object.
         """
-        if isinstance((adapter := adapter_or_generator), IAdapter):
-            new_workflow = [{"type": "map", "callback": adapter.handle_stream}]
-            for item in self:
-                yield self.__apply_workflow(item, new_workflow)
-        elif isgeneratorfunction(generator := adapter_or_generator):
-            new_workflow = [{"type": "map", "callback": generator}]
-            for item in self:
-                yield from self.__apply_workflow(item, new_workflow)
+        if isinstance(adapter_or_generator, IAdapter):
+            new_workflow = [{"type": "map", "callback": adapter_or_generator.handle_stream}]
+            for record in self:
+                yield self.__apply_workflow(record, new_workflow)
+        elif isgeneratorfunction(adapter_or_generator):
+            new_workflow = [{"type": "map", "callback": adapter_or_generator}]
+            for record in self:
+                yield from self.__apply_workflow(record, new_workflow)
         else:
             raise Exception("map_stream Only accepts Adapter class or Generator function")
 

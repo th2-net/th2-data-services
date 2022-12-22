@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Iterable, Any
 
 from tests.tests_unit.utils import (
     is_cache_file_exists,
@@ -8,6 +8,8 @@ from tests.tests_unit.utils import (
 )
 from th2_data_services.data import Data
 import pytest
+
+from th2_data_services.interfaces import IAdapter
 
 
 def test_iter_data(general_data: List[dict]):
@@ -472,3 +474,49 @@ class TestDataObjectJoining:
         dx.use_cache(True)
         iterate_data(dx, to_return=False)  # It should create dx cache file.
         assert is_cache_file_exists(dx), f"The cache was not dumped after using len"
+
+
+def test_map_stream_with_Adapter(general_data: List[dict]):
+    class SimpleAdapter(IAdapter):
+        def handle_stream(self, stream: Iterable):
+            return self.handle(stream)
+
+        def handle(self, record: Any) -> Any:
+            if record["eventType"] == "Checkpoint":
+                return {"id": record["eventId"], "name": record["eventName"]}
+
+    data = Data(general_data).map_stream(SimpleAdapter())
+    assert list(data) == [
+        None,
+        None,
+        None,
+        {"id": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e", "name": "Checkpoint"},
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    ]
+
+
+def test_map_stream_with_generator_function(general_data: List[dict]):
+    def simple_gen(event):
+        if event["eventType"] == "Checkpoint":
+            yield {"id": event["eventId"], "name": event["eventName"]}
+
+    data = Data(general_data).map_stream(simple_gen)
+    assert list(data) == [
+        {"id": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e", "name": "Checkpoint"}
+    ]
