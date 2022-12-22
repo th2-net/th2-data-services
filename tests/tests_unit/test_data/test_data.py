@@ -479,7 +479,14 @@ class TestDataObjectJoining:
 def test_map_stream_with_adapter(general_data: List[dict]):
     class SimpleAdapter(IAdapter):
         def handle_stream(self, stream: Iterable):
-            return self.handle(stream)
+            # TODO - that's wrong.
+            #   1. Expected to get stream, but self.handle work with a record
+            #   2. handle stream have to be Generator function and yield objects (not return)
+            # return self.handle(stream)
+
+            for record in stream:
+                if record["eventType"] == "Checkpoint":
+                    yield {"id": record["eventId"], "name": record["eventName"]}
 
         def handle(self, record: Any) -> Any:
             if record["eventType"] == "Checkpoint":
@@ -492,9 +499,13 @@ def test_map_stream_with_adapter(general_data: List[dict]):
 
 
 def test_map_stream_with_generator_function(general_data: List[dict]):
-    def simple_gen(event):
-        if event["eventType"] == "Checkpoint":
-            yield {"id": event["eventId"], "name": event["eventName"]}
+    def simple_gen(stream):
+        # TODO - that's wrong.
+        #   1. Expected to get stream, but self.handle work with a record
+        #   2. handle stream have to be Generator function and yield objects (not return)
+        for event in stream:
+            if event["eventType"] == "Checkpoint":
+                yield {"id": event["eventId"], "name": event["eventName"]}
 
     data = Data(general_data).map_stream(simple_gen)
     assert list(data) == [
@@ -505,6 +516,7 @@ def test_map_stream_with_generator_function(general_data: List[dict]):
 def test_map_stream_chaining(general_data: List[dict]):
     class SimpleAdapter(IAdapter):
         def handle_stream(self, stream: Iterable):
+            # TODO - the same mistake as previous.
             return self.handle(stream)
 
         def handle(self, record: Any) -> Any:
@@ -521,6 +533,7 @@ def test_map_stream_chaining(general_data: List[dict]):
 
 def test_map_stream_chaining_with_other_methods(general_data: List[dict]):
     def simple_gen(event):
+        # TODO - the same mistake as previous.
         if event["eventName"] == "Checkpoint":
             yield {"id": event["eventId"]}
 
