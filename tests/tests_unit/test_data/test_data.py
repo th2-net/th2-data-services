@@ -1,5 +1,5 @@
 import os
-from typing import Iterable, List
+from typing import List
 
 from tests.tests_unit.utils import (
     is_cache_file_exists,
@@ -8,8 +8,6 @@ from tests.tests_unit.utils import (
 )
 from th2_data_services.data import Data
 import pytest
-
-from th2_data_services.interfaces import IAdapter
 
 
 def test_iter_data(general_data: List[dict]):
@@ -416,13 +414,6 @@ def test_break_cycle(general_data: List[dict]):
     assert second_cycle == 21
 
 
-def test_cache_filename():
-    data = Data([1, 2, 3, 4, 5], cache=True)
-    for d in data:
-        d
-    assert data._cache_filename.find(":") == -1
-
-
 class TestDataObjectJoining:
     @classmethod
     def setup_class(cls):
@@ -474,60 +465,3 @@ class TestDataObjectJoining:
         dx.use_cache(True)
         iterate_data(dx, to_return=False)  # It should create dx cache file.
         assert is_cache_file_exists(dx), f"The cache was not dumped after using len"
-
-
-def test_map_stream_with_adapter(general_data: List[dict]):
-    class SimpleAdapter(IAdapter):
-        def handle_stream(self, stream: Iterable):
-            for record in stream:
-                if record["eventType"] == "Checkpoint":
-                    yield {"id": record["eventId"], "name": record["eventName"]}
-
-        def handle(self, record):
-            pass
-
-    data = Data(general_data).map_stream(SimpleAdapter())
-    assert list(data) == [
-        {"id": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e", "name": "Checkpoint"}
-    ]
-
-
-def test_map_stream_with_generator_function(general_data: List[dict]):
-    def simple_gen(stream):
-        for event in stream:
-            if event["eventType"] == "Checkpoint":
-                yield {"id": event["eventId"], "name": event["eventName"]}
-
-    data = Data(general_data).map_stream(simple_gen)
-    assert list(data) == [
-        {"id": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e", "name": "Checkpoint"}
-    ]
-
-
-def test_map_stream_chaining(general_data: List[dict]):
-    class SimpleAdapter(IAdapter):
-        def handle_stream(self, stream: Iterable):
-            for record in stream:
-                if record["eventType"] == "Checkpoint":
-                    yield {"id": record["eventId"], "name": record["eventName"]}
-
-        def handle(self, record):
-            pass
-
-    def simple_gen(stream):
-        for event in stream:
-            if "Checkpoint" in event["name"]:
-                yield {"id": event["id"]}
-
-    data = Data(general_data).map_stream(SimpleAdapter()).map_stream(simple_gen)
-    assert list(data) == [{"id": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e"}]
-
-
-def test_map_stream_chaining_with_other_methods(general_data: List[dict]):
-    def simple_gen(stream):
-        for event in stream:
-            if event["eventName"] == "Checkpoint":
-                yield {"id": event["eventId"]}
-
-    data = Data(general_data).filter(lambda event: "Checkpoint" in event["eventName"]).map_stream(simple_gen)
-    assert list(data) == [{"id": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e"}]
