@@ -23,7 +23,6 @@ from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, I
 from weakref import finalize
 import types
 from th2_data_services.interfaces import IAdapter
-from inspect import isgeneratorfunction
 
 # LOG import logging
 
@@ -447,12 +446,12 @@ class Data:
         new_workflow = [{"type": "map", "callback": callback}]
         return Data(data=self, workflow=new_workflow)
 
-    def map_stream(self, adapter_or_generator: Union[IAdapter, Callable]):
+    def map_stream(self, adapter_or_generator: Union[IAdapter, Generator]):
         if isinstance((adapter := adapter_or_generator), IAdapter):
             new_workflow = [{"type": "map", "callback": adapter.handle_stream}]
             for item in self:
                 yield self.__apply_workflow(item, new_workflow)
-        elif isgeneratorfunction((generator := adapter_or_generator)):
+        elif isinstance((adapter := adapter_or_generator), Generator):
             # new_workflow = [{"type": "map", "callback": generator}]
             # yield from Data(data=self, workflow=new_workflow)
             ...
