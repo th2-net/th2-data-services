@@ -22,6 +22,8 @@ from time import time
 from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Iterator, Any
 from weakref import finalize
 import types
+from th2_data_services.interfaces import IAdapter
+from inspect import isgeneratorfunction
 
 # LOG import logging
 
@@ -444,6 +446,18 @@ class Data:
         # LOG         self._logger.info("Apply map")
         new_workflow = [{"type": "map", "callback": callback}]
         return Data(data=self, workflow=new_workflow)
+
+    def map_stream(self, adapter_or_generator: Union[IAdapter, Callable]):
+        if isinstance((adapter := adapter_or_generator), IAdapter):
+            new_workflow = [{"type": "map", "callback": adapter.handle_stream}]
+            for item in self:
+                yield self.__apply_workflow(item, new_workflow)
+        elif isgeneratorfunction((generator := adapter_or_generator)):
+            # new_workflow = [{"type": "map", "callback": generator}]
+            # yield from Data(data=self, workflow=new_workflow)
+            ...
+        else:
+            raise Exception("map_stream Only accepts Adapter class or Generator")
 
     def _build_limit_callback(self, num) -> Callable:
         # LOG         self._logger.debug("Build limit callback with limit = %s", num)
