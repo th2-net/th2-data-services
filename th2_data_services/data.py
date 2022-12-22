@@ -23,6 +23,7 @@ from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, I
 from weakref import finalize
 import types
 from th2_data_services.interfaces import IAdapter
+from inspect import isgeneratorfunction
 
 # LOG import logging
 
@@ -446,15 +447,26 @@ class Data:
         new_workflow = [{"type": "map", "callback": callback}]
         return Data(data=self, workflow=new_workflow)
 
-    def map_stream(self, adapter_or_generator: Union[IAdapter, Generator]):
+    def map_stream(self, adapter_or_generator: Union[IAdapter, Callable[..., Generator]]) -> "Data":
+        """Append `transform` function to workflow without handling None records.
+
+        If Adapter is passed workflow function is Adapter.handle_stream.
+        If Generator is passed it will be used as a workflow.
+
+        Args:
+            adapter_or_generator: Adapter or Generator function
+
+        Returns:
+            Data: Data object.
+        """
         if isinstance((adapter := adapter_or_generator), IAdapter):
             new_workflow = [{"type": "map", "callback": adapter.handle_stream}]
             for item in self:
                 yield self.__apply_workflow(item, new_workflow)
-        elif isinstance((generator := adapter_or_generator), Generator):
-            # new_workflow = [{"type": "map", "callback": generator}]
-            # yield from Data(data=self, workflow=new_workflow)
-            ...
+        elif isgeneratorfunction(generator := adapter_or_generator):
+            new_workflow = [{"type": "map", "callback": generator}]
+            for item in self:
+                yield from self.__apply_workflow(item, new_workflow)
         else:
             raise Exception("map_stream Only accepts Adapter class or Generator function")
 
