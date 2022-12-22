@@ -1,5 +1,5 @@
 import os
-from typing import List, Iterable, Any
+from typing import Iterable, List
 
 from tests.tests_unit.utils import (
     is_cache_file_exists,
@@ -479,18 +479,12 @@ class TestDataObjectJoining:
 def test_map_stream_with_adapter(general_data: List[dict]):
     class SimpleAdapter(IAdapter):
         def handle_stream(self, stream: Iterable):
-            # TODO - that's wrong.
-            #   1. Expected to get stream, but self.handle work with a record
-            #   2. handle stream have to be Generator function and yield objects (not return)
-            # return self.handle(stream)
-
             for record in stream:
                 if record["eventType"] == "Checkpoint":
                     yield {"id": record["eventId"], "name": record["eventName"]}
 
-        def handle(self, record: Any) -> Any:
-            if record["eventType"] == "Checkpoint":
-                return {"id": record["eventId"], "name": record["eventName"]}
+        def handle(self, record):
+            pass
 
     data = Data(general_data).map_stream(SimpleAdapter())
     assert list(data) == [
@@ -500,9 +494,6 @@ def test_map_stream_with_adapter(general_data: List[dict]):
 
 def test_map_stream_with_generator_function(general_data: List[dict]):
     def simple_gen(stream):
-        # TODO - that's wrong.
-        #   1. Expected to get stream, but self.handle work with a record
-        #   2. handle stream have to be Generator function and yield objects (not return)
         for event in stream:
             if event["eventType"] == "Checkpoint":
                 yield {"id": event["eventId"], "name": event["eventName"]}
@@ -516,26 +507,27 @@ def test_map_stream_with_generator_function(general_data: List[dict]):
 def test_map_stream_chaining(general_data: List[dict]):
     class SimpleAdapter(IAdapter):
         def handle_stream(self, stream: Iterable):
-            # TODO - the same mistake as previous.
-            return self.handle(stream)
+            for record in stream:
+                if record["eventType"] == "Checkpoint":
+                    yield {"id": record["eventId"], "name": record["eventName"]}
 
-        def handle(self, record: Any) -> Any:
-            if record["eventType"] == "Checkpoint":
-                return {"id": record["eventId"], "name": record["eventName"]}
+        def handle(self, record):
+            pass
 
-    def simple_gen(event):
-        if "Checkpoint" in event["name"]:
-            yield {"id": event["id"]}
+    def simple_gen(stream):
+        for event in stream:
+            if "Checkpoint" in event["name"]:
+                yield {"id": event["id"]}
 
     data = Data(general_data).map_stream(SimpleAdapter()).map_stream(simple_gen)
     assert list(data) == [{"id": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e"}]
 
 
 def test_map_stream_chaining_with_other_methods(general_data: List[dict]):
-    def simple_gen(event):
-        # TODO - the same mistake as previous.
-        if event["eventName"] == "Checkpoint":
-            yield {"id": event["eventId"]}
+    def simple_gen(stream):
+        for event in stream:
+            if event["eventName"] == "Checkpoint":
+                yield {"id": event["eventId"]}
 
     data = Data(general_data).filter(lambda event: "Checkpoint" in event["eventName"]).map_stream(simple_gen)
     assert list(data) == [{"id": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e"}]

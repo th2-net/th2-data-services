@@ -459,24 +459,18 @@ class Data:
         Returns:
             Data: Data object.
         """
-        if isinstance(adapter_or_generator, IAdapter):
-            new_workflow = [{"type": "map", "callback": adapter_or_generator.handle_stream}]
 
-            def source():
-                for item in self:
-                    yield self.__apply_workflow(item, new_workflow)
+        def get_source(handler):
+            yield from handler(self)
 
+        if isinstance(adapter_or_generator, IAdapter) and isgeneratorfunction(adapter_or_generator.handle_stream):
+            source = partial(get_source, adapter_or_generator.handle_stream)
             return Data(source)
         elif isgeneratorfunction(adapter_or_generator):
-            new_workflow = [{"type": "map", "callback": adapter_or_generator}]
-
-            def source():
-                for item in self:
-                    yield from self.__apply_workflow(item, new_workflow)
-
+            source = partial(get_source, adapter_or_generator)
             return Data(source)
         else:
-            raise Exception("map_stream Only accepts Adapter class or Generator function")
+            raise Exception("map_stream Only accepts Adapter class with generator function or Generator function")
 
     def _build_limit_callback(self, num) -> Callable:
         # LOG         self._logger.debug("Build limit callback with limit = %s", num)
