@@ -12,7 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from th2_data_services.interfaces.adapter import IAdapter, IEventAdapter, IMessageAdapter
+from th2_data_services.interfaces.adapter import (
+    IAdapter,
+    IEventAdapter,
+    IMessageAdapter,
+    IStreamAdapter,
+    IRecordAdapter,
+)
 from th2_data_services.interfaces.command import ICommand
 from th2_data_services.interfaces.data_source import IDataSource
 from th2_data_services.interfaces.source_api import ISourceAPI

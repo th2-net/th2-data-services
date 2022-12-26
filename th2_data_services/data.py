@@ -22,8 +22,8 @@ from time import time
 from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Iterator, Any
 from weakref import finalize
 import types
-from th2_data_services.interfaces import IAdapter
 from inspect import isgeneratorfunction
+from th2_data_services.interfaces.adapter import IStreamAdapter
 
 # LOG import logging
 
@@ -460,7 +460,7 @@ class Data:
         new_workflow = [{"type": "map", "callback": callback}]
         return Data(data=self, workflow=new_workflow)
 
-    def map_stream(self, adapter_or_generator: Union[IAdapter, Callable[..., Generator]]) -> "Data":
+    def map_stream(self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]) -> "Data":
         """Append `transform` function to workflow without handling None records.
 
         If Adapter is passed workflow function is Adapter.handle_stream.
@@ -477,14 +477,16 @@ class Data:
         def get_source(handler):
             yield from handler(self)
 
-        if isinstance(adapter_or_generator, IAdapter) and isgeneratorfunction(adapter_or_generator.handle_stream):
+        if isinstance(adapter_or_generator, IStreamAdapter) and isgeneratorfunction(adapter_or_generator.handle_stream):
             source = partial(get_source, adapter_or_generator.handle_stream)
             return Data(source)
         elif isgeneratorfunction(adapter_or_generator):
             source = partial(get_source, adapter_or_generator)
             return Data(source)
         else:
-            raise Exception("map_stream Only accepts Adapter class with generator function or Generator function")
+            raise Exception(
+                "map_stream Only accepts IStreamAdapter class with generator function or Generator function"
+            )
 
     def _build_limit_callback(self, num) -> Callable:
         # LOG         self._logger.debug("Build limit callback with limit = %s", num)
