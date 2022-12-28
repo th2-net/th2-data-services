@@ -429,8 +429,7 @@ class Data:
         """
         # LOG         self._logger.info("Apply filter")
         new_workflow = [
-            # {"type": "filter", "callback": lambda record: record if callback(record) else None},
-            {"type": "filter", "callback": callback},
+            {"type": "filter", "callback": lambda record: record if callback(record) else None},
         ]
         return Data(data=self, workflow=new_workflow)
 

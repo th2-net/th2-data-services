@@ -20,8 +20,7 @@ def handler(event):
 
 class SimpleAdapter(IAdapter):
     def handle(self, event):
-        if event["type"] == "eventTreeNode":
-            yield {"id": event["eventId"], "eventType": event["eventType"]}
+        ...
 
     def handle_stream(self, stream: Iterable):
         for event in stream:
@@ -54,18 +53,22 @@ def time_map():
     times = []
     for _ in range(5):
         start1 = time.time()
-        _map = map_plain()
+        map1 = map_plain()
+        assert map1.len
         end1 = time.time() - start1
 
         start2 = time.time()
-        _map = map_stream_adapter()
+        map2 = map_stream_adapter()
+        assert map2.len
         end2 = time.time() - start2
 
         start3 = time.time()
-        _map = map_stream_generator()
+        map3 = map_stream_generator()
+        assert map3.len
         end3 = time.time() - start3
 
         times.append([end1, end2, end3])
+
     print(
         tabulate(
             times,
@@ -73,7 +76,8 @@ def time_map():
             floatfmt=".10f",
             tablefmt="github",
             showindex=range(1, 6),
-        )
+        ),
+        "\n",
     )
 
 
@@ -82,9 +86,10 @@ def cprofile_map():
         profiler = cProfile.Profile()
         profiler.enable()
         map_ = func()
+        assert map_.len
         profiler.disable()
-        pstats.Stats(profiler).sort_stats("ncalls").print_stats(5)
-        print("-" * 30)
+        pstats.Stats(profiler).sort_stats("ncalls").print_stats(10)
+        print("-" * 30, "\n")
 
 
 # # # # # # MAP # # # # # #
@@ -115,17 +120,20 @@ def time_filter():
     times = []
     for _ in range(5):
         start1 = time.time()
-        _filter = filter_plain()
+        filter1 = filter_plain()
+        assert filter1.len
         end1 = time.time() - start1
 
         start2 = time.time()
-        _filter = filter_stream()
+        filter2 = filter_stream()
+        assert filter2.len
         end2 = time.time() - start2
 
         times.append([end1, end2])
 
     print(
-        tabulate(times, headers=["Filter", "Filter Stream"], floatfmt=".10f", tablefmt="github", showindex=range(1, 6))
+        tabulate(times, headers=["Filter", "Filter Stream"], floatfmt=".10f", tablefmt="github", showindex=range(1, 6)),
+        "\n",
     )
 
 
@@ -134,9 +142,10 @@ def cprofile_filter():
         profiler = cProfile.Profile()
         profiler.enable()
         _filter = func()
+        assert _filter.len
         profiler.disable()
-        pstats.Stats(profiler).sort_stats("ncalls").print_stats(5)
-        print("-" * 30)
+        pstats.Stats(profiler).sort_stats("ncalls").print_stats(10)
+        print("-" * 30, "\n")
 
 
 # # # # # # FILTER # # # # # #
