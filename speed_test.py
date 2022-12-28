@@ -54,17 +54,17 @@ def time_map():
     for _ in range(5):
         start1 = time.time()
         map1 = map_plain()
-        assert map1.len
+        map1_len = map1.len
         end1 = time.time() - start1
 
         start2 = time.time()
         map2 = map_stream_adapter()
-        assert map2.len
+        map2_len = map2.len
         end2 = time.time() - start2
 
         start3 = time.time()
         map3 = map_stream_generator()
-        assert map3.len
+        map3_len = map3.len
         end3 = time.time() - start3
 
         times.append([end1, end2, end3])
@@ -86,7 +86,7 @@ def cprofile_map():
         profiler = cProfile.Profile()
         profiler.enable()
         map_ = func()
-        assert map_.len
+        map_len = map_.len
         profiler.disable()
         pstats.Stats(profiler).sort_stats("ncalls").print_stats(10)
         print("-" * 30, "\n")
@@ -121,12 +121,12 @@ def time_filter():
     for _ in range(5):
         start1 = time.time()
         filter1 = filter_plain()
-        assert filter1.len
+        filter1_len = filter1.len
         end1 = time.time() - start1
 
         start2 = time.time()
         filter2 = filter_stream()
-        assert filter2.len
+        filter2_len = filter2.len
         end2 = time.time() - start2
 
         times.append([end1, end2])
@@ -142,7 +142,7 @@ def cprofile_filter():
         profiler = cProfile.Profile()
         profiler.enable()
         _filter = func()
-        assert _filter.len
+        _filter_len = _filter.len
         profiler.disable()
         pstats.Stats(profiler).sort_stats("ncalls").print_stats(10)
         print("-" * 30, "\n")
@@ -151,10 +151,10 @@ def cprofile_filter():
 # # # # # # FILTER # # # # # #
 
 if __name__ == "__main__":
-    # # Filter Tests
-    time_filter()
-    cprofile_filter()
-
     # # Map Tests
     time_map()
     cprofile_map()
+
+    # # Filter Tests
+    time_filter()
+    cprofile_filter()
