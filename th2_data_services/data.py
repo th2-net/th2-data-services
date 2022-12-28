@@ -93,8 +93,7 @@ class Data:
 
     def __remove(self):
         """Data class destructor."""
-        if self.__is_cache_file_exists() and not self._read_from_external_cache_file:
-            self.__delete_cache()
+        self.clear_cache()
         del self._data_stream
 
     def __delete_cache(self) -> None:
@@ -614,3 +613,14 @@ class Data:
         obj = cls([], cache=True)
         obj._set_custom_cache_destination(filename=filename)
         return obj
+
+    def clear_cache(self):
+        """Clears related to data object cache file.
+
+        This function won't remove external cache file.
+        """
+        if self._read_from_external_cache_file:
+            raise Exception("It's not possible to remove external cache file via this method")
+        else:
+            if self.__is_cache_file_exists():
+                self.__delete_cache()
