@@ -22,5 +22,8 @@ def test_cache_file_removed_but_data_object_iterates(general_data: List[dict]):
     data = Data(general_data, cache=True)
     r = iterate_data(data)
     data.clear_cache()
+    data += Data([1, 2, 3])
+    res = r + [1, 2, 3]
 
-    assert list(data) == r
+    assert list(data) == res
+    assert is_cache_file_exists(data)

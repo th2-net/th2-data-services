@@ -567,8 +567,22 @@ class Data:
         return False
 
     def __add__(self, other_data: Iterable) -> "Data":
-        """Joining feature."""
+        """Joining feature.
+
+        Don't keep cache status.
+
+        e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
+        """
         return Data(self._create_data_set_from_iterables([self, other_data]))
+
+    def __iadd__(self, other_data: Iterable) -> "Data":
+        """Joining feature.
+
+        Keeps cache status.
+
+        e.g. data1 += data2  -- will keep the cache status of data1.
+        """
+        return self.__add__(other_data).use_cache(self._cache_status)
 
     def _set_custom_cache_destination(self, filename):
         path = Path(filename).resolve()
