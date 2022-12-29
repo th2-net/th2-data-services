@@ -648,14 +648,3 @@ class Data:
         else:
             if self.__is_cache_file_exists():
                 self.__delete_cache()
-
-    def clear_cache(self):
-        """Clears related to data object cache file.
-
-        This function won't remove external cache file.
-        """
-        if self._read_from_external_cache_file:
-            raise Exception("It's not possible to remove external cache file via this method")
-        else:
-            if self.__is_cache_file_exists():
-                self.__delete_cache()
