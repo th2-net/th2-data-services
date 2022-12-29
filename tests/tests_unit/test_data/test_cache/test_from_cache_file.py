@@ -15,3 +15,10 @@ def test_from_cache_file(general_data: List[dict], cache_file):
     data = Data.from_cache_file(cache_file)
     print()
     assert list(data) == general_data
+
+
+def test_from_cache_file_non_exist_file(general_data: List[dict]):
+    """Check that the lib will raise exception."""
+    cache_file = Path().cwd() / "tests/non_exist_file"
+    with pytest.raises(FileExistsError) as ex:
+        Data.from_cache_file(cache_file)
