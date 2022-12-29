@@ -43,7 +43,7 @@ def iterate_data(data: Data, *, to_return=True) -> Optional[list]:
             pass
 
 
-def iterate_data_and_do_cache_checks(data: Data, log_checker: LogsChecker) -> list:
+def iterate_data_and_do_cache_checks(data: Data, log_checker: LogsChecker = None) -> list:
     r = iterate_data(data, to_return=True)  # Just to iterate and create cache files.
     if data.cache_status:
         assert is_cache_file_exists(data)

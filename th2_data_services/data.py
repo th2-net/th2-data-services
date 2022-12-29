@@ -79,6 +79,8 @@ class Data:
         self._workflow = [] if workflow is None else workflow  # Normally it has empty list or one Step.
         self._length_hint = None  # The value is populated when we use limit method.
         self._cache_status = cache
+        # We use finalize instead of __del__ because __del__ won't be executed sometimes.
+        # Read more about __del__ problems here: https://stackoverflow.com/a/2452895
         self._finalizer = finalize(self, self.__remove)
         # LOG         self._logger = _DataLogger(logger, {"id": self._id})
         # It used to indicate the number of current iteration of the Data object.
@@ -614,3 +616,14 @@ class Data:
         obj = cls([], cache=True)
         obj._set_custom_cache_destination(filename=filename)
         return obj
+
+    def clear_cache(self):
+        """Clears related to data object cache file.
+
+        This function won't remove external cache file.
+        """
+        if self._read_from_external_cache_file:
+            raise Exception("It's not possible to remove external cache file via this method")
+        else:
+            if self.__is_cache_file_exists():
+                self.__delete_cache()
