@@ -5,6 +5,7 @@
 ## Modules
 
 - [`data`](./data.md#module-data)
+- [`decode_error_handler`](./decode_error_handler.md#module-decode_error_handler)
 - [`events_tree`](./events_tree.md#module-events_tree)
 - [`events_tree.events_tree`](./events_tree.events_tree.md#module-events_treeevents_tree)
 - [`events_tree.exceptions`](./events_tree.exceptions.md#module-events_treeexceptions)
@@ -21,6 +22,7 @@
 - [`interfaces.stub_builder`](./interfaces.stub_builder.md#module-interfacesstub_builder)
 - [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
 - [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
+- [`sse_client`](./sse_client.md#module-sse_client)
 - [`utils`](./utils.md#module-utils)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
 
@@ -48,11 +50,12 @@
 - [`stub_builder.IMessageStub`](./interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
 - [`stub_builder.IStub`](./interfaces.stub_builder.md#class-istub)
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
+- [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
 
 ## Functions
 
-- No functions
+- [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
 
 
 ---
