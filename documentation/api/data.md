@@ -92,7 +92,7 @@ Creates cache file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L620"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L624"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `clear_cache`
 
@@ -162,7 +162,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 ### <kbd>classmethod</kbd> `from_cache_file`
 
 ```python
-from_cache_file(filename)
+from_cache_file(filename) → Data
 ```
 
 Creates Data object from cache file with provided name. 
@@ -172,6 +172,11 @@ Creates Data object from cache file with provided name.
 **Args:**
  
  - <b>`filename`</b>:  Name or path to cache file. 
+
+
+
+**Raises:**
+ FileExistsError if provided file is not exist. 
 
 ---
 
