@@ -15,7 +15,7 @@ def test_cache_file_removed(general_data: List[dict]):
     assert not is_cache_file_exists(data)
 
 
-def test_(general_data: List[dict]):
+def test_cache_file_removed_but_data_object_iterates(general_data: List[dict]):
     """
     Check that second iteration the same data object works after cache clearing.
     """
