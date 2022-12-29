@@ -373,3 +373,8 @@ This release implements performance bug fixes and provides Data object cache fil
 2. [TH2-4380] Fixed apply_adpater feature for GetMessages / GetEvents / GetEventById / GetMessageById
 3. [TH2-3767] Fixed bug with limit of Data object in Windows.
 4. [TH2-4460] Fixed bug where GRPC omitted fields with None value in response.
+
+# v1.4.0
+
+## Feature
+1. [TH2-4601] Added `clear_cache` method to data object to remove cache file. 
