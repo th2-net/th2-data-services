@@ -378,3 +378,6 @@ This release implements performance bug fixes and provides Data object cache fil
 
 ## Feature
 1. Added `clear_cache` method to data object to remove cache file. 
+
+## BugFixes
+1. [TH2-4603] Fix += joining feature. Now it keeps cache status.
