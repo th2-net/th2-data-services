@@ -389,6 +389,7 @@ This release implements performance bug fixes and provides Data object cache fil
 
 ## BugFixes
 1. [TH2-4603] Fix += joining feature. Now it keeps cache status.
+2. [TH2-4604] `Data.from_cache_file` method has return value now.
 
 # v2.0.0
 
