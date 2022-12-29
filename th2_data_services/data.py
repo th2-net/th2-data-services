@@ -618,18 +618,25 @@ class Data:
                 file.close()
 
     @classmethod
-    def from_cache_file(cls, filename):
+    def from_cache_file(cls, filename) -> "Data":
         """Creates Data object from cache file with provided name.
 
         Args:
             filename: Name or path to cache file.
 
+        Returns:
+            Data: Data object.
+
+        Raises:
+            FileExistsError if provided file is not exist.
+
         """
         if not Path(filename).resolve().exists():
             raise FileExistsError
-        obj = cls([], cache=True)
-        obj._set_custom_cache_destination(filename=filename)
-        return obj
+
+        data_obj = cls([], cache=True)
+        data_obj._set_custom_cache_destination(filename=filename)
+        return data_obj
 
     def clear_cache(self):
         """Clears related to data object cache file.
