@@ -567,8 +567,22 @@ class Data:
         return False
 
     def __add__(self, other_data: Iterable) -> "Data":
-        """Joining feature."""
+        """Joining feature.
+
+        Don't keep cache status.
+
+        e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
+        """
         return Data(self._create_data_set_from_iterables([self, other_data]))
+
+    def __iadd__(self, other_data: Iterable) -> "Data":
+        """Joining feature.
+
+        Keeps cache status.
+
+        e.g. data1 += data2  -- will keep the cache status of data1.
+        """
+        return self.__add__(other_data).use_cache(self._cache_status)
 
     def _set_custom_cache_destination(self, filename):
         path = Path(filename).resolve()
@@ -610,6 +624,9 @@ class Data:
         Args:
             filename: Name or path to cache file.
 
+        Returns:
+            Data: Data object.
+
         Raises:
             FileExistsError if provided file is not exist.
 
@@ -620,6 +637,17 @@ class Data:
         data_obj = cls([], cache=True)
         data_obj._set_custom_cache_destination(filename=filename)
         return data_obj
+
+    def clear_cache(self):
+        """Clears related to data object cache file.
+
+        This function won't remove external cache file.
+        """
+        if self._read_from_external_cache_file:
+            raise Exception("It's not possible to remove external cache file via this method")
+        else:
+            if self.__is_cache_file_exists():
+                self.__delete_cache()
 
     def clear_cache(self):
         """Clears related to data object cache file.
