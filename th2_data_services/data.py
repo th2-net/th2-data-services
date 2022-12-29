@@ -79,6 +79,8 @@ class Data:
         self._workflow = [] if workflow is None else workflow  # Normally it has empty list or one Step.
         self._length_hint = None  # The value is populated when we use limit method.
         self._cache_status = cache
+        # We use finalize instead of __del__ because __del__ won't be executed sometimes.
+        # Read more about __del__ problems here: https://stackoverflow.com/a/2452895
         self._finalizer = finalize(self, self.__remove)
         # LOG         self._logger = _DataLogger(logger, {"id": self._id})
         # It used to indicate the number of current iteration of the Data object.
@@ -93,7 +95,8 @@ class Data:
 
     def __remove(self):
         """Data class destructor."""
-        self.clear_cache()
+        if self.__is_cache_file_exists() and not self._read_from_external_cache_file:
+            self.__delete_cache()
         del self._data_stream
 
     def __delete_cache(self) -> None:
