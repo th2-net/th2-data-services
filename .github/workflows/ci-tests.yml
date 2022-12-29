@@ -34,7 +34,7 @@ jobs:
           pip install --pre -e .[rdp5] -q
           pip list
           # pytest tests/tests_unit -n auto --ignore tests/tests_unit/tests_diff_version/tests_v6
-          ./run_pytest_rdp5.sh
+          bash run_pytest_rdp5.sh
 
       - name: rdp6 tests
         run: |
