@@ -14,8 +14,6 @@
 
 from th2_data_services.interfaces.adapter import (
     IAdapter,
-    IEventAdapter,
-    IMessageAdapter,
     IStreamAdapter,
     IRecordAdapter,
 )

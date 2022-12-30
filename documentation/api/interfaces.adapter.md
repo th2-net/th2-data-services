@@ -23,10 +23,10 @@ Interface of Adapter for streams.
 
 <a href="../../th2_data_services/interfaces/adapter.py#L22"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-### <kbd>method</kbd> `handle_stream`
+### <kbd>method</kbd> `handle`
 
 ```python
-handle_stream(stream: Iterable)
+handle(stream: Iterable)
 ```
 
 
@@ -51,7 +51,7 @@ Interface of Adapter for events.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(event: dict) → Any
+handle(record: dict) → Any
 ```
 
 
@@ -93,56 +93,6 @@ handle(record: Any) → Any
 
 ```python
 handle_stream(stream: Iterable)
-```
-
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/adapter.py#L50"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>class</kbd> `IMessageAdapter`
-Interface of Adapter for messages. 
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/adapter.py#L53"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `handle`
-
-```python
-handle(message: dict) → Any
-```
-
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/adapter.py#L58"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>class</kbd> `IEventAdapter`
-Interface of Adapter for events. 
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/adapter.py#L61"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `handle`
-
-```python
-handle(event: dict) → Any
 ```
 
 
