@@ -20,7 +20,7 @@ class IStreamAdapter(ABC):
     """Interface of Adapter for streams."""
 
     @abstractmethod
-    def handle_stream(self, stream: Iterable):
+    def handle(self, stream: Iterable):
         pass
 
 
@@ -28,7 +28,7 @@ class IRecordAdapter(ABC):
     """Interface of Adapter for events."""
 
     @abstractmethod
-    def handle(self, event: dict) -> Any:
+    def handle(self, record: dict) -> Any:
         pass
 
 
@@ -44,20 +44,4 @@ class IAdapter(IStreamAdapter, IRecordAdapter):
 
     @abstractmethod
     def handle_stream(self, stream: Iterable):
-        pass
-
-
-class IMessageAdapter(IRecordAdapter):
-    """Interface of Adapter for messages."""
-
-    @abstractmethod
-    def handle(self, message: dict) -> Any:
-        pass
-
-
-class IEventAdapter(IRecordAdapter):
-    """Interface of Adapter for events."""
-
-    @abstractmethod
-    def handle(self, event: dict) -> Any:
         pass
