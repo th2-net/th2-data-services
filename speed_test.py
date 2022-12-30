@@ -73,7 +73,7 @@ def time_map():
         tabulate(
             times,
             headers=["Map", "Map Stream (Adapter)", "Map Stream (Generator)"],
-            floatfmt=".10f",
+            floatfmt=".5f",
             tablefmt="github",
             showindex=range(1, 6),
         ),
@@ -98,14 +98,7 @@ def cprofile_map():
 
 
 def simple_filter(event):
-    if event["type"] == "eventTreeNode":
-        return event
-
-
-def filter_stream_(stream):
-    for event in stream:
-        if event["type"] == "eventTreeNode":
-            yield event
+    return event["type"] == "eventTreeNode"
 
 
 def filter_plain():
@@ -113,7 +106,7 @@ def filter_plain():
 
 
 def filter_stream():
-    return data.filter_stream(filter_stream_)
+    return data.filter_stream(simple_filter)
 
 
 def time_filter():
@@ -132,7 +125,7 @@ def time_filter():
         times.append([end1, end2])
 
     print(
-        tabulate(times, headers=["Filter", "Filter Stream"], floatfmt=".10f", tablefmt="github", showindex=range(1, 6)),
+        tabulate(times, headers=["Filter", "Filter Stream"], floatfmt=".5f", tablefmt="github", showindex=range(1, 6)),
         "\n",
     )
 
