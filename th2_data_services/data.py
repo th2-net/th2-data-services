@@ -88,6 +88,7 @@ class Data:
         self.iter_num = 0  # Indicates what level of the loop the Data object is in.
         self.stop_iteration = None
         self._read_from_external_cache_file = False
+        self._metadata = {}
 
     # LOG         self._logger.info(
     # LOG            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
