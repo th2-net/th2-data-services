@@ -428,4 +428,6 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 | lwdp2    | latest version of lwdp (version 2) |
 
 3. [TH2-4493] Adapter interface got handle_stream method.
-4. [TH2-4490] Added `map_stream` method to Data. 
+4. [TH2-4490] Added `map_stream` method to Data.
+   - Method accepts Generator function or IStreamAdapter interface class with Generator function.
+5. [TH2-4609] Data.filter implementation changed to use `yield`.
