@@ -118,7 +118,7 @@
 
 ## User impact and migration instructions
 
-1. [I] The "metadataOnly" query parameter will now always be set to False in the get_X_from_data_provider methods. Its
+1. [I] The "metadataOnly" query parameter will now always be set to False in the get_X_from_data_provider methods. It's
    the option for Report Viewer front-end only.  
    [M] (Optional) Remove "metadataOnly" parameter in your requests to get more logical and clean code.
 
@@ -371,12 +371,12 @@ This release implements performance bug fixes and provides Data object cache fil
 
    **Dependencies list**
 
-| dependency name | provider version |
-|:---------------:|:----------------:|
-|      RDP5       |        5         |
-|      RDP6       |        6         |
+   | dependency name | provider version |
+   |:---------------:|:----------------:|
+   |      RDP5       |        5         |
+   |      RDP6       |        6         |
 
-**Example**
+   **Example**
 
    ```
    pip install th2-data-services[rdp5]
@@ -421,11 +421,11 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 
    Available data sources implementations:
 
-| provider |              version               |
-|----------|:----------------------------------:|
-| lwdp     |       latest version of lwdp       |
-| lwdp1    | latest version of lwdp (version 1) |
-| lwdp2    | latest version of lwdp (version 2) |
+   | provider |              version               |
+   |----------|:----------------------------------:|
+   | lwdp     |       latest version of lwdp       |
+   | lwdp1    | latest version of lwdp (version 1) |
+   | lwdp2    | latest version of lwdp (version 2) |
 
 3. [TH2-4493] Adapter interface got handle_stream method.
-4. [TH2-4490] Added `map_stream` method to Data. 
+4. [TH2-4490] Added `map_stream` method to Data.�
