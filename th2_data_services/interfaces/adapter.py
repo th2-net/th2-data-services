@@ -20,7 +20,7 @@ class IStreamAdapter(ABC):
     """Interface of Adapter for streams."""
 
     @abstractmethod
-    def handle(self, stream: Iterable):
+    def handle_stream(self, stream: Iterable):
         pass
 
 
