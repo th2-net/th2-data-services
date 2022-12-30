@@ -427,24 +427,18 @@ class Data:
             Data: Data object.
 
         """
-        # LOG         self._logger.info("Apply filter")
-        new_workflow = [
-            {"type": "filter", "callback": lambda record: record if callback(record) else None},
-        ]
-        return Data(data=self, workflow=new_workflow)
 
-        # TODO - check speed for the solution via yield filter
-        # def get_source(handler):
-        #     yield from handler(self)
-        #
-        # def filter_yield(stream):
-        #     for record in stream:
-        #         if callback(record):
-        #             yield record
-        #
-        # source = partial(get_source, filter_yield)
-        #
-        # return Data(source)
+        def get_source(handler):
+            yield from handler(self)
+
+        def filter_yield(stream):
+            for record in stream:
+                if callback(record):
+                    yield record
+
+        source = partial(get_source, filter_yield)
+
+        return Data(source)
 
     def map(self, callback: Callable) -> "Data":
         """Append `transform` function to workflow.
