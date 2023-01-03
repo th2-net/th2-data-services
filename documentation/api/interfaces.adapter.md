@@ -26,7 +26,7 @@ Interface of Adapter for streams.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(stream: Iterable)
+handle(stream: Iterable) → Any
 ```
 
 
@@ -39,7 +39,7 @@ handle(stream: Iterable)
 <a href="../../th2_data_services/interfaces/adapter.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IRecordAdapter`
-Interface of Adapter for events. 
+Interface of Adapter for record. 
 
 
 

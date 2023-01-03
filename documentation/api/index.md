@@ -35,7 +35,7 @@
 - [`exceptions.CommandError`](./exceptions.md#class-commanderror): Exception raised for errors in the command.
 - [`exceptions.EventNotFound`](./exceptions.md#class-eventnotfound)
 - [`exceptions.MessageNotFound`](./exceptions.md#class-messagenotfound)
-- [`adapter.IRecordAdapter`](./interfaces.adapter.md#class-irecordadapter): Interface of Adapter for events.
+- [`adapter.IRecordAdapter`](./interfaces.adapter.md#class-irecordadapter): Interface of Adapter for record.
 - [`adapter.IStreamAdapter`](./interfaces.adapter.md#class-istreamadapter): Interface of Adapter for streams.
 - [`command.IAdaptableCommand`](./interfaces.command.md#class-iadaptablecommand)
 - [`command.ICommand`](./interfaces.command.md#class-icommand): High level interface for Command.

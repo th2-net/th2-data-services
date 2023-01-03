@@ -20,12 +20,12 @@ class IStreamAdapter(ABC):
     """Interface of Adapter for streams."""
 
     @abstractmethod
-    def handle(self, stream: Iterable):
+    def handle(self, stream: Iterable) -> Any:
         pass
 
 
 class IRecordAdapter(ABC):
-    """Interface of Adapter for events."""
+    """Interface of Adapter for record."""
 
     @abstractmethod
     def handle(self, record: dict) -> Any:
