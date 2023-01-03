@@ -463,7 +463,7 @@ class Data:
     def map_stream(self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]) -> "Data":
         """Append `transform` function to workflow without handling None records.
 
-        If Adapter is passed workflow function is Adapter.handle_stream.
+        If Adapter is passed workflow function is Adapter.handle.
         If Generator is passed it will be used as a workflow.
 
         Args:
@@ -477,8 +477,8 @@ class Data:
         def get_source(handler):
             yield from handler(self)
 
-        if isinstance(adapter_or_generator, IStreamAdapter) and isgeneratorfunction(adapter_or_generator.handle_stream):
-            source = partial(get_source, adapter_or_generator.handle_stream)
+        if isinstance(adapter_or_generator, IStreamAdapter) and isgeneratorfunction(adapter_or_generator.handle):
+            source = partial(get_source, adapter_or_generator.handle)
             return Data(source)
         elif isgeneratorfunction(adapter_or_generator):
             source = partial(get_source, adapter_or_generator)

@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 from th2_data_services.interfaces.adapter import (
-    IAdapter,
     IStreamAdapter,
     IRecordAdapter,
 )

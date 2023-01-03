@@ -5,7 +5,7 @@ from th2_data_services.interfaces import IStreamAdapter
 
 
 class SimpleAdapter(IStreamAdapter):
-    def handle_stream(self, stream: Iterable):
+    def handle(self, stream: Iterable):
         for record in stream:
             if record["eventType"] == "Checkpoint":
                 yield {"id": record["eventId"], "name": record["eventName"]}

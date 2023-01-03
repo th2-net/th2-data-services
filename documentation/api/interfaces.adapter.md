@@ -23,10 +23,10 @@ Interface of Adapter for streams.
 
 <a href="../../th2_data_services/interfaces/adapter.py#L22"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-### <kbd>method</kbd> `handle_stream`
+### <kbd>method</kbd> `handle`
 
 ```python
-handle_stream(stream: Iterable)
+handle(stream: Iterable)
 ```
 
 
@@ -52,47 +52,6 @@ Interface of Adapter for events.
 
 ```python
 handle(record: dict) → Any
-```
-
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/adapter.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>class</kbd> `IAdapter`
-High level interface for Adapter. 
-
-Adapters are classes that convert one data type to another. 
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/adapter.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `handle`
-
-```python
-handle(record: Any) → Any
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/adapter.py#L45"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `handle_stream`
-
-```python
-handle_stream(stream: Iterable)
 ```
 
 

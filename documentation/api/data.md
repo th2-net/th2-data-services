@@ -245,7 +245,7 @@ map_stream(
 
 Append `transform` function to workflow without handling None records. 
 
-If Adapter is passed workflow function is Adapter.handle_stream. If Generator is passed it will be used as a workflow. 
+If Adapter is passed workflow function is Adapter.handle. If Generator is passed it will be used as a workflow. 
 
 
 

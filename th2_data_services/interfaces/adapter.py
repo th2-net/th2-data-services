@@ -20,7 +20,7 @@ class IStreamAdapter(ABC):
     """Interface of Adapter for streams."""
 
     @abstractmethod
-    def handle_stream(self, stream: Iterable):
+    def handle(self, stream: Iterable):
         pass
 
 
@@ -29,19 +29,4 @@ class IRecordAdapter(ABC):
 
     @abstractmethod
     def handle(self, record: dict) -> Any:
-        pass
-
-
-class IAdapter(IStreamAdapter, IRecordAdapter):
-    """High level interface for Adapter.
-
-    Adapters are classes that convert one data type to another.
-    """
-
-    @abstractmethod
-    def handle(self, record: Any) -> Any:
-        pass
-
-    @abstractmethod
-    def handle_stream(self, stream: Iterable):
         pass
