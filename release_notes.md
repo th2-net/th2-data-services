@@ -118,7 +118,7 @@
 
 ## User impact and migration instructions
 
-1. [I] The "metadataOnly" query parameter will now always be set to False in the get_X_from_data_provider methods. Its
+1. [I] The "metadataOnly" query parameter will now always be set to False in the get_X_from_data_provider methods. It's
    the option for Report Viewer front-end only.  
    [M] (Optional) Remove "metadataOnly" parameter in your requests to get more logical and clean code.
 
@@ -361,7 +361,6 @@ This release implements performance bug fixes and provides Data object cache fil
    User cannot use `add_stderr_logger` and  `add_file_logger` logging functions.
    [M] Remove DS lib logging usage anywhere.
 2. [I] Since `v1.3.0`, the library doesn't provide data source dependencies.
-
    [M] You should provide it manually during installation.
    You just need to add square brackets after library name and put dependency name.
 
@@ -369,18 +368,18 @@ This release implements performance bug fixes and provides Data object cache fil
       pip install th2-data-services[dependency_name]
       ```
 
-   **Dependencies list**
+      **Dependencies list**
 
-| dependency name | provider version |
-|:---------------:|:----------------:|
-|      RDP5       |        5         |
-|      RDP6       |        6         |
+      | dependency name | provider version |
+      |:---------------:|:----------------:|
+      |      RDP5       |        5         |
+      |      RDP6       |        6         |
 
-**Example**
+      **Example**
 
-   ```
-   pip install th2-data-services[rdp5]
-   ```
+      ```
+      pip install th2-data-services[rdp5]
+      ```
 
 ## Features
 
@@ -421,11 +420,11 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 
    Available data sources implementations:
 
-| provider |              version               |
-|----------|:----------------------------------:|
-| lwdp     |       latest version of lwdp       |
-| lwdp1    | latest version of lwdp (version 1) |
-| lwdp2    | latest version of lwdp (version 2) |
+   | provider |              version               |
+   |----------|:----------------------------------:|
+   | lwdp     |       latest version of lwdp       |
+   | lwdp1    | latest version of lwdp (version 1) |
+   | lwdp2    | latest version of lwdp (version 2) |
 
 3. [TH2-4493] Adapter interface got handle_stream method.
 4. [TH2-4490] Added `map_stream` method to Data.
