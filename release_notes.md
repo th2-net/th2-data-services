@@ -414,4 +414,4 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    | lwdp2    | latest version of lwdp (version 2) |
 
 3. [TH2-4493] Adapter interface got handle_stream method.
-4. [TH2-4491] metadata attribute added to Data.
+4. [TH2-4491] metadata attribute added to Data. It will contain request urls.
