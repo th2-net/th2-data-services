@@ -430,3 +430,4 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 4. [TH2-4490] Added `map_stream` method to Data.
    - Method accepts Generator function or IStreamAdapter interface class with Generator function.
 5. [TH2-4609] Data.filter implementation changed to use `yield`.
+6. [TH2-4491] metadata attribute added to Data.
