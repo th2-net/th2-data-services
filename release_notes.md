@@ -402,6 +402,15 @@ This release implements performance bug fixes and provides Data object cache fil
 3. [TH2-3767] Fixed bug with limit of Data object in Windows.
 4. [TH2-4460] Fixed bug where GRPC omitted fields with None value in response.
 
+# v1.4.0
+
+## Feature
+1. [TH2-4601] Added `clear_cache` method to data object to remove cache file.
+
+## BugFixes
+1. [TH2-4603] Fix += joining feature. Now it keeps cache status.
+2. [TH2-4604] `Data.from_cache_file` method has return value now.
+
 # v2.0.0
 
 ## User impact and migration instructions
@@ -426,10 +435,11 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    | lwdp1    | latest version of lwdp (version 1) |
    | lwdp2    | latest version of lwdp (version 2) |
 
-3. [TH2-4493] Adapter interface got handle_stream method.
+3. [TH2-4493] Adapter interface got handle_stream method. 
 4. [TH2-4490] Added `map_stream` method to Data.
 5. [TH2-4582] IAdapter interface removed.
    - IStreamAdapter interface added to handle streams.
    - IRecordAdapter interface added to handle single record. 
    - Method accepts Generator function or IStreamAdapter interface class with Generator function.
-5. [TH2-4609] Data.filter implementation changed to use `yield`.
+5. [TH2-4609] Data.filter implementation changed to use `yield`. 
+6. [TH2-4491] metadata attribute added to Data. It will contain request urls.

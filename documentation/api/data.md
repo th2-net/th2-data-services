@@ -94,6 +94,20 @@ Creates cache file with provided name.
 
 <a href="../../th2_data_services/data.py#L418"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
+### <kbd>method</kbd> `clear_cache`
+
+```python
+clear_cache()
+```
+
+Clears related to data object cache file. 
+
+This function won't remove external cache file. 
+
+---
+
+<a href="../../th2_data_services/data.py#L419"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
 ### <kbd>method</kbd> `filter`
 
 ```python
@@ -148,7 +162,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 ### <kbd>classmethod</kbd> `from_cache_file`
 
 ```python
-from_cache_file(filename)
+from_cache_file(filename) → Data
 ```
 
 Creates Data object from cache file with provided name. 
@@ -159,9 +173,21 @@ Creates Data object from cache file with provided name.
  
  - <b>`filename`</b>:  Name or path to cache file. 
 
+
+
+**Returns:**
+ 
+ - <b>`Data`</b>:  Data object. 
+
+
+
+**Raises:**
+ FileExistsError if provided file is not exist. 
+
 ---
 
 <a href="../../th2_data_services/data.py#L279"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
 
 ### <kbd>method</kbd> `get_cache_filepath`
 

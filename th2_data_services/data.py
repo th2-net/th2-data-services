@@ -81,6 +81,8 @@ class Data:
         self._workflow = [] if workflow is None else workflow  # Normally it has empty list or one Step.
         self._length_hint = None  # The value is populated when we use limit method.
         self._cache_status = cache
+        # We use finalize instead of __del__ because __del__ won't be executed sometimes.
+        # Read more about __del__ problems here: https://stackoverflow.com/a/2452895
         self._finalizer = finalize(self, self.__remove)
         # LOG         self._logger = _DataLogger(logger, {"id": self._id})
         # It used to indicate the number of current iteration of the Data object.
@@ -88,6 +90,7 @@ class Data:
         self.iter_num = 0  # Indicates what level of the loop the Data object is in.
         self.stop_iteration = None
         self._read_from_external_cache_file = False
+        self.metadata = {}
 
     # LOG         self._logger.info(
     # LOG            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
@@ -602,8 +605,22 @@ class Data:
         return False
 
     def __add__(self, other_data: Iterable) -> "Data":
-        """Joining feature."""
+        """Joining feature.
+
+        Don't keep cache status.
+
+        e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
+        """
         return Data(self._create_data_set_from_iterables([self, other_data]))
+
+    def __iadd__(self, other_data: Iterable) -> "Data":
+        """Joining feature.
+
+        Keeps cache status.
+
+        e.g. data1 += data2  -- will keep the cache status of data1.
+        """
+        return self.__add__(other_data).use_cache(self._cache_status)
 
     def _set_custom_cache_destination(self, filename):
         path = Path(filename).resolve()
@@ -639,15 +656,33 @@ class Data:
                 file.close()
 
     @classmethod
-    def from_cache_file(cls, filename):
+    def from_cache_file(cls, filename) -> "Data":
         """Creates Data object from cache file with provided name.
 
         Args:
             filename: Name or path to cache file.
 
+        Returns:
+            Data: Data object.
+
+        Raises:
+            FileExistsError if provided file is not exist.
+
         """
         if not Path(filename).resolve().exists():
             raise FileExistsError
-        obj = cls([], cache=True)
-        obj._set_custom_cache_destination(filename=filename)
-        return obj
+
+        data_obj = cls([], cache=True)
+        data_obj._set_custom_cache_destination(filename=filename)
+        return data_obj
+
+    def clear_cache(self):
+        """Clears related to data object cache file.
+
+        This function won't remove external cache file.
+        """
+        if self._read_from_external_cache_file:
+            raise Exception("It's not possible to remove external cache file via this method")
+        else:
+            if self.__is_cache_file_exists():
+                self.__delete_cache()
