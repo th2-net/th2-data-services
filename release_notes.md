@@ -428,5 +428,8 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 
 3. [TH2-4493] Adapter interface got handle_stream method.
 4. [TH2-4490] Added `map_stream` method to Data.
+5. [TH2-4582] IAdapter interface removed.
+   - IStreamAdapter interface added to handle streams.
+   - IRecordAdapter interface added to handle single record. 
    - Method accepts Generator function or IStreamAdapter interface class with Generator function.
 5. [TH2-4609] Data.filter implementation changed to use `yield`.

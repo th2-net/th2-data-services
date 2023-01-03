@@ -1,17 +1,14 @@
 from typing import List, Iterable
 
 from th2_data_services import Data
-from th2_data_services.interfaces import IAdapter
+from th2_data_services.interfaces import IStreamAdapter
 
 
-class SimpleAdapter(IAdapter):
-    def handle_stream(self, stream: Iterable):
+class SimpleAdapter(IStreamAdapter):
+    def handle(self, stream: Iterable):
         for record in stream:
             if record["eventType"] == "Checkpoint":
                 yield {"id": record["eventId"], "name": record["eventName"]}
-
-    def handle(self, record):
-        pass
 
 
 def test_map_stream_with_adapter(general_data: List[dict]):
