@@ -414,13 +414,6 @@ def test_break_cycle(general_data: List[dict]):
     assert second_cycle == 21
 
 
-def test_cache_filename():
-    data = Data([1, 2, 3, 4, 5], cache=True)
-    for d in data:
-        d
-    assert data._cache_filename.find(":") == -1
-
-
 class TestDataObjectJoining:
     @classmethod
     def setup_class(cls):

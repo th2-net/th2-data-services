@@ -16,32 +16,17 @@ from abc import ABC, abstractmethod
 from typing import Any, Iterable
 
 
-class IAdapter(ABC):
-    """High level interface for Adapter.
-
-    Adapters are classes that convert one data type to another.
-    """
+class IStreamAdapter(ABC):
+    """Interface of Adapter for streams."""
 
     @abstractmethod
-    def handle(self, record: Any) -> Any:
-        pass
-
-    @abstractmethod
-    def handle_stream(self, stream: Iterable):
+    def handle(self, stream: Iterable) -> Any:
         pass
 
 
-class IMessageAdapter(IAdapter):
-    """Interface of Adapter for messages."""
+class IRecordAdapter(ABC):
+    """Interface of Adapter for record."""
 
     @abstractmethod
-    def handle(self, message: dict) -> Any:
-        pass
-
-
-class IEventAdapter(IAdapter):
-    """Interface of Adapter for events."""
-
-    @abstractmethod
-    def handle(self, event: dict) -> Any:
+    def handle(self, record: dict) -> Any:
         pass

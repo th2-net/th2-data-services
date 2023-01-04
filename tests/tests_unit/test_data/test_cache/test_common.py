@@ -9,6 +9,7 @@ from tests.tests_unit.utils import (
     iterate_data,
     is_pending_cache_file_exists,
 )
+from th2_data_services import Data
 
 from th2_data_services.data import Data
 import pytest
@@ -214,3 +215,10 @@ def test_tmp_cache_will_be_deleted_if_not_fully_recorded(change_type):
     data2 = change_type(data).use_cache()
     iterate_data(data2, to_return=False)
     assert not is_pending_cache_file_exists(data2)
+
+
+def test_cache_filename():
+    data = Data([1, 2, 3, 4, 5], cache=True)
+    for d in data:
+        d
+    assert data._cache_filename.find(":") == -1
