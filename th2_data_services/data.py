@@ -23,7 +23,7 @@ from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, I
 from weakref import finalize
 import types
 from inspect import isgeneratorfunction
-from th2_data_services.interfaces.adapter import IStreamAdapter
+from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 
 # LOG import logging
 
@@ -443,25 +443,28 @@ class Data:
 
         return Data(source)
 
-    def map(self, callback: Callable) -> "Data":
+    def map(self, callback_or_adapter: Union[Callable, IRecordAdapter]) -> "Data":
         """Append `transform` function to workflow.
 
         Args:
-            callback: Transform function.
+            callback_or_adapter: Transform function or an Adapter with IRecordAdapter interface implementation.
 
         Returns:
             Data: Data object.
 
         """
         # LOG         self._logger.info("Apply map")
-        new_workflow = [{"type": "map", "callback": callback}]
+        if isinstance(callback_or_adapter, IRecordAdapter):
+            new_workflow = [{"type": "map", "callback": callback_or_adapter.handle}]
+        else:
+            new_workflow = [{"type": "map", "callback": callback_or_adapter}]
         return Data(data=self, workflow=new_workflow)
 
     def map_stream(self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]) -> "Data":
-        """Append `stream-transform` function to workflow. 
+        """Append `stream-transform` function to workflow.
 
         If StreamAdapter is passed StreamAdapter.handle method will be used as a map function.
-        
+
         Difference between map and map_stream:
         1. map_stream allows you return None values.
         2. map_stream allows you work with the whole stream but not with only 1 element, so you can implement some buffers inside handler.
@@ -474,6 +477,7 @@ class Data:
             Data: Data object.
 
         """
+
         def get_source(handler):
             yield from handler(self)
 
