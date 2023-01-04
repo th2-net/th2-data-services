@@ -22,6 +22,8 @@ from time import time
 from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Iterator, Any
 from weakref import finalize
 import types
+from inspect import isgeneratorfunction
+from th2_data_services.interfaces.adapter import IStreamAdapter
 
 # LOG import logging
 
@@ -428,11 +430,18 @@ class Data:
             Data: Data object.
 
         """
-        # LOG         self._logger.info("Apply filter")
-        new_workflow = [
-            {"type": "filter", "callback": lambda record: record if callback(record) else None},
-        ]
-        return Data(data=self, workflow=new_workflow)
+
+        def get_source(handler):
+            yield from handler(self)
+
+        def filter_yield(stream):
+            for record in stream:
+                if callback(record):
+                    yield record
+
+        source = partial(get_source, filter_yield)
+
+        return Data(source)
 
     def map(self, callback: Callable) -> "Data":
         """Append `transform` function to workflow.
@@ -447,6 +456,37 @@ class Data:
         # LOG         self._logger.info("Apply map")
         new_workflow = [{"type": "map", "callback": callback}]
         return Data(data=self, workflow=new_workflow)
+
+    def map_stream(self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]) -> "Data":
+        """Append `stream-transform` function to workflow. 
+
+        If StreamAdapter is passed StreamAdapter.handle method will be used as a map function.
+        
+        Difference between map and map_stream:
+        1. map_stream allows you return None values.
+        2. map_stream allows you work with the whole stream but not with only 1 element, so you can implement some buffers inside handler.
+        3. map_stream works slightly efficent (faster on 5-10%).
+
+        Args:
+            adapter_or_generator: StreamAdapter object or generator function.
+
+        Returns:
+            Data: Data object.
+
+        """
+        def get_source(handler):
+            yield from handler(self)
+
+        if isinstance(adapter_or_generator, IStreamAdapter) and isgeneratorfunction(adapter_or_generator.handle):
+            source = partial(get_source, adapter_or_generator.handle)
+            return Data(source)
+        elif isgeneratorfunction(adapter_or_generator):
+            source = partial(get_source, adapter_or_generator)
+            return Data(source)
+        else:
+            raise Exception(
+                "map_stream Only accepts IStreamAdapter class with generator function or Generator function"
+            )
 
     def _build_limit_callback(self, num) -> Callable:
         # LOG         self._logger.debug("Build limit callback with limit = %s", num)
