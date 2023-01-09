@@ -42,6 +42,35 @@ parse_timestamp(datetime_string: str) → (<class 'str'>, <class 'str'>)
 
 <a href="../../th2_data_services/utils/converters.py#L33"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
+## <kbd>class</kbd> `DatetimeConverter`
+Converts datetime objects to timestamp. 
+
+If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding). 
+
+Expected datetime object shouldn't contain microseconds. 
+
+
+
+
+---
+
+<a href="../../th2_data_services/utils/converters.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>classmethod</kbd> `parse_timestamp`
+
+```python
+parse_timestamp(datetime_obj: datetime) → (<class 'str'>, <class 'str'>)
+```
+
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/utils/converters.py#L48"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
 ## <kbd>class</kbd> `ProtobufTimestampConverter`
 Converts Th2 timestamps. 
 
@@ -52,7 +81,7 @@ If you request microseconds but your timestamp has nanoseconds, they will be jus
 
 ---
 
-<a href="../../th2_data_services/utils/converters.py#L40"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/converters.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `parse_timestamp`
 
