@@ -89,6 +89,32 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
 
 ---
 
+<a href="../../th2_data_services/interfaces/utils/converter.py#L61"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>classmethod</kbd> `to_milliseconds`
+
+```python
+to_milliseconds(timestamp: ~TimestampType)
+```
+
+Converts timestamp to milliseconds. 
+
+If your timestamp has nanoseconds, they will be just cut (not rounding). 
+
+
+
+**Args:**
+ 
+ - <b>`timestamp`</b>:  TimestampType object to convert. 
+
+
+
+**Returns:**
+ 
+ - <b>`int`</b>:  Timestamp in microseconds format. 
+
+---
+
 <a href="../../th2_data_services/interfaces/utils/converter.py#L48"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `to_nanoseconds`

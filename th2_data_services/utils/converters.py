@@ -6,7 +6,7 @@ from th2_data_services.interfaces.utils.converter import ITimestampConverter
 _DatetimeTuple = namedtuple("DatetimeTuple", "datetime mantissa")
 
 
-class DatetimeStringConverter(ITimestampConverter[str]):
+class ProtobufTimestampConverter(ITimestampConverter[str]):
     """Converts datetime strings.
 
     If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding).

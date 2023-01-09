@@ -13,7 +13,7 @@
 
 <a href="../../th2_data_services/utils/converters.py#L9"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `DatetimeStringConverter`
+## <kbd>class</kbd> `ProtobufTimestampConverter`
 Converts datetime strings. 
 
 If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding). 
