@@ -6,7 +6,7 @@ from th2_data_services.interfaces.utils.converter import ITimestampConverter
 _DatetimeTuple = namedtuple("DatetimeTuple", "datetime mantissa")
 
 
-class ProtobufTimestampConverter(ITimestampConverter[str]):
+class DatetimeStringConverter(ITimestampConverter[str]):
     """Converts datetime strings.
 
     If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding).
@@ -27,4 +27,17 @@ class ProtobufTimestampConverter(ITimestampConverter[str]):
         nanoseconds = f"{mantissa_wo_z:0<9}"
         seconds = int(timestamp.timestamp())
 
+        return seconds, nanoseconds
+
+
+class ProtobufTimestampConverter(ITimestampConverter[dict]):
+    """Converts Th2 timestamps.
+
+    If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding).
+    Expected timestamp format {'epochSecond': 123, 'nano': 500}.
+    """
+
+    @classmethod
+    def parse_timestamp(cls, timestamp: dict) -> (str, str):
+        seconds, nanoseconds = timestamp["epochSecond"], f"{timestamp['nano']:0>9}"
         return seconds, nanoseconds

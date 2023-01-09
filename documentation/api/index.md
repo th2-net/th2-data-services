@@ -50,7 +50,8 @@
 - [`stub_builder.IStub`](./interfaces.stub_builder.md#class-istub)
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
-- [`converters.ProtobufTimestampConverter`](./utils.converters.md#class-protobuftimestampconverter): Converts datetime strings.
+- [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
+- [`converters.ProtobufTimestampConverter`](./utils.converters.md#class-protobuftimestampconverter): Converts Th2 timestamps.
 
 ## Functions
 
