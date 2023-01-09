@@ -446,3 +446,4 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 5. [TH2-4609] Data.filter implementation changed to use `yield`. 
 6. [TH2-4491] metadata attribute added to Data. It will contain request urls.
 7. [TH2-4577] map method now can take either Callable function or Adapter which implements IRecordAdapter.
+8. [TH2-4611] DatetimeConverter, ProtobufTimestampConverter converters added.

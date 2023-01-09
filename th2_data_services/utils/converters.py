@@ -28,3 +28,31 @@ class DatetimeStringConverter(ITimestampConverter[str]):
         seconds = int(timestamp.timestamp())
 
         return seconds, nanoseconds
+
+
+class DatetimeConverter(ITimestampConverter[datetime]):
+    """Converts datetime objects to timestamp.
+
+    If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding).
+
+    Expected datetime object shouldn't contain microseconds.
+    """
+
+    @classmethod
+    def parse_timestamp(cls, datetime_obj: datetime) -> (str, str):
+        seconds = str(int(datetime_obj.timestamp()))
+        nanoseconds = "0" * 9
+        return seconds, nanoseconds
+
+
+class ProtobufTimestampConverter(ITimestampConverter[dict]):
+    """Converts Th2 timestamps.
+
+    If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding).
+    Expected timestamp format {'epochSecond': 123, 'nano': 500}.
+    """
+
+    @classmethod
+    def parse_timestamp(cls, timestamp: dict) -> (str, str):
+        seconds, nanoseconds = timestamp["epochSecond"], f"{timestamp['nano']:0>9}"
+        return seconds, nanoseconds
