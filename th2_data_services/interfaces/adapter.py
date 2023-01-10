@@ -13,11 +13,13 @@
 #  limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import Any, Iterable
+from typing import Any, Iterable, List
 
 
 class IStreamAdapter(ABC):
     """Interface of Adapter for streams."""
+
+    _interactive_mode_errors: List = []
 
     @abstractmethod
     def handle(self, stream: Iterable) -> Any:
