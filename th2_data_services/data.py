@@ -440,8 +440,9 @@ class Data:
                     yield record
 
         source = partial(get_source, filter_yield)
-
-        return Data(source)
+        data = Data(source)
+        data.metadata = self.metadata
+        return data
 
     def map(self, callback_or_adapter: Union[Callable, IRecordAdapter]) -> "Data":
         """Append `transform` function to workflow.
@@ -458,7 +459,9 @@ class Data:
             new_workflow = [{"type": "map", "callback": callback_or_adapter.handle}]
         else:
             new_workflow = [{"type": "map", "callback": callback_or_adapter}]
-        return Data(data=self, workflow=new_workflow)
+        data = Data(data=self, workflow=new_workflow)
+        data.metadata = self.metadata
+        return data
 
     def map_stream(self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]) -> "Data":
         """Append `stream-transform` function to workflow.
@@ -483,14 +486,15 @@ class Data:
 
         if isinstance(adapter_or_generator, IStreamAdapter) and isgeneratorfunction(adapter_or_generator.handle):
             source = partial(get_source, adapter_or_generator.handle)
-            return Data(source)
         elif isgeneratorfunction(adapter_or_generator):
             source = partial(get_source, adapter_or_generator)
-            return Data(source)
         else:
             raise Exception(
                 "map_stream Only accepts IStreamAdapter class with generator function or Generator function"
             )
+        data = Data(source)
+        data.metadata = self.metadata
+        return data
 
     def _build_limit_callback(self, num) -> Callable:
         # LOG         self._logger.debug("Build limit callback with limit = %s", num)
@@ -521,6 +525,7 @@ class Data:
         new_workflow = [{"type": "limit", "callback": self._build_limit_callback(num)}]
         data_obj = Data(data=self, workflow=new_workflow)
         data_obj._length_hint = num
+        data_obj.metadata = self.metadata
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
@@ -618,7 +623,9 @@ class Data:
 
         e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
         """
-        return Data(self._create_data_set_from_iterables([self, other_data]))
+        data = Data(self._create_data_set_from_iterables([self, other_data]))
+        data.metadata = self.metadata
+        return data
 
     def __iadd__(self, other_data: Iterable) -> "Data":
         """Joining feature.
