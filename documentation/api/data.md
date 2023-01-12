@@ -288,6 +288,20 @@ Difference between map and map_stream: 1. map_stream allows you return None valu
 
 ---
 
+<a href="../../th2_data_services/data.py#L704"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `set_metadata`
+
+```python
+set_metadata(metadata: Dict)
+```
+
+
+
+
+
+---
+
 <a href="../../th2_data_services/data.py#L531"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sift`
