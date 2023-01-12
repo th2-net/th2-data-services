@@ -465,3 +465,11 @@ class TestDataObjectJoining:
         dx.use_cache(True)
         iterate_data(dx, to_return=False)  # It should create dx cache file.
         assert is_cache_file_exists(dx), f"The cache was not dumped after using len"
+
+
+def test_metadata_is_carried(general_data: List[dict]):
+    data = Data(general_data)
+    metadata = {"some": "default value", "test": "case"}
+    data.set_metadata(metadata)
+    data = data.filter(lambda event: event["isBatched"]).map(lambda event: {"id": event["eventId"]})
+    assert data.metadata == metadata
