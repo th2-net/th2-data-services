@@ -22,18 +22,18 @@ from th2_data_services import Data
 from th2_data_services.events_tree.events_tree import EventsTree
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
-from th2_data_services.provider.interfaces.data_source import IProviderDataSource
+from th2_data_services.interfaces import IDataSource
 
-import logging
+# LOG import logging
 
 import warnings
 
-logger = logging.getLogger(__name__)
+# LOG logger = logging.getLogger(__name__)
 
 
-class _EventsTreeCollectionLogger(logging.LoggerAdapter):
-    def process(self, msg, kwargs):
-        return "ETC[%s] %s" % (self.extra["id"], msg), kwargs
+# LOG class _EventsTreeCollectionLogger(logging.LoggerAdapter):
+# LOG     def process(self, msg, kwargs):
+# LOG         return "ETC[%s] %s" % (self.extra["id"], msg), kwargs
 
 
 class EventsTreeCollection(ABC):
@@ -48,7 +48,7 @@ class EventsTreeCollection(ABC):
     def __init__(
         self,
         data: Data,
-        data_source: IProviderDataSource = None,
+        data_source: IDataSource = None,
         preserve_body: bool = False,
         stub: bool = False,
     ):
@@ -67,7 +67,7 @@ class EventsTreeCollection(ABC):
         self._detached_nodes: Dict[Optional[str], List[dict]] = defaultdict(list)  # {parent_event_id: [event1, ..]}
         self._stub_status = stub
         self._data_source = data_source
-        self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
+        # LOG         self._logger = _EventsTreeCollectionLogger(logger, {"id": self._id})
 
         events_nodes = self._build_events_store(data)
         self._build_trees(events_nodes)
@@ -77,7 +77,7 @@ class EventsTreeCollection(ABC):
 
         if self._detached_nodes:
             w = "The collection were built with detached events because there are no some events in the source"
-            self._logger.warning(w)
+            # LOG             self._logger.warning(w)
             warnings.warn(w)
 
     def get_parentless_trees(self) -> List[EventsTree]:
@@ -767,7 +767,7 @@ class EventsTreeCollection(ABC):
                     continue
         raise EventIdNotInTree(id)
 
-    def recover_unknown_events(self, data_source: IProviderDataSource) -> None:
+    def recover_unknown_events(self, data_source: IDataSource) -> None:
         """Loads missed events and recover events.
 
         Args:

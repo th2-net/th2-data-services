@@ -102,7 +102,7 @@ Appends a root event to the tree.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L386"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L391"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find`
 
@@ -130,7 +130,7 @@ Searches the first event match.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L310"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L315"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_ancestor`
 
@@ -154,7 +154,7 @@ Finds the ancestor of an event.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L360"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L365"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `findall`
 
@@ -188,7 +188,7 @@ Searches events matches.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L328"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L333"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `findall_iter`
 
@@ -246,7 +246,7 @@ Returns all events from the tree as iterator.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L271"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L276"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_ancestors`
 
@@ -347,7 +347,7 @@ Returns an event by id.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L224"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L229"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_full_path`
 
@@ -488,7 +488,7 @@ Returns the root name.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L408"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L413"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subtree`
 
@@ -517,7 +517,7 @@ Returns subtree of the event by its id.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L425"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L430"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `merge_tree`
 
@@ -547,7 +547,7 @@ Merges a EventsTree to specified identifier.
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L440"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L445"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `show`
 
@@ -572,7 +572,7 @@ Root
 
 ---
 
-<a href="../../th2_data_services/events_tree/events_tree.py#L467"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/events_tree/events_tree.py#L472"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `summary`
 

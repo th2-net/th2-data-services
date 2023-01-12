@@ -217,7 +217,12 @@ class EventsTree:
             EventIdNotInTree: If event id is not in the tree.
         """
         try:
-            return self._tree.parent(id).data
+            parent = self._tree.parent(id)
+
+            if parent is None:
+                raise EventIdNotInTree(id)
+
+            return parent.data
         except NodeIDAbsentError:
             raise EventIdNotInTree(id)
 
