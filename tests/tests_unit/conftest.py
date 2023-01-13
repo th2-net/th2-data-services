@@ -1876,8 +1876,7 @@ def tmp_test_folder() -> Path:
 
 @pytest.fixture
 def events_tree_for_test() -> EventsTree:
-    tree = EventsTree()
-    tree.create_root_event(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
+    tree = EventsTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
     tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
     tree.append_event(event_name="B", event_id="B_id", data=None, parent_id="root_id")
     tree.append_event(event_name="C", event_id="C_id", data={"data": "test data"}, parent_id="B_id")

@@ -11,14 +11,14 @@ def test_getitem(events_tree_for_test: EventsTree):
 
 def test_getitem_id_error(events_tree_for_test: EventsTree):
     with pytest.raises(EventIdNotInTree) as exc:
-        events_tree_for_test["test"]
+        _ = events_tree_for_test["test"]
     assert exc
 
 
 def test_setitem(events_tree_for_test: EventsTree):
     tree = events_tree_for_test
-    tree["A_id"] = "new data"
-    assert tree["A_id"] == "new data"
+    tree["A_id"] = {"new data": 123}
+    assert tree["A_id"] == {"new data": 123}
 
 
 def test_setitem_id_error(events_tree_for_test: EventsTree):
@@ -62,21 +62,39 @@ def test_merge_events_tree(events_tree_for_test: EventsTree):
     tree = events_tree_for_test
     events_count = len(tree)
 
-    other_tree = EventsTree()
-    other_tree.create_root_event(event_name="RootEvent", event_id="root_id")
+    other_tree = EventsTree(event_name="RootEvent", event_id="root_id")
     tree.append_event(event_name="12A", event_id="12A_id", data=None, parent_id="root_id")
     tree.append_event(event_name="12B", event_id="12B_id", data=None, parent_id="root_id")
 
     tree.merge_tree("A_id", other_tree=other_tree)
+    # TODO - this check is peace of shit
     assert events_count < len(tree)
 
 
 def test_merge_events_tree_id_error(events_tree_for_test: EventsTree):
     tree = events_tree_for_test
-    other_tree = EventsTree()
-    other_tree.create_root_event(event_name="RootEvent", event_id="root_id")
+    other_tree = EventsTree(event_name="RootEvent", event_id="root_id")
     tree.append_event(event_name="12A", event_id="12A_id", data=None, parent_id="root_id")
 
     with pytest.raises(EventIdNotInTree) as exc:
         tree.merge_tree("Test_id", other_tree=other_tree)
     assert exc
+
+
+def test_append_event():
+    pass
+
+
+def test_show(events_tree_for_test: EventsTree):
+    """Raises exception now in Windows
+    https://stackoverflow.com/questions/27092833/unicodeencodeerror-charmap-codec-cant-encode-characters
+    """
+    expected = """root event
+├── A
+└── B
+    ├── C
+    └── D
+        └── D1
+"""
+
+    assert events_tree_for_test.show()

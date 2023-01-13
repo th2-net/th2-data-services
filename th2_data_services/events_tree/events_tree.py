@@ -18,7 +18,7 @@ from treelib.exceptions import NodeIDAbsentError, LoopError
 
 from th2_data_services.events_tree.exceptions import EventIdNotInTree, EventAlreadyExist, EventRootExist, TreeLoop
 
-Th2Event = dict
+Th2Event = dict  # TODO - move to types. Also this class knows that th2-event is a dict, but it cannot to know.
 
 
 class EventsTree:
@@ -27,7 +27,6 @@ class EventsTree:
     - get_x methods raise Exceptions if no result is found.
     - find_x methods return None if no result is found.
     - EventsTree stores events as Nodes and interacts with them using an internal tree.
-    - EventsTree removes the 'body' field by default to save memory, but you can keep it.
     - Note that EventsTree stores only one tree.
         If you want to store all trees, use EventsTreeCollections.
     - EventsTree contains all events in memory.
@@ -44,15 +43,18 @@ class EventsTree:
     ```
     """
 
-    def __init__(self, tree: Tree = None):
+    def __init__(self, event_name: str, event_id: str, data: dict = None):
         """EventsTree constructor.
 
         Args:
-            tree: Tree.
+            event_name: Event Name.
+            event_id: Event Id.
+            data: Data of event.
         """
-        self._tree = Tree() if tree is None else tree
+        self._tree = Tree()
+        self._create_root_event(event_name, event_id, data)
 
-    def create_root_event(self, event_name: str, event_id: str, data: dict = None) -> None:
+    def _create_root_event(self, event_name: str, event_id: str, data: dict = None) -> None:
         """Appends a root event to the tree.
 
         Args:
@@ -68,7 +70,7 @@ class EventsTree:
         self._tree.create_node(tag=event_name, identifier=event_id, parent=None, data=data)
 
     def append_event(self, event_name: str, event_id: str, parent_id: str, data: dict = None) -> None:
-        """Appends a event to the tree.
+        """Appends the event to the tree.
 
         Args:
             event_name: Event Name.
@@ -112,12 +114,15 @@ class EventsTree:
         return node.data
 
     def __getitem__(self, id_: str) -> Th2Event:
+        """e.g. ET['id1'] returns event.data."""
         try:
             return self._tree[id_].data
         except NodeIDAbsentError:
             raise EventIdNotInTree(id_)
 
     def __setitem__(self, id_: str, data: dict) -> None:
+        # TODO - It shouldn't raise an exception.
+        #   It should create new Node or change existing
         try:
             self._tree[id_].data = data
         except NodeIDAbsentError:
@@ -425,7 +430,11 @@ class EventsTree:
         subtree = self._tree.subtree(id)
         if not subtree:
             raise EventIdNotInTree(id)
-        return EventsTree(tree=subtree)
+
+        et = EventsTree(event_name="0", event_id="0")
+        et._tree = subtree
+
+        return et
 
     def merge_tree(self, parent_id: str, other_tree: "EventsTree", use_deepcopy: bool = False) -> None:
         """Merges a EventsTree to specified identifier.
@@ -458,6 +467,20 @@ class EventsTree:
             |    |___ C31
         ```
         """
+        # TODO
+        # et.append_event('a', '2', et.get_root_id())
+        # et.show()
+        # Traceback (most recent call last):
+        #   File "C:\Users\admin\AppData\Local\Programs\Python\Python39\lib\code.py", line 90, in runcode
+        #     exec(code, self.locals)
+        #   File "<input>", line 1, in <module>
+        #   File "C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\th2_data_services\events_tree\events_tree.py", line 475, in show
+        #     self._tree.show()
+        #   File "C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\ds_lib_venv_py39\lib\site-packages\treelib\tree.py", line 854, in show
+        #     print(self._reader)
+        #   File "C:\Users\admin\AppData\Local\Programs\Python\Python39\lib\encodings\cp1251.py", line 19, in encode
+        #     return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+        # UnicodeEncodeError: 'charmap' codec can't encode characters in position 6-8: character maps to <undefined>
         self._tree.show()
 
     def __len__(self) -> int:

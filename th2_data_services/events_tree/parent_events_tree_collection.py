@@ -13,12 +13,8 @@
 #  limitations under the License.
 
 from typing import Dict, List, Optional
-
-
-from th2_data_services import Data
 from th2_data_services.events_tree.events_tree import EventsTree
-from th2_data_services.interfaces.events_tree.events_tree_collection import EventsTreeCollection
-from th2_data_services.interfaces import IDataSource
+from th2_data_services.events_tree.events_tree_collection import EventsTreeCollection
 
 
 class ParentEventsTreeCollection(EventsTreeCollection):
@@ -27,41 +23,23 @@ class ParentEventsTreeCollection(EventsTreeCollection):
     ParentEventsTree contains all parent events that are referenced.
     """
 
-    def __init__(
-        self,
-        data: Data,
-        data_source: IDataSource = None,
-        preserve_body: bool = False,
-        stub: bool = False,
-    ):
-        """ParentEventsTreeCollection constructor.
-
-        Args:
-            data: Data object.
-            data_source: Data Source object.
-            preserve_body: If True then save body of event.
-            stub: If True it will create stub when event is broken.
-        """
-        super().__init__(data, data_source, preserve_body, stub)
-
-    def _build_trees(self, events_store: Dict[Optional[str], List[dict]]) -> None:
+    def _build_trees(self, events_nodes: Dict[Optional[str], List[dict]]) -> None:
         """Builds trees and saves detached events.
 
         Args:
-            events_store: Events nodes.
+            events_nodes: Events nodes.
         """
         roots = []
-        for event in events_store[None]:  # None - is parent_event_id for root events.
-            event_id, event_name = self._get_event_id(event), self._get_event_name(event)
-            if events_store[event_id]:
-                tree = EventsTree()
-                tree.create_root_event(event_name=event_name, event_id=event_id, data=event)
+        for event in events_nodes[None]:  # None - is parent_event_id for root events.
+            event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(event)
+            if events_nodes[event_id]:
+                tree = EventsTree(event_name=event_name, event_id=event_id, data=event)
                 roots.append(tree)
-                self._fill_tree(events_store, tree, event_id)
-        events_store.pop(None)
+                self._fill_tree(events_nodes, tree, event_id)
+        events_nodes.pop(None)
 
         self._roots = roots
-        self._detached_nodes = events_store
+        self._detached_nodes = events_nodes
 
     def _fill_tree(
         self, events_store: Dict[Optional[str], List[dict]], current_tree: EventsTree, parent_id: str
@@ -74,7 +52,7 @@ class ParentEventsTreeCollection(EventsTreeCollection):
             parent_id: Parent even id.
         """
         for event in events_store[parent_id]:
-            event_id, event_name = self._get_event_id(event), self._get_event_name(event)
+            event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(event)
             if events_store.get(event_id):
                 current_tree.append_event(event_name=event_name, event_id=event_id, parent_id=parent_id, data=event)
                 self._fill_tree(events_store, current_tree, event_id)  # recursive fill
