@@ -296,9 +296,19 @@ Difference between map and map_stream: 1. map_stream allows you return None valu
 set_metadata(metadata: Dict) → None
 ```
 
+Set metadata of object to metadata argument. 
 
 
 
+**Args:**
+ 
+ - <b>`metadata`</b> (dict):  New Metadata 
+
+
+
+**Raises:**
+ 
+ - <b>`Exception`</b>:  If metadata isn't dict, error will be raised. 
 
 ---
 
@@ -323,6 +333,31 @@ Skips and limits records.
 
 **Yields:**
  Generator records. 
+
+---
+
+<a href="../../th2_data_services/data.py#L718"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `update_metadata`
+
+```python
+update_metadata(metadata: Dict) → None
+```
+
+Update metadata of object with metadata argument. 
+
+
+
+**Args:**
+ 
+ - <b>`metadata`</b> (dict):  New Metadata 
+
+
+
+**Raises:**
+ 
+ - <b>`Exception`</b>:  If metadata isn't dict, error will be raised. 
+ - <b>`AttributeError`</b>:  If you're trying to update key value with dict which isn't a dict. 
 
 ---
 

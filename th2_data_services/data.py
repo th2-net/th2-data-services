@@ -701,8 +701,48 @@ class Data:
             if self.__is_cache_file_exists():
                 self.__delete_cache()
 
-    def set_metadata(self, metadata: Dict) -> None:  # noqa
+    def set_metadata(self, metadata: Dict) -> None:
+        """Set metadata of object to metadata argument.
+
+        Args:
+            metadata (dict): New Metadata
+
+        Raises:
+            Exception: If metadata isn't dict, error will be raised.
+        """
         if not isinstance(metadata, Dict):
             raise Exception("metadata must be dictionary!")
 
         self.metadata = copy.deepcopy(metadata)
+
+    def update_metadata(self, metadata: Dict) -> None:
+        """Update metadata of object with metadata argument.
+
+        Args:
+            metadata (dict): New Metadata
+
+        Raises:
+            Exception: If metadata isn't dict, error will be raised.
+            AttributeError: If you're trying to update key value with dict which isn't a dict.
+        """
+        if not isinstance(metadata, Dict):
+            raise Exception("metadata must be dictionary!")
+
+        for k, v in metadata.items():
+            if k in self.metadata:
+                current = self.metadata[k]
+                # Check For Iterable Types
+                if isinstance(v, dict):
+                    self.metadata[k].update({**current, **v})
+                elif isinstance(v, Iterable) and not (isinstance(v, str) or isinstance(current, str)):
+                    if isinstance(current, Iterable):
+                        self.metadata[k] = [*current, *v]
+                    else:
+                        self.metadata[k] = [current, *v]
+                else:  # Single Item
+                    if isinstance(current, Iterable):
+                        self.metadata[k] = [*current, v]
+                    else:
+                        self.metadata[k] = v
+            else:
+                self.metadata[k] = v
