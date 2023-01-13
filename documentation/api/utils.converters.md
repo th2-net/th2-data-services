@@ -45,16 +45,16 @@ parse_timestamp(datetime_string: str) → (<class 'str'>, <class 'str'>)
 ## <kbd>class</kbd> `DatetimeConverter`
 Converts datetime objects to timestamp. 
 
-If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding). 
+If you request milliseconds but your timestamp has microseconds, they will be just cut (not rounding). If you request nanoseconds, last 3 number will be zeros, because datatime object doesn't have nanoseconds. 
 
-Expected datetime object shouldn't contain microseconds. 
+Expected timestamp format "datetime.datetime object". Expected that you provide UTC time in your data object. 
 
 
 
 
 ---
 
-<a href="../../th2_data_services/utils/converters.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/converters.py#L43"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `parse_timestamp`
 
@@ -69,19 +69,21 @@ parse_timestamp(datetime_obj: datetime) → (<class 'str'>, <class 'str'>)
 
 ---
 
-<a href="../../th2_data_services/utils/converters.py#L48"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/converters.py#L51"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ProtobufTimestampConverter`
 Converts Th2 timestamps. 
 
-If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding). Expected timestamp format {'epochSecond': 123, 'nano': 500}. 
+If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding). 
+
+Expected timestamp format {'epochSecond': 123, 'nano': 500}. 
 
 
 
 
 ---
 
-<a href="../../th2_data_services/utils/converters.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/converters.py#L59"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `parse_timestamp`
 
