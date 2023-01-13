@@ -90,11 +90,15 @@ class Data:
         self.iter_num = 0  # Indicates what level of the loop the Data object is in.
         self.stop_iteration = None
         self._read_from_external_cache_file = False
-        self.metadata = {}
+        self.__metadata = {}
 
     # LOG         self._logger.info(
     # LOG            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
     # LOG        )
+
+    @property
+    def metadata(self):
+        return self.__metadata
 
     def __remove(self):
         """Data class destructor."""
@@ -713,7 +717,7 @@ class Data:
         if not isinstance(metadata, Dict):
             raise Exception("metadata must be dictionary!")
 
-        self.metadata = copy.deepcopy(metadata)
+        self.__metadata = copy.deepcopy(metadata)
 
     def update_metadata(self, metadata: Dict) -> None:
         """Update metadata of object with metadata argument.
@@ -742,17 +746,17 @@ class Data:
                 current = self.metadata[k]
                 # Check For Iterable Types
                 if isinstance(v, dict):
-                    self.metadata[k].update({**current, **v})
+                    self.__metadata[k].update({**current, **v})
                 elif isinstance(v, Iterable) and not (isinstance(v, str) or isinstance(current, str)):
                     if isinstance(current, Iterable):
-                        self.metadata[k] = [*current, *v]
+                        self.__metadata[k] = [*current, *v]
                     else:
-                        self.metadata[k] = [current, *v]
+                        self.__metadata[k] = [current, *v]
                 else:  # Single Item
                     if isinstance(current, Iterable):
-                        self.metadata[k] = [*current, v]
+                        self.__metadata[k] = [*current, v]
                     else:
-                        self.metadata[k] = v
+                        self.__metadata[k] = v
             else:
                 # Add New Item
-                self.metadata[k] = v
+                self.__metadata[k] = v
