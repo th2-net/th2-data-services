@@ -701,5 +701,8 @@ class Data:
             if self.__is_cache_file_exists():
                 self.__delete_cache()
 
-    def set_metadata(self, metadata: Dict):  # noqa
-        self.metadata = metadata
+    def set_metadata(self, metadata: Dict) -> None:  # noqa
+        if not isinstance(metadata, Dict):
+            raise Exception("metadata must be dictionary!")
+
+        self.metadata = copy.deepcopy(metadata)

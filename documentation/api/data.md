@@ -293,7 +293,7 @@ Difference between map and map_stream: 1. map_stream allows you return None valu
 ### <kbd>method</kbd> `set_metadata`
 
 ```python
-set_metadata(metadata: Dict)
+set_metadata(metadata: Dict) → None
 ```
 
 
