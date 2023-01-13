@@ -25,7 +25,7 @@ class DatetimeStringConverter(ITimestampConverter[str]):
 
         mantissa_wo_z = dt_tuple.mantissa[:-1]
         nanoseconds = f"{mantissa_wo_z:0<9}"
-        seconds = int(timestamp.timestamp())
+        seconds = str(int(timestamp.timestamp()))
 
         return seconds, nanoseconds
 
@@ -33,15 +33,18 @@ class DatetimeStringConverter(ITimestampConverter[str]):
 class DatetimeConverter(ITimestampConverter[datetime]):
     """Converts datetime objects to timestamp.
 
-    If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding).
+    If you request milliseconds but your timestamp has microseconds, they will be just cut (not rounding).
+    If you request nanoseconds, last 3 number will be zeros, because datatime object doesn't have nanoseconds.
 
-    Expected datetime object shouldn't contain microseconds.
+    Expected timestamp format "datetime.datetime object".
+    Expected that you provide UTC time in your data object.
     """
 
     @classmethod
     def parse_timestamp(cls, datetime_obj: datetime) -> (str, str):
-        seconds = str(int(datetime_obj.timestamp()))
-        nanoseconds = "0" * 9
+        sec_and_mantisa = str(datetime_obj.replace(tzinfo=timezone.utc).timestamp()).split(".")
+        seconds = sec_and_mantisa[0]
+        nanoseconds = f"{sec_and_mantisa[1]:0<9}"
         return seconds, nanoseconds
 
 
@@ -49,6 +52,7 @@ class ProtobufTimestampConverter(ITimestampConverter[dict]):
     """Converts Th2 timestamps.
 
     If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding).
+
     Expected timestamp format {'epochSecond': 123, 'nano': 500}.
     """
 
