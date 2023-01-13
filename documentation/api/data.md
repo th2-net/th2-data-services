@@ -288,30 +288,6 @@ Difference between map and map_stream: 1. map_stream allows you return None valu
 
 ---
 
-<a href="../../th2_data_services/data.py#L704"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `set_metadata`
-
-```python
-set_metadata(metadata: Dict) → None
-```
-
-Set metadata of object to metadata argument. 
-
-
-
-**Args:**
- 
- - <b>`metadata`</b> (dict):  New Metadata 
-
-
-
-**Raises:**
- 
- - <b>`Exception`</b>:  If metadata isn't dict, error will be raised. 
-
----
-
 <a href="../../th2_data_services/data.py#L531"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sift`
@@ -345,6 +321,10 @@ update_metadata(metadata: Dict) → None
 ```
 
 Update metadata of object with metadata argument. 
+
+Metadata is updated with new values, meaning previous values are kept and added with new values. 
+
+| Example: | data = Data(...) | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}} | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'} | data.update_metadata(new_metadata) | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'} 
 
 
 

@@ -470,6 +470,6 @@ class TestDataObjectJoining:
 def test_metadata_is_carried(general_data: List[dict]):
     data = Data(general_data)
     metadata = {"some": "default value", "test": "case"}
-    data.set_metadata(metadata)
+    data._set_metadata(metadata)
     data = data.filter(lambda event: event["isBatched"]).map(lambda event: {"id": event["eventId"]})
     assert data.metadata == metadata

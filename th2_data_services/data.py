@@ -441,7 +441,7 @@ class Data:
 
         source = partial(get_source, filter_yield)
         data = Data(source)
-        data.set_metadata(self.metadata)
+        data._set_metadata(self.metadata)
         return data
 
     def map(self, callback_or_adapter: Union[Callable, IRecordAdapter]) -> "Data":
@@ -460,7 +460,7 @@ class Data:
         else:
             new_workflow = [{"type": "map", "callback": callback_or_adapter}]
         data = Data(data=self, workflow=new_workflow)
-        data.set_metadata(self.metadata)
+        data._set_metadata(self.metadata)
         return data
 
     def map_stream(self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]) -> "Data":
@@ -493,7 +493,7 @@ class Data:
                 "map_stream Only accepts IStreamAdapter class with generator function or Generator function"
             )
         data = Data(source)
-        data.set_metadata(self.metadata)
+        data._set_metadata(self.metadata)
         return data
 
     def _build_limit_callback(self, num) -> Callable:
@@ -525,7 +525,7 @@ class Data:
         new_workflow = [{"type": "limit", "callback": self._build_limit_callback(num)}]
         data_obj = Data(data=self, workflow=new_workflow)
         data_obj._length_hint = num
-        data_obj.set_metadata(self.metadata)
+        data_obj._set_metadata(self.metadata)
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
@@ -624,7 +624,7 @@ class Data:
         e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
         """
         data = Data(self._create_data_set_from_iterables([self, other_data]))
-        data.set_metadata(self.metadata)
+        data._set_metadata(self.metadata)
         return data
 
     def __iadd__(self, other_data: Iterable) -> "Data":
@@ -701,7 +701,7 @@ class Data:
             if self.__is_cache_file_exists():
                 self.__delete_cache()
 
-    def set_metadata(self, metadata: Dict) -> None:
+    def _set_metadata(self, metadata: Dict) -> None:
         """Set metadata of object to metadata argument.
 
         Args:
@@ -717,6 +717,15 @@ class Data:
 
     def update_metadata(self, metadata: Dict) -> None:
         """Update metadata of object with metadata argument.
+
+        Metadata is updated with new values, meaning previous values are kept and added with new values.
+
+        | Example:
+        | data = Data(...)
+        | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}}
+        | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'}
+        | data.update_metadata(new_metadata)
+        | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'}
 
         Args:
             metadata (dict): New Metadata
@@ -745,4 +754,5 @@ class Data:
                     else:
                         self.metadata[k] = v
             else:
+                # Add New Item
                 self.metadata[k] = v
