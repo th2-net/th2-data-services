@@ -325,7 +325,7 @@ Skips and limits records.
 ### <kbd>method</kbd> `update_metadata`
 
 ```python
-update_metadata(metadata: Dict) → None
+update_metadata(metadata: Dict) → Data
 ```
 
 Update metadata of object with metadata argument. 
@@ -339,6 +339,11 @@ Metadata is updated with new values, meaning previous values are kept and added 
 **Args:**
  
  - <b>`metadata`</b> (dict):  New Metadata 
+
+
+
+**Returns:**
+ Data objects (itself) 
 
 
 

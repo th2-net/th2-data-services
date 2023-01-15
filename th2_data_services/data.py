@@ -719,7 +719,7 @@ class Data:
 
         self.__metadata = copy.deepcopy(metadata)
 
-    def update_metadata(self, metadata: Dict) -> None:
+    def update_metadata(self, metadata: Dict) -> "Data":
         """Update metadata of object with metadata argument.
 
         Metadata is updated with new values, meaning previous values are kept and added with new values.
@@ -733,6 +733,9 @@ class Data:
 
         Args:
             metadata (dict): New Metadata
+
+        Returns:
+            Data objects (itself)
 
         Raises:
             Exception: If metadata isn't dict, error will be raised.
@@ -760,3 +763,5 @@ class Data:
             else:
                 # Add New Item
                 self.__metadata[k] = v
+
+        return self
