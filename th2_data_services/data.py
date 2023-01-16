@@ -629,6 +629,8 @@ class Data:
         """
         data = Data(self._create_data_set_from_iterables([self, other_data]))
         data._set_metadata(self.metadata)
+        if isinstance(other_data, Data):
+            data.update_metadata(other_data.metadata)
         return data
 
     def __iadd__(self, other_data: Iterable) -> "Data":
