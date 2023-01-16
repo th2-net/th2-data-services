@@ -90,11 +90,15 @@ class Data:
         self.iter_num = 0  # Indicates what level of the loop the Data object is in.
         self.stop_iteration = None
         self._read_from_external_cache_file = False
-        self.metadata = {}
+        self.__metadata = {}
 
     # LOG         self._logger.info(
     # LOG            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
     # LOG        )
+
+    @property
+    def metadata(self):
+        return self.__metadata
 
     def __remove(self):
         """Data class destructor."""
@@ -440,8 +444,9 @@ class Data:
                     yield record
 
         source = partial(get_source, filter_yield)
-
-        return Data(source)
+        data = Data(source)
+        data._set_metadata(self.metadata)
+        return data
 
     def map(self, callback_or_adapter: Union[Callable, IRecordAdapter]) -> "Data":
         """Append `transform` function to workflow.
@@ -458,7 +463,9 @@ class Data:
             new_workflow = [{"type": "map", "callback": callback_or_adapter.handle}]
         else:
             new_workflow = [{"type": "map", "callback": callback_or_adapter}]
-        return Data(data=self, workflow=new_workflow)
+        data = Data(data=self, workflow=new_workflow)
+        data._set_metadata(self.metadata)
+        return data
 
     def map_stream(self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]) -> "Data":
         """Append `stream-transform` function to workflow.
@@ -483,14 +490,15 @@ class Data:
 
         if isinstance(adapter_or_generator, IStreamAdapter) and isgeneratorfunction(adapter_or_generator.handle):
             source = partial(get_source, adapter_or_generator.handle)
-            return Data(source)
         elif isgeneratorfunction(adapter_or_generator):
             source = partial(get_source, adapter_or_generator)
-            return Data(source)
         else:
             raise Exception(
                 "map_stream Only accepts IStreamAdapter class with generator function or Generator function"
             )
+        data = Data(source)
+        data._set_metadata(self.metadata)
+        return data
 
     def _build_limit_callback(self, num) -> Callable:
         # LOG         self._logger.debug("Build limit callback with limit = %s", num)
@@ -521,6 +529,7 @@ class Data:
         new_workflow = [{"type": "limit", "callback": self._build_limit_callback(num)}]
         data_obj = Data(data=self, workflow=new_workflow)
         data_obj._length_hint = num
+        data_obj._set_metadata(self.metadata)
         return data_obj
 
     def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
@@ -618,7 +627,11 @@ class Data:
 
         e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
         """
-        return Data(self._create_data_set_from_iterables([self, other_data]))
+        data = Data(self._create_data_set_from_iterables([self, other_data]))
+        data._set_metadata(self.metadata)
+        if isinstance(other_data, Data):
+            data.update_metadata(other_data.metadata)
+        return data
 
     def __iadd__(self, other_data: Iterable) -> "Data":
         """Joining feature.
@@ -693,3 +706,64 @@ class Data:
         else:
             if self.__is_cache_file_exists():
                 self.__delete_cache()
+
+    def _set_metadata(self, metadata: Dict) -> None:
+        """Set metadata of object to metadata argument.
+
+        Args:
+            metadata (dict): New Metadata
+
+        Raises:
+            Exception: If metadata isn't dict, error will be raised.
+        """
+        if not isinstance(metadata, Dict):
+            raise Exception("metadata must be dictionary!")
+
+        self.__metadata = copy.deepcopy(metadata)
+
+    def update_metadata(self, metadata: Dict) -> "Data":
+        """Update metadata of object with metadata argument.
+
+        Metadata is updated with new values, meaning previous values are kept and added with new values.
+
+        | Example:
+        | data = Data(...)
+        | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}}
+        | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'}
+        | data.update_metadata(new_metadata)
+        | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'}
+
+        Args:
+            metadata (dict): New Metadata
+
+        Returns:
+            Data objects (itself)
+
+        Raises:
+            Exception: If metadata isn't dict, error will be raised.
+            AttributeError: If you're trying to update key value with dict which isn't a dict.
+        """
+        if not isinstance(metadata, Dict):
+            raise Exception("metadata must be dictionary!")
+
+        for k, v in metadata.items():
+            if k in self.metadata:
+                current = self.metadata[k]
+                # Check For Iterable Types
+                if isinstance(v, dict):
+                    self.__metadata[k].update({**current, **v})
+                elif isinstance(v, Iterable) and not (isinstance(v, str) or isinstance(current, str)):
+                    if isinstance(current, Iterable):
+                        self.__metadata[k] = [*current, *v]
+                    else:
+                        self.__metadata[k] = [current, *v]
+                else:  # Single Item
+                    if isinstance(current, Iterable):
+                        self.__metadata[k] = [*current, v]
+                    else:
+                        self.__metadata[k] = v
+            else:
+                # Add New Item
+                self.__metadata[k] = v
+
+        return self

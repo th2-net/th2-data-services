@@ -443,7 +443,10 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    - IStreamAdapter interface added to handle streams.
    - IRecordAdapter interface added to handle single record. 
    - Method accepts Generator function or IStreamAdapter interface class with Generator function.
-5. [TH2-4609] Data.filter implementation changed to use `yield`. 
-6. [TH2-4491] metadata attribute added to Data. It will contain request urls.
-7. [TH2-4577] map method now can take either Callable function or Adapter which implements IRecordAdapter.
-8. [TH2-4611] DatetimeConverter, ProtobufTimestampConverter converters added.
+6. [TH2-4609] Data.filter implementation changed to use `yield`. 
+7. [TH2-4491] metadata attribute added to Data. It will contain request urls.
+8. [TH2-4577] map method now can take either Callable function or Adapter which implements IRecordAdapter.
+9. [TH2-4611] DatetimeConverter, ProtobufTimestampConverter converters added.
+10. [TH2-4646] 
+    - metadata gets carried when using Data methods.
+    - update_metadata method added to update metadata.
