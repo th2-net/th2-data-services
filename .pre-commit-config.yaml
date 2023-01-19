@@ -53,7 +53,7 @@ repos:
         args:
           - get_started_example.py
           - README.md
-        require_serial: true
+        require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
 
       - id: unit_tests
         name: unit_tests
