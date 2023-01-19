@@ -6,3 +6,4 @@ black
 lazydocs
 pydocstyle
 autoflake
+importlib_metadata
