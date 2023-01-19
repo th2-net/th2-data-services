@@ -18,14 +18,14 @@ Converts datetime strings.
 
 If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding). 
 
-Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z". 
+Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z". If you don't provide 'Z' in the end, it can return wrong results. 
 
 
 
 
 ---
 
-<a href="../../th2_data_services/utils/converters.py#L17"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/converters.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `parse_timestamp`
 
@@ -40,7 +40,7 @@ parse_timestamp(datetime_string: str) → (<class 'str'>, <class 'str'>)
 
 ---
 
-<a href="../../th2_data_services/utils/converters.py#L33"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/converters.py#L37"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `DatetimeConverter`
 Converts datetime objects to timestamp. 
@@ -54,7 +54,7 @@ Expected timestamp format "datetime.datetime object". Expected that you provide 
 
 ---
 
-<a href="../../th2_data_services/utils/converters.py#L43"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/converters.py#L47"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `parse_timestamp`
 
@@ -69,7 +69,7 @@ parse_timestamp(datetime_obj: datetime) → (<class 'str'>, <class 'str'>)
 
 ---
 
-<a href="../../th2_data_services/utils/converters.py#L51"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/converters.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ProtobufTimestampConverter`
 Converts Th2 timestamps. 
@@ -83,7 +83,7 @@ Expected timestamp format {'epochSecond': 123, 'nano': 500}.
 
 ---
 
-<a href="../../th2_data_services/utils/converters.py#L59"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/converters.py#L63"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `parse_timestamp`
 
