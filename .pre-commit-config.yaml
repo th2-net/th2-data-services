@@ -64,8 +64,8 @@ repos:
 
       - id: unit_tests
         name: unit_tests
-#        stages: [ push ]
-        stages: [ commit ]
+        stages: [ push ]
+#        stages: [ commit ]
         entry: python -m pytest tests --ignore tests/tests_unit/test_dependencies/
         language: python
         pass_filenames: false
