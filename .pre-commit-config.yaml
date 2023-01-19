@@ -34,33 +34,26 @@ repos:
 
   - repo: local
     hooks:
-#      - id: docgen
-#        name: docgen
-#        language: script
-#        entry: doc_gen.sh
-#        require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
-#
-#      - id: update_readme_toc
-#        name: update_readme_toc
-#        language: script
-#        entry: update_readme_toc.sh
-#        require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
-#
-#      - id: update_get_started_example_in_readme
-#        name: update_get_started_example_in_readme
-#        language: script
-#        entry: attach_file_to.sh
-#        args:
-#          - get_started_example.py
-#          - README.md
-#        require_serial: true
+      - id: docgen
+        name: docgen
+        language: script
+        entry: doc_gen.sh
+        require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
 
-      - id: t
-        name: t
-        language: system
-        entry: bash -c "echo $PATH"
+      - id: update_readme_toc
+        name: update_readme_toc
+        language: script
+        entry: update_readme_toc.sh
+        require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
+
+      - id: update_get_started_example_in_readme
+        name: update_get_started_example_in_readme
+        language: script
+        entry: attach_file_to.sh
+        args:
+          - get_started_example.py
+          - README.md
         require_serial: true
-        verbose: true
 
       - id: unit_tests
         name: unit_tests
