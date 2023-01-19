@@ -37,7 +37,6 @@
 - [`exceptions.MessageNotFound`](./exceptions.md#class-messagenotfound)
 - [`adapter.IRecordAdapter`](./interfaces.adapter.md#class-irecordadapter): Interface of Adapter for record.
 - [`adapter.IStreamAdapter`](./interfaces.adapter.md#class-istreamadapter): Interface of Adapter for streams.
-- [`command.IAdaptableCommand`](./interfaces.command.md#class-iadaptablecommand)
 - [`command.ICommand`](./interfaces.command.md#class-icommand): High level interface for Command.
 - [`data_source.IDataSource`](./interfaces.data_source.md#class-idatasource)
 - [`events_tree_collection.EventsTreeCollection`](./interfaces.events_tree.events_tree_collection.md#class-eventstreecollection): EventsTreeCollection objective is building 'EventsTree's and storing them.

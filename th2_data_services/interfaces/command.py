@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from th2_data_services.interfaces.data_source import IDataSource
@@ -27,27 +27,3 @@ class ICommand(ABC):
     @abstractmethod
     def handle(self, data_source: IDataSource):
         pass
-
-
-class IAdaptableCommand(ICommand):
-    def __init__(self):
-        """Class to make Command classes adaptable."""
-        self._workflow = []
-
-    def apply_adapter(self, adapter: Callable) -> "IAdaptableCommand":
-        """Adds adapter to the Command workflow.
-        
-        Note, sequence that you will add adapters make sense.
-        
-        Args:
-            adapter: Callable function that will be used as adapter.
-        Returns:
-            self
-        """
-        self._workflow.append(adapter)
-        return self
-
-    def _handle_adapters(self, data):
-        for step in self._workflow:
-            data = step(data)
-        return data
