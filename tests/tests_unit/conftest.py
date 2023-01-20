@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, NamedTuple, Sequence, Optional
 import pytest
+
 from tests.tests_unit.utils import LogsChecker
 from th2_data_services import Data
 from th2_data_services.events_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver

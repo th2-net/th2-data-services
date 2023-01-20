@@ -5,7 +5,6 @@
 ## Modules
 
 - [`data`](./data.md#module-data)
-- [`decode_error_handler`](./decode_error_handler.md#module-decode_error_handler)
 - [`events_tree`](./events_tree.md#module-events_tree)
 - [`events_tree.etc_driver`](./events_tree.etc_driver.md#module-events_treeetc_driver)
 - [`events_tree.event_tree`](./events_tree.event_tree.md#module-events_treeevent_tree)
@@ -22,9 +21,10 @@
 - [`interfaces.stub_builder`](./interfaces.stub_builder.md#module-interfacesstub_builder)
 - [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
 - [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
-- [`sse_client`](./sse_client.md#module-sse_client)
 - [`utils`](./utils.md#module-utils)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
+- [`utils.decode_error_handler`](./utils.decode_error_handler.md#module-utilsdecode_error_handler)
+- [`utils.sse_client`](./utils.sse_client.md#module-utilssse_client)
 
 ## Classes
 
@@ -52,14 +52,14 @@
 - [`stub_builder.IMessageStub`](./interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
 - [`stub_builder.IStub`](./interfaces.stub_builder.md#class-istub)
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
-- [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`converters.DatetimeConverter`](./utils.converters.md#class-datetimeconverter): Converts datetime objects to timestamp.
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
 - [`converters.ProtobufTimestampConverter`](./utils.converters.md#class-protobuftimestampconverter): Converts Th2 timestamps.
+- [`sse_client.SSEClient`](./utils.sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 
 ## Functions
 
-- [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
+- [`decode_error_handler.handler`](./utils.decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
 
 
 ---
