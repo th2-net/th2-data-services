@@ -160,9 +160,7 @@ END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=50)
 events: Data = data_source.command(
     commands.GetEventsByBookByScopes(
         book_id="demo_book_1",
-        scopes=[
-            "demo_scope",
-        ],
+        scopes=["demo_scope"],
         start_timestamp=START_TIME,
         end_timestamp=END_TIME,
         # Use Filter class to apply rpt-data-provider filters.
@@ -178,9 +176,7 @@ events: Data = data_source.command(
 messages: Data = data_source.command(
     commands.GetMessagesByBookByStreams(
         book_id="demo_book_1",
-        streams=[
-            "demo-conn2",
-        ],
+        streams=["demo-conn2"],
         start_timestamp=START_TIME,
         end_timestamp=END_TIME,
     )
