@@ -9,7 +9,7 @@ import pytest
 
 from tests.tests_unit.utils import LogsChecker
 from th2_data_services import Data
-
+from th2_data_services.events_tree import EventTree
 
 EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
 
@@ -1872,3 +1872,14 @@ def tmp_test_folder() -> Path:
     new_dir.mkdir(exist_ok=True)
     yield new_dir
     os.chdir(cwd)
+
+
+@pytest.fixture
+def events_tree_for_test() -> EventTree:
+    tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
+    tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
+    tree.append_event(event_name="B", event_id="B_id", data=None, parent_id="root_id")
+    tree.append_event(event_name="C", event_id="C_id", data={"data": "test data"}, parent_id="B_id")
+    tree.append_event(event_name="D", event_id="D_id", data=None, parent_id="B_id")
+    tree.append_event(event_name="D1", event_id="D1_id", data={"key1": "value1", "key2": "value2"}, parent_id="D_id")
+    return tree

@@ -11,14 +11,14 @@
 
 ---
 
-<a href="../../th2_data_services/interfaces/events_tree/parent_events_tree_collection.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/parent_events_tree_collection.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ParentEventsTreeCollection`
 ParentEventsTreeCollections is a class like an EventsTreeCollections. 
 
 ParentEventsTree contains all parent events that are referenced. 
 
-<a href="../../th2_data_services/interfaces/events_tree/parent_events_tree_collection.py#L31"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/parent_events_tree_collection.py#L30"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
