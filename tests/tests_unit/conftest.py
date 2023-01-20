@@ -1886,32 +1886,89 @@ def events_tree_for_test() -> EventsTree:
     return tree
 
 
+#  Copyright 2022 Exactpro (Exactpro Systems Limited)
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+from typing import Sequence, Optional
+from th2_data_services.events_tree import IETCDriver
+from th2_data_services.events_tree.etc_driver import Th2EventType
+from th2_data_services.events_tree.exceptions import FieldIsNotExist
+from th2_data_services_lwdp.interfaces.data_source import ILwDPDataSource
+from th2_data_services_lwdp.struct import EventStruct, http_event_struct
+from th2_data_services_lwdp.stub_builder import http_event_stub_builder
+
+
+class DemoDriver(IETCDriver):
+    def __init__(
+        self,
+        data_source: ILwDPDataSource = None,
+        event_struct: EventStruct = http_event_struct,
+        use_stub: bool = False,
+    ):
+        super().__init__(data_source=data_source, event_struct=event_struct, use_stub=use_stub)
+
+    def get_events_by_id_from_source(self, ids: Sequence) -> list:
+        ...
+
+    def get_event_id(self, event: Th2EventType) -> str:
+        try:
+            return event[self.event_struct.EVENT_ID]
+        except KeyError:
+            raise FieldIsNotExist(self.event_struct.EVENT_ID)
+
+    def get_event_name(self, event: Th2EventType) -> str:
+        try:
+            return event[self.event_struct.NAME]
+        except KeyError:
+            raise FieldIsNotExist(self.event_struct.NAME)
+
+    def get_parent_event_id(self, event) -> Optional[str]:
+        return event.get(self.event_struct.PARENT_EVENT_ID)
+
+    def build_stub_event(self, id_: str) -> Th2EventType:
+        return http_event_stub_builder.build({self.event_struct.EVENT_ID: id_})
+
+    def stub_event_name(self):
+        return http_event_stub_builder.template[self.event_struct.NAME]
+
+
 @pytest.fixture
-def http_etc_driver():
+def demo_etc_driver():
     return HttpETCDriver()
 
 
 @pytest.fixture
-def demo_etc(http_etc_driver):
-    return EventsTreeCollection(http_etc_driver)
+def demo_etc(demo_etc_driver):
+    return EventsTreeCollection(demo_etc_driver)
 
 
 @pytest.fixture
-def demo_etc_with_data(http_etc_driver, general_data):
+def demo_etc_with_data(demo_etc_driver, general_data):
     data = Data(general_data)
-    etc = EventsTreeCollection(http_etc_driver)
+    etc = EventsTreeCollection(demo_etc_driver)
     etc.build(data)
     return etc
 
 
 @pytest.fixture
-def demo_petc(http_etc_driver):
-    return ParentEventsTreeCollection(http_etc_driver)
+def demo_petc(demo_etc_driver):
+    return ParentEventsTreeCollection(demo_etc_driver)
 
 
 @pytest.fixture
-def demo_petc_with_data(http_etc_driver, general_data):
+def demo_petc_with_data(demo_etc_driver, general_data):
     data = Data(general_data)
-    petc = ParentEventsTreeCollection(http_etc_driver)
+    petc = ParentEventsTreeCollection(demo_etc_driver)
     petc.build(data)
     return petc
