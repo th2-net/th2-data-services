@@ -8,10 +8,10 @@
 - [`decode_error_handler`](./decode_error_handler.md#module-decode_error_handler)
 - [`events_tree`](./events_tree.md#module-events_tree)
 - [`events_tree.etc_driver`](./events_tree.etc_driver.md#module-events_treeetc_driver)
-- [`events_tree.events_tree`](./events_tree.events_tree.md#module-events_treeevents_tree)
-- [`events_tree.events_tree_collection`](./events_tree.events_tree_collection.md#module-events_treeevents_tree_collection)
+- [`events_tree.event_tree`](./events_tree.event_tree.md#module-events_treeevent_tree)
+- [`events_tree.event_tree_collection`](./events_tree.event_tree_collection.md#module-events_treeevent_tree_collection)
 - [`events_tree.exceptions`](./events_tree.exceptions.md#module-events_treeexceptions)
-- [`events_tree.parent_events_tree_collection`](./events_tree.parent_events_tree_collection.md#module-events_treeparent_events_tree_collection)
+- [`events_tree.parent_event_tree_collection`](./events_tree.parent_event_tree_collection.md#module-events_treeparent_event_tree_collection)
 - [`exceptions`](./exceptions.md#module-exceptions)
 - [`interfaces`](./interfaces.md#module-interfaces)
 - [`interfaces.adapter`](./interfaces.adapter.md#module-interfacesadapter)
@@ -30,14 +30,14 @@
 
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
 - [`etc_driver.IETCDriver`](./events_tree.etc_driver.md#class-ietcdriver)
-- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree is a tree-based data structure of events.
-- [`events_tree_collection.EventsTreeCollection`](./events_tree.events_tree_collection.md#class-eventstreecollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
+- [`event_tree.EventTree`](./events_tree.event_tree.md#class-eventtree): EventTree is a tree-based data structure of events.
+- [`event_tree_collection.EventTreeCollection`](./events_tree.event_tree_collection.md#class-eventtreecollection): EventTreeCollection objective is building 'EventsTree's and storing them.
 - [`exceptions.EventAlreadyExist`](./events_tree.exceptions.md#class-eventalreadyexist)
 - [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
 - [`exceptions.EventRootExist`](./events_tree.exceptions.md#class-eventrootexist)
 - [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
 - [`exceptions.TreeLoop`](./events_tree.exceptions.md#class-treeloop)
-- [`parent_events_tree_collection.ParentEventsTreeCollection`](./events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
+- [`parent_event_tree_collection.ParentEventTreeCollection`](./events_tree.parent_event_tree_collection.md#class-parenteventtreecollection): ParentEventTreeCollections is a class like an EventsTreeCollections.
 - [`exceptions.CommandError`](./exceptions.md#class-commanderror): Exception raised for errors in the command.
 - [`exceptions.EventNotFound`](./exceptions.md#class-eventnotfound)
 - [`exceptions.MessageNotFound`](./exceptions.md#class-messagenotfound)

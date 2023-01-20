@@ -21,15 +21,15 @@ from th2_data_services.events_tree.exceptions import EventIdNotInTree, EventAlre
 Th2Event = dict  # TODO - move to types. Also this class knows that th2-event is a dict, but it cannot to know.
 
 
-class EventsTree:
-    """EventsTree is a tree-based data structure of events.
+class EventTree:
+    """EventTree is a tree-based data structure of events.
 
     - get_x methods raise Exceptions if no result is found.
     - find_x methods return None if no result is found.
-    - EventsTree stores events as Nodes and interacts with them using an internal tree.
-    - Note that EventsTree stores only one tree.
-        If you want to store all trees, use EventsTreeCollections.
-    - EventsTree contains all events in memory.
+    - EventTree stores events as Nodes and interacts with them using an internal tree.
+    - Note that EventTree stores only one tree.
+        If you want to store all trees, use EventTreeCollections.
+    - EventTree contains all events in memory.
 
     Take a look at the following HTML tree to understand some important terms.
 
@@ -44,7 +44,7 @@ class EventsTree:
     """
 
     def __init__(self, event_name: str, event_id: str, data: dict = None):
-        """EventsTree constructor.
+        """EventTree constructor.
 
         Args:
             event_name: Event Name.
@@ -415,7 +415,7 @@ class EventsTree:
                 return event
         return None
 
-    def get_subtree(self, id: str) -> "EventsTree":
+    def get_subtree(self, id: str) -> "EventTree":
         """Returns subtree of the event by its id.
 
         Args:
@@ -431,17 +431,17 @@ class EventsTree:
         if not subtree:
             raise EventIdNotInTree(id)
 
-        et = EventsTree(event_name="0", event_id="0")
+        et = EventTree(event_name="0", event_id="0")
         et._tree = subtree
 
         return et
 
-    def merge_tree(self, parent_id: str, other_tree: "EventsTree", use_deepcopy: bool = False) -> None:
-        """Merges a EventsTree to specified identifier.
+    def merge_tree(self, parent_id: str, other_tree: "EventTree", use_deepcopy: bool = False) -> None:
+        """Merges a EventTree to specified identifier.
 
         Args:
             parent_id: Event id to which merge.
-            other_tree: EventsTree.
+            other_tree: EventTree.
             use_deepcopy: True if you need deepcopy for your objects in event.
 
         Raises:
@@ -452,7 +452,7 @@ class EventsTree:
         self._tree.merge(parent_id, other_tree._tree, use_deepcopy)
 
     def show(self) -> None:
-        """Prints the EventsTree as tree view.
+        """Prints the EventTree as tree view.
 
         For example:
 
@@ -474,7 +474,7 @@ class EventsTree:
         #   File "C:\Users\admin\AppData\Local\Programs\Python\Python39\lib\code.py", line 90, in runcode
         #     exec(code, self.locals)
         #   File "<input>", line 1, in <module>
-        #   File "C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\th2_data_services\events_tree\events_tree.py", line 475, in show
+        #   File "C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\th2_data_services\events_tree\event_tree.py", line 475, in show
         #     self._tree.show()
         #   File "C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\ds_lib_venv_py39\lib\site-packages\treelib\tree.py", line 854, in show
         #     print(self._reader)

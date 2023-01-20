@@ -16,8 +16,8 @@ from collections import defaultdict
 from typing import List, Dict, Optional, Union, Generator, Tuple, Callable, Sequence
 
 from treelib.exceptions import NodeIDAbsentError
-from th2_data_services.events_tree.events_tree import EventsTree
-from th2_data_services.events_tree.events_tree import Th2Event
+from th2_data_services.events_tree.event_tree import EventTree
+from th2_data_services.events_tree.event_tree import Th2Event
 from th2_data_services.events_tree.exceptions import EventIdNotInTree
 
 import warnings
@@ -25,31 +25,31 @@ import warnings
 from th2_data_services.events_tree.etc_driver import IETCDriver
 
 
-class EventsTreeCollection:
-    """EventsTreeCollection objective is building 'EventsTree's and storing them.
+class EventTreeCollection:
+    """EventTreeCollection objective is building 'EventsTree's and storing them.
 
-    - EventsTreeCollection stores all EventsTree. You can to refer to each of them.
+    - EventTreeCollection stores all EventsTree. You can to refer to each of them.
     - Recovery of missing events occurs when you have passed DataSource class to constructor.
     Otherwise you should execute the method 'recover_unknown_events' manually.
     Note that there is no point in the method if the list of detached events is empty.
     """
 
     def __init__(self, driver: IETCDriver):
-        """EventsTreeCollection constructor.
+        """EventTreeCollection constructor.
 
         Args:
             driver: initialized driver object.
         """
         self._driver = driver
-        self._roots: List[EventsTree] = []
-        self._parentless: Optional[List[EventsTree]] = None
+        self._roots: List[EventTree] = []
+        self._parentless: Optional[List[EventTree]] = None
         # {parent_event_id: [event1, ..]}
         self._detached_nodes: Dict[Optional[str], List[dict]] = defaultdict(list)
 
     def _detached_parent_ids(self):
         return self._detached_nodes.keys()
 
-    def _build_parentless_trees(self) -> List[EventsTree]:
+    def _build_parentless_trees(self) -> List[EventTree]:
         """Builds parentless trees by detached events.
 
         Returns:
@@ -66,7 +66,7 @@ class EventsTreeCollection:
         for id_ in stub_roots:
             stub_event = self._driver.build_stub_event(id_)
             event_id, event_name = self._driver.get_event_id(stub_event), self._driver.get_event_name(stub_event)
-            tree = EventsTree(event_id=event_id, event_name=event_name, data=stub_event)
+            tree = EventTree(event_id=event_id, event_name=event_name, data=stub_event)
             self._fill_tree(self._detached_nodes, tree, id_)
             self._parentless.append(tree)
 
@@ -98,7 +98,7 @@ class EventsTreeCollection:
         roots = []
         for root_event in events_nodes[None]:  # None - is parent_event_id for root events.
             event_name, event_id = self._driver.get_event_name(root_event), self._driver.get_event_id(root_event)
-            tree = EventsTree(event_name=event_name, event_id=event_id, data=root_event)
+            tree = EventTree(event_name=event_name, event_id=event_id, data=root_event)
             roots.append(tree)
             self._fill_tree(events_nodes, tree, event_id)
         events_nodes.pop(None)
@@ -107,7 +107,7 @@ class EventsTreeCollection:
         self._detached_nodes = events_nodes
 
     def _fill_tree(
-        self, events_store: Dict[Optional[str], List[dict]], current_tree: EventsTree, parent_id: str
+        self, events_store: Dict[Optional[str], List[dict]], current_tree: EventTree, parent_id: str
     ) -> None:
         """Fills tree recursively.
 
@@ -130,7 +130,7 @@ class EventsTreeCollection:
         events_nodes = self._build_events_store(data)  # {parent_event_id: [event1, event2, ..]}
         self._build_trees(events_nodes)  # Produces _detached_nodes.
 
-    def get_parentless_trees(self) -> List[EventsTree]:
+    def get_parentless_trees(self) -> List[EventTree]:
         """Builds and returns parentless trees by detached events.
 
         Detached events will be removed from the tree.
@@ -168,7 +168,7 @@ class EventsTreeCollection:
                 self._detached_nodes[parent_event_id].append(event)
         else:
             event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(event)
-            tree = EventsTree(event_id=event_id, event_name=event_name, data=event)
+            tree = EventTree(event_id=event_id, event_name=event_name, data=event)
             self._roots.append(tree)
 
             event_id = self._driver.get_event_id(event)
@@ -197,7 +197,7 @@ class EventsTreeCollection:
             return [tree.get_root_id() for tree in self._roots] + [tree.get_root_id() for tree in self._parentless]
         return [tree.get_root_id() for tree in self._roots]
 
-    def get_trees(self) -> List[EventsTree]:
+    def get_trees(self) -> List[EventTree]:
         """Returns the list of trees inside the collection.
 
         If there are parentless trees, they also will be return.
@@ -225,7 +225,7 @@ class EventsTreeCollection:
         except EventIdNotInTree:
             raise EventIdNotInTree(id)
 
-    def get_tree_by_id(self, id) -> EventsTree:
+    def get_tree_by_id(self, id) -> EventTree:
         """Returns a tree by id of any event in this tree.
 
         If event id of parentless tree is passed, stub of this parentless tree will be returnd.
@@ -304,7 +304,7 @@ class EventsTreeCollection:
     def summary(self) -> str:
         """Returns the collection summary.
 
-        The same as repr(EventsTreeCollection).
+        The same as repr(EventTreeCollection).
         """
         return self.__repr__()
 
@@ -645,7 +645,7 @@ class EventsTreeCollection:
                     return event
         return None
 
-    def get_subtree(self, id: str) -> "EventsTree":
+    def get_subtree(self, id: str) -> "EventTree":
         """Returns subtree of the event by its id.
 
         This method applicable only for trees (regular or parentless), not for detached events.
@@ -701,13 +701,13 @@ class EventsTreeCollection:
             w = "The collection were built with detached events because there are no some events in the source"
             warnings.warn(w)
 
-    def get_parentless_tree_collection(self) -> "EventsTreeCollection":
-        """Builds and returns parentless trees by detached events as EventsTreeCollection.
+    def get_parentless_tree_collection(self) -> "EventTreeCollection":
+        """Builds and returns parentless trees by detached events as EventTreeCollection.
 
         Detached events will be removed from the collection.
 
         Returns:
-            EventsTreeCollection.
+            EventTreeCollection.
         """
         new_etc = self.__class__(self._driver)
         new_etc._roots = self.get_parentless_trees()
