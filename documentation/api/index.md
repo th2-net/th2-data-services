@@ -43,7 +43,6 @@
 - [`exceptions.MessageNotFound`](./exceptions.md#class-messagenotfound)
 - [`adapter.IRecordAdapter`](./interfaces.adapter.md#class-irecordadapter): Interface of Adapter for record.
 - [`adapter.IStreamAdapter`](./interfaces.adapter.md#class-istreamadapter): Interface of Adapter for streams.
-- [`command.IAdaptableCommand`](./interfaces.command.md#class-iadaptablecommand)
 - [`command.ICommand`](./interfaces.command.md#class-icommand): High level interface for Command.
 - [`data_source.IDataSource`](./interfaces.data_source.md#class-idatasource)
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.

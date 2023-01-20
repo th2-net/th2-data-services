@@ -29,9 +29,7 @@ Interface of Adapter for streams.
 handle(stream: Iterable) → Any
 ```
 
-
-
-
+Stream handle function that should yield data (not return). 
 
 
 ---
@@ -54,9 +52,7 @@ Interface of Adapter for record.
 handle(record: dict) → Any
 ```
 
-
-
-
+One record handle function that should return data. 
 
 
 
