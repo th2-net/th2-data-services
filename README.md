@@ -128,62 +128,61 @@ This example works with **Events**, but you also can do the same actions with **
 
 <!-- start get_started_example.py -->
 ```python
-from collections import Generator
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Generator
 from datetime import datetime
 
 from th2_data_services import Data
-from th2_data_services.events_tree import EventTree
-from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.commands import http as commands
-from th2_data_services.provider.v5.events_tree import ParentEventsTreeCollectionProvider5
-from th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
-from th2_data_services.provider.v5.filters.message_filters import BodyFilter
+from th2_data_services.events_tree import EventTree, EventTreeCollection, ParentEventTreeCollection
+from th2_data_services_lwdp.data_source import HTTPDataSource
+from th2_data_services_lwdp.commands import http as commands
+from th2_data_services_lwdp.filters.event_filters import NameFilter, TypeFilter
+from th2_data_services_lwdp.events_tree import HttpETCDriver
+
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
 # If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
 # global parameter to True. It'll keep cache files if something went wrong.
 import th2_data_services
-from th2_data_services.interfaces.events_tree import EventsTreeCollection
 
 th2_data_services.INTERACTIVE_MODE = True
 
 # [1] Create DataSource object to connect to rpt-data-provider.
 DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
 DEMO_PORT = "30999"  # Node port of rpt-data-provider.
-data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+data_source = HTTPDataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
 
-START_TIME = datetime(
-    year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
-)  # Datetime in utc format.
+START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41)  # Datetime in utc format.
 END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=50)
 
 # [2] Get events or messages from START_TIME to END_TIME.
 # [2.1] Get events.
 events: Data = data_source.command(
-    commands.GetEvents(
+    commands.GetEventsByBookByScopes(
+        book_id="demo_book_1",
+        scopes=[
+            "demo_scope",
+        ],
         start_timestamp=START_TIME,
         end_timestamp=END_TIME,
-        attached_messages=True,
         # Use Filter class to apply rpt-data-provider filters.
         # Do not use multiple classes of the same type.
         filters=[
             TypeFilter("Send message"),
             NameFilter(["ExecutionReport", "NewOrderSingle"]),  # You can use multiple values.
-            FailedStatusFilter(),
         ],
     )
 )
 
 # [2.2] Get messages.
 messages: Data = data_source.command(
-    commands.GetMessages(
+    commands.GetMessagesByBookByStreams(
+        book_id="demo_book_1",
+        streams=[
+            "demo-conn2",
+        ],
         start_timestamp=START_TIME,
         end_timestamp=END_TIME,
-        attached_events=True,
-        stream=["demo-conn2"],
-        filters=BodyFilter("195"),  # Filter message if there is a substring '195' in the body.
     )
 )
 
@@ -290,14 +289,15 @@ data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 # [4] Working with EventsTree and EventsTreeCollection.
 # [4.1] Building the EventsTreeCollection.
 
-# If you don't specify data_source for the tree then it won't recover detached events.
-etc = EventsTreeCollection()  # TODO - req driver.
+# If you don't specify data_source for the driver then it won't recover detached events.
+driver = HttpETCDriver()
+etc = EventTreeCollection(driver)
 etc.build(events)
 
 # Detached events isn't empty.
 assert etc.get_detached_events()
 
-etc = EventsTreeCollection()
+etc = EventTreeCollection(driver)
 # Detached events are empty because they were recovered.
 assert not etc.get_detached_events()
 
@@ -361,8 +361,10 @@ tree: EventTree = trees[0]
 parentless_trees: List[EventTree] = etc.get_parentless_trees()
 
 # [4.4] Working with ParentEventsTreeCollection.
-# ParentEventsTreeCollection is a tree like EventsTreeCollection but it has only events that have references.
-etc = ParentEventsTreeCollectionProvider5(events, data_source=data_source)
+# ParentEventsTreeCollection is a tree like EventsTreeCollection, but it has only events that have references.
+driver = HttpETCDriver(data_source=data_source)
+etc = ParentEventTreeCollection(driver)
+etc.build(events)
 
 etc.show()
 
