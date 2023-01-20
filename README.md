@@ -286,8 +286,8 @@ events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
 
-# [4] Working with EventsTree and EventsTreeCollection.
-# [4.1] Building the EventsTreeCollection.
+# [4] Working with EventTree and EventTreeCollection.
+# [4.1] Building the EventTreeCollection.
 
 # If you don't specify data_source for the driver then it won't recover detached events.
 driver = HttpETCDriver()
@@ -301,8 +301,8 @@ etc = EventTreeCollection(driver)
 # Detached events are empty because they were recovered.
 assert not etc.get_detached_events()
 
-# The collection has EventsTrees each with a tree of events.
-# Using Collection and EventsTrees, you can work flexibly with events.
+# The collection has EventTrees each with a tree of events.
+# Using Collection and EventTrees, you can work flexibly with events.
 
 # [4.1.1] Get leaves of all trees.
 leaves: Tuple[dict] = etc.get_leaves()
@@ -346,29 +346,34 @@ etc.append_event(
 # [4.1.11] Show the entire collection.
 etc.show()
 
-# [4.2] Working with the EventsTree.
-# EventsTree has the same methods as EventsTreeCollection, but only for its own tree.
+# [4.2] Working with the EventTree.
+# EventTree has the same methods as EventTreeCollection, but only for its own tree.
 
 # [4.2.1] Get collection trees.
 trees: List[EventTree] = etc.get_trees()
 tree: EventTree = trees[0]
 
-# But EventsTree provides a work with the tree, but does not modify it.
-# If you want to modify the tree, use EventsTreeCollections.
+# But EventTree provides a work with the tree, but does not modify it.
+# If you want to modify the tree, use EventTreeCollections.
 
 # [4.3] Working with ParentlessTree.
-# ParentlessTree is EventsTree which has detached events with stubs.
+# ParentlessTree is EventTree which has detached events with stubs.
 parentless_trees: List[EventTree] = etc.get_parentless_trees()
 
-# [4.4] Working with ParentEventsTreeCollection.
-# ParentEventsTreeCollection is a tree like EventsTreeCollection, but it has only events that have references.
+# [4.4] Working with ParentEventTreeCollection.
+# ParentEventTreeCollection is a tree like EventTreeCollection, but it has only events that have references.
 driver = HttpETCDriver(data_source=data_source)
 etc = ParentEventTreeCollection(driver)
 etc.build(events)
 
 etc.show()
 
-# TODO - how to build your custom EventsTree
+# [4.5] Build a custom EventTree
+# To create an EventTree object you will need name and id, data is optional.
+tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
+
+# To add new node use append_event. parent_id is necessary, data is optional.
+tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
 
 ```
 <!-- end get_started_example.py -->
