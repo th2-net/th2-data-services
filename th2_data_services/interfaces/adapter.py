@@ -21,7 +21,7 @@ class IStreamAdapter(ABC):
 
     @abstractmethod
     def handle(self, stream: Iterable) -> Any:
-        pass
+        """Stream handle function that should yield data (not return)."""
 
 
 class IRecordAdapter(ABC):
@@ -29,4 +29,4 @@ class IRecordAdapter(ABC):
 
     @abstractmethod
     def handle(self, record: dict) -> Any:
-        pass
+        """One record handle function that should return data."""
