@@ -4,10 +4,7 @@ from collections import namedtuple
 from datetime import datetime
 from pathlib import Path
 from typing import List, NamedTuple
-
 import pytest
-from th2_data_services_lwdp.events_tree import HttpETCDriver
-
 from tests.tests_unit.utils import LogsChecker
 from th2_data_services import Data
 from th2_data_services.events_tree import EventsTree, EventsTreeCollection, ParentEventsTreeCollection
