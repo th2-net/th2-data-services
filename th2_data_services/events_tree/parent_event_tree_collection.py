@@ -13,12 +13,12 @@
 #  limitations under the License.
 
 from typing import Dict, List, Optional
-from th2_data_services.events_tree.events_tree import EventsTree
-from th2_data_services.events_tree.events_tree_collection import EventsTreeCollection
+from th2_data_services.events_tree.event_tree import EventTree
+from th2_data_services.events_tree.event_tree_collection import EventTreeCollection
 
 
-class ParentEventsTreeCollection(EventsTreeCollection):
-    """ParentEventsTreeCollections is a class like an EventsTreeCollections.
+class ParentEventTreeCollection(EventTreeCollection):
+    """ParentEventTreeCollections is a class like an EventsTreeCollections.
 
     ParentEventsTree contains all parent events that are referenced.
     """
@@ -33,7 +33,7 @@ class ParentEventsTreeCollection(EventsTreeCollection):
         for event in events_nodes[None]:  # None - is parent_event_id for root events.
             event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(event)
             if events_nodes[event_id]:
-                tree = EventsTree(event_name=event_name, event_id=event_id, data=event)
+                tree = EventTree(event_name=event_name, event_id=event_id, data=event)
                 roots.append(tree)
                 self._fill_tree(events_nodes, tree, event_id)
         events_nodes.pop(None)
@@ -42,7 +42,7 @@ class ParentEventsTreeCollection(EventsTreeCollection):
         self._detached_nodes = events_nodes
 
     def _fill_tree(
-        self, events_store: Dict[Optional[str], List[dict]], current_tree: EventsTree, parent_id: str
+        self, events_store: Dict[Optional[str], List[dict]], current_tree: EventTree, parent_id: str
     ) -> None:
         """Fills tree recursively.
 
