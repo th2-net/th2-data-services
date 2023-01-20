@@ -6,10 +6,11 @@ from pathlib import Path
 from typing import List, NamedTuple
 
 import pytest
+from th2_data_services_lwdp.events_tree import HttpETCDriver
 
 from tests.tests_unit.utils import LogsChecker
 from th2_data_services import Data
-from th2_data_services.events_tree import EventsTree
+from th2_data_services.events_tree import EventsTree, EventsTreeCollection
 
 EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
 
@@ -1883,3 +1884,21 @@ def events_tree_for_test() -> EventsTree:
     tree.append_event(event_name="D", event_id="D_id", data=None, parent_id="B_id")
     tree.append_event(event_name="D1", event_id="D1_id", data={"key1": "value1", "key2": "value2"}, parent_id="D_id")
     return tree
+
+
+@pytest.fixture
+def http_etc_driver():
+    return HttpETCDriver()
+
+
+@pytest.fixture
+def demo_etc(http_etc_driver):
+    return EventsTreeCollection(http_etc_driver)
+
+
+@pytest.fixture
+def demo_etc_with_data(http_etc_driver, general_data):
+    data = Data(general_data)
+    etc = EventsTreeCollection(http_etc_driver)
+    etc.build(data)
+    return etc
