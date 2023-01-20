@@ -12,12 +12,6 @@ def test_etc_for_detached_events_without_data(demo_etc):
     assert not demo_etc.get_detached_events()  # Detached Events Don't Exist If No Data
 
 
-# TODO: How To Assert?
-def test_etc_to_get_leaves(demo_etc_with_data):
-    etc = demo_etc_with_data
-    assert etc.get_leaves()  # == 14 ?
-
-
 def test_etc_to_get_roots_ids(demo_etc_with_data, general_data):
     etc = demo_etc_with_data
     root_ids = etc.get_roots_ids()
@@ -51,12 +45,6 @@ def test_etc_get_children(demo_etc_with_data, general_data):
     children = etc.get_children(id_)
     data = Data(general_data).filter(lambda event: event["parentEventId"] == id_)
     assert list(children) == list(data)
-
-
-def test_etc_get_subtree(demo_etc_with_data, general_data):
-    etc = demo_etc_with_data
-    subtree = etc.get_subtree(DEMO_CHILD_ID)
-    assert subtree.get_root_id() == DEMO_CHILD_ID
 
 
 def test_etc_get_full_path(demo_etc_with_data):

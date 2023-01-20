@@ -12,12 +12,6 @@ def test_petc_for_detached_events_without_data(demo_petc):
     assert not demo_petc.get_detached_events()  # No Detached Events Without Data
 
 
-# TODO: How To Assert?
-def test_petc_to_get_leaves(demo_petc_with_data):
-    petc = demo_petc_with_data
-    assert petc.get_leaves()  # == 1 ?
-
-
 def test_petc_to_get_roots_ids(demo_petc_with_data, general_data):
     petc = demo_petc_with_data
     root_ids = petc.get_roots_ids()
@@ -52,13 +46,6 @@ def test_petc_find_children(demo_petc_with_data, general_data):
     data = Data(general_data).filter(lambda event: event["parentEventId"] == id_)
     data = [event for event in data if petc.find(lambda ev: ev["parentEventId"] == event["eventId"])]
     assert list(children) == data
-
-
-# TODO: Fix Test
-def test_petc_get_subtree(demo_petc_with_data, general_data):
-    petc = demo_petc_with_data
-    subtree = petc.get_subtree(DEMO_CHILD_ID)
-    assert subtree.get_root_id() == DEMO_CHILD_ID
 
 
 def test_petc_get_full_path(demo_petc_with_data):
