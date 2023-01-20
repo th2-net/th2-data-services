@@ -10,7 +10,7 @@ from th2_data_services_lwdp.events_tree import HttpETCDriver
 
 from tests.tests_unit.utils import LogsChecker
 from th2_data_services import Data
-from th2_data_services.events_tree import EventsTree, EventsTreeCollection
+from th2_data_services.events_tree import EventsTree, EventsTreeCollection, ParentEventsTreeCollection
 
 EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
 
@@ -1902,3 +1902,16 @@ def demo_etc_with_data(http_etc_driver, general_data):
     etc = EventsTreeCollection(http_etc_driver)
     etc.build(data)
     return etc
+
+
+@pytest.fixture
+def demo_petc(http_etc_driver):
+    return ParentEventsTreeCollection(http_etc_driver)
+
+
+@pytest.fixture
+def demo_petc_with_data(http_etc_driver, general_data):
+    data = Data(general_data)
+    petc = ParentEventsTreeCollection(http_etc_driver)
+    petc.build(data)
+    return petc

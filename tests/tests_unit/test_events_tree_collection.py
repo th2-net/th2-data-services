@@ -4,9 +4,8 @@ DEMO_CHILD_ID = "88a3ee80-d1b4-11eb-b0fb-199708acc7bc"
 DEMO_PARENT_ID = "84db48fc-d1b4-11eb-b0fb-199708acc7bc"
 
 
-def test_etc_for_detached_events_with_data(demo_etc_with_data, general_data):
-    etc = demo_etc_with_data
-    assert etc.get_detached_events()  # Detached Events Exist Without Data Source
+def test_etc_for_detached_events_with_data(demo_etc_with_data):
+    assert demo_etc_with_data.get_detached_events()  # Detached Events Exist Without Data Source
 
 
 def test_etc_for_detached_events_without_data(demo_etc):
@@ -46,12 +45,12 @@ def test_etc_find_ancestor(demo_etc_with_data):
     assert ancestor["eventId"] == DEMO_PARENT_ID
 
 
-def test_etc_find_children(demo_etc_with_data, general_data):
+def test_etc_get_children(demo_etc_with_data, general_data):
     etc = demo_etc_with_data
     id_ = DEMO_CHILD_ID
     children = etc.get_children(id_)
     data = Data(general_data).filter(lambda event: event["parentEventId"] == id_)
-    assert len(children) == data.len
+    assert list(children) == list(data)
 
 
 def test_etc_get_subtree(demo_etc_with_data, general_data):
@@ -69,8 +68,7 @@ def test_etc_get_full_path(demo_etc_with_data):
 
 def test_etc_get_parent(demo_etc_with_data):
     etc = demo_etc_with_data
-    child = DEMO_CHILD_ID
-    parent = etc.get_parent(child)
+    parent = etc.get_parent(DEMO_CHILD_ID)
     assert parent["eventId"] == "84db48fc-d1b4-11eb-b0fb-199708acc7bc"
 
 
@@ -97,3 +95,10 @@ def test_etc_append_non_stub_event(demo_etc_with_data):
         }
     )
     assert etc.find(lambda event: event["eventName"] == "DemoEvent")
+
+
+def test_etc_get_all_events(demo_etc_with_data, general_data):
+    etc = demo_etc_with_data
+    data = Data(general_data)
+    events = etc.get_all_events()
+    assert len(events) == data.len
