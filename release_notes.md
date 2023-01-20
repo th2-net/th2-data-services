@@ -450,3 +450,4 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 10. [TH2-4646] 
     - metadata gets carried when using Data methods.
     - update_metadata method added to update metadata.
+11. [TH2-4684] Tree names changed from plural to singular. (e.g Event**s**Tree -> EventTree)

@@ -11,14 +11,14 @@
 
 ---
 
-<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L14"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L16"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `EventIdNotInTree`
 
 
 
 
-<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L15"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L17"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -40,14 +40,14 @@ Exception for the case when the tree hasn't the event.
 
 ---
 
-<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L29"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `FieldIsNotExist`
 
 
 
 
-<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L28"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L30"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -62,6 +62,64 @@ Exception for the case when event as dict hasn't field.
 **Args:**
  
  - <b>`field_name`</b>:  Field name. 
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L42"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+## <kbd>class</kbd> `EventAlreadyExist`
+
+
+
+
+<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L43"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `__init__`
+
+```python
+__init__(event_id)
+```
+
+Exception for the case when event already exist in tree. 
+
+
+
+**Args:**
+ 
+ - <b>`event_id`</b>:  Event id. 
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+## <kbd>class</kbd> `EventRootExist`
+
+
+
+
+<a href="../../th2_data_services/interfaces/events_tree/exceptions.py#L56"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `__init__`
+
+```python
+__init__(event_id)
+```
+
+Exception for the case when root already added in tree. 
+
+
+
+**Args:**
+ 
+ - <b>`event_id`</b>:  Event id. 
 
 
 

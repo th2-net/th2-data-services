@@ -133,10 +133,10 @@ from typing import Tuple, List, Optional
 from datetime import datetime
 
 from th2_data_services import Data
-from th2_data_services.events_tree import EventsTree
+from th2_data_services.events_tree import EventTree
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http as commands
-from th2_data_services.provider.v5.events_tree import EventsTreeCollectionProvider5, ParentEventsTreeCollectionProvider5
+from th2_data_services.provider.v5.events_tree import ParentEventsTreeCollectionProvider5
 from th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
 from th2_data_services.provider.v5.filters.message_filters import BodyFilter
 
@@ -145,6 +145,7 @@ from th2_data_services.provider.v5.filters.message_filters import BodyFilter
 # If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
 # global parameter to True. It'll keep cache files if something went wrong.
 import th2_data_services
+from th2_data_services.interfaces.events_tree import EventsTreeCollection
 
 th2_data_services.INTERACTIVE_MODE = True
 
@@ -290,50 +291,51 @@ data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 # [4.1] Building the EventsTreeCollection.
 
 # If you don't specify data_source for the tree then it won't recover detached events.
-collection = EventsTreeCollectionProvider5(events)
+etc = EventsTreeCollection()  # TODO - req driver.
+etc.build(events)
 
 # Detached events isn't empty.
-assert collection.detached_events
+assert etc.get_detached_events()
 
-collection = EventsTreeCollectionProvider5(events, data_source=data_source)
+etc = EventsTreeCollection()
 # Detached events are empty because they were recovered.
-assert not collection.detached_events
+assert not etc.get_detached_events()
 
 # The collection has EventsTrees each with a tree of events.
 # Using Collection and EventsTrees, you can work flexibly with events.
 
 # [4.1.1] Get leaves of all trees.
-leaves: Tuple[dict] = collection.get_leaves()
+leaves: Tuple[dict] = etc.get_leaves()
 
 # [4.1.2] Get roots ids of all trees.
-roots: List[str] = collection.get_roots_ids()
+roots: List[str] = etc.get_roots_ids()
 
 # [4.1.3] Find an event in all trees.
-find_event: Optional[dict] = collection.find(lambda event: "Send message" in event["eventType"])
+find_event: Optional[dict] = etc.find(lambda event: "Send message" in event["eventType"])
 
 # [4.1.4] Find all events in all trees. There is also iterable version 'findall_iter'.
-find_events: List[dict] = collection.findall(lambda event: event["successful"] is True)
+find_events: List[dict] = etc.findall(lambda event: event["successful"] is True)
 
 # [4.1.5] Find an ancestor of the event.
-ancestor: Optional[dict] = collection.find_ancestor(
+ancestor: Optional[dict] = etc.find_ancestor(
     "8bbe3717-cf59-11eb-a3f7-094f904c3a62", filter=lambda event: "RootEvent" in event["eventName"]
 )
 
 # [4.1.6] Get children of the event. There is also iterable version 'get_children_iter'.
-children: Tuple[dict] = collection.get_children("814422e1-9c68-11eb-8598-691ebd7f413d")
+children: Tuple[dict] = etc.get_children("814422e1-9c68-11eb-8598-691ebd7f413d")
 
 # [4.1.7] Get subtree for specified event.
-subtree: EventsTree = collection.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
+subtree: EventTree = etc.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
 
 # [4.1.8] Get full path to the event.
 # Looks like [ancestor_root, ancestor_level1, ancestor_level2, event]
-event_path: List[dict] = collection.get_full_path("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
+event_path: List[dict] = etc.get_full_path("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
 
 # [4.1.9] Get parent of the event.
-parent = collection.get_parent("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
+parent = etc.get_parent("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
 
 # [4.1.10] Append new event to the collection.
-collection.append_event(
+etc.append_event(
     event={
         "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
         "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",
@@ -342,27 +344,29 @@ collection.append_event(
 )
 
 # [4.1.11] Show the entire collection.
-collection.show()
+etc.show()
 
 # [4.2] Working with the EventsTree.
 # EventsTree has the same methods as EventsTreeCollection, but only for its own tree.
 
 # [4.2.1] Get collection trees.
-trees: List[EventsTree] = collection.get_trees()
-tree: EventsTree = trees[0]
+trees: List[EventTree] = etc.get_trees()
+tree: EventTree = trees[0]
 
 # But EventsTree provides a work with the tree, but does not modify it.
 # If you want to modify the tree, use EventsTreeCollections.
 
 # [4.3] Working with ParentlessTree.
 # ParentlessTree is EventsTree which has detached events with stubs.
-parentless_trees: List[EventsTree] = collection.get_parentless_trees()
+parentless_trees: List[EventTree] = etc.get_parentless_trees()
 
 # [4.4] Working with ParentEventsTreeCollection.
 # ParentEventsTreeCollection is a tree like EventsTreeCollection but it has only events that have references.
-collection = ParentEventsTreeCollectionProvider5(events, data_source=data_source)
+etc = ParentEventsTreeCollectionProvider5(events, data_source=data_source)
 
-collection.show()
+etc.show()
+
+# TODO - how to build your custom EventsTree
 
 ```
 <!-- end get_started_example.py -->
