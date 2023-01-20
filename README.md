@@ -133,7 +133,7 @@ from typing import Tuple, List, Optional
 from datetime import datetime
 
 from th2_data_services import Data
-from th2_data_services.events_tree import EventsTree
+from th2_data_services.events_tree import EventTree
 from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
 from th2_data_services.provider.v5.commands import http as commands
 from th2_data_services.provider.v5.events_tree import ParentEventsTreeCollectionProvider5
@@ -325,7 +325,7 @@ ancestor: Optional[dict] = etc.find_ancestor(
 children: Tuple[dict] = etc.get_children("814422e1-9c68-11eb-8598-691ebd7f413d")
 
 # [4.1.7] Get subtree for specified event.
-subtree: EventsTree = etc.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
+subtree: EventTree = etc.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
 
 # [4.1.8] Get full path to the event.
 # Looks like [ancestor_root, ancestor_level1, ancestor_level2, event]
@@ -350,15 +350,15 @@ etc.show()
 # EventsTree has the same methods as EventsTreeCollection, but only for its own tree.
 
 # [4.2.1] Get collection trees.
-trees: List[EventsTree] = etc.get_trees()
-tree: EventsTree = trees[0]
+trees: List[EventTree] = etc.get_trees()
+tree: EventTree = trees[0]
 
 # But EventsTree provides a work with the tree, but does not modify it.
 # If you want to modify the tree, use EventsTreeCollections.
 
 # [4.3] Working with ParentlessTree.
 # ParentlessTree is EventsTree which has detached events with stubs.
-parentless_trees: List[EventsTree] = etc.get_parentless_trees()
+parentless_trees: List[EventTree] = etc.get_parentless_trees()
 
 # [4.4] Working with ParentEventsTreeCollection.
 # ParentEventsTreeCollection is a tree like EventsTreeCollection but it has only events that have references.
