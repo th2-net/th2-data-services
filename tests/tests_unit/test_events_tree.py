@@ -60,15 +60,15 @@ def test_update_event_name_id_error(events_tree_for_test: EventTree):
 
 def test_merge_events_tree(events_tree_for_test: EventTree):
     tree = events_tree_for_test
-    events_count = len(tree)
 
     other_tree = EventTree(event_name="RootEvent", event_id="root_id")
-    tree.append_event(event_name="12A", event_id="12A_id", data=None, parent_id="root_id")
-    tree.append_event(event_name="12B", event_id="12B_id", data=None, parent_id="root_id")
+    other_tree.append_event(event_name="12A", event_id="12A_id", data=None, parent_id="root_id")
+    other_tree.append_event(event_name="12B", event_id="12B_id", data=None, parent_id="root_id")
+
+    new_events_count = len(tree) + len(other_tree) - 1  # root_id Node Isn't Added
 
     tree.merge_tree("A_id", other_tree=other_tree)
-    # TODO - this check is peace of shit
-    assert events_count < len(tree)
+    assert len(tree) == new_events_count
 
 
 def test_merge_events_tree_id_error(events_tree_for_test: EventTree):
@@ -81,10 +81,13 @@ def test_merge_events_tree_id_error(events_tree_for_test: EventTree):
     assert exc
 
 
-def test_append_event():
-    pass
+def test_append_event(events_tree_for_test):
+    tree = events_tree_for_test
+    tree.append_event(event_name="0xA", event_id="0xA_id", data={"msg": "Event Has Been Created"}, parent_id="root_id")
+    assert tree.get_event("0xA_id")
 
 
+@pytest.mark.xfail(reason="Raises exception now in Windows")
 def test_show(events_tree_for_test: EventTree):
     """Raises exception now in Windows
     https://stackoverflow.com/questions/27092833/unicodeencodeerror-charmap-codec-cant-encode-characters
