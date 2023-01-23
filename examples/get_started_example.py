@@ -1,127 +1,115 @@
 from collections import Generator
 from typing import Tuple, List, Optional
 from datetime import datetime
+from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter
 
 from th2_data_services import Data
-from th2_data_services.events_tree import EventTree
-from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.commands import http as commands
-from th2_data_services.provider.v5.events_tree import ParentEventsTreeCollectionProvider5
-from th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
-from th2_data_services.provider.v5.filters.message_filters import BodyFilter
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
 # If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
 # global parameter to True. It'll keep cache files if something went wrong.
 import th2_data_services
-from th2_data_services.interfaces.events_tree import EventsTreeCollection
 
 th2_data_services.INTERACTIVE_MODE = True
 
-# [1] Create DataSource object to connect to rpt-data-provider.
-DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
-DEMO_PORT = "30999"  # Node port of rpt-data-provider.
-data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+# Some example data
+events = Data([
+    {
+        "eventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
+        "batchId": None,
+        "isBatched": False,
+        "eventName": "Set of auto-generated events for ds lib testing",
+        "eventType": "ds-lib-test-event",
+        "endTimestamp": {"epochSecond": 1672927025, "nano": 561751000},
+        "startTimestamp": {"epochSecond": 1672927025, "nano": 560873000},
+        "parentEventId": None,
+        "successful": True,
+        "bookId": "demo_book_1",
+        "scope": "th2-scope",
+        "attachedMessageIds": [],
+        "body": [],
+    },
+    {
+        "eventId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c>demo_book_1:th2-scope:20230105135705563522000:d61e930a-8d00-11ed-aa1a-d34a6155152d_2",
+        "batchId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c",
+        "isBatched": True,
+        "eventName": "Plain event 1",
+        "eventType": "ds-lib-test-event",
+        "endTimestamp": {"epochSecond": 1672927025, "nano": 563640000},
+        "startTimestamp": {"epochSecond": 1672927025, "nano": 563522000},
+        "parentEventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
+        "successful": True,
+        "bookId": "demo_book_1",
+        "scope": "th2-scope",
+        "attachedMessageIds": [],
+        "body": {"type": "message", "data": "ds-lib test body"},
+    },
+    {
+        "eventId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c>demo_book_1:th2-scope:20230105135705563757000:d61e930a-8d00-11ed-aa1a-d34a6155152d_3",
+        "batchId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c",
+        "isBatched": True,
+        "eventName": "Plain event 2",
+        "eventType": "ds-lib-test-event",
+        "endTimestamp": {"epochSecond": 1672927025, "nano": 563791000},
+        "startTimestamp": {"epochSecond": 1672927025, "nano": 563757000},
+        "parentEventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
+        "successful": True,
+        "bookId": "demo_book_1",
+        "scope": "th2-scope",
+        "attachedMessageIds": [],
+        "body": {"type": "message", "data": "ds-lib test body"},
+    }
+])
 
-START_TIME = datetime(
-    year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
-)  # Datetime in utc format.
-END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=50)
-
-# [2] Get events or messages from START_TIME to END_TIME.
-# [2.1] Get events.
-events: Data = data_source.command(
-    commands.GetEvents(
-        start_timestamp=START_TIME,
-        end_timestamp=END_TIME,
-        attached_messages=True,
-        # Use Filter class to apply rpt-data-provider filters.
-        # Do not use multiple classes of the same type.
-        filters=[
-            TypeFilter("Send message"),
-            NameFilter(["ExecutionReport", "NewOrderSingle"]),  # You can use multiple values.
-            FailedStatusFilter(),
-        ],
-    )
-)
-
-# [2.2] Get messages.
-messages: Data = data_source.command(
-    commands.GetMessages(
-        start_timestamp=START_TIME,
-        end_timestamp=END_TIME,
-        attached_events=True,
-        stream=["demo-conn2"],
-        filters=BodyFilter("195"),  # Filter message if there is a substring '195' in the body.
-    )
-)
-
-# [3] Work with a Data object.
-# [3.1] Filter.
+# [1] Working with a Data object.
+# [1.1] Filter.
 filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter events with empty body.
 
 
-# [3.2] Map.
+# [1.2] Map.
 def transform_function(record):
     return {"eventName": record["eventName"], "successful": record["successful"]}
 
 
 filtered_and_mapped_events = filtered_events.map(transform_function)
 
-# [3.3] Data pipeline.
+
+# [1.3] Data pipeline.
 #       Instead of doing data transformations step by step you can do it in one line.
 filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []).map(transform_function)
-
 # Content of these two Data objects should be equal.
 assert list(filtered_and_mapped_events) == list(filtered_and_mapped_events_by_pipeline)
 
-# [3.4] Sift. Skip the first few items or limit them.
-events_from_11_to_end: Generator = events.sift(skip=10)
-only_first_10_events: Generator = events.sift(limit=10)
+data = Data([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
 
-# [3.5] Changing cache status.
+# [1.4] Sift. Skip the first few items or limit them.
+items_from_11_to_end: Generator = data.sift(skip=10)
+only_first_10_items: Generator = data.sift(limit=10)
+
+# [1.5] Changing cache status.
 events.use_cache(True)
 # or just
 events.use_cache()  # If you want to activate cache.
-
-# [3.6] Walk through data.
+# [1.6] Walk through data.
 for event in events:
     # Do something with event (event is a dict).
     print(event)
 # After first iteration the events has a cache file.
 # Now they will be used in the cache in the next iteration.
 
-# [3.7] Get number of the elements in the Data object.
+# [1.7] Get number of the elements in the Data object.
 number_of_events = events.len
 
-# [3.8] Check that Data object isn't empty.
+# [1.8] Check that Data object isn't empty.
 # The data source should be not empty.
 assert events.is_empty is False
 
-# [3.9] Convert Data object to the list of elements(events or messages).
+# [1.9] Convert Data object to the list of elements(events or messages).
 # Be careful, this can take too much memory.
 events_list = list(events)
 
-# [3.10] Get event/message by id.
-desired_event = "9ce8a2ff-d600-4366-9aba-2082cfc69901:ef1d722e-cf5e-11eb-bcd0-ced60009573f"
-desired_events = [
-    "deea079b-4235-4421-abf6-6a3ac1d04c76:ef1d3a20-cf5e-11eb-bcd0-ced60009573f",
-    "a34e3cb4-c635-4a90-8f42-37dd984209cb:ef1c5cea-cf5e-11eb-bcd0-ced60009573f",
-]
-desired_message = "demo-conn1:first:1619506157132265837"
-desired_messages = [
-    "demo-conn1:first:1619506157132265836",
-    "demo-conn1:first:1619506157132265833",
-]
-
-data_source.command(commands.GetEventById(desired_event))  # Returns 1 event (dict).
-data_source.command(commands.GetEventsById(desired_events))  # Returns 2 events list(dict).
-
-data_source.command(commands.GetMessageById(desired_message))  # Returns 1 message (dict).
-data_source.command(commands.GetMessagesById(desired_messages))  # Returns 2 messages list(dict).
-
-# [3.11] The cache inheritance.
+# [1.10] The cache inheritance.
 # Creates a new Data object that will use cache from the events Data object.
 events_filtered: Data = events.filter(lambda record: record.get("batchId"))
 
@@ -137,7 +125,7 @@ filtered_events_types = events_filtered.map(lambda record: {"eventType": record.
 events_without_types_with_batch = filtered_events_types.filter(lambda record: not record.get("eventType"))
 events_without_types_with_batch.use_cache()
 
-# [3.12] Data objects joining.
+# [1.11] Data objects joining.
 # You have the following 3 Data objects.
 d1 = Data([1, 2, 3])
 d2 = Data(["a", {"id": 123}, "c"])
@@ -152,88 +140,37 @@ data_with_non_data_obj_via_add = d1 + ["a", {"id": 123}, "c"] + d3
 # It will keep cache status.
 d1 += d3  # d1 will become Data([1,2,3,7,8,9])
 
-# [3.13] Build and read Data object cache files.
+# [1.12] Build and read Data object cache files.
 events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
 
-# [4] Working with EventsTree and EventsTreeCollection.
-# [4.1] Building the EventsTreeCollection.
+# [2] Working with converters.
+# There currently are two implementations of ITimestampConverter class: DatetimeConverter and DatetimeStringConverter.
 
-# If you don't specify data_source for the tree then it won't recover detached events.
-etc = EventsTreeCollection()  # TODO - req driver.
-etc.build(events)
+# [2.1] DatetimeConverter.
+# DatetimeConverter takes datetime.datetime object as input.
 
-# Detached events isn't empty.
-assert etc.get_detached_events()
+date = datetime(year=2023, month=1, day=5, hour=14, minute=38, second=25, microsecond=1460)
 
-etc = EventsTreeCollection()
-# Detached events are empty because they were recovered.
-assert not etc.get_detached_events()
+# It has methods that return the datetime in different formas:
 
-# The collection has EventsTrees each with a tree of events.
-# Using Collection and EventsTrees, you can work flexibly with events.
+date_ms = DatetimeConverter.to_milliseconds(date)
+date_us = DatetimeConverter.to_microseconds(date)
+# Converting to nanoseconds justs adds three trailing zeros as datetime object doesn't have nanoseconds.
+date_ns = DatetimeConverter.to_nanoseconds(date)
 
-# [4.1.1] Get leaves of all trees.
-leaves: Tuple[dict] = etc.get_leaves()
+# [2.2] DatetimeStringConverter
+# DatetimeStringConverter takes string in "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ" format.
 
-# [4.1.2] Get roots ids of all trees.
-roots: List[str] = etc.get_roots_ids()
+date_string = "2023-01-05T14:38:25.00146Z"
 
-# [4.1.3] Find an event in all trees.
-find_event: Optional[dict] = etc.find(lambda event: "Send message" in event["eventType"])
+# We have same methods as in DatetimeConverter
 
-# [4.1.4] Find all events in all trees. There is also iterable version 'findall_iter'.
-find_events: List[dict] = etc.findall(lambda event: event["successful"] is True)
+date_ms_from_string = DatetimeStringConverter.to_milliseconds(date_string)
+date_us_from_string = DatetimeStringConverter.to_microseconds(date_string)
+date_ns_from_string = DatetimeStringConverter.to_nanoseconds(date_string)
 
-# [4.1.5] Find an ancestor of the event.
-ancestor: Optional[dict] = etc.find_ancestor(
-    "8bbe3717-cf59-11eb-a3f7-094f904c3a62", filter=lambda event: "RootEvent" in event["eventName"]
-)
+# We can also get datetime object from string
 
-# [4.1.6] Get children of the event. There is also iterable version 'get_children_iter'.
-children: Tuple[dict] = etc.get_children("814422e1-9c68-11eb-8598-691ebd7f413d")
-
-# [4.1.7] Get subtree for specified event.
-subtree: EventTree = etc.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
-
-# [4.1.8] Get full path to the event.
-# Looks like [ancestor_root, ancestor_level1, ancestor_level2, event]
-event_path: List[dict] = etc.get_full_path("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
-
-# [4.1.9] Get parent of the event.
-parent = etc.get_parent("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
-
-# [4.1.10] Append new event to the collection.
-etc.append_event(
-    event={
-        "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
-        "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",
-        "eventName": "StubEvent",
-    }
-)
-
-# [4.1.11] Show the entire collection.
-etc.show()
-
-# [4.2] Working with the EventsTree.
-# EventsTree has the same methods as EventsTreeCollection, but only for its own tree.
-
-# [4.2.1] Get collection trees.
-trees: List[EventTree] = etc.get_trees()
-tree: EventTree = trees[0]
-
-# But EventsTree provides a work with the tree, but does not modify it.
-# If you want to modify the tree, use EventsTreeCollections.
-
-# [4.3] Working with ParentlessTree.
-# ParentlessTree is EventsTree which has detached events with stubs.
-parentless_trees: List[EventTree] = etc.get_parentless_trees()
-
-# [4.4] Working with ParentEventsTreeCollection.
-# ParentEventsTreeCollection is a tree like EventsTreeCollection but it has only events that have references.
-etc = ParentEventsTreeCollectionProvider5(events, data_source=data_source)
-
-etc.show()
-
-# TODO - how to build your custom EventsTree
+date_from_string = DatetimeStringConverter.to_datetime(date_string)
