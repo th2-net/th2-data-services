@@ -147,7 +147,9 @@ data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
 # [2] Working with converters.
 # There currently are three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
-# They all implement same methods from base class
+# They all implement same methods from base class.
+# Note that somea ccuracy may be lost during conversion.
+# If for example you use to_microseconds nanoseconds will be cut off instead of rounding.
 
 # [2.1] DatetimeConverter.
 # DatetimeConverter takes datetime.datetime object as input.
