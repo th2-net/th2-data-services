@@ -81,9 +81,8 @@ filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []
 # Content of these two Data objects should be equal.
 assert list(filtered_and_mapped_events) == list(filtered_and_mapped_events_by_pipeline)
 
-data = Data([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
-
 # [1.4] Sift. Skip the first few items or limit them.
+data = Data([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
 items_from_11_to_end: Generator = data.sift(skip=10)
 only_first_10_items: Generator = data.sift(limit=10)
 
@@ -146,7 +145,7 @@ data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
 
 # [2] Working with converters.
-# There currently are two implementations of ITimestampConverter class: DatetimeConverter and DatetimeStringConverter.
+# There are currently two implementations of ITimestampConverter class: DatetimeConverter and DatetimeStringConverter.
 
 # [2.1] DatetimeConverter.
 # DatetimeConverter takes datetime.datetime object as input.
