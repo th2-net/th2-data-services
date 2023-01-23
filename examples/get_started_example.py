@@ -1,7 +1,7 @@
 from collections import Generator
 from typing import Tuple, List, Optional
 from datetime import datetime
-from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter
+from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
 
 from th2_data_services import Data
 
@@ -146,7 +146,8 @@ data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
 
 # [2] Working with converters.
-# There currently are two implementations of ITimestampConverter class: DatetimeConverter and DatetimeStringConverter.
+# There currently are three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
+# They all implement same methods from base class
 
 # [2.1] DatetimeConverter.
 # DatetimeConverter takes datetime.datetime object as input.
@@ -173,4 +174,15 @@ date_ns_from_string = DatetimeStringConverter.to_nanoseconds(date_string)
 
 # We can also get datetime object from string
 
-date_from_string = DatetimeStringConverter.to_datetime(date_string)
+datetime_from_string = DatetimeStringConverter.to_datetime(date_string)
+
+# [2.3] ProtobufTimestampConverter
+# Protobuf timestamps must be in form {"epochSecond": seconds, "nano": nanoseconds}
+
+protobuf_timestamp = {"epochSecond": 1672929505, "nano": 1_460_000}
+
+date_ms_from_timestamp = ProtobufTimestampConverter.to_milliseconds(protobuf_timestamp)
+date_us_from_timestamp = ProtobufTimestampConverter.to_microseconds(protobuf_timestamp)
+date_ns_from_timestamp = ProtobufTimestampConverter.to_nanoseconds(protobuf_timestamp)
+
+datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(protobuf_timestamp)
