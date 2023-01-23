@@ -147,34 +147,32 @@ data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 # [2] Working with converters.
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
 # They all implement same methods from base class.
-# Note that somea ccuracy may be lost during conversion.
+# Note that some accuracy may be lost during conversion.
 # If for example you use to_microseconds nanoseconds will be cut off instead of rounding.
 
 # [2.1] DatetimeConverter.
 # DatetimeConverter takes datetime.datetime object as input.
 
-date = datetime(year=2023, month=1, day=5, hour=14, minute=38, second=25, microsecond=1460)
+datetime_obj = datetime(year=2023, month=1, day=5, hour=14, minute=38, second=25, microsecond=1460)
 
 # It has methods that return the datetime in different formas:
 
-date_ms = DatetimeConverter.to_milliseconds(date)
-date_us = DatetimeConverter.to_microseconds(date)
+date_ms = DatetimeConverter.to_milliseconds(datetime_obj)
+date_us = DatetimeConverter.to_microseconds(datetime_obj)
 # Converting to nanoseconds justs adds three trailing zeros as datetime object doesn't have nanoseconds.
-date_ns = DatetimeConverter.to_nanoseconds(date)
+date_ns = DatetimeConverter.to_nanoseconds(datetime_obj)
 
 # [2.2] DatetimeStringConverter
-# DatetimeStringConverter takes string in "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ" format.
+# DatetimeStringConverter takes string in "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z" format.
 
 date_string = "2023-01-05T14:38:25.00146Z"
 
 # We have same methods as in DatetimeConverter
-
 date_ms_from_string = DatetimeStringConverter.to_milliseconds(date_string)
 date_us_from_string = DatetimeStringConverter.to_microseconds(date_string)
 date_ns_from_string = DatetimeStringConverter.to_nanoseconds(date_string)
 
 # We can also get datetime object from string
-
 datetime_from_string = DatetimeStringConverter.to_datetime(date_string)
 
 # [2.3] ProtobufTimestampConverter
@@ -185,5 +183,4 @@ protobuf_timestamp = {"epochSecond": 1672929505, "nano": 1_460_000}
 date_ms_from_timestamp = ProtobufTimestampConverter.to_milliseconds(protobuf_timestamp)
 date_us_from_timestamp = ProtobufTimestampConverter.to_microseconds(protobuf_timestamp)
 date_ns_from_timestamp = ProtobufTimestampConverter.to_nanoseconds(protobuf_timestamp)
-
 datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(protobuf_timestamp)
