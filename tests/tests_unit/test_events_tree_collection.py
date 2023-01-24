@@ -137,7 +137,7 @@ def test_etc_get_all_events(demo_etc_with_data, general_data):
 def test_get_parentless_trees(demo_etc_with_data, general_data):
     """Check that ETC returns parentless_tress."""
     etc = demo_etc_with_data
-    parentless_tress = etc.test_get_parentless_trees()
+    parentless_tress = etc.get_parentless_trees()
     # TODO - check that ETC returns them
     assert False
 

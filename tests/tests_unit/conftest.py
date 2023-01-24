@@ -1945,6 +1945,7 @@ def demo_etc(demo_etc_driver):
     return EventTreeCollection(demo_etc_driver)
 
 
+# TODO - we have to create ETC that will have several trees (>1) that has more than 1 event inside (each).
 @pytest.fixture
 def demo_etc_with_data(demo_etc_driver, general_data):
     data = Data(general_data)
