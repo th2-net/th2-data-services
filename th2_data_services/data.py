@@ -19,10 +19,11 @@ from functools import partial
 from os import rename
 from pathlib import Path
 from time import time
-from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Iterator, Any
+from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Iterator, Any, Generic
 from weakref import finalize
 import types
 from inspect import isgeneratorfunction
+from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 
 # LOG import logging
@@ -35,12 +36,13 @@ from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 # LOG         return "Data[%s] %s" % (self.extra["id"], msg), kwargs
 
 
-DataGenerator = Generator[dict, None, None]
+DataIterValues = TypeVar("DataIterValues")
+DataGenerator = Generator[DataIterValues, None, None]
 DataSet = Union[Iterator, Callable[..., DataGenerator], List[Iterator]]
 WorkFlow = List[Dict[str, Union[Callable, str]]]
 
 
-class Data:
+class Data(Generic[DataIterValues]):
     """A wrapper for data/data_stream.
 
     The class provides methods for working with data as a stream.
