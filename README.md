@@ -37,7 +37,7 @@ Table of Contents
 
 # 1. Introduction
 
-This repository is an interface for creating data-services applications.
+This repository is an interface for creating th2-data-services applications.
 
 The library's features:
 
