@@ -16,13 +16,13 @@ from collections import defaultdict
 from typing import List, Dict, Optional, Union, Generator, Tuple, Callable, Sequence
 
 from treelib.exceptions import NodeIDAbsentError
-from th2_data_services.events_tree.event_tree import EventTree
-from th2_data_services.events_tree.event_tree import Th2Event
-from th2_data_services.events_tree.exceptions import EventIdNotInTree
+from th2_data_services.event_tree.event_tree import EventTree
+from th2_data_services.event_tree.event_tree import Th2Event
+from th2_data_services.event_tree.exceptions import EventIdNotInTree
 
 import warnings
 
-from th2_data_services.events_tree.etc_driver import IETCDriver
+from th2_data_services.event_tree.etc_driver import IETCDriver
 
 
 class EventTreeCollection:

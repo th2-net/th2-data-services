@@ -5,12 +5,12 @@
 ## Modules
 
 - [`data`](./data.md#module-data)
-- [`events_tree`](./events_tree.md#module-events_tree)
-- [`events_tree.etc_driver`](./events_tree.etc_driver.md#module-events_treeetc_driver)
-- [`events_tree.event_tree`](./events_tree.event_tree.md#module-events_treeevent_tree)
-- [`events_tree.event_tree_collection`](./events_tree.event_tree_collection.md#module-events_treeevent_tree_collection)
-- [`events_tree.exceptions`](./events_tree.exceptions.md#module-events_treeexceptions)
-- [`events_tree.parent_event_tree_collection`](./events_tree.parent_event_tree_collection.md#module-events_treeparent_event_tree_collection)
+- [`event_tree`](./event_tree.md#module-event_tree)
+- [`event_tree.etc_driver`](./event_tree.etc_driver.md#module-event_treeetc_driver)
+- [`event_tree.event_tree`](./event_tree.event_tree.md#module-event_treeevent_tree)
+- [`event_tree.event_tree_collection`](./event_tree.event_tree_collection.md#module-event_treeevent_tree_collection)
+- [`event_tree.exceptions`](./event_tree.exceptions.md#module-event_treeexceptions)
+- [`event_tree.parent_event_tree_collection`](./event_tree.parent_event_tree_collection.md#module-event_treeparent_event_tree_collection)
 - [`exceptions`](./exceptions.md#module-exceptions)
 - [`interfaces`](./interfaces.md#module-interfaces)
 - [`interfaces.adapter`](./interfaces.adapter.md#module-interfacesadapter)
@@ -29,15 +29,15 @@
 ## Classes
 
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
-- [`etc_driver.IETCDriver`](./events_tree.etc_driver.md#class-ietcdriver)
-- [`event_tree.EventTree`](./events_tree.event_tree.md#class-eventtree): EventTree is a tree-based data structure of events.
-- [`event_tree_collection.EventTreeCollection`](./events_tree.event_tree_collection.md#class-eventtreecollection): EventTreeCollection objective is building 'EventsTree's and storing them.
-- [`exceptions.EventAlreadyExist`](./events_tree.exceptions.md#class-eventalreadyexist)
-- [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
-- [`exceptions.EventRootExist`](./events_tree.exceptions.md#class-eventrootexist)
-- [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
-- [`exceptions.TreeLoop`](./events_tree.exceptions.md#class-treeloop)
-- [`parent_event_tree_collection.ParentEventTreeCollection`](./events_tree.parent_event_tree_collection.md#class-parenteventtreecollection): ParentEventTreeCollections is a class like an EventsTreeCollections.
+- [`etc_driver.IETCDriver`](./event_tree.etc_driver.md#class-ietcdriver)
+- [`event_tree.EventTree`](./event_tree.event_tree.md#class-eventtree): EventTree is a tree-based data structure of events.
+- [`event_tree_collection.EventTreeCollection`](./event_tree.event_tree_collection.md#class-eventtreecollection): EventTreeCollection objective is building 'EventsTree's and storing them.
+- [`exceptions.EventAlreadyExist`](./event_tree.exceptions.md#class-eventalreadyexist)
+- [`exceptions.EventIdNotInTree`](./event_tree.exceptions.md#class-eventidnotintree)
+- [`exceptions.EventRootExist`](./event_tree.exceptions.md#class-eventrootexist)
+- [`exceptions.FieldIsNotExist`](./event_tree.exceptions.md#class-fieldisnotexist)
+- [`exceptions.TreeLoop`](./event_tree.exceptions.md#class-treeloop)
+- [`parent_event_tree_collection.ParentEventTreeCollection`](./event_tree.parent_event_tree_collection.md#class-parenteventtreecollection): ParentEventTreeCollections is a class like an EventsTreeCollections.
 - [`exceptions.CommandError`](./exceptions.md#class-commanderror): Exception raised for errors in the command.
 - [`exceptions.EventNotFound`](./exceptions.md#class-eventnotfound)
 - [`exceptions.MessageNotFound`](./exceptions.md#class-messagenotfound)
