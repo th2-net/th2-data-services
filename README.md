@@ -390,18 +390,16 @@ You can tell DS to cache data to specific cache file, which won't be deleted aft
 You can see example in 1.12 section of [get_started_example](examples/get_started_example.py).
 
 
-### EventsTree and collections
+### EventTree and collections
 
-#### EventsTree
+#### EventTree
 
-EventsTree is a tree-based data structure of events. It allows you get children and parents of event, display tree, get
-full path to event etc.
+`EventTree` is a tree-based data structure of events. It allows you get children and parents of event, 
+display tree, get full path to event etc.
 
 Details:
 
-* EventsTree contains all events in memory.
-* To reduce memory usage an EventsTreeCollection delete the 'body' field from events, but you can preserve it specify '
-  preserve_body'.
+* `EventTree` contains all events in memory.
 * Tree has some important terms:
     1. _Ancestor_ is any relative of the event up the tree (grandparent, parent etc.).
     2. _Parent_ is only the first relative of the event up the tree.
@@ -420,28 +418,28 @@ Take a look at the following HTML tree to understand them.
 
 #### Collections
 
-**EventsTreeCollection** is a collection of EventsTrees. The collection builds a few _EventsTree_ by passed _Data
+**EventTreeCollection** is a collection of EventTrees. The collection builds a few _EventTree_ by passed _Data
 object_. Although you can change the tree directly, it's better to do it through collections because they are aware of
-`detached_events` and can solve some events dependencies. The collection has similar features like a single _EventsTree_
-but applying them for all EventsTrees.
+`detached_events` and can solve some events dependencies. The collection has similar features like a single _EventTree_
+but applying them for all _EventTrees_.
 
-**ParentEventsTreeCollection** is a collection similar to EventsTreeCollection but containing only parent events that
-are referenced in the data stream. It will be working data in the collection and trees of collection. The collection has
-features similar to EventsTreeCollection.
+**ParentEventTreeCollection** is a collection similar to _EventTreeCollection_ but containing only parent events that
+are referenced in the data stream. The collection has features similar to _EventTreeCollection_.
 
 Details:
 
+* To use ET collections you need to initialize them by _ETCDriver_. Data sources usually provide them.
+  You can create it by yourself depending on your data structure.  
 * The collection has a feature to recover events. All events that are not in the received data stream, but which are
   referenced will be loaded from the data source.
-* If you haven't passed a _DataSource object_ then the recovery of events will not occur.
-* You can take `detached_events` to see which events are missing. It looks like `{parent_id: [events are referenced]}`
+* You can take `detached_events` to see which events are missing.
 * If you want, you can build parentless trees where the missing events are stubbed instead. Just
   use `get_parentless_trees()`.
 
 Requirements:
 
-1. Events have to have `event_name`, `event_id`, `parent_event_id` fields, which are described in the
-passed `event_struct` object.
+1. Events provided to ETC have to have `event_name`, `event_id`, `parent_event_id` fields. They 
+can have another names (it resolves in the driver).
 
 #### Hints
 
