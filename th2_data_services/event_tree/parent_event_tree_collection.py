@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 from typing import Dict, List, Optional
-from th2_data_services.events_tree.event_tree import EventTree
-from th2_data_services.events_tree.event_tree_collection import EventTreeCollection
+from th2_data_services.event_tree.event_tree import EventTree
+from th2_data_services.event_tree.event_tree_collection import EventTreeCollection
 
 
 class ParentEventTreeCollection(EventTreeCollection):

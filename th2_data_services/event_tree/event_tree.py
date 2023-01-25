@@ -16,7 +16,7 @@ from typing import List, Tuple, Generator, Callable, Optional, Union
 from treelib import Tree, Node
 from treelib.exceptions import NodeIDAbsentError, LoopError
 
-from th2_data_services.events_tree.exceptions import EventIdNotInTree, EventAlreadyExist, EventRootExist, TreeLoop
+from th2_data_services.event_tree.exceptions import EventIdNotInTree, EventAlreadyExist, EventRootExist, TreeLoop
 
 Th2Event = dict  # TODO - move to types. Also this class knows that th2-event is a dict, but it cannot to know.
 
@@ -474,7 +474,7 @@ class EventTree:
         #   File "C:\Users\admin\AppData\Local\Programs\Python\Python39\lib\code.py", line 90, in runcode
         #     exec(code, self.locals)
         #   File "<input>", line 1, in <module>
-        #   File "C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\th2_data_services\events_tree\event_tree.py", line 475, in show
+        #   File "C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\th2_data_services\event_tree\event_tree.py", line 475, in show
         #     self._tree.show()
         #   File "C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\ds_lib_venv_py39\lib\site-packages\treelib\tree.py", line 854, in show
         #     print(self._reader)
