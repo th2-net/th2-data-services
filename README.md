@@ -41,7 +41,7 @@ This repository is an interface for creating th2-data-services applications.
 
 The library's features:
 
-- Provides core interface for implementing data source implementations
+- Provides core interface for developing data source implementations
 - Work with iterable objects (list, tuple, etc including files) via _Data object_ using its features
 - Manipulate the workflow to make some analysis by _Data object_ methods
 - Use timestamp converter implementations or use base class to create custom converters
@@ -475,11 +475,11 @@ passed `event_struct` object.
 - [Lightweight Data Provider Data Source](https://github.com/th2-net/th2-ds-source-lwdp)
 
 
-# 3. API
+# 4. API
 
 If you are looking for classes description see the [API Documentation](documentation/api/index.md).
 
-# 4. Examples
+# 5. Examples
 
 - [get_started_example.py](examples/get_started_example.py)
   
