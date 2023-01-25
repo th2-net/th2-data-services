@@ -37,7 +37,8 @@ Table of Contents
 
 # 1. Introduction
 
-This repository is an interface for creating th2-data-services applications.
+This repository is a library for creating th2-data-services applications.
+Data Services allows you to manipulate the stream data processing workflow using pipelining.
 
 The library's features:
 
@@ -45,7 +46,7 @@ The library's features:
 - Work with iterable objects (list, tuple, etc including files) via _Data object_ using its features
 - Manipulate the workflow to make some analysis by _Data object_ methods
 - Use timestamp converter implementations or use base class to create custom converters
-- Build Event Trees (`EventsTreeCollection` class)
+- Build Event Trees (EventTree, EventTreeCollection and ParentEventTreeCollection classes)
 
 Workflow manipulation tools allows you:
 
@@ -92,7 +93,6 @@ pip install th2-data-services[dependency_name]
 | dependency name | provider version          |
 |:---------------:|---------------------------|
 |      lwdp       | latest version of lwdp    |
-|      lwdp1      | latest version of lwdp v1 |
 |      lwdp2      | latest version of lwdp v2 |
 
 **Example**
@@ -101,24 +101,11 @@ pip install th2-data-services[dependency_name]
 pip install th2-data-services[lwdp1]
 ```
 
-### GRPC provider warning
-This library has ability to interact with several versions of grpc providers, but it's limited by installed version of
-`th2_grpc_data_provider` package version. You can use only appropriate version of provider api, which is compatible with
-installed version of `th2_grpc_data_provider`.
-
-By default, `th2_data_services` uses the latest available version of provider api version.
-
-#### Reasons for the restriction
-1. Two different versions of `th2_grpc_data_provider` can't be installed in the same virtual environment;
-2. Two different versions of package `th2_grpc_data_provider` may depend on different versions of packages `th2_grpc_common`;
-3. In the case of using another package in the process of using `th2_data_services` (for example `th2_common`), 
-which also depends on `th2_grpc_common`, a version conflict may occur (both at the Python level and at the Protobuf level).
-
 ## 2.2. Example
 
 A good, short example is worth a thousand words.
 
-This example shows basic usage of Data object and converters.
+This example shows basic usage of library's features.
 
 [The following example as a file](examples/get_started_example.py).
 
@@ -470,7 +457,7 @@ passed `event_struct` object.
 - [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)
 - [Th2 Data Services Utils](https://github.com/th2-net/th2-data-services-utils)
 
-# 3. Official Implementations
+# 3. Official DataSource implementations
 
 - [Lightweight Data Provider Data Source](https://github.com/th2-net/th2-ds-source-lwdp)
 
