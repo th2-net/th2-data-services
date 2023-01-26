@@ -3,16 +3,13 @@ from typing import Tuple, List, Optional
 from datetime import datetime
 from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
 
+
 from th2_data_services import Data
-<<<<<<< HEAD
 from th2_data_services.events_tree import EventTree, EventTreeCollection, ParentEventTreeCollection
 from th2_data_services_lwdp.data_source import HTTPDataSource
 from th2_data_services_lwdp.commands import http as commands
 from th2_data_services_lwdp.filters.event_filters import NameFilter, TypeFilter
 from th2_data_services_lwdp.events_tree import HttpETCDriver
-
-=======
->>>>>>> origin/dev_2.0.0
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
@@ -22,45 +19,6 @@ import th2_data_services
 
 th2_data_services.INTERACTIVE_MODE = True
 
-<<<<<<< HEAD
-# [1] Create DataSource object to connect to rpt-data-provider.
-DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
-DEMO_PORT = "30999"  # Node port of rpt-data-provider.
-data_source = HTTPDataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
-
-START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41)  # Datetime in utc format.
-END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=50)
-
-# [2] Get events or messages from START_TIME to END_TIME.
-# [2.1] Get events.
-events: Data = data_source.command(
-    commands.GetEventsByBookByScopes(
-        book_id="demo_book_1",
-        scopes=["demo_scope"],
-        start_timestamp=START_TIME,
-        end_timestamp=END_TIME,
-        # Use Filter class to apply rpt-data-provider filters.
-        # Do not use multiple classes of the same type.
-        filters=[
-            TypeFilter("Send message"),
-            NameFilter(["ExecutionReport", "NewOrderSingle"]),  # You can use multiple values.
-        ],
-    )
-)
-
-# [2.2] Get messages.
-messages: Data = data_source.command(
-    commands.GetMessagesByBookByStreams(
-        book_id="demo_book_1",
-        streams=["demo-conn2"],
-        start_timestamp=START_TIME,
-        end_timestamp=END_TIME,
-    )
-)
-
-# [3] Work with a Data object.
-# [3.1] Filter.
-=======
 # Some example data
 events = Data([
     {
@@ -112,7 +70,6 @@ events = Data([
 
 # [1] Working with a Data object.
 # [1.1] Filter.
->>>>>>> origin/dev_2.0.0
 filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter events with empty body.
 
 
@@ -193,15 +150,6 @@ events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
 
-<<<<<<< HEAD
-# [4] Working with EventTree and EventTreeCollection.
-# [4.1] Building the EventTreeCollection.
-
-# If you don't specify data_source for the driver then it won't recover detached events.
-driver = HttpETCDriver()
-etc = EventTreeCollection(driver)
-etc.build(events)
-=======
 # [2] Working with converters.
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
 # They all implement same methods from base class.
@@ -210,25 +158,15 @@ etc.build(events)
 
 # [2.1] DatetimeConverter.
 # DatetimeConverter takes datetime.datetime object as input.
->>>>>>> origin/dev_2.0.0
 
 datetime_obj = datetime(year=2023, month=1, day=5, hour=14, minute=38, second=25, microsecond=1460)
 
-<<<<<<< HEAD
-etc = EventTreeCollection(driver)
-# Detached events are empty because they were recovered.
-assert not etc.get_detached_events()
-
-# The collection has EventTrees each with a tree of events.
-# Using Collection and EventTrees, you can work flexibly with events.
-=======
 # It has methods that return the datetime in different formas:
 
 date_ms = DatetimeConverter.to_milliseconds(datetime_obj)
 date_us = DatetimeConverter.to_microseconds(datetime_obj)
 # Converting to nanoseconds justs adds three trailing zeros as datetime object doesn't have nanoseconds.
 date_ns = DatetimeConverter.to_nanoseconds(datetime_obj)
->>>>>>> origin/dev_2.0.0
 
 # [2.2] DatetimeStringConverter
 # DatetimeStringConverter takes string in "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z" format.
@@ -248,18 +186,86 @@ datetime_from_string = DatetimeStringConverter.to_datetime(date_string)
 
 protobuf_timestamp = {"epochSecond": 1672929505, "nano": 1_460_000}
 
-<<<<<<< HEAD
-# [4.1.7] Get subtree for specified event.
+date_ms_from_timestamp = ProtobufTimestampConverter.to_milliseconds(protobuf_timestamp)
+date_us_from_timestamp = ProtobufTimestampConverter.to_microseconds(protobuf_timestamp)
+date_ns_from_timestamp = ProtobufTimestampConverter.to_nanoseconds(protobuf_timestamp)
+datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(protobuf_timestamp)
+
+
+# [3] Working with EventTree and EventTreeCollection.
+
+# [3.1] Create DataSource object to connect to rpt-data-provider.
+DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
+DEMO_PORT = "30999"  # Node port of rpt-data-provider.
+data_source = HTTPDataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+
+START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41)  # Datetime in utc format.
+END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=50)
+
+# [3.2] Get events.
+events: Data = data_source.command(
+    commands.GetEventsByBookByScopes(
+        book_id="demo_book_1",
+        scopes=["demo_scope"],
+        start_timestamp=START_TIME,
+        end_timestamp=END_TIME,
+        # Use Filter class to apply rpt-data-provider filters.
+        # Do not use multiple classes of the same type.
+        filters=[
+            TypeFilter("Send message"),
+            NameFilter(["ExecutionReport", "NewOrderSingle"]),  # You can use multiple values.
+        ],
+    )
+)
+
+# [3.3] Building the EventTreeCollection.
+
+# If you don't specify data_source for the driver then it won't recover detached events.
+driver = HttpETCDriver()
+etc = EventTreeCollection(driver)
+etc.build(events)
+
+# Detached events isn't empty.
+assert etc.get_detached_events()
+
+etc = EventTreeCollection(driver)
+# Detached events are empty because they were recovered.
+assert not etc.get_detached_events()
+
+# The collection has EventTrees each with a tree of events.
+# Using Collection and EventTrees, you can work flexibly with events.
+
+# [3.3.1] Get leaves of all trees.
+leaves: Tuple[dict] = etc.get_leaves()
+
+# [3.3.2] Get roots ids of all trees.
+roots: List[str] = etc.get_roots_ids()
+
+# [3.3.3] Find an event in all trees.
+find_event: Optional[dict] = etc.find(lambda event: "Send message" in event["eventType"])
+
+# [3.3.4] Find all events in all trees. There is also iterable version 'findall_iter'.
+find_events: List[dict] = etc.findall(lambda event: event["successful"] is True)
+
+# [3.3.5] Find an ancestor of the event.
+ancestor: Optional[dict] = etc.find_ancestor(
+    "8bbe3717-cf59-11eb-a3f7-094f904c3a62", filter=lambda event: "RootEvent" in event["eventName"]
+)
+
+# [3.3.6] Get children of the event. There is also iterable version 'get_children_iter'.
+children: Tuple[dict] = etc.get_children("814422e1-9c68-11eb-8598-691ebd7f413d")
+
+# [3.3.7] Get subtree for specified event.
 subtree: EventTree = etc.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
 
-# [4.1.8] Get full path to the event.
+# [3.3.8] Get full path to the event.
 # Looks like [ancestor_root, ancestor_level1, ancestor_level2, event]
 event_path: List[dict] = etc.get_full_path("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
 
-# [4.1.9] Get parent of the event.
+# [3.3.9] Get parent of the event.
 parent = etc.get_parent("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
 
-# [4.1.10] Append new event to the collection.
+# [3.3.10] Append new event to the collection.
 etc.append_event(
     event={
         "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
@@ -268,24 +274,24 @@ etc.append_event(
     }
 )
 
-# [4.1.11] Show the entire collection.
+# [3.3.11] Show the entire collection.
 etc.show()
 
-# [4.2] Working with the EventTree.
+# [3.4] Working with the EventTree.
 # EventTree has the same methods as EventTreeCollection, but only for its own tree.
 
-# [4.2.1] Get collection trees.
+# [3.4.1] Get collection trees.
 trees: List[EventTree] = etc.get_trees()
 tree: EventTree = trees[0]
 
 # But EventTree provides a work with the tree, but does not modify it.
 # If you want to modify the tree, use EventTreeCollections.
 
-# [4.3] Working with ParentlessTree.
+# [3.5] Working with ParentlessTree.
 # ParentlessTree is EventTree which has detached events with stubs.
 parentless_trees: List[EventTree] = etc.get_parentless_trees()
 
-# [4.4] Working with ParentEventTreeCollection.
+# [3.6] Working with ParentEventTreeCollection.
 # ParentEventTreeCollection is a tree like EventTreeCollection, but it has only events that have references.
 driver = HttpETCDriver(data_source=data_source)
 etc = ParentEventTreeCollection(driver)
@@ -293,15 +299,9 @@ etc.build(events)
 
 etc.show()
 
-# [4.5] Build a custom EventTree
+# [3.7] Build a custom EventTree
 # To create an EventTree object you will need name and id, data is optional.
 tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
 
 # To add new node use append_event. parent_id is necessary, data is optional.
 tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
-=======
-date_ms_from_timestamp = ProtobufTimestampConverter.to_milliseconds(protobuf_timestamp)
-date_us_from_timestamp = ProtobufTimestampConverter.to_microseconds(protobuf_timestamp)
-date_ns_from_timestamp = ProtobufTimestampConverter.to_nanoseconds(protobuf_timestamp)
-datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(protobuf_timestamp)
->>>>>>> origin/dev_2.0.0
