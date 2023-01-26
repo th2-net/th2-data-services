@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from collections import defaultdict
-from typing import List, Dict, Optional, Union, Generator, Tuple, Callable, Sequence
+from typing import Callable, Dict, Generator, Iterable, List, Optional, Tuple, Union
 
 from treelib.exceptions import NodeIDAbsentError
 from th2_data_services.event_tree.event_tree import EventTree
@@ -72,7 +72,7 @@ class EventTreeCollection:
 
         return self._parentless
 
-    def _build_events_store(self, data: Sequence) -> Dict[Optional[str], List[dict]]:
+    def _build_events_store(self, data: Iterable) -> Dict[Optional[str], List[dict]]:
         """Builds events store, grouping them by parent_event_id.
 
         Args:
@@ -126,7 +126,7 @@ class EventTreeCollection:
             self._fill_tree(events_store, current_tree, event_id)  # Recursive fill.
         events_store.pop(parent_id)
 
-    def build(self, data: Sequence):
+    def build(self, data: Iterable):
         events_nodes = self._build_events_store(data)  # {parent_event_id: [event1, event2, ..]}
         self._build_trees(events_nodes)  # Produces _detached_nodes.
 
