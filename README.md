@@ -38,18 +38,15 @@ Table of Contents
 # 1. Introduction
 
 This repository is a library for creating th2-data-services applications.
+Data Services allows you to manipulate the stream data processing workflow using pipelining.
 
-The library used to analyze stream data using _aggregate operations_ mainly from
-the ["Report Data Provider"](https://github.com/th2-net/th2-rpt-data-provider). Data Services allows you to manipulate
-the stream data processing workflow using _pipelining_.
+The library's features:
 
-The library allows you:
-
-- Natively connect to ["Report Data Provider"](https://github.com/th2-net/th2-rpt-data-provider) via
-  `ProviderDataSource` class and extract TH2 Events/Messages via _commands_
+- Provides core interface for developing data source implementations
 - Work with iterable objects (list, tuple, etc including files) via _Data object_ using its features
 - Manipulate the workflow to make some analysis by _Data object_ methods
-- Build Event Trees (`EventsTreeCollection` class)
+- Use timestamp converter implementations or use base class to create custom converters
+- Build Event Trees (EventTree, EventTreeCollection and ParentEventTreeCollection classes)
 
 Workflow manipulation tools allows you:
 
@@ -96,7 +93,6 @@ pip install th2-data-services[dependency_name]
 | dependency name | provider version          |
 |:---------------:|---------------------------|
 |      lwdp       | latest version of lwdp    |
-|      lwdp1      | latest version of lwdp v1 |
 |      lwdp2      | latest version of lwdp v2 |
 
 **Example**
@@ -105,24 +101,11 @@ pip install th2-data-services[dependency_name]
 pip install th2-data-services[lwdp1]
 ```
 
-### GRPC provider warning
-This library has ability to interact with several versions of grpc providers, but it's limited by installed version of
-`th2_grpc_data_provider` package version. You can use only appropriate version of provider api, which is compatible with
-installed version of `th2_grpc_data_provider`.
-
-By default, `th2_data_services` uses the latest available version of provider api version.
-
-#### Reasons for the restriction
-1. Two different versions of `th2_grpc_data_provider` can't be installed in the same virtual environment;
-2. Two different versions of package `th2_grpc_data_provider` may depend on different versions of packages `th2_grpc_common`;
-3. In the case of using another package in the process of using `th2_data_services` (for example `th2_common`), 
-which also depends on `th2_grpc_common`, a version conflict may occur (both at the Python level and at the Protobuf level).
-
 ## 2.2. Example
 
 A good, short example is worth a thousand words.
 
-This example works with **Events**, but you also can do the same actions with **Messages**.
+This example shows basic usage of library's features.
 
 [The following example as a file](examples/get_started_example.py).
 
@@ -131,127 +114,114 @@ This example works with **Events**, but you also can do the same actions with **
 from collections import Generator
 from typing import Tuple, List, Optional
 from datetime import datetime
+from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
 
 from th2_data_services import Data
-from th2_data_services.events_tree import EventTree
-from th2_data_services.provider.v5.data_source.http import HTTPProvider5DataSource
-from th2_data_services.provider.v5.commands import http as commands
-from th2_data_services.provider.v5.events_tree import ParentEventsTreeCollectionProvider5
-from th2_data_services.provider.v5.filters.event_filters import NameFilter, TypeFilter, FailedStatusFilter
-from th2_data_services.provider.v5.filters.message_filters import BodyFilter
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
 # If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
 # global parameter to True. It'll keep cache files if something went wrong.
 import th2_data_services
-from th2_data_services.interfaces.events_tree import EventsTreeCollection
 
 th2_data_services.INTERACTIVE_MODE = True
 
-# [1] Create DataSource object to connect to rpt-data-provider.
-DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
-DEMO_PORT = "30999"  # Node port of rpt-data-provider.
-data_source = HTTPProvider5DataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+# Some example data
+events = Data([
+    {
+        "eventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
+        "batchId": None,
+        "isBatched": False,
+        "eventName": "Set of auto-generated events for ds lib testing",
+        "eventType": "ds-lib-test-event",
+        "endTimestamp": {"epochSecond": 1672927025, "nano": 561751000},
+        "startTimestamp": {"epochSecond": 1672927025, "nano": 560873000},
+        "parentEventId": None,
+        "successful": True,
+        "bookId": "demo_book_1",
+        "scope": "th2-scope",
+        "attachedMessageIds": [],
+        "body": [],
+    },
+    {
+        "eventId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c>demo_book_1:th2-scope:20230105135705563522000:d61e930a-8d00-11ed-aa1a-d34a6155152d_2",
+        "batchId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c",
+        "isBatched": True,
+        "eventName": "Plain event 1",
+        "eventType": "ds-lib-test-event",
+        "endTimestamp": {"epochSecond": 1672927025, "nano": 563640000},
+        "startTimestamp": {"epochSecond": 1672927025, "nano": 563522000},
+        "parentEventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
+        "successful": True,
+        "bookId": "demo_book_1",
+        "scope": "th2-scope",
+        "attachedMessageIds": [],
+        "body": {"type": "message", "data": "ds-lib test body"},
+    },
+    {
+        "eventId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c>demo_book_1:th2-scope:20230105135705563757000:d61e930a-8d00-11ed-aa1a-d34a6155152d_3",
+        "batchId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c",
+        "isBatched": True,
+        "eventName": "Plain event 2",
+        "eventType": "ds-lib-test-event",
+        "endTimestamp": {"epochSecond": 1672927025, "nano": 563791000},
+        "startTimestamp": {"epochSecond": 1672927025, "nano": 563757000},
+        "parentEventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
+        "successful": True,
+        "bookId": "demo_book_1",
+        "scope": "th2-scope",
+        "attachedMessageIds": [],
+        "body": {"type": "message", "data": "ds-lib test body"},
+    }
+])
 
-START_TIME = datetime(
-    year=2021, month=6, day=17, hour=9, minute=44, second=41, microsecond=692724
-)  # Datetime in utc format.
-END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=50)
-
-# [2] Get events or messages from START_TIME to END_TIME.
-# [2.1] Get events.
-events: Data = data_source.command(
-    commands.GetEvents(
-        start_timestamp=START_TIME,
-        end_timestamp=END_TIME,
-        attached_messages=True,
-        # Use Filter class to apply rpt-data-provider filters.
-        # Do not use multiple classes of the same type.
-        filters=[
-            TypeFilter("Send message"),
-            NameFilter(["ExecutionReport", "NewOrderSingle"]),  # You can use multiple values.
-            FailedStatusFilter(),
-        ],
-    )
-)
-
-# [2.2] Get messages.
-messages: Data = data_source.command(
-    commands.GetMessages(
-        start_timestamp=START_TIME,
-        end_timestamp=END_TIME,
-        attached_events=True,
-        stream=["demo-conn2"],
-        filters=BodyFilter("195"),  # Filter message if there is a substring '195' in the body.
-    )
-)
-
-# [3] Work with a Data object.
-# [3.1] Filter.
+# [1] Working with a Data object.
+# [1.1] Filter.
 filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter events with empty body.
 
 
-# [3.2] Map.
+# [1.2] Map.
 def transform_function(record):
     return {"eventName": record["eventName"], "successful": record["successful"]}
 
 
 filtered_and_mapped_events = filtered_events.map(transform_function)
 
-# [3.3] Data pipeline.
+
+# [1.3] Data pipeline.
 #       Instead of doing data transformations step by step you can do it in one line.
 filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []).map(transform_function)
-
 # Content of these two Data objects should be equal.
 assert list(filtered_and_mapped_events) == list(filtered_and_mapped_events_by_pipeline)
 
-# [3.4] Sift. Skip the first few items or limit them.
-events_from_11_to_end: Generator = events.sift(skip=10)
-only_first_10_events: Generator = events.sift(limit=10)
+# [1.4] Sift. Skip the first few items or limit them.
+data = Data([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
+items_from_11_to_end: Generator = data.sift(skip=10)
+only_first_10_items: Generator = data.sift(limit=10)
 
-# [3.5] Changing cache status.
+# [1.5] Changing cache status.
 events.use_cache(True)
 # or just
 events.use_cache()  # If you want to activate cache.
-
-# [3.6] Walk through data.
+# [1.6] Walk through data.
 for event in events:
     # Do something with event (event is a dict).
     print(event)
 # After first iteration the events has a cache file.
 # Now they will be used in the cache in the next iteration.
 
-# [3.7] Get number of the elements in the Data object.
+# [1.7] Get number of the elements in the Data object.
 number_of_events = events.len
 
-# [3.8] Check that Data object isn't empty.
+# [1.8] Check that Data object isn't empty.
 # The data source should be not empty.
 assert events.is_empty is False
 
-# [3.9] Convert Data object to the list of elements(events or messages).
+# [1.9] Convert Data object to the list of elements(events or messages).
 # Be careful, this can take too much memory.
 events_list = list(events)
 
-# [3.10] Get event/message by id.
-desired_event = "9ce8a2ff-d600-4366-9aba-2082cfc69901:ef1d722e-cf5e-11eb-bcd0-ced60009573f"
-desired_events = [
-    "deea079b-4235-4421-abf6-6a3ac1d04c76:ef1d3a20-cf5e-11eb-bcd0-ced60009573f",
-    "a34e3cb4-c635-4a90-8f42-37dd984209cb:ef1c5cea-cf5e-11eb-bcd0-ced60009573f",
-]
-desired_message = "demo-conn1:first:1619506157132265837"
-desired_messages = [
-    "demo-conn1:first:1619506157132265836",
-    "demo-conn1:first:1619506157132265833",
-]
-
-data_source.command(commands.GetEventById(desired_event))  # Returns 1 event (dict).
-data_source.command(commands.GetEventsById(desired_events))  # Returns 2 events list(dict).
-
-data_source.command(commands.GetMessageById(desired_message))  # Returns 1 message (dict).
-data_source.command(commands.GetMessagesById(desired_messages))  # Returns 2 messages list(dict).
-
-# [3.11] The cache inheritance.
+# [1.10] The cache inheritance.
 # Creates a new Data object that will use cache from the events Data object.
 events_filtered: Data = events.filter(lambda record: record.get("batchId"))
 
@@ -267,7 +237,7 @@ filtered_events_types = events_filtered.map(lambda record: {"eventType": record.
 events_without_types_with_batch = filtered_events_types.filter(lambda record: not record.get("eventType"))
 events_without_types_with_batch.use_cache()
 
-# [3.12] Data objects joining.
+# [1.11] Data objects joining.
 # You have the following 3 Data objects.
 d1 = Data([1, 2, 3])
 d2 = Data(["a", {"id": 123}, "c"])
@@ -282,91 +252,51 @@ data_with_non_data_obj_via_add = d1 + ["a", {"id": 123}, "c"] + d3
 # It will keep cache status.
 d1 += d3  # d1 will become Data([1,2,3,7,8,9])
 
-# [3.13] Build and read Data object cache files.
+# [1.12] Build and read Data object cache files.
 events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
 
-# [4] Working with EventsTree and EventsTreeCollection.
-# [4.1] Building the EventsTreeCollection.
+# [2] Working with converters.
+# There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
+# They all implement same methods from base class.
+# Note that some accuracy may be lost during conversion.
+# If for example you use to_microseconds nanoseconds will be cut off instead of rounding.
 
-# If you don't specify data_source for the tree then it won't recover detached events.
-etc = EventsTreeCollection()  # TODO - req driver.
-etc.build(events)
+# [2.1] DatetimeConverter.
+# DatetimeConverter takes datetime.datetime object as input.
 
-# Detached events isn't empty.
-assert etc.get_detached_events()
+datetime_obj = datetime(year=2023, month=1, day=5, hour=14, minute=38, second=25, microsecond=1460)
 
-etc = EventsTreeCollection()
-# Detached events are empty because they were recovered.
-assert not etc.get_detached_events()
+# It has methods that return the datetime in different formas:
 
-# The collection has EventsTrees each with a tree of events.
-# Using Collection and EventsTrees, you can work flexibly with events.
+date_ms = DatetimeConverter.to_milliseconds(datetime_obj)
+date_us = DatetimeConverter.to_microseconds(datetime_obj)
+# Converting to nanoseconds justs adds three trailing zeros as datetime object doesn't have nanoseconds.
+date_ns = DatetimeConverter.to_nanoseconds(datetime_obj)
 
-# [4.1.1] Get leaves of all trees.
-leaves: Tuple[dict] = etc.get_leaves()
+# [2.2] DatetimeStringConverter
+# DatetimeStringConverter takes string in "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z" format.
 
-# [4.1.2] Get roots ids of all trees.
-roots: List[str] = etc.get_roots_ids()
+date_string = "2023-01-05T14:38:25.00146Z"
 
-# [4.1.3] Find an event in all trees.
-find_event: Optional[dict] = etc.find(lambda event: "Send message" in event["eventType"])
+# We have same methods as in DatetimeConverter
+date_ms_from_string = DatetimeStringConverter.to_milliseconds(date_string)
+date_us_from_string = DatetimeStringConverter.to_microseconds(date_string)
+date_ns_from_string = DatetimeStringConverter.to_nanoseconds(date_string)
 
-# [4.1.4] Find all events in all trees. There is also iterable version 'findall_iter'.
-find_events: List[dict] = etc.findall(lambda event: event["successful"] is True)
+# We can also get datetime object from string
+datetime_from_string = DatetimeStringConverter.to_datetime(date_string)
 
-# [4.1.5] Find an ancestor of the event.
-ancestor: Optional[dict] = etc.find_ancestor(
-    "8bbe3717-cf59-11eb-a3f7-094f904c3a62", filter=lambda event: "RootEvent" in event["eventName"]
-)
+# [2.3] ProtobufTimestampConverter
+# Protobuf timestamps must be in form {"epochSecond": seconds, "nano": nanoseconds}
 
-# [4.1.6] Get children of the event. There is also iterable version 'get_children_iter'.
-children: Tuple[dict] = etc.get_children("814422e1-9c68-11eb-8598-691ebd7f413d")
+protobuf_timestamp = {"epochSecond": 1672929505, "nano": 1_460_000}
 
-# [4.1.7] Get subtree for specified event.
-subtree: EventTree = etc.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
-
-# [4.1.8] Get full path to the event.
-# Looks like [ancestor_root, ancestor_level1, ancestor_level2, event]
-event_path: List[dict] = etc.get_full_path("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
-
-# [4.1.9] Get parent of the event.
-parent = etc.get_parent("8e2524fa-cf59-11eb-a3f7-094f904c3a62")
-
-# [4.1.10] Append new event to the collection.
-etc.append_event(
-    event={
-        "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
-        "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",
-        "eventName": "StubEvent",
-    }
-)
-
-# [4.1.11] Show the entire collection.
-etc.show()
-
-# [4.2] Working with the EventsTree.
-# EventsTree has the same methods as EventsTreeCollection, but only for its own tree.
-
-# [4.2.1] Get collection trees.
-trees: List[EventTree] = etc.get_trees()
-tree: EventTree = trees[0]
-
-# But EventsTree provides a work with the tree, but does not modify it.
-# If you want to modify the tree, use EventsTreeCollections.
-
-# [4.3] Working with ParentlessTree.
-# ParentlessTree is EventsTree which has detached events with stubs.
-parentless_trees: List[EventTree] = etc.get_parentless_trees()
-
-# [4.4] Working with ParentEventsTreeCollection.
-# ParentEventsTreeCollection is a tree like EventsTreeCollection but it has only events that have references.
-etc = ParentEventsTreeCollectionProvider5(events, data_source=data_source)
-
-etc.show()
-
-# TODO - how to build your custom EventsTree
+date_ms_from_timestamp = ProtobufTimestampConverter.to_milliseconds(protobuf_timestamp)
+date_us_from_timestamp = ProtobufTimestampConverter.to_microseconds(protobuf_timestamp)
+date_ns_from_timestamp = ProtobufTimestampConverter.to_nanoseconds(protobuf_timestamp)
+datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(protobuf_timestamp)
 
 ```
 <!-- end get_started_example.py -->
@@ -383,12 +313,10 @@ supports aggregate operations.
   A _Data object_ provides an interface to a sequenced set of values of a specific element type. Stream inside the _Data
   object_ **don’t actually store** elements; they are computed on demand.
 - **data source** (exactly in small letters):
-  Any source of data. E.g. [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider), collections,
+  Any source of data. E.g. [Lightweight Data Provider](https://github.com/th2-net/th2-lw-data-provider), collections,
   arrays, or I/O resources.
 - **DataSource**:
   A class that is an intermediate link between the SourceAPI and Commands.
-- **ProviderDataSource**:
-  The DataSource object whose source is [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider).
 - **SourceAPI**:
   Each source has its own API to retrieve data. SourceAPI is a class that provide API for some data source.
 - **Commands**:
@@ -417,8 +345,7 @@ by `ICommand` classes.
 `IAdapter` classes transform data stream like functions for `Data.map` method. Essentially it's the same thing but more
 flexible.
 
-Thus, the native `ProviderDataSource` and the set of commands for it are described. This approach provides great
-opportunities for extension. You can easily create your own unique commands for _ProviderDataSource_, as well as entire
+For example, LwDP DataSource(https://github.com/th2-net/th2-ds-source-lwdp) uses these abstract classes to build its implementation.You can easily create your own unique commands for _LwDP DataSource_, as well as entire
 _DataSource_ classes. [Here is a documentation](documentation/datasource.md) on how to implement these interfaces.
 
 ![Data stream pipeline](documentation/img/concept.png)
@@ -459,50 +386,20 @@ your source can be the data source, the parent cache, or own cache:
 Note that the cache state of the Data object is not inherited.
 
 #### Forced caching
-You can tell DS to cache data to specific cache file, which won't be deleted after script end:
-```python
-import datetime
-
-from th2_data_services import Data
-from th2_data_services.provider.v5.commands import http
-from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
+You can tell DS to cache data to specific cache file, which won't be deleted after script end.
+You can see example in 1.12 section of [get_started_example](examples/get_started_example.py).
 
 
-data_source = HTTPProvider5DataSource("http://HOST:PORT")
-events: Data = data_source.command(
-    http.GetEvents(
-        start_timestamp=datetime.datetime.utcnow() - datetime.timedelta(minutes=5),
-        end_timestamp=datetime.datetime.utcnow(),
-        attached_messages=True,
-        cache=True,
-    )
-)
-events.build_cache("my_cache.pickle")
-```
+### EventTree and collections
 
-Later you can create _Data_ object from this cache file and use it as usual:
-```python
-from th2_data_services import Data
+#### EventTree
 
-events = Data.from_cache_file("my_cache.pickle")
-
-for event_id in events.filter(lambda x: x["eventType"] == "Verification").map(lambda x: x["eventId"]):
-    print(event_id)
-```
-
-
-### EventsTree and collections
-
-#### EventsTree
-
-EventsTree is a tree-based data structure of events. It allows you get children and parents of event, display tree, get
-full path to event etc.
+`EventTree` is a tree-based data structure of events. It allows you get children and parents of event, 
+display tree, get full path to event etc.
 
 Details:
 
-* EventsTree contains all events in memory.
-* To reduce memory usage an EventsTreeCollection delete the 'body' field from events, but you can preserve it specify '
-  preserve_body'.
+* `EventTree` contains all events in memory.
 * Tree has some important terms:
     1. _Ancestor_ is any relative of the event up the tree (grandparent, parent etc.).
     2. _Parent_ is only the first relative of the event up the tree.
@@ -521,28 +418,28 @@ Take a look at the following HTML tree to understand them.
 
 #### Collections
 
-**EventsTreeCollection** is a collection of EventsTrees. The collection builds a few _EventsTree_ by passed _Data
+**EventTreeCollection** is a collection of EventTrees. The collection builds a few _EventTree_ by passed _Data
 object_. Although you can change the tree directly, it's better to do it through collections because they are aware of
-`detached_events` and can solve some events dependencies. The collection has similar features like a single _EventsTree_
-but applying them for all EventsTrees.
+`detached_events` and can solve some events dependencies. The collection has similar features like a single _EventTree_
+but applying them for all _EventTrees_.
 
-**ParentEventsTreeCollection** is a collection similar to EventsTreeCollection but containing only parent events that
-are referenced in the data stream. It will be working data in the collection and trees of collection. The collection has
-features similar to EventsTreeCollection.
+**ParentEventTreeCollection** is a collection similar to _EventTreeCollection_ but containing only parent events that
+are referenced in the data stream. The collection has features similar to _EventTreeCollection_.
 
 Details:
 
+* To use ET collections you need to initialize them by _ETCDriver_. Data sources usually provide them.
+  You can create it by yourself depending on your data structure.  
 * The collection has a feature to recover events. All events that are not in the received data stream, but which are
   referenced will be loaded from the data source.
-* If you haven't passed a _DataSource object_ then the recovery of events will not occur.
-* You can take `detached_events` to see which events are missing. It looks like `{parent_id: [events are referenced]}`
+* You can take `detached_events` to see which events are missing.
 * If you want, you can build parentless trees where the missing events are stubbed instead. Just
   use `get_parentless_trees()`.
 
 Requirements:
 
-1. Events have to have `event_name`, `event_id`, `parent_event_id` fields, which are described in the
-passed `event_struct` object.
+1. Events provided to ETC have to have `event_name`, `event_id`, `parent_event_id` fields. They 
+can have another names (it resolves in the driver).
 
 #### Hints
 
@@ -558,16 +455,16 @@ passed `event_struct` object.
 - [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)
 - [Th2 Data Services Utils](https://github.com/th2-net/th2-data-services-utils)
 
-# 3. API
+# 3. Official DataSource implementations
+
+- [Lightweight Data Provider Data Source](https://github.com/th2-net/th2-ds-source-lwdp)
+
+
+# 4. API
 
 If you are looking for classes description see the [API Documentation](documentation/api/index.md).
 
-# 4. Examples
-
-## 4.1. Notebooks
-
-- [notebook_0.ipynb](examples/notebooks/notebook_0.ipynb)
-
-## 4.2. *.py
+# 5. Examples
 
 - [get_started_example.py](examples/get_started_example.py)
+  

@@ -8,9 +8,10 @@ import pytest
 
 from tests.tests_unit.utils import LogsChecker
 from th2_data_services import Data
-from th2_data_services.events_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
-from th2_data_services.events_tree.etc_driver import Th2EventType
-from th2_data_services.events_tree.exceptions import FieldIsNotExist
+from th2_data_services.event_tree import EventTree
+from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2_data_services.event_tree.etc_driver import Th2EventType
+from th2_data_services.event_tree.exceptions import FieldIsNotExist
 from th2_data_services.interfaces import IEventStruct, IEventStub
 
 EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
