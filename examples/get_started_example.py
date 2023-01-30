@@ -1,11 +1,10 @@
-from collections import Generator
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Generator
 from datetime import datetime
 from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
 
 
 from th2_data_services import Data
-from th2_data_services.events_tree import EventTree, EventTreeCollection, ParentEventTreeCollection
+from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection
 from th2_data_services_lwdp.data_source import HTTPDataSource
 from th2_data_services_lwdp.commands import http as commands
 from th2_data_services_lwdp.filters.event_filters import NameFilter, TypeFilter
@@ -20,53 +19,55 @@ import th2_data_services
 th2_data_services.INTERACTIVE_MODE = True
 
 # Some example data
-events = Data([
-    {
-        "eventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
-        "batchId": None,
-        "isBatched": False,
-        "eventName": "Set of auto-generated events for ds lib testing",
-        "eventType": "ds-lib-test-event",
-        "endTimestamp": {"epochSecond": 1672927025, "nano": 561751000},
-        "startTimestamp": {"epochSecond": 1672927025, "nano": 560873000},
-        "parentEventId": None,
-        "successful": True,
-        "bookId": "demo_book_1",
-        "scope": "th2-scope",
-        "attachedMessageIds": [],
-        "body": [],
-    },
-    {
-        "eventId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c>demo_book_1:th2-scope:20230105135705563522000:d61e930a-8d00-11ed-aa1a-d34a6155152d_2",
-        "batchId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c",
-        "isBatched": True,
-        "eventName": "Plain event 1",
-        "eventType": "ds-lib-test-event",
-        "endTimestamp": {"epochSecond": 1672927025, "nano": 563640000},
-        "startTimestamp": {"epochSecond": 1672927025, "nano": 563522000},
-        "parentEventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
-        "successful": True,
-        "bookId": "demo_book_1",
-        "scope": "th2-scope",
-        "attachedMessageIds": [],
-        "body": {"type": "message", "data": "ds-lib test body"},
-    },
-    {
-        "eventId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c>demo_book_1:th2-scope:20230105135705563757000:d61e930a-8d00-11ed-aa1a-d34a6155152d_3",
-        "batchId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c",
-        "isBatched": True,
-        "eventName": "Plain event 2",
-        "eventType": "ds-lib-test-event",
-        "endTimestamp": {"epochSecond": 1672927025, "nano": 563791000},
-        "startTimestamp": {"epochSecond": 1672927025, "nano": 563757000},
-        "parentEventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
-        "successful": True,
-        "bookId": "demo_book_1",
-        "scope": "th2-scope",
-        "attachedMessageIds": [],
-        "body": {"type": "message", "data": "ds-lib test body"},
-    }
-])
+events = Data(
+    [
+        {
+            "eventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
+            "batchId": None,
+            "isBatched": False,
+            "eventName": "Set of auto-generated events for ds lib testing",
+            "eventType": "ds-lib-test-event",
+            "endTimestamp": {"epochSecond": 1672927025, "nano": 561751000},
+            "startTimestamp": {"epochSecond": 1672927025, "nano": 560873000},
+            "parentEventId": None,
+            "successful": True,
+            "bookId": "demo_book_1",
+            "scope": "th2-scope",
+            "attachedMessageIds": [],
+            "body": [],
+        },
+        {
+            "eventId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c>demo_book_1:th2-scope:20230105135705563522000:d61e930a-8d00-11ed-aa1a-d34a6155152d_2",
+            "batchId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c",
+            "isBatched": True,
+            "eventName": "Plain event 1",
+            "eventType": "ds-lib-test-event",
+            "endTimestamp": {"epochSecond": 1672927025, "nano": 563640000},
+            "startTimestamp": {"epochSecond": 1672927025, "nano": 563522000},
+            "parentEventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
+            "successful": True,
+            "bookId": "demo_book_1",
+            "scope": "th2-scope",
+            "attachedMessageIds": [],
+            "body": {"type": "message", "data": "ds-lib test body"},
+        },
+        {
+            "eventId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c>demo_book_1:th2-scope:20230105135705563757000:d61e930a-8d00-11ed-aa1a-d34a6155152d_3",
+            "batchId": "demo_book_1:th2-scope:20230105135705563522000:9adbb3e0-5f8b-4c28-a2ac-7361e8fa704c",
+            "isBatched": True,
+            "eventName": "Plain event 2",
+            "eventType": "ds-lib-test-event",
+            "endTimestamp": {"epochSecond": 1672927025, "nano": 563791000},
+            "startTimestamp": {"epochSecond": 1672927025, "nano": 563757000},
+            "parentEventId": "demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1",
+            "successful": True,
+            "bookId": "demo_book_1",
+            "scope": "th2-scope",
+            "attachedMessageIds": [],
+            "body": {"type": "message", "data": "ds-lib test body"},
+        },
+    ]
+)
 
 # [1] Working with a Data object.
 # [1.1] Filter.
@@ -88,7 +89,7 @@ filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []
 assert list(filtered_and_mapped_events) == list(filtered_and_mapped_events_by_pipeline)
 
 # [1.4] Sift. Skip the first few items or limit them.
-data = Data([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
+data = Data([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
 items_from_11_to_end: Generator = data.sift(skip=10)
 only_first_10_items: Generator = data.sift(limit=10)
 
