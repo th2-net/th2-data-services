@@ -42,7 +42,6 @@ def test_petc_to_get_roots_ids(demo_petc_with_general_data, general_data):
 
 
 def test_petc_to_get_roots_ids_with_multiple_trees(demo_petc):
-    """Check that ETC returns correct root ids."""
     petc = demo_petc
     root_ids = petc.get_roots_ids()
     assert all(["root_id" in root_id for root_id in root_ids])
@@ -140,3 +139,24 @@ def test_petc_get_tree_by_id(demo_petc):
     tree = petc.get_tree_by_id("b2_id")
     expected_tree = petc.get_trees()[1]
     assert tree == expected_tree
+
+
+def test_get_parentless_trees(demo_petc):
+    petc = demo_petc
+    parentless_trees = petc.get_parentless_trees()
+    expected_parentless_tree = [
+        {
+            "attachedMessageIds": [],
+            "batchId": "Broken_Event",
+            "endTimestamp": {"nano": 0, "epochSecond": 0},
+            "startTimestamp": {"nano": 0, "epochSecond": 0},
+            "eventId": "Unknown",
+            "eventName": "Broken_Event",
+            "eventType": "Broken_Event",
+            "parentEventId": "Broken_Event",
+            "successful": None,
+            "isBatched": None,
+        }
+    ]
+    assert len(parentless_trees) == 1
+    assert parentless_trees[0].get_all_events() == expected_parentless_tree

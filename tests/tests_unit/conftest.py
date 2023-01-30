@@ -11,7 +11,7 @@ from th2_data_services import Data
 from th2_data_services.events_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
 from th2_data_services.events_tree.etc_driver import Th2EventType
 from th2_data_services.events_tree.exceptions import FieldIsNotExist
-from th2_data_services.interfaces import IEventStruct
+from th2_data_services.interfaces import IEventStruct, IEventStub
 
 EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
 
@@ -1901,6 +1901,27 @@ class DemoEventStruct(IEventStruct):
     BODY = "body"
 
 
+class DemoEventStubBuilder(IEventStub):
+    def __init__(self, event_struct):
+        self.event_fields = event_struct
+        super().__init__()  # Requirement to define fields for the template earlier.
+
+    @property
+    def template(self) -> dict:
+        return {
+            self.event_fields.ATTACHED_MESSAGES_IDS: [],
+            self.event_fields.BATCH_ID: "Broken_Event",
+            self.event_fields.END_TIMESTAMP: {"nano": 0, "epochSecond": 0},
+            self.event_fields.START_TIMESTAMP: {"nano": 0, "epochSecond": 0},
+            self.event_fields.EVENT_ID: self.REQUIRED_FIELD,
+            self.event_fields.NAME: "Broken_Event",
+            self.event_fields.EVENT_TYPE: "Broken_Event",
+            self.event_fields.PARENT_EVENT_ID: "Broken_Event",
+            self.event_fields.STATUS: None,
+            self.event_fields.IS_BATCHED: None,
+        }
+
+
 class DemoDriver(IETCDriver):
     def __init__(
         self,
@@ -1909,6 +1930,7 @@ class DemoDriver(IETCDriver):
         use_stub: bool = False,
     ):
         super().__init__(data_source=data_source, event_struct=event_struct, use_stub=use_stub)
+        self.stub_builder = DemoEventStubBuilder(event_struct)
 
     def get_event_id(self, event: Th2EventType) -> str:
         try:
@@ -1930,11 +1952,16 @@ class DemoDriver(IETCDriver):
     def get_events_by_id_from_source(self, ids: Sequence) -> list:
         ...
 
-    def build_stub_event(self, id_: str) -> Th2EventType:
-        ...
+    def build_stub_event(self, id_):
+        # event = self.stub_builder.template
+        # for kwarg in kwargs:
+        #     if kwarg in event:
+        #         event[kwarg] = kwargs[kwarg]
+        # print(event)
+        return self.stub_builder.build({self.event_struct.EVENT_ID: id_})
 
     def stub_event_name(self):
-        ...
+        return self.stub_builder.template[self.event_struct.NAME]
 
 
 @pytest.fixture
@@ -2055,7 +2082,7 @@ def dummy_etc_data():
             "parentEventId": "e2_id",
         },
         #
-        {"eventName": "Root Event 3", "eventId": "root_id3", "data": {"data": [11, 12]}, "parentEventId": "Unknown"},
+        {"eventName": "Root Event 3", "eventId": "root_id3", "data": {"data": [11, 12]}},
         {"eventName": "Event A3", "eventId": "a3_id", "data": {"data": "A3"}, "parentEventId": "root_id3"},
         {
             "eventName": "Event A3_child1",
@@ -2063,6 +2090,8 @@ def dummy_etc_data():
             "data": {"data": "A3_child1"},
             "parentEventId": "a3_id",
         },
+        #
+        {"eventName": "Root Event 4", "eventId": "root_id4", "data": {"data": [13, 14]}, "parentEventId": "Unknown"},
     ]
 
 

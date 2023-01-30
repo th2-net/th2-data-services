@@ -1,5 +1,3 @@
-import pytest
-
 from th2_data_services import Data
 
 DEMO_CHILD_ID = "88a3ee80-d1b4-11eb-b0fb-199708acc7bc"
@@ -138,12 +136,26 @@ def test_etc_get_all_events(demo_etc_with_general_data, general_data):
     assert events == data
 
 
-@pytest.mark.xfail(reason="EventIdNotInTree: Event with the id '<DETACHED_EVENT_ID>' doesn't exist in the tree")
 def test_get_parentless_trees(demo_etc):
-    """Check that ETC returns parentless_tress."""
     etc = demo_etc
-    parentless_tress = etc.get_parentless_trees()
-    assert parentless_tress
+    parentless_trees = etc.get_parentless_trees()
+    expected_parentless_tree = [
+        {
+            "attachedMessageIds": [],
+            "batchId": "Broken_Event",
+            "endTimestamp": {"nano": 0, "epochSecond": 0},
+            "startTimestamp": {"nano": 0, "epochSecond": 0},
+            "eventId": "Unknown",
+            "eventName": "Broken_Event",
+            "eventType": "Broken_Event",
+            "parentEventId": "Broken_Event",
+            "successful": None,
+            "isBatched": None,
+        },
+        {"eventName": "Root Event 4", "eventId": "root_id4", "data": {"data": [13, 14]}, "parentEventId": "Unknown"},
+    ]
+    assert len(parentless_trees) == 1
+    assert parentless_trees[0].get_all_events() == expected_parentless_tree
 
 
 def test_etc_get_trees(demo_etc):
