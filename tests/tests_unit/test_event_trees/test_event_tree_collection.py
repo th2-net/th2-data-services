@@ -100,15 +100,12 @@ def test_etc_get_parent(demo_etc_with_general_data):
 
 def test_etc_append_stub_event(demo_etc_with_general_data):
     etc = demo_etc_with_general_data
-    etc.append_event(
-        event=(
-            stub_event := {
-                "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
-                "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",
-                "eventName": "CustomStubEvent",
-            }
-        )
-    )
+    stub_event = {
+        "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
+        "parentEventId": "8e2524fa-cf59-11eb-a3f7-094f904c3a62",
+        "eventName": "CustomStubEvent",
+    }
+    etc.append_event(event=stub_event)
     filter_for_stub_event = [event for event in etc.get_all_events_iter() if event["eventName"] == "CustomStubEvent"]
     assert len(filter_for_stub_event) == 1
     assert filter_for_stub_event[0] == stub_event
@@ -116,15 +113,12 @@ def test_etc_append_stub_event(demo_etc_with_general_data):
 
 def test_etc_append_non_stub_event(demo_etc_with_general_data):
     etc = demo_etc_with_general_data
-    etc.append_event(
-        event=(
-            demo_event := {
-                "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
-                "parentEventId": DEMO_PARENT_ID,  #
-                "eventName": "DemoEvent",
-            }
-        )
-    )
+    demo_event = {
+        "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
+        "parentEventId": DEMO_PARENT_ID,  #
+        "eventName": "DemoEvent",
+    }
+    etc.append_event(event=demo_event)
     event = etc.find(lambda event_: event_["eventName"] == "DemoEvent")
     assert event == demo_event
 
