@@ -1,39 +1,31 @@
+from copy import deepcopy
+
+
 from th2_data_services import Data
 
-DEMO_CHILD_ID = "88a3ee80-d1b4-11eb-b0fb-199708acc7bc"
-DEMO_PARENT_ID = "84db48fc-d1b4-11eb-b0fb-199708acc7bc"
+EXPECTED_STUB = {
+    "attachedMessageIds": [],
+    "batchId": "Broken_Event",
+    "endTimestamp": {"nano": 0, "epochSecond": 0},
+    "startTimestamp": {"nano": 0, "epochSecond": 0},
+    "eventId": "Unknown",
+    "eventName": "Broken_Event",
+    "eventType": "Broken_Event",
+    "parentEventId": "Broken_Event",
+    "successful": None,
+    "isBatched": None,
+}
 
 
-def test_etc_for_detached_events_with_data(demo_etc_with_general_data):
+def test_etc_for_detached_events_with_data(demo_etc, all_test=False):
     """Checks that ETC returns its detached events."""
-    expected_detached = [
-        {
-            "batchId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf",
-            "eventId": "654c2724-5202-460b-8e6c-a7ee9fb02ddf:8ca20288-d1b4-11eb-986f-1e8d42132387",
-            "eventName": "Remove 'NewOrderSingle' id='demo-conn1:SECOND:1624005455622135205' Hash='7009491514226292581' Group='NOS_CONN' Hash['SecondaryClOrdID': 11111, 'SecurityID': INSTR1]",
-            "isBatched": True,
-            "eventType": "",
-            "parentEventId": "a3779b94-d051-11eb-986f-1e8d42132387",
-        },
-        {
-            "batchId": None,
-            "eventId": "8ceb47f6-d1b4-11eb-a9ed-ffb57363e013",
-            "eventName": "Send 'ExecutionReport' message",
-            "isBatched": False,
-            "eventType": "Send message",
-            "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d",
-        },
-        {
-            "batchId": None,
-            "eventId": "8ced1c93-d1b4-11eb-a9f4-b12655548efc",
-            "eventName": "Send 'ExecutionReport' message",
-            "isBatched": False,
-            "eventType": "Send message",
-            "parentEventId": "845d70d2-9c68-11eb-8598-691ebd7f413d",
-        },
-    ]
-
-    assert demo_etc_with_general_data.get_detached_events() == expected_detached
+    detached_events = demo_etc.get_detached_events()
+    if all_test:
+        assert detached_events == []  # After get_parentless_trees Detached Events Become Root Events
+    else:
+        assert detached_events == [
+            {"eventName": "Root Event 4", "eventId": "root_id4", "data": {"data": [13, 14]}, "parentEventId": "Unknown"}
+        ]
 
 
 def test_etc_to_get_roots_ids(demo_etc_with_general_data, general_data):
@@ -48,54 +40,148 @@ def test_etc_to_get_roots_ids_with_multiple_trees(demo_etc):
     """Check that ETC returns correct root ids."""
     etc = demo_etc
     root_ids = etc.get_roots_ids()
-    assert all(["root_id" in root_id for root_id in root_ids])
+    assert all(["root_id" in root_id or "Unknown" in root_id for root_id in root_ids])
 
 
-def test_etc_find_event(demo_etc_with_general_data, general_data):
-    etc = demo_etc_with_general_data
-    event_by_find = etc.find(lambda event: "Aggressive" in event["eventName"])
-    event_filtered = list(filter(lambda event: "Aggressive" in event["eventName"], general_data))[0]
-    assert event_filtered == event_by_find
+def test_etc_find_event(demo_etc, all_test=False):
+    etc = demo_etc
+    if all_test:
+        event_by_find = etc.find(lambda event: event["eventName"] == "Root Event 4")
+        expected_event = {
+            "eventName": "Root Event 4",
+            "eventId": "root_id4",
+            "data": {"data": [13, 14]},
+            "parentEventId": "Unknown",
+        }
+        assert event_by_find == expected_event
+    else:
+        event_by_find = etc.find(lambda event: event["eventName"] == "Event E2_child3")
+        expected_event = {
+            "eventName": "Event E2_child3",
+            "eventId": "e2_child3_id",
+            "data": {"data": "E2_child3"},
+            "parentEventId": "e2_id",
+        }
+        assert event_by_find == expected_event
 
 
-def test_etc_find_events(demo_etc_with_general_data, general_data):
-    etc = demo_etc_with_general_data
-    event_by_find = etc.findall(lambda event: event["batchId"])
-    event_filtered = list(filter(lambda event: event["batchId"] and event["eventType"], general_data))
-    assert event_filtered == event_by_find
+def test_etc_find_events(demo_etc, all_test=False):
+    etc = demo_etc
+    if all_test:
+        event_by_find = etc.findall(lambda event: "Root Event" in event["eventName"])
+        expected_events = [
+            {"eventName": "Root Event", "eventId": "root_id", "data": {"data": [1, 2, 3, 4, 5]}},
+            {"eventName": "Root Event 2", "eventId": "root_id2", "data": {"data": [6, 7, 8, 9, 10]}},
+            {"eventName": "Root Event 3", "eventId": "root_id3", "data": {"data": [11, 12]}},
+            {
+                "eventName": "Root Event 4",
+                "eventId": "root_id4",
+                "data": {"data": [13, 14]},
+                "parentEventId": "Unknown",
+            },
+        ]
+        assert event_by_find == expected_events
+    else:
+        event_by_find = etc.findall(lambda event: "E2_child" in event["eventName"])
+        expected_events = [
+            {
+                "eventName": "Event E2_child1",
+                "eventId": "e2_child1_id",
+                "data": {"data": "E2_child1"},
+                "parentEventId": "e2_id",
+            },
+            {
+                "eventName": "Event E2_child2",
+                "eventId": "e2_child2_id",
+                "data": {"data": "E2_child2"},
+                "parentEventId": "e2_id",
+            },
+            {
+                "eventName": "Event E2_child3",
+                "eventId": "e2_child3_id",
+                "data": {"data": "E2_child3"},
+                "parentEventId": "e2_id",
+            },
+        ]
+        assert event_by_find == expected_events
 
 
-def test_etc_find_ancestor(demo_etc_with_general_data):
-    etc = demo_etc_with_general_data
-    ancestor = etc.find_ancestor(DEMO_CHILD_ID, filter=lambda event: not event.get("parentEventId"))
-    assert ancestor["eventId"] == DEMO_PARENT_ID
+def test_etc_find_ancestor(demo_etc, all_test=False):
+    etc = demo_etc
+    if all_test:
+        ancestor = etc.find_ancestor("root_id4", filter=lambda event: event.get("parentEventId") == "Broken_Event")
+        expected_event = EXPECTED_STUB
+        assert ancestor == expected_event
+    else:
+        ancestor = etc.find_ancestor("e2_child1_id", filter=lambda event: not event.get("parentEventId"))
+        expected_event = {"eventName": "Root Event 2", "eventId": "root_id2", "data": {"data": [6, 7, 8, 9, 10]}}
+        assert ancestor == expected_event
 
 
-def test_etc_get_ancestors(demo_etc_with_general_data):
-    etc = demo_etc_with_general_data
-    ancestor = etc.find_ancestor(DEMO_CHILD_ID, filter=lambda event: not event.get("parentEventId"))
-    assert ancestor["eventId"] == DEMO_PARENT_ID
+def test_etc_get_ancestors(demo_etc, all_test=False):
+    etc = demo_etc
+    if all_test:
+        ancestors = etc.get_ancestors("root_id4")
+        assert [ancestor["eventId"] for ancestor in ancestors] == ["Unknown"]
+    else:
+        ancestors = etc.get_ancestors("b2_child1_id")
+        assert [ancestor["eventId"] for ancestor in ancestors] == ["root_id2", "b2_id"]
 
 
-def test_etc_get_children(demo_etc_with_general_data, general_data):
-    etc = demo_etc_with_general_data
-    id_ = DEMO_CHILD_ID
-    children = etc.get_children(id_)
-    data = filter(lambda event: event["parentEventId"] == id_, general_data)
-    assert children == tuple(data)
+def test_etc_get_children(demo_etc, all_test=False):
+    etc = demo_etc
+    if all_test:
+        id_ = "Unknown"
+        children = etc.get_children(id_)
+        expected_children = (
+            {
+                "eventName": "Root Event 4",
+                "eventId": "root_id4",
+                "data": {"data": [13, 14]},
+                "parentEventId": "Unknown",
+            },
+        )
+        assert children == expected_children
+    else:
+        id_ = "a1_id"
+        children = etc.get_children(id_)
+        expected_children = (
+            {
+                "eventName": "Event A1_child1",
+                "eventId": "a1_child1_id",
+                "data": {"data": "A1_child1"},
+                "parentEventId": "a1_id",
+            },
+            {
+                "eventName": "Event A1_child2",
+                "eventId": "a1_child2_id",
+                "data": {"data": "A1_child2"},
+                "parentEventId": "a1_id",
+            },
+        )
+        assert children == expected_children
 
 
-def test_etc_get_full_path(demo_etc_with_general_data):
-    etc = demo_etc_with_general_data
-    child, ancestor = DEMO_CHILD_ID, DEMO_PARENT_ID
-    event_path = etc.get_full_path(child)  # [ancestor_root, ancestor_level1, ..., event]
-    assert [event["eventId"] for event in event_path] == [ancestor, child]
+def test_etc_get_full_path(demo_etc, all_test=False):
+    etc = demo_etc
+    if all_test:
+        child, ancestor = "root_id4", "Unknown"
+        event_path = etc.get_full_path(child)
+        assert [event["eventId"] for event in event_path] == [ancestor, child]
+    else:
+        expected_path = ["root_id", "c1_id", "d1_id", "e1_child1_id"]
+        event_path = etc.get_full_path("e1_child1_id")
+        assert [event["eventId"] for event in event_path] == expected_path
 
 
-def test_etc_get_parent(demo_etc_with_general_data):
-    etc = demo_etc_with_general_data
-    parent = etc.get_parent(DEMO_CHILD_ID)
-    assert parent["eventId"] == "84db48fc-d1b4-11eb-b0fb-199708acc7bc"
+def test_etc_get_parent(demo_etc, all_test=False):
+    etc = demo_etc
+    if all_test:
+        parent = etc.get_parent("root_id4")
+        assert parent == EXPECTED_STUB
+    else:
+        parent = etc.get_parent("a1_child1_id")
+        assert parent["eventId"] == "a1_id"
 
 
 def test_etc_append_stub_event(demo_etc_with_general_data):
@@ -115,37 +201,42 @@ def test_etc_append_non_stub_event(demo_etc_with_general_data):
     etc = demo_etc_with_general_data
     demo_event = {
         "eventId": "a20f5ef4-c3fe-bb10-a29c-dd3d784909eb",
-        "parentEventId": DEMO_PARENT_ID,  #
+        "parentEventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",  # NonStub Parent Event
         "eventName": "DemoEvent",
     }
+
     etc.append_event(event=demo_event)
     event = etc.find(lambda event_: event_["eventName"] == "DemoEvent")
     assert event == demo_event
 
 
-def test_etc_get_all_events(demo_etc_with_general_data, general_data):
-    etc = demo_etc_with_general_data
-    data = sorted(general_data, key=lambda event: event["eventId"])
+def test_etc_get_all_events(demo_etc, dummy_etc_data, all_test=False):
+    etc = demo_etc
+    data = sorted(dummy_etc_data, key=lambda event: event["eventId"])
     events = sorted(etc.get_all_events(), key=lambda event: event["eventId"])
-    assert events == data
+    if not all_test:
+        events.extend(etc.get_detached_events())
+        data.extend(
+            [
+                {
+                    "eventName": "Root Event 4",
+                    "eventId": "root_id4",
+                    "data": {"data": [13, 14]},
+                    "parentEventId": "Unknown",
+                }
+            ]
+        )
+        assert events == data
+    else:
+        data.insert(0, EXPECTED_STUB)
+        assert events == data
 
 
 def test_get_parentless_trees(demo_etc):
     etc = demo_etc
     parentless_trees = etc.get_parentless_trees()
     expected_parentless_tree = [
-        {
-            "attachedMessageIds": [],
-            "batchId": "Broken_Event",
-            "endTimestamp": {"nano": 0, "epochSecond": 0},
-            "startTimestamp": {"nano": 0, "epochSecond": 0},
-            "eventId": "Unknown",
-            "eventName": "Broken_Event",
-            "eventType": "Broken_Event",
-            "parentEventId": "Broken_Event",
-            "successful": None,
-            "isBatched": None,
-        },
+        EXPECTED_STUB,
         {"eventName": "Root Event 4", "eventId": "root_id4", "data": {"data": [13, 14]}, "parentEventId": "Unknown"},
     ]
     assert len(parentless_trees) == 1
@@ -155,23 +246,48 @@ def test_get_parentless_trees(demo_etc):
 def test_etc_get_trees(demo_etc):
     etc = demo_etc
     trees = etc.get_trees()
-    assert all(["root_id" in tree.get_root_id() for tree in trees])
+    root_ids = [tree.get_root_id() for tree in trees]
+    assert all(["root_id" in root_id or "Unknown" in root_id for root_id in root_ids])
 
 
-def test_etc_get_root_by_id(demo_etc):
+def test_etc_get_root_by_id(demo_etc, all_test=False):
     etc = demo_etc
-    root = etc.get_root_by_id("root_id")
-    expected_root = {"eventName": "Root Event", "eventId": "root_id", "data": {"data": [1, 2, 3, 4, 5]}}
-    assert root == expected_root
+    if all_test:
+        root = etc.get_root_by_id("Unknown")
+        expected_root = EXPECTED_STUB
+        assert root == expected_root
+    else:
+        root = etc.get_root_by_id("root_id")
+        expected_root = {"eventName": "Root Event", "eventId": "root_id", "data": {"data": [1, 2, 3, 4, 5]}}
+        assert root == expected_root
 
 
-def test_etc_get_tree_by_id(demo_etc):
+def test_etc_get_tree_by_id(demo_etc, all_test=False):
     etc = demo_etc
-    tree = etc.get_tree_by_id("b1_child2_id")
-    expected_tree = etc.get_trees()[0]
-    assert tree == expected_tree
+    if all_test:
+        tree = etc.get_tree_by_id("Unknown")
+        expected_tree = etc.get_trees()[-1]
+        assert tree == expected_tree
+    else:
+        tree = etc.get_tree_by_id("b1_child2_id")
+        expected_tree = etc.get_trees()[0]
+        assert tree == expected_tree
 
 
-# TODO - add big set of tests after user used `get_parentless_trees`
-#   I prefer to create separate file for big set of tests.
-#   Like for test_data/test_cache -- there are only cache tests and all methods with cache.
+def test_all_after_get_parentless_trees(demo_etc, dummy_etc_data):
+    demo_etc_copy = deepcopy(demo_etc)
+    test_get_parentless_trees(demo_etc)
+
+    test_etc_get_all_events(demo_etc, dummy_etc_data, True)
+    test_etc_get_trees(demo_etc)
+    test_etc_get_ancestors(demo_etc, True)
+    test_etc_get_children(demo_etc, True)
+    test_etc_get_full_path(demo_etc, True)
+    test_etc_get_parent(demo_etc, True)
+    test_etc_get_root_by_id(demo_etc, True)
+    test_etc_get_tree_by_id(demo_etc, True)
+    test_etc_to_get_roots_ids_with_multiple_trees(demo_etc)
+    test_etc_for_detached_events_with_data(demo_etc, True)
+    test_etc_find_event(demo_etc, True)
+    test_etc_find_events(demo_etc, True)
+    test_etc_find_ancestor(demo_etc, True)

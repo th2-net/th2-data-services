@@ -1977,13 +1977,13 @@ def dummy_etc_data():
         {"eventName": "Event A1", "eventId": "a1_id", "data": {"data": "A1"}, "parentEventId": "root_id"},
         {
             "eventName": "Event A1_child1",
-            "eventId": "a_child1_id",
+            "eventId": "a1_child1_id",
             "data": {"data": "A1_child1"},
             "parentEventId": "a1_id",
         },
         {
             "eventName": "Event A1_child2",
-            "eventId": "a_child2_id",
+            "eventId": "a1_child2_id",
             "data": {"data": "A1_child2"},
             "parentEventId": "a1_id",
         },
