@@ -1,25 +1,13 @@
-# TODO - these tests will fail when demo_etc_with_data will have More than 1 tree
-#   and max_count > than number of events that were found in the first tree.
-#
-# TODO - WE HAVE TO CREATE SUCH TEST and FIX issue
+def test_findall_max_count(random_ETC):
+    etc = random_ETC
+    max_nodes_to_get = 10
+    findall_nodes = etc.findall(filter=lambda e: e.get("parentEventId"), max_count=max_nodes_to_get)
+    assert len(findall_nodes) == max_nodes_to_get
 
-# TODO - I've found this error when have ETC(trees=100, [events=100])
 
-# def test_findall_max_count(demo_etc_with_data, general_data):
-#     etc = demo_etc_with_data
-#     one_value_from_findall = etc.findall(filter=lambda e: e["parentEventId"] is not None,
-#                                          max_count=10)
-#     assert 10 == len(one_value_from_findall)
-#
-#
-# def test_findall_iter_max_count(demo_etc_with_data, general_data):
-#     etc = demo_etc_with_data
-#     one_value_from_findall = list(etc.findall_iter(filter=lambda e: e["parentEventId"] is not None, max_count=1))
-#     assert [{
-#             "batchId": None,
-#             "eventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
-#             "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for " "instrument INSTR1",
-#             "eventType": "",
-#             "isBatched": False,
-#             "parentEventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
-#         }] == one_value_from_findall
+def test_findall_iter_max_count(random_ETC):
+    etc = random_ETC
+    one_value_from_findall = list(etc.findall_iter(filter=lambda e: e.get("parentEventId") is not None, max_count=1))
+    assert [
+        {"eventName": "Event D0", "eventId": "D0_id", "data": {"data": [63, 40, 40]}, "parentEventId": "root_id28"}
+    ] == one_value_from_findall
