@@ -91,7 +91,7 @@ build(data: Iterable)
 
 ---
 
-<a href="../../th2_data_services/event_tree/event_tree_collection.py#L637"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/event_tree_collection.py#L635"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find`
 
@@ -147,7 +147,7 @@ This method applicable only for trees (regular or parentless), not for detached 
 
 ---
 
-<a href="../../th2_data_services/event_tree/event_tree_collection.py#L612"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/event_tree_collection.py#L610"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `findall`
 
@@ -481,7 +481,7 @@ Returns a parent of the event by its id.
 
 ---
 
-<a href="../../th2_data_services/event_tree/event_tree_collection.py#L720"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/event_tree_collection.py#L718"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_parentless_tree_collection`
 
@@ -564,7 +564,7 @@ If there are parentless trees, they also will be return.
 
 ---
 
-<a href="../../th2_data_services/event_tree/event_tree_collection.py#L664"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/event_tree_collection.py#L662"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subtree`
 
@@ -640,7 +640,7 @@ If there are parentless trees, they also will be return.
 
 ---
 
-<a href="../../th2_data_services/event_tree/event_tree_collection.py#L691"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/event_tree_collection.py#L689"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `recover_unknown_events`
 

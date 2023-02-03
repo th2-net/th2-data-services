@@ -588,26 +588,24 @@ class EventTreeCollection:
             Matching events.
         """
 
-        def find_wrapper(iterator):
+        def finder_wrapper(iterator):
             nonlocal max_count
-            for tree in iterator:
-                if max_count <= 0:
-                    break
-                for node in tree.findall_iter(filter=filter, stop=stop, max_count=max_count):
+            if max_count:
+                for tree in iterator:
                     if max_count <= 0:
                         break
-                    yield node
-                    max_count -= 1
+                    for node in tree.findall_iter(filter=filter, stop=stop, max_count=max_count):
+                        if max_count <= 0:
+                            break
+                        yield node
+                        max_count -= 1
+            else:
+                for tree in iterator:
+                    yield from tree.findall_iter(filter=filter, stop=stop, max_count=max_count)
 
-                # max_count = min(max_count, len(tree) - 1) if max_count else 0
-                # yield from tree.findall_iter(filter=filter, stop=stop, max_count=counter)
-                # counter -= max_count
-                # if counter <= 0:
-                #     break
-
-        yield from find_wrapper(self._roots)
+        yield from finder_wrapper(self._roots)
         if self._parentless is not None:
-            yield from find_wrapper(self._parentless)
+            yield from finder_wrapper(self._parentless)
 
     def findall(
         self,
