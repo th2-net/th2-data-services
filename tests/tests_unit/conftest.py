@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 from collections import namedtuple
 from datetime import datetime
 from pathlib import Path
@@ -1954,11 +1955,6 @@ class DemoDriver(IETCDriver):
         ...
 
     def build_stub_event(self, id_):
-        # event = self.stub_builder.template
-        # for kwarg in kwargs:
-        #     if kwarg in event:
-        #         event[kwarg] = kwargs[kwarg]
-        # print(event)
         return self.stub_builder.build({self.event_struct.EVENT_ID: id_})
 
     def stub_event_name(self):
@@ -2126,3 +2122,50 @@ def demo_petc_with_general_data(demo_etc_driver, general_data):
     petc = ParentEventTreeCollection(demo_etc_driver)
     petc.build(data)
     return petc
+
+
+@pytest.fixture
+def random_ETC():
+    """Generate Random Tree Structure.
+    | State Can Be Saved Using `seed` (new seed => new state).
+
+    Returns:
+        EventsTreeCollection
+    """
+    random.seed(0xC0DE)
+
+    def rand_data():
+        return {"data": [random.randint(1, 100) for _ in range(3)]}
+
+    tree = EventTreeCollection(DemoDriver())
+    for _ in range(100):
+        rand_id = random.randint(1, 1000)
+        rand_char = chr(random.randint(65, 90))
+        root_id = f"root_id{rand_id}"
+        root_name = f"Root Event {rand_id}"
+        tree.append_event({"eventName": root_name, "eventId": root_id, "data": rand_data()})
+        for i in range(random.randint(1, 5)):
+            child_event_name = f"Event {rand_char}{i}"
+            child_event_id = f"{rand_char}{i}_id"
+            tree.append_event(
+                {
+                    "eventName": child_event_name,
+                    "eventId": child_event_id,
+                    "data": rand_data(),
+                    "parentEventId": root_id,
+                }
+            )
+            if random.randint(1, 10) == 6:
+                for j in range(random.randint(1, 3)):
+                    grandchild_event_name = f"{child_event_name}_child{j}"
+                    grandchild_event_id = f"{rand_char}_child{j}_id"
+                    tree.append_event(
+                        {
+                            "eventName": grandchild_event_name,
+                            "eventId": grandchild_event_id,
+                            "data": rand_data(),
+                            "parentEventId": child_event_id,
+                        }
+                    )
+
+    return tree
