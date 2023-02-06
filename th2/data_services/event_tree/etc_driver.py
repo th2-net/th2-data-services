@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar, Generic, Sequence
 
-from th2_data_services.interfaces import IEventStruct, IDataSource
+from th2.data_services.interfaces import IEventStruct, IDataSource
 
 Th2EventType = TypeVar("Th2EventType")
 

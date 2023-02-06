@@ -16,7 +16,7 @@ from typing import List, Tuple, Generator, Callable, Optional, Union
 from treelib import Tree, Node
 from treelib.exceptions import NodeIDAbsentError, LoopError
 
-from th2_data_services.event_tree.exceptions import EventIdNotInTree, EventAlreadyExist, EventRootExist, TreeLoop
+from th2.data_services.event_tree.exceptions import EventIdNotInTree, EventAlreadyExist, EventRootExist, TreeLoop
 
 Th2Event = dict  # TODO - move to types. Also this class knows that th2-event is a dict, but it cannot to know.
 

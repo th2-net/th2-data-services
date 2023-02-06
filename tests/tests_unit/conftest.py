@@ -8,8 +8,8 @@ from typing import List, NamedTuple
 import pytest
 
 from tests.tests_unit.utils import LogsChecker
-from th2_data_services import Data
-from th2_data_services.event_tree import EventTree
+from th2.data_services.data import Data
+from th2.data_services.event_tree import EventTree
 
 EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
 

@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from th2_data_services.interfaces.data_source import IDataSource
+    from th2.data_services.interfaces.data_source import IDataSource
 
 
 class ICommand(ABC):

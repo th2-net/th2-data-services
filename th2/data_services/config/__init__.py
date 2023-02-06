@@ -1,0 +1,1 @@
+from th2.data_services.config.config import _global_config
