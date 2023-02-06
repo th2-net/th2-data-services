@@ -300,21 +300,46 @@ def test_findall_max_count():
     etc = etc_generator()
     max_nodes_to_get = 10
     expected_nodes = [
-        {"eventName": "Event D0", "eventId": "D0_id", "data": {"data": [63, 40, 40]}, "parentEventId": "root_id28"},
-        {"eventName": "Event D1", "eventId": "D1_id", "data": {"data": [47, 87, 9]}, "parentEventId": "root_id28"},
-        {"eventName": "Event D2", "eventId": "D2_id", "data": {"data": [21, 77, 83]}, "parentEventId": "root_id28"},
-        {"eventName": "Event D3", "eventId": "D3_id", "data": {"data": [33, 60, 15]}, "parentEventId": "root_id28"},
+        {"eventName": "Event A0", "eventId": "A0_id", "data": {"data": [89, 98, 58]}, "parentEventId": "root_id0"},
+        {"eventName": "Event A1", "eventId": "A1_id", "data": {"data": [40, 40, 61]}, "parentEventId": "root_id0"},
         {
-            "eventName": "Event D3_child0",
-            "eventId": "D_child0_id",
-            "data": {"data": [41, 40, 40]},
-            "parentEventId": "D3_id",
+            "eventName": "Event A1_child0",
+            "eventId": "A1_child0_id",
+            "data": {"data": [9, 90, 81]},
+            "parentEventId": "A1_id",
         },
-        {"eventName": "Event A0", "eventId": "A0_id", "data": {"data": [72, 49, 2]}, "parentEventId": "root_id150"},
-        {"eventName": "Event A1", "eventId": "A1_id", "data": {"data": [48, 84, 39]}, "parentEventId": "root_id150"},
-        {"eventName": "Event A2", "eventId": "A2_id", "data": {"data": [62, 99, 82]}, "parentEventId": "root_id150"},
-        {"eventName": "Event A3", "eventId": "A3_id", "data": {"data": [76, 22, 17]}, "parentEventId": "root_id150"},
-        {"eventName": "Event A4", "eventId": "A4_id", "data": {"data": [90, 7, 3]}, "parentEventId": "root_id150"},
+        {
+            "eventName": "Event A1_child1",
+            "eventId": "A1_child1_id",
+            "data": {"data": [100, 67, 21]},
+            "parentEventId": "A1_id",
+        },
+        {
+            "eventName": "Event A1_child2",
+            "eventId": "A1_child2_id",
+            "data": {"data": [77, 83, 55]},
+            "parentEventId": "A1_id",
+        },
+        {"eventName": "Event A2", "eventId": "A2_id", "data": {"data": [33, 60, 15]}, "parentEventId": "root_id0"},
+        {"eventName": "Event A3", "eventId": "A3_id", "data": {"data": [19, 1, 17]}, "parentEventId": "root_id0"},
+        {
+            "eventName": "Event A2_child0",
+            "eventId": "A2_child0_id",
+            "data": {"data": [14, 13, 66]},
+            "parentEventId": "A2_id",
+        },
+        {
+            "eventName": "Event A3_child0",
+            "eventId": "A3_child0_id",
+            "data": {"data": [59, 37, 57]},
+            "parentEventId": "A3_id",
+        },
+        {
+            "eventName": "Event A3_child1",
+            "eventId": "A3_child1_id",
+            "data": {"data": [96, 94, 99]},
+            "parentEventId": "A3_id",
+        },
     ]
     findall_nodes = etc.findall(filter=lambda e: e.get("parentEventId"), max_count=max_nodes_to_get)
     assert len(findall_nodes) == max_nodes_to_get
@@ -325,5 +350,5 @@ def test_findall_iter_max_count():
     etc = etc_generator()
     one_value_from_findall = list(etc.findall_iter(filter=lambda e: e.get("parentEventId") is not None, max_count=1))
     assert [
-        {"eventName": "Event D0", "eventId": "D0_id", "data": {"data": [63, 40, 40]}, "parentEventId": "root_id28"}
+        {"eventName": "Event A0", "eventId": "A0_id", "data": {"data": [89, 98, 58]}, "parentEventId": "root_id0"}
     ] == one_value_from_findall

@@ -2140,15 +2140,14 @@ def etc_generator(seed=0xC0DE) -> EventTreeCollection:
         return {"data": [random.randint(1, 100) for _ in range(3)]}
 
     etc = EventTreeCollection(DemoDriver())
-    for _ in range(100):
-        rand_id = random.randint(1, 1000)
+    for i in range(100):
         rand_char = chr(random.randint(65, 90))
-        root_id = f"root_id{rand_id}"
-        root_name = f"Root Event {rand_id}"
+        root_id = f"root_id{i}"
+        root_name = f"Root Event {i}"
         etc.append_event({"eventName": root_name, "eventId": root_id, "data": rand_data()})
-        for i in range(random.randint(1, 5)):
-            child_event_name = f"Event {rand_char}{i}"
-            child_event_id = f"{rand_char}{i}_id"
+        for j in range(random.randint(1, 5)):
+            child_event_name = f"Event {rand_char}{j}"
+            child_event_id = f"{rand_char}{j}_id"
             etc.append_event(
                 {
                     "eventName": child_event_name,
@@ -2158,9 +2157,9 @@ def etc_generator(seed=0xC0DE) -> EventTreeCollection:
                 }
             )
             if random.randint(1, 10) == 6:
-                for j in range(random.randint(1, 3)):
-                    grandchild_event_name = f"{child_event_name}_child{j}"
-                    grandchild_event_id = f"{rand_char}_child{j}_id"
+                for k in range(random.randint(1, 3)):
+                    grandchild_event_name = f"{child_event_name}_child{k}"
+                    grandchild_event_id = f"{rand_char}{j}_child{k}_id"
                     etc.append_event(
                         {
                             "eventName": grandchild_event_name,
