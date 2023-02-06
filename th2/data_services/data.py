@@ -60,7 +60,6 @@ class Data(Generic[DataIterValues]):
             workflow: Workflow.
 
         """
-        print(_global_config.INTERACTIVE_MODE)
         if isinstance(data, types.GeneratorType) and cache is False:
             warn(
                 "Putted data has a generator type. "
@@ -214,12 +213,11 @@ class Data(Generic[DataIterValues]):
                     # LOG                     self._logger.info("The cache file is not written to the end. Delete tmp cache file")
                     self.__delete_pending_cache()
                 else:  # Data reads cache.
-                    from th2 import INTERACTIVE_MODE  # To escape circular import problem.
 
                     # Do not delete cache file if it reads an external cache file.
                     if not self._read_from_external_cache_file:
                         # Do not delete cache file if it's an interactive mode and Data has read cache.
-                        if not INTERACTIVE_MODE:
+                        if not _global_config.INTERACTIVE_MODE:
                             self.__delete_cache()
 
             self.iter_num -= 1
