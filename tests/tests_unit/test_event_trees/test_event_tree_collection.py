@@ -294,6 +294,10 @@ def test_all_after_get_parentless_trees(demo_etc, dummy_etc_data):
 
 
 def test_findall_max_count(random_ETC):
+    """https://exactpro.atlassian.net/browse/TH2-4711 - issue related test.
+    these tests will fail when ETC will have More than 1 tree
+    and max_count > than number of events that were found in the first tree.
+    """
     etc = random_ETC
     max_nodes_to_get = 10
     findall_nodes = etc.findall(filter=lambda e: e.get("parentEventId"), max_count=max_nodes_to_get)

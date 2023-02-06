@@ -2125,7 +2125,7 @@ def demo_petc_with_general_data(demo_etc_driver, general_data):
 
 
 @pytest.fixture
-def random_ETC():
+def random_ETC() -> EventTreeCollection:
     """Generate Random Tree Structure.
     | State Can Be Saved Using `seed` (new seed => new state).
 
@@ -2137,17 +2137,17 @@ def random_ETC():
     def rand_data():
         return {"data": [random.randint(1, 100) for _ in range(3)]}
 
-    tree = EventTreeCollection(DemoDriver())
+    etc = EventTreeCollection(DemoDriver())
     for _ in range(100):
         rand_id = random.randint(1, 1000)
         rand_char = chr(random.randint(65, 90))
         root_id = f"root_id{rand_id}"
         root_name = f"Root Event {rand_id}"
-        tree.append_event({"eventName": root_name, "eventId": root_id, "data": rand_data()})
+        etc.append_event({"eventName": root_name, "eventId": root_id, "data": rand_data()})
         for i in range(random.randint(1, 5)):
             child_event_name = f"Event {rand_char}{i}"
             child_event_id = f"{rand_char}{i}_id"
-            tree.append_event(
+            etc.append_event(
                 {
                     "eventName": child_event_name,
                     "eventId": child_event_id,
@@ -2159,7 +2159,7 @@ def random_ETC():
                 for j in range(random.randint(1, 3)):
                     grandchild_event_name = f"{child_event_name}_child{j}"
                     grandchild_event_id = f"{rand_char}_child{j}_id"
-                    tree.append_event(
+                    etc.append_event(
                         {
                             "eventName": grandchild_event_name,
                             "eventId": grandchild_event_id,
@@ -2168,4 +2168,4 @@ def random_ETC():
                         }
                     )
 
-    return tree
+    return etc
