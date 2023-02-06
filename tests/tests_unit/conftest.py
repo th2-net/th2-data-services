@@ -2124,15 +2124,17 @@ def demo_petc_with_general_data(demo_etc_driver, general_data):
     return petc
 
 
-@pytest.fixture
-def random_ETC() -> EventTreeCollection:
-    """Generate Random Tree Structure.
-    | State Can Be Saved Using `seed` (new seed => new state).
+def etc_generator(seed=0xC0DE) -> EventTreeCollection:
+    """Generates Random EventTreeCollection Structure Based On `seed`.
+    | State Is Saved By `seed`, new seed => new state.
+
+    Args:
+        seed: Random State Seed, Defaults to 0xC0DE.
 
     Returns:
         EventsTreeCollection
     """
-    random.seed(0xC0DE)
+    random.seed(seed)
 
     def rand_data():
         return {"data": [random.randint(1, 100) for _ in range(3)]}

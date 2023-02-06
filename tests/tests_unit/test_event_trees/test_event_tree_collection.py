@@ -1,6 +1,5 @@
 from copy import deepcopy
-
-
+from ..conftest import etc_generator
 from th2_data_services import Data
 
 EXPECTED_STUB = {
@@ -293,19 +292,37 @@ def test_all_after_get_parentless_trees(demo_etc, dummy_etc_data):
     test_etc_find_ancestor(demo_etc, True)
 
 
-def test_findall_max_count(random_ETC):
+def test_findall_max_count():
     """https://exactpro.atlassian.net/browse/TH2-4711 - issue related test.
     these tests will fail when ETC will have More than 1 tree
     and max_count > than number of events that were found in the first tree.
     """
-    etc = random_ETC
+    etc = etc_generator()
     max_nodes_to_get = 10
+    expected_nodes = [
+        {"eventName": "Event D0", "eventId": "D0_id", "data": {"data": [63, 40, 40]}, "parentEventId": "root_id28"},
+        {"eventName": "Event D1", "eventId": "D1_id", "data": {"data": [47, 87, 9]}, "parentEventId": "root_id28"},
+        {"eventName": "Event D2", "eventId": "D2_id", "data": {"data": [21, 77, 83]}, "parentEventId": "root_id28"},
+        {"eventName": "Event D3", "eventId": "D3_id", "data": {"data": [33, 60, 15]}, "parentEventId": "root_id28"},
+        {
+            "eventName": "Event D3_child0",
+            "eventId": "D_child0_id",
+            "data": {"data": [41, 40, 40]},
+            "parentEventId": "D3_id",
+        },
+        {"eventName": "Event A0", "eventId": "A0_id", "data": {"data": [72, 49, 2]}, "parentEventId": "root_id150"},
+        {"eventName": "Event A1", "eventId": "A1_id", "data": {"data": [48, 84, 39]}, "parentEventId": "root_id150"},
+        {"eventName": "Event A2", "eventId": "A2_id", "data": {"data": [62, 99, 82]}, "parentEventId": "root_id150"},
+        {"eventName": "Event A3", "eventId": "A3_id", "data": {"data": [76, 22, 17]}, "parentEventId": "root_id150"},
+        {"eventName": "Event A4", "eventId": "A4_id", "data": {"data": [90, 7, 3]}, "parentEventId": "root_id150"},
+    ]
     findall_nodes = etc.findall(filter=lambda e: e.get("parentEventId"), max_count=max_nodes_to_get)
     assert len(findall_nodes) == max_nodes_to_get
+    assert expected_nodes == findall_nodes
 
 
-def test_findall_iter_max_count(random_ETC):
-    etc = random_ETC
+def test_findall_iter_max_count():
+    etc = etc_generator()
     one_value_from_findall = list(etc.findall_iter(filter=lambda e: e.get("parentEventId") is not None, max_count=1))
     assert [
         {"eventName": "Event D0", "eventId": "D0_id", "data": {"data": [63, 40, 40]}, "parentEventId": "root_id28"}
