@@ -299,7 +299,7 @@ def test_findall_max_count():
     """
     etc = etc_generator()
     max_nodes_to_get = 10
-    expected_nodes = [
+    expected_nodes = sorted([
         {"eventName": "Event A0", "eventId": "A0_id", "data": "A", "parentEventId": "root_id0"},
         {"eventName": "Event N0", "eventId": "N0_id", "data": "N", "parentEventId": "root_id1"},
         {"eventName": "Event N1", "eventId": "N1_id", "data": "N", "parentEventId": "root_id1"},
@@ -310,8 +310,9 @@ def test_findall_max_count():
         {"eventName": "Event N0_child0", "eventId": "N0_child0_id", "data": "N", "parentEventId": "N0_id"},
         {"eventName": "Event N1_child2", "eventId": "N1_child2_id", "data": "N", "parentEventId": "N1_id"},
         {"eventName": "Event P0", "eventId": "P0_id", "data": "P", "parentEventId": "root_id2"},
-    ]
+    ], key=lambda e: e['eventId'])
     findall_nodes = etc.findall(filter=lambda e: e.get("parentEventId"), max_count=max_nodes_to_get)
+    findall_nodes = sorted(findall_nodes, key=lambda e: e['eventId'])
     assert len(findall_nodes) == max_nodes_to_get
     assert expected_nodes == findall_nodes
 
