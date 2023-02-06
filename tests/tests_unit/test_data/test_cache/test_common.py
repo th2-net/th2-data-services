@@ -138,9 +138,9 @@ def test_cache_file_will_be_removed_only_if_data_write_it(interactive_mod, expec
         3. We DO NOT have to delete file if we read the file using special method.
 
     Issue related test: https://exactpro.atlassian.net/browse/TH2-3546"""
-    from th2.data_services.config import _global_config
+    from th2.data_services.config import options
 
-    _global_config.INTERACTIVE_MODE = interactive_mod
+    options.INTERACTIVE_MODE = interactive_mod
 
     # Write test
     data = Data([1, 2, 3, 4, 5], cache=True).map(map_func)

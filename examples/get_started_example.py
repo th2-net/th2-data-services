@@ -9,9 +9,9 @@ from th2.data_services.data import Data
 # [0.1] Interactive or Script mode
 # If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
 # global parameter to True. It'll keep cache files if something went wrong.
-from th2.data_services.config import _global_config
+from th2.data_services.config import options
 
-_global_config.INTERACTIVE_MODE = True
+options.INTERACTIVE_MODE = True
 
 # Some example data
 events = Data([

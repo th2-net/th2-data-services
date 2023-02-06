@@ -2,8 +2,8 @@ from th2.data_services.data import Data
 
 d = Data([20,3,0,4])
 
-from th2.data_services.config import _global_config
+from th2.data_services.config import options
 
-_global_config.INTERACTIVE_MODE = True
+options.INTERACTIVE_MODE = True
 
 d = Data([10,2,0,3])

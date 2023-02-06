@@ -25,7 +25,7 @@ import types
 from inspect import isgeneratorfunction
 from typing import TypeVar
 from th2.data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
-from th2.data_services.config import _global_config
+from th2.data_services.config import options
 # LOG import logging
 
 # LOG logger = logging.getLogger(__name__)
@@ -217,7 +217,7 @@ class Data(Generic[DataIterValues]):
                     # Do not delete cache file if it reads an external cache file.
                     if not self._read_from_external_cache_file:
                         # Do not delete cache file if it's an interactive mode and Data has read cache.
-                        if not _global_config.INTERACTIVE_MODE:
+                        if not options.INTERACTIVE_MODE:
                             self.__delete_cache()
 
             self.iter_num -= 1
