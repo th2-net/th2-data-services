@@ -62,7 +62,8 @@ setup(
     license="Apache License 2.0",
     python_requires=">=3.7",
     install_requires=requirements,
-    packages=find_packages(include=["th2_data_services*"]),
+    packages = ['th2', 'th2.data_services','th2.data_services.config','th2.data_services.event_tree','th2.data_services.interfaces','th2.data_services.utils'],
+    namespace_packages = ['th2', 'th2.data_services'],
     extras_require=CORE_EXTRAS_DEPENDENCIES,
     include_package_data=True,
 )
