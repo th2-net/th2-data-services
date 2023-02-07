@@ -2,15 +2,20 @@ from functools import partial
 from os import listdir, path
 from typing import Callable, Dict, List, Tuple, Set, Union
 from datetime import datetime
-import misc_utils
+from th2_data_services.utils import misc_utils
 import json
 from collections import defaultdict
 from tabulate import tabulate
 
+# TODO -
+#   1. events: List[Dict] -- should be Iterable[Th2Event], where Th2Event = Dict. It can be changed in the future
+#   2. IDEA - it's difficult to understand what you will get when read some functions. I think add examples
+#   3. Rename all docstrings word Gets to Returns. That's different things.
+
 
 def get_category_frequencies(
     events: List[Dict], categories: List[str], categorizer: Callable, aggregation_level: str = "seconds"
-):
+) -> List[List[str]]:
     """Gets Event Frequencies Based On Event Category.
 
     Args:
@@ -31,8 +36,16 @@ def get_category_frequencies(
     )
 
 
+# TODO - slava
+#   Do we really need it? Why user cannot just use this one line?
+#   Maybe better to have prepared list of categorizers? e.g. in form of Adapters.
+#   get_category_frequencies(events, types_list, EventCategorizer.type)
+#   or idea to creat class TypeFrequences
+#   GetFrequences.by_type_category
+#   GetFrequences.by_name_category
+#   GetFrequences.by_category
 def get_type_frequencies(events: List[Dict], types_list: List[str], aggregation_level="seconds") -> List[List[str]]:
-    """Gets Event Frequencies Based On EventType.
+    """Returns Event Frequencies Based On EventType.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -45,6 +58,16 @@ def get_type_frequencies(events: List[Dict], types_list: List[str], aggregation_
     return get_category_frequencies(events, types_list, lambda e: e["eventType"], aggregation_level)
 
 
+# USEFUL
+# STREAMING
+# TODO - NOT-READY -- event["successful"] should be updated by resolver
+# categorizer - expects that it will return str
+# --
+# example
+# eu.get_category_totals(d2, lambda e: e["eventType"])
+# defaultdict(<class 'int'>, {'Service event [ok]': 9531, 'Info [ok]': 469})
+# eu.get_category_totals(d2, lambda e: 'aaa')
+# defaultdict(<class 'int'>, {'aaa [ok]': 10000})
 def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status: bool = False) -> Dict[str, int]:
     """Gets Dictionary quantities of events for different categories.
 
@@ -62,13 +85,20 @@ def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status
         if not ignore_status:
             status = " [ok]" if event["successful"] else " [fail]"
             category += status
-        event_categories[category] += 1
+        else:
+            event_categories[category] += 1
 
     return event_categories
 
 
+# USEFUL
+# STREAMING
+# TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
+# example
+# eu.get_attached_messages_totals(d1)
+# defaultdict(<class 'int'>, {'envtn2_msfix5:first': 25262, 'envtn2_jpmfix1:second': 1702, 'env2_gscofixg2:second': 1702,...
 def get_attached_messages_totals(events: List[Dict]) -> Dict[str, int]:
-    """Gets Dictionary quantities of messages attached to events for each stream + direction.
+    """Returns Dictionary quantities of messages attached to events for each stream.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -85,8 +115,11 @@ def get_attached_messages_totals(events: List[Dict]) -> Dict[str, int]:
     return streams
 
 
+# USEFUL
+# STREAMING
+# TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
 def get_attached_message_ids(events: List[Dict]) -> Set[str]:
-    """Gets set of unique message IDs linked to all events.
+    """Returns the set of unique message IDs linked to all events.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -97,8 +130,13 @@ def get_attached_message_ids(events: List[Dict]) -> Set[str]:
     return set(message_id for event in events for message_id in event["attachedMessageIds"])
 
 
+# USEFUL
+# TODO - NOT-READY -- event["parentEventId, eventId"] should be updated by resolver
+# TODO - It returns only parent events that not present in the events.
+#   Perhaps we need to find better name
+# we use something similar in our EventTree
 def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
-    """Gets set of unique parent event ids.
+    """Returns only parent events that not present in the events.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -120,8 +158,17 @@ def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
     return parent_ids
 
 
+# USEFUL
+# NOT STREAMING - keeps events
+# TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
+# BE AWARE!! - it can it all your memory
+# O(N*M)
 def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
     """Gets dict of lists of related events by unique message IDs.
+
+    Note:
+        This object can occupy large amount of memory for big collections of events - use with caution
+        Keeps in memory all events that are linked to messages.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -137,6 +184,12 @@ def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
     return result
 
 
+# USEFULL ??? Do we need ignore status??
+# partly the same as get_category_totals and WO ignore status
+# Because it's the same we can you get_category_totals inside
+#
+# STREAMING
+# TODO - NOT-READY -- event["successful"] should be updated by resolver
 def get_type_totals(events: List[Dict]) -> Dict[str, int]:
     """Gets dictionary quantities of events for different event types.
 
@@ -155,6 +208,9 @@ def get_type_totals(events: List[Dict]) -> Dict[str, int]:
     return event_types
 
 
+# TODO - USEFUL ???
+#   What the example of this? look very rarely need to use
+# Will return list! Perhaps it's better to return Data?
 def get_events(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> List[Dict]:
     """Gets limited list of events of specific eventType.
 
