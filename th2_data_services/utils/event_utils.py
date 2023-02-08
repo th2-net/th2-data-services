@@ -1,3 +1,4 @@
+from functools import partial
 from os import listdir, path
 from typing import Callable, Dict, List, Tuple, Set, Union
 from datetime import datetime
@@ -654,7 +655,7 @@ def build_roots_cache(events, depth, max_level):  # noqa
     return result
 
 
-def extract_time_for_print(event) -> str:
+def extract_time(event) -> str:
     """Gets string representation of events timestamp.
 
     Args:
@@ -861,7 +862,7 @@ def print_children_from_parents(events: List[Dict], parents: List[Dict], max_eve
 
 def print_children_stats_from_parents(
     events: List[Dict], parents: List[Dict], max_events: int = 10_000, return_html: bool = False
-) -> None:
+) -> Union[None, str]:
     """Prints statistics with number of children and their duration for each event in parents_list.
 
     Args:
@@ -900,4 +901,7 @@ def print_children_stats_from_parents(
             ]
         )
 
-    return misc_utils.print_stats_dict(table, return_html)
+    if return_html:
+        return tabulate(table, headers="firstrow", tablefmt="html")
+    else:
+        print(tabulate(table, headers="firstrow", tablefmt="grid"))
