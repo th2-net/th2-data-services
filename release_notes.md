@@ -451,3 +451,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
     - metadata gets carried when using Data methods.
     - update_metadata method added to update metadata.
 11. [TH2-4684] Tree names changed from plural to singular. (e.g Event**s**Tree -> EventTree)
+
+
+## BugFixes
+1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
