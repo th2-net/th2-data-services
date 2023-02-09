@@ -2,6 +2,8 @@ from functools import partial
 from os import listdir, path
 from typing import Callable, Dict, List, Tuple, Set, Union
 from datetime import datetime
+
+from th2_data_services import EVENT_FIELDS_RESOLVER, MESSAGE_FIELDS_RESOLVER
 from th2_data_services.utils import misc_utils
 import json
 from collections import defaultdict
@@ -32,7 +34,7 @@ def get_category_frequencies(
         events,
         categories,
         categorizer,
-        lambda e: e["startTimestamp"]["epochSecond"],
+        lambda e: EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
         aggregation_level=aggregation_level,
     )
 
@@ -57,16 +59,15 @@ def get_type_frequencies(events: List[Dict], types_list: List[str], aggregation_
     Returns:
         List[List[str]]: List Of Frequency Lists
     """
-    return get_category_frequencies(events, types_list, lambda e: e["eventType"], aggregation_level)
+    return get_category_frequencies(events, types_list, lambda e: EVENT_FIELDS_RESOLVER.get_type(e), aggregation_level)
 
 
 # USEFUL
 # STREAMING
-# TODO - NOT-READY -- event["successful"] should be updated by resolver
 # categorizer - expects that it will return str
 # --
 # example
-# eu.get_category_totals(d2, lambda e: e["eventType"])
+# eu.get_category_totals(d2, lambda e: EVENT_FIELDS_RESOLVER.get_type(e))
 # defaultdict(<class 'int'>, {'Service event [ok]': 9531, 'Info [ok]': 469})
 # eu.get_category_totals(d2, lambda e: 'aaa')
 # defaultdict(<class 'int'>, {'aaa [ok]': 10000})
@@ -85,7 +86,7 @@ def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status
     for event in events:
         category = categorizer(event)
         if not ignore_status:
-            status = " [ok]" if event["successful"] else " [fail]"
+            status = " [ok]" if EVENT_FIELDS_RESOLVER.get_status(event) else " [fail]"
             category += status
         event_categories[category] += 1
 
@@ -94,7 +95,6 @@ def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status
 
 # USEFUL
 # STREAMING
-# TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
 # example
 # eu.get_attached_messages_totals(d1)
 # defaultdict(<class 'int'>, {'envtn2_msfix5:first': 25262, 'envtn2_jpmfix1:second': 1702, 'env2_gscofixg2:second': 1702,...
@@ -109,7 +109,7 @@ def get_attached_messages_totals(events: List[Dict]) -> Dict[str, int]:
     """
     streams = defaultdict(int)
     for event in events:
-        for message_id in event["attachedMessageIds"]:
+        for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
             key = message_id[: message_id.rindex(":")]
             streams[key] += 1
 
@@ -118,7 +118,6 @@ def get_attached_messages_totals(events: List[Dict]) -> Dict[str, int]:
 
 # USEFUL
 # STREAMING
-# TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
 def get_attached_message_ids(events: List[Dict]) -> Set[str]:
     """Returns the set of unique message IDs linked to all events.
 
@@ -128,12 +127,11 @@ def get_attached_message_ids(events: List[Dict]) -> Set[str]:
     Returns:
         Set[str]
     """
-    return set(message_id for event in events for message_id in event["attachedMessageIds"])
+    return set(message_id for event in events for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event))
 
 
 # USEFUL
 # STREAMING
-# TODO - NOT-READY -- event["parentEventId, eventId"] should be updated by resolver
 # TODO - It returns only parent events that not present in the events.
 #   Perhaps we need to find better name
 # we use something similar in our EventTree
@@ -149,8 +147,8 @@ def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
     all_event_ids = set()
     parent_ids = set()
     for event in events:
-        parent_id = event["parentEventId"]
-        event_id = event["eventId"]
+        parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
+        event_id = EVENT_FIELDS_RESOLVER.get_id(event)
         if parent_id is not None and not parent_id in all_event_ids:
             parent_ids.add(parent_id)
         if event_id in parent_ids:
@@ -162,7 +160,6 @@ def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
 
 # USEFUL
 # NOT STREAMING - keeps events
-# TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
 # BE AWARE!! - it can it all your memory
 # O(N*M)
 def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
@@ -180,7 +177,7 @@ def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
     """
     result = defaultdict(list)
     for event in events:
-        for message_id in event["attachedMessageIds"]:
+        for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
             result[message_id].append(event)
 
     return result
@@ -191,7 +188,6 @@ def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
 # Because it's the same we can you get_category_totals inside
 #
 # STREAMING
-# TODO - NOT-READY -- event["successful"] should be updated by resolver
 def get_type_totals(events: List[Dict]) -> Dict[str, int]:
     """Gets dictionary quantities of events for different event types.
 
@@ -203,8 +199,8 @@ def get_type_totals(events: List[Dict]) -> Dict[str, int]:
     """
     event_types = defaultdict(int)
     for event in events:
-        status = " [ok]" if event["successful"] else " [fail] "
-        event_type = event["eventType"] + status
+        status = " [ok]" if EVENT_FIELDS_RESOLVER.get_status(event) else " [fail] "
+        event_type = EVENT_FIELDS_RESOLVER.get_type(event) + status
         event_types[event_type] += 1
 
     return event_types
@@ -231,8 +227,8 @@ def get_events(events: List[Dict], event_type: str, count: int, start: int = 0, 
     limit = start + count
     counter = 0
     for event in events:
-        if event["eventType"] == event_type:
-            if failed and event["successful"]:
+        if EVENT_FIELDS_RESOLVER.get_type(event) == event_type:
+            if failed and EVENT_FIELDS_RESOLVER.get_status(event):
                 continue
             if counter >= start:
                 result.append(event)
@@ -256,10 +252,10 @@ def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> 
         List[Dict]
     """
     result = []
-    msg_ids = set(message["messageId"] for message in messages)
+    msg_ids = set(MESSAGE_FIELDS_RESOLVER.get_id(message) for message in messages)
 
     for event in events:
-        for msg_id in event["attachedMessageIds"]:
+        for msg_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
             if msg_id in msg_ids:
                 result.append(event)
                 if len(result) == count:
@@ -290,7 +286,7 @@ def get_events_by_category(
     counter = 0
     for event in events:
         if categorizer(event) == category:
-            if failed and event["successful"]:
+            if failed and EVENT_FIELDS_RESOLVER.get_status(event):
                 continue
             if counter >= start:
                 result.append(event)
@@ -317,7 +313,7 @@ def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
     limit = start + count
     counter = 0
     for event in events:
-        if event["parentEventId"] is None:
+        if EVENT_FIELDS_RESOLVER.get_parent_id(event) is None:
             if counter >= start:
                 result.append(event)
             counter += 1
@@ -336,8 +332,8 @@ def get_parents(events: List[Dict], children: List[Dict]):
         children (List[Dict]): Extract Parents By Child Events
 
     """
-    parent_ids = set(child["parentEventId"] for child in children)
-    return [event for event in events if event["eventId"] in parent_ids]
+    parent_ids = set(EVENT_FIELDS_RESOLVER.get_parent_id(child) for child in children)
+    return [event for event in events if EVENT_FIELDS_RESOLVER.get_id(event) in parent_ids]
 
 
 # NOT STREAMING
@@ -356,9 +352,9 @@ def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: 
     resolved_parent = {}
     counter = 0
     for event in events:
-        if event["eventId"] == parent_id:
+        if EVENT_FIELDS_RESOLVER.get_id(event) == parent_id:
             resolved_parent = event
-        if event["parentEventId"] == parent_id:
+        if EVENT_FIELDS_RESOLVER.get_parent_id(event) == parent_id:
             children.append(event)
             counter += 1
             if counter == max_events:
@@ -379,11 +375,11 @@ def get_children_from_parents(events: List[Dict], parents: List[Dict], max_event
     Returns:
         Tuple(Dict[str, list], int): Parent-Children, Events Count
     """
-    parent_ids = set(parent["eventId"] for parent in parents)
+    parent_ids = set(EVENT_FIELDS_RESOLVER.get_id(parent) for parent in parents)
     result = defaultdict(list)
     events_count = 0
     for event in events:
-        parent_id = event["parentEventId"]
+        parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
         if parent_id not in parent_ids:
             continue
         events_count += 1
@@ -405,11 +401,11 @@ def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], m
     Returns:
         Dict[str, list]: Children Events
     """
-    parent_ids = set(parent["eventId"] for parent in parents)
+    parent_ids = set(EVENT_FIELDS_RESOLVER.get_id(parent) for parent in parents)
     result = []
     parents_counts = defaultdict(int)
     for event in events:
-        parent_id = event["parentEventId"]
+        parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
         if parent_id not in parent_ids:
             continue
         if parents_counts[parent_id] <= max_events:
@@ -442,45 +438,49 @@ def get_event_tree_from_parent_events(
     current_children = parents
     while len(current_children) > 0 and iteration < depth:
         for child in current_children:
+            attached_ids = EVENT_FIELDS_RESOLVER.get_attached_messages_ids(child)
+            event_name = EVENT_FIELDS_RESOLVER.get_name(child)
+            event_type = EVENT_FIELDS_RESOLVER.get_type(child)
+            event_body = EVENT_FIELDS_RESOLVER.get_body(child)
             leaf = {
                 "info": {
-                    "name": child["eventName"],
-                    "type": child["eventType"],
-                    "id": child["eventId"],
+                    "name": event_name,
+                    "type": event_type,
+                    "id": EVENT_FIELDS_RESOLVER.get_id(child),
                     "time": extract_time(child),
                 },
-                "body": child["body"],
+                "body": event_body,
             }
-            if len(child["attachedMessageIds"]) > 0:
-                leaf["info"]["attachedMessageIds"] = child["attachedMessageIds"]
+            if len(attached_ids) > 0:
+                leaf["info"]["attachedMessageIds"] = attached_ids
 
             if iteration == 0:
                 dt = tree
             else:
-                dt = index[child["parentEventId"]]
+                dt = index[EVENT_FIELDS_RESOLVER.get_parent_id(child)]
 
-            child_event_status = "[ok]" if child["successful"] else "[fail]"
+            child_event_status = "[ok]" if EVENT_FIELDS_RESOLVER.get_status(child) else "[fail]"
             leaf_index = len(dt)
 
             if "body" in dt:
                 leaf_index -= 1
 
-            child_event_str = f"{leaf_index} {child_event_status} {child['eventName']}"
+            child_event_str = f"{leaf_index} {child_event_status} {event_name}"
             dt[child_event_str] = leaf
-            index[child["eventId"]] = leaf
+            index[EVENT_FIELDS_RESOLVER.get_id(child)] = leaf
 
             # Calculating stats
-            stats_key = f"{child['eventType']} {child_event_status}"
+            stats_key = f"{event_type} {child_event_status}"
             stats[stats_key] += 1
             stats["TOTAL"] += 1
 
             # Simplifying body
-            if len(child["body"]) == 0:
+            if len(event_body) == 0:
                 leaf.pop("body")
 
             if body_to_simple_processors is not None:
-                if (eventType := child["eventType"]) in body_to_simple_processors:
-                    leaf["body"] = body_to_simple_processors[eventType](child["body"])
+                if event_type in body_to_simple_processors:
+                    leaf["body"] = body_to_simple_processors[event_type](event_body)
 
         current_children = get_children_from_parents_as_list(events, current_children, max_children)
         print(f"get_event_tree_from_parent - {iteration} len_children={len(current_children)} {datetime.now()}")
@@ -510,9 +510,16 @@ def get_event_tree_from_parent_id(
     tree, _ = get_event_tree_from_parent_events(
         events, current_children, depth, max_children, body_to_simple_processors
     )
-    tree["info"].update({"name": parent["eventName"], "type": parent["eventType"], "time": extract_time(parent)})
-    if len(parent["body"]) != 0:
-        tree["body"] = parent["body"]
+    tree["info"].update(
+        {
+            "name": EVENT_FIELDS_RESOLVER.get_name(parent),
+            "type": EVENT_FIELDS_RESOLVER.get_type(parent),
+            "time": extract_time(parent),
+        }
+    )
+    body = EVENT_FIELDS_RESOLVER.get_body(parent)
+    if len(body) != 0:
+        tree["body"] = body
 
     return tree
 
@@ -533,7 +540,7 @@ def sublist(events: List[Dict], start_time: datetime, end_time: datetime) -> Lis
     start_time = datetime.timestamp(start_time)
     end_time = datetime.timestamp(end_time)
     for event in events:
-        event_time = event["startTimestamp"]["epochSecond"]
+        event_time = EVENT_FIELDS_RESOLVER.get_start_timestamp(event)["epochSecond"]
         if start_time <= event_time <= end_time:
             result.append(event)
 
@@ -719,16 +726,19 @@ def build_roots_cache(events, depth, max_level):  # noqa
     prev_levels = get_roots(events, max_level)
     print("First level :", len(prev_levels))
     for prev_level in prev_levels:
-        result[prev_level["eventId"]] = {"eventName": prev_level["eventName"], "eventPath": prev_level["eventName"]}
+        result[EVENT_FIELDS_RESOLVER.get_id(prev_level)] = {
+            "eventName": EVENT_FIELDS_RESOLVER.get_name(prev_level),
+            "eventPath": EVENT_FIELDS_RESOLVER.get_name(prev_level),
+        }
     while level < depth:
         next_levels = get_children_from_parents_as_list(events, prev_levels, max_level)
         print("Next level :", len(next_levels))
         for next_level in next_levels:
-            event_id = next_level["eventId"]
-            parent_id = next_level["parentEventId"]
+            event_id = EVENT_FIELDS_RESOLVER.get_id(next_level)
+            parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(next_level)
             result[event_id] = {
-                "eventName": next_level["eventName"],
-                "eventPath": result[parent_id]["eventPath"] + "/" + next_level["eventName"],
+                "eventName": EVENT_FIELDS_RESOLVER.get_name(next_level),
+                "eventPath": result[parent_id]["eventPath"] + "/" + EVENT_FIELDS_RESOLVER.get_name(next_level),
             }
         prev_level = next_levels
         level += 1
@@ -746,7 +756,7 @@ def extract_time(event) -> str:
     Returns:
         str
     """
-    return misc_utils.extract_time_string(event["startTimestamp"])
+    return misc_utils.extract_time_string(EVENT_FIELDS_RESOLVER.get_start_timestamp(event))
 
 
 # STREAMING
@@ -790,12 +800,12 @@ def print_event(event: Dict) -> None:
 
     """
     print(
-        f"{extract_time(event)} > [{'ok' if event['successful'] else 'fail'}] "
-        f"Type: {event['eventType']} "
-        f"Name: {event['eventName']} "
-        f"ID: {event['eventId']} "
-        f"Parent:{event['parentEventId']} "
-        f"Body:{event['body']}"
+        f"{extract_time(event)} > [{'ok' if EVENT_FIELDS_RESOLVER.get_status(event) else 'fail'}] "
+        f"Type: {EVENT_FIELDS_RESOLVER.get_type(event)} "
+        f"Name: {EVENT_FIELDS_RESOLVER.get_name(event)} "
+        f"ID: {EVENT_FIELDS_RESOLVER.get_id(event)} "
+        f"Parent:{EVENT_FIELDS_RESOLVER.get_parent_id(event)} "
+        f"Body:{EVENT_FIELDS_RESOLVER.get_body(event)}"
     )
 
 
@@ -948,8 +958,8 @@ def print_children_from_parents(events: List[Dict], parents: List[Dict], max_eve
     print(f"####### Retrieved Children: {count}")
     for parent in parents:
         print(parent)
-        print(f">>>>>>> Children: {len(tree[parent['eventId']])}")
-        for child in tree[parent["eventId"]]:
+        print(f">>>>>>> Children: {len(tree[EVENT_FIELDS_RESOLVER.get_id(parent)])}")
+        for child in tree[EVENT_FIELDS_RESOLVER.get_id(parent)]:
             print_event(child)
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
@@ -972,22 +982,22 @@ def print_children_stats_from_parents(
     for parent in parents:
         start_timestamp, end_timestamp = 0, 0
         events_passed, events_failed = 0, 0
-        for child in tree[parent["eventId"]]:
-            child_start_time_epoch = child["startTimestamp"]["epochSecond"]
+        for child in tree[EVENT_FIELDS_RESOLVER.get_id(parent)]:
+            child_start_time_epoch = EVENT_FIELDS_RESOLVER.get_start_timestamp(child)["epochSecond"]
             if child_start_time_epoch > end_timestamp:
                 end_timestamp = child_start_time_epoch
             if start_timestamp == 0 or child_start_time_epoch < start_timestamp:
                 start_timestamp = child_start_time_epoch
 
-            if child["successful"]:
+            if EVENT_FIELDS_RESOLVER.get_status(child):
                 events_passed += 1
             else:
                 events_failed += 1
 
         table.append(
             [
-                parent["eventName"],
-                "[ok]" if parent["successful"] else "[fail]",
+                EVENT_FIELDS_RESOLVER.get_name(parent),
+                "[ok]" if EVENT_FIELDS_RESOLVER.get_status(parent) else "[fail]",
                 events_passed,
                 events_failed,
                 datetime.fromtimestamp(start_timestamp).isoformat(),

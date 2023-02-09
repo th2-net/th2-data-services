@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 # # # EXPERIMENTAL
-# def get__find_key(record: dict, key_to_find: str) -> str:
+# def _find_key(record: dict, key_to_find: str) -> str:
 #     if key_to_find in record:
 #         return key_to_find
 #
@@ -16,10 +16,10 @@ from abc import ABC, abstractmethod
 #
 #     @staticmethod
 #     def get(record, key):
-#         key = _find_key(record, key)
-#         if not key:
+#         key_found = _find_key(record, key)
+#         if not key_found:
 #             raise KeyError(key)
-#         return record[key]
+#         return record[key_found]
 #
 #     @staticmethod
 #     def find(record, key):

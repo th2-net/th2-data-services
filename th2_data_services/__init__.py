@@ -27,8 +27,8 @@ from th2_data_services.utils.resolver import EventFieldsResolver, MessageFieldsR
 INTERACTIVE_MODE = False  # Script mode by default.
 
 # Global variable for utils methods.
-EVENT_RESOLVER: EventFieldsResolver
-MESSAGE_RESOLVER: MessageFieldsResolver
+EVENT_FIELDS_RESOLVER: EventFieldsResolver
+MESSAGE_FIELDS_RESOLVER: MessageFieldsResolver
 
 
 # LOG def add_stderr_logger(level=logging.DEBUG):
