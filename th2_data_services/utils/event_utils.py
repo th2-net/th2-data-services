@@ -13,6 +13,7 @@ from tabulate import tabulate
 #   3. Rename all docstrings word Gets to Returns. That's different things.
 
 
+# STREAMING
 def get_category_frequencies(
     events: List[Dict], categories: List[str], categorizer: Callable, aggregation_level: str = "seconds"
 ) -> List[List[str]]:
@@ -36,6 +37,7 @@ def get_category_frequencies(
     )
 
 
+# STREAMING
 # TODO - slava
 #   Do we really need it? Why user cannot just use this one line?
 #   Maybe better to have prepared list of categorizers? e.g. in form of Adapters.
@@ -85,8 +87,7 @@ def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status
         if not ignore_status:
             status = " [ok]" if event["successful"] else " [fail]"
             category += status
-        else:
-            event_categories[category] += 1
+        event_categories[category] += 1
 
     return event_categories
 
@@ -131,6 +132,7 @@ def get_attached_message_ids(events: List[Dict]) -> Set[str]:
 
 
 # USEFUL
+# STREAMING
 # TODO - NOT-READY -- event["parentEventId, eventId"] should be updated by resolver
 # TODO - It returns only parent events that not present in the events.
 #   Perhaps we need to find better name
@@ -208,6 +210,7 @@ def get_type_totals(events: List[Dict]) -> Dict[str, int]:
     return event_types
 
 
+# NOT STREAMING
 # TODO - USEFUL ???
 #   What the example of this? look very rarely need to use
 # Will return list! Perhaps it's better to return Data?
@@ -240,6 +243,7 @@ def get_events(events: List[Dict], event_type: str, count: int, start: int = 0, 
     return result
 
 
+# NOT STREAMING
 def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> List[Dict]:
     """Gets limited list of events of linked to any message within specified messages objects collection.
 
@@ -264,6 +268,7 @@ def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> 
     return result
 
 
+# NOT STREAMING
 def get_events_by_category(
     events: List[Dict], category: str, count: int, categorizer: Callable, start=0, failed=False
 ) -> List[Dict]:
@@ -296,6 +301,7 @@ def get_events_by_category(
     return result
 
 
+# NOT STREAMING
 def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
     """Gets limited list of root events (events without parents).
 
@@ -321,6 +327,7 @@ def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
     return result
 
 
+# NOT STREAMING
 def get_parents(events: List[Dict], children: List[Dict]):
     """Gets all parent events of linked to any event within specified events objects collection.
 
@@ -333,6 +340,7 @@ def get_parents(events: List[Dict], children: List[Dict]):
     return [event for event in events if event["eventId"] in parent_ids]
 
 
+# NOT STREAMING
 def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: int) -> Tuple[List[Dict], Dict]:
     """Gets limited list of direct children events.
 
@@ -359,6 +367,7 @@ def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: 
     return children, resolved_parent
 
 
+# NOT STREAMING
 def get_children_from_parents(events: List[Dict], parents: List[Dict], max_events: int) -> Tuple[Dict[str, list], int]:
     """Gets limited list of direct children events for each event in parents.
 
@@ -384,6 +393,7 @@ def get_children_from_parents(events: List[Dict], parents: List[Dict], max_event
     return result, events_count
 
 
+# NOT STREAMING
 def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], max_events: int) -> List[Dict]:
     """Gets limited list of direct children events for each event in parents.
 
@@ -409,6 +419,7 @@ def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], m
     return result
 
 
+# NOT STREAMING
 def get_event_tree_from_parent_events(
     events: List[Dict], parents: List[Dict], depth: int, max_children: int, body_to_simple_processors: Dict = None
 ) -> Tuple[Dict, Dict]:
@@ -478,6 +489,7 @@ def get_event_tree_from_parent_events(
     return tree, index
 
 
+# NOT STREAMING
 def get_event_tree_from_parent_id(
     events: List[Dict], parent_id: str, depth: int, max_children: int, body_to_simple_processors: Dict = None
 ) -> Dict:
@@ -505,6 +517,7 @@ def get_event_tree_from_parent_id(
     return tree
 
 
+# NOT STREAMING
 def sublist(events: List[Dict], start_time: datetime, end_time: datetime) -> List[Dict]:
     """Filter Events Based On Timeframe.
 
@@ -527,6 +540,7 @@ def sublist(events: List[Dict], start_time: datetime, end_time: datetime) -> Lis
     return result
 
 
+# NOT STREAMING
 def extract_parent_as_json(
     events: Dict,
     parent_id: str,
@@ -547,14 +561,15 @@ def extract_parent_as_json(
     """
     sub_events = sublist([events], datetime.fromisoformat(interval_start), datetime.fromisoformat(interval_end))
     print(f"Sublist Length = {len(sub_events)}")
-    tree, _ = get_event_tree_from_parent_id(sub_events, parent_id, 10, 10000, body_to_simple_processors)
-    types_set = list(set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL")))
-    tree["info"]["types_list"] = types_set
+    tree = get_event_tree_from_parent_id(sub_events, parent_id, 10, 10000, body_to_simple_processors)
+    types_set = set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL"))
+    tree["info"]["types_list"] = list(types_set)
 
     with open(json_file_path, "w") as file:
         json.dump(tree, file, indent=3)
 
 
+# NOT STREAMING
 def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callable = None) -> None:
     """Saves Tree As JSON Format.
 
@@ -592,6 +607,7 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
             json.dump(leaf, out_file, indent=3)
 
 
+# STREAMING
 def transform_tree(index: Dict, post_processors: Dict[str, Callable]) -> None:
     """Transform Tree.
 
@@ -610,6 +626,7 @@ def transform_tree(index: Dict, post_processors: Dict[str, Callable]) -> None:
             leaf.update(modified_leaf)
 
 
+# STREAMING? | Depends On `processor`
 def process_trees_from_jsons(path_pattern: str, processor: Callable) -> None:  # noqa
     # TODO: Add Docstings
     dir_path = path_pattern[: path_pattern.rindex("/")] if "/" in path_pattern else ""
@@ -623,6 +640,7 @@ def process_trees_from_jsons(path_pattern: str, processor: Callable) -> None:  #
                 processor(tree)
 
 
+# STREAMING
 def tree_walk(tree: Dict, processor: Callable, tree_filter: Callable = None, root_path: List = []) -> None:  # noqa
     # TODO: Add Docstings
     for name, leaf in tree.items():
@@ -640,11 +658,13 @@ def tree_walk(tree: Dict, processor: Callable, tree_filter: Callable = None, roo
         tree_walk(leaf, processor, tree_filter=tree_filter, root_path=new_path)
 
 
+# STREAMING
 def tree_walk_from_jsons(path_pattern, processor, tree_filter):  # noqa
     # TODO: Add Docstings
     process_trees_from_jsons(path_pattern, lambda tree: tree_walk(tree, processor, tree_filter=tree_filter))
 
 
+# STREAMING
 def tree_update_totals(categorizer, result, p, n, l):  # noqa
     # TODO: Add Docstings
     category = categorizer(p, n, l)
@@ -654,6 +674,7 @@ def tree_update_totals(categorizer, result, p, n, l):  # noqa
         result[category] += 1
 
 
+# STREAMING
 def tree_get_category_totals(tree, categorizer, tree_filter):  # noqa
     # TODO: Add Docstings
     result = {}
@@ -661,6 +682,7 @@ def tree_get_category_totals(tree, categorizer, tree_filter):  # noqa
     return result
 
 
+# STREAMING
 def tree_get_category_totals_from_jsons(path_pattern, categorizer, tree_filter):  # noqa
     # TODO: Add Docstings
     result = {}
@@ -679,6 +701,7 @@ def search_tree(tree, filter_lambda):  # noqa
     return result
 
 
+# NOT STREAMING
 def search_tree_from_jsons(path_pattern, filter_lambda):  # noqa
     # TODO: Add Docstings
     result = []
@@ -688,6 +711,7 @@ def search_tree_from_jsons(path_pattern, filter_lambda):  # noqa
     return result
 
 
+# NOT STREAMING
 def build_roots_cache(events, depth, max_level):  # noqa
     # TODO: Add Docstings
     result = {}
@@ -708,9 +732,11 @@ def build_roots_cache(events, depth, max_level):  # noqa
             }
         prev_level = next_levels
         level += 1
+
     return result
 
 
+# STREAMING
 def extract_time(event) -> str:
     """Gets string representation of events timestamp.
 
@@ -723,6 +749,7 @@ def extract_time(event) -> str:
     return misc_utils.extract_time_string(event["startTimestamp"])
 
 
+# STREAMING
 def print_attached_messages_totals(events: List[Dict], return_html: bool = False) -> Union[None, str]:
     """Prints Dictionary quantities of messages attached to events for each stream + direction.
 
@@ -735,6 +762,7 @@ def print_attached_messages_totals(events: List[Dict], return_html: bool = False
     return misc_utils.print_stats_dict(data, return_html)
 
 
+# STREAMING
 def print_category_totals(
     events: List[Dict], categorizer: Callable, return_html: bool = False, ignore_status: bool = False
 ) -> Union[None, str]:
@@ -753,6 +781,7 @@ def print_category_totals(
     return misc_utils.print_stats_dict(data, return_html)
 
 
+# STREAMING
 def print_event(event: Dict) -> None:
     """Prints event in human-readable format.
 
@@ -770,6 +799,7 @@ def print_event(event: Dict) -> None:
     )
 
 
+# NOT STREAMING
 def print_events_raw(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> None:
     """Prints limited list of events of specific eventType in dictionary format.
 
@@ -786,6 +816,7 @@ def print_events_raw(events: List[Dict], event_type: str, count: int, start: int
         print(r)
 
 
+# NOT STREAMING
 def print_some(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> None:
     """Prints limited list of events of specific eventType in human-readable format.
 
@@ -802,6 +833,7 @@ def print_some(events: List[Dict], event_type: str, count: int, start: int = 0, 
         print_event(r)
 
 
+# NOT STREAMING
 def print_some_by_category(
     events: List[Dict], category: str, count: int, categorizer: Callable, start: int = 0, failed: bool = False
 ):  # noqa
@@ -811,6 +843,7 @@ def print_some_by_category(
         print_event(r)
 
 
+# NOT STREAMING
 def print_roots(events: List[Dict], count: int, start: int = 0) -> None:
     """Prints limited list of root events (events without parents).
 
@@ -825,6 +858,7 @@ def print_roots(events: List[Dict], count: int, start: int = 0) -> None:
         print_event(r)
 
 
+# NOT STREAMING
 def print_children(events: List[Dict], parent: str, count: int, verbose: bool = True):
     """Prints limited list of direct children events.
 
@@ -841,6 +875,7 @@ def print_children(events: List[Dict], parent: str, count: int, verbose: bool = 
         fprint(r)
 
 
+# STREAMING
 def print_type_totals(events: List[Dict], return_html: bool = False) -> Union[None, str]:
     """Prints dictionary quantities of events for different event types.
 
@@ -855,6 +890,7 @@ def print_type_totals(events: List[Dict], return_html: bool = False) -> Union[No
     return misc_utils.print_stats_dict(event_types)
 
 
+# STREAMING
 def print_type_frequencies(
     events: List[Dict], event_types: List[str], aggregation_level: str = "seconds", return_html=False
 ) -> Union[None, str]:
@@ -874,6 +910,7 @@ def print_type_frequencies(
         print(tabulate(table, headers="firstrow", tablefmt="grid"))
 
 
+# STREAMING
 def print_category_frequencies(
     events: List[Dict],
     event_types: List[str],
@@ -897,6 +934,7 @@ def print_category_frequencies(
     return misc_utils.print_stats_dict(data, return_html)
 
 
+# NOT STREAMING
 def print_children_from_parents(events: List[Dict], parents: List[Dict], max_events: int = 10_000) -> None:
     """Prints limited list of direct children events for each event in parents_list.
 
@@ -916,6 +954,7 @@ def print_children_from_parents(events: List[Dict], parents: List[Dict], max_eve
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
 
+# NOT STREAMING
 def print_children_stats_from_parents(
     events: List[Dict], parents: List[Dict], max_events: int = 10_000, return_html: bool = False
 ) -> Union[None, str]:
