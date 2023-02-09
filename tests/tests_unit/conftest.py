@@ -5,10 +5,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, NamedTuple, Sequence, Optional
 import pytest
-
+from tests.tests_unit.test_event_trees.demo_etc_data import demo_etc_data_big, demo_etc_data_small
 from tests.tests_unit.utils import LogsChecker
 from th2_data_services import Data
-from th2_data_services.event_tree import EventTree
 from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
 from th2_data_services.event_tree.etc_driver import Th2EventType
 from th2_data_services.event_tree.exceptions import FieldIsNotExist
@@ -1954,11 +1953,6 @@ class DemoDriver(IETCDriver):
         ...
 
     def build_stub_event(self, id_):
-        # event = self.stub_builder.template
-        # for kwarg in kwargs:
-        #     if kwarg in event:
-        #         event[kwarg] = kwargs[kwarg]
-        # print(event)
         return self.stub_builder.build({self.event_struct.EVENT_ID: id_})
 
     def stub_event_name(self):
@@ -1971,134 +1965,8 @@ def demo_etc_driver():
 
 
 @pytest.fixture
-def dummy_etc_data():
-    return [
-        {"eventName": "Root Event", "eventId": "root_id", "data": {"data": [1, 2, 3, 4, 5]}},
-        {"eventName": "Event A1", "eventId": "a1_id", "data": {"data": "A1"}, "parentEventId": "root_id"},
-        {
-            "eventName": "Event A1_child1",
-            "eventId": "a1_child1_id",
-            "data": {"data": "A1_child1"},
-            "parentEventId": "a1_id",
-        },
-        {
-            "eventName": "Event A1_child2",
-            "eventId": "a1_child2_id",
-            "data": {"data": "A1_child2"},
-            "parentEventId": "a1_id",
-        },
-        {"eventName": "Event B1", "eventId": "b1_id", "data": {"data": "B1"}, "parentEventId": "root_id"},
-        {
-            "eventName": "Event B1_child1",
-            "eventId": "b1_child1_id",
-            "data": {"data": "B1_child1"},
-            "parentEventId": "b1_id",
-        },
-        {
-            "eventName": "Event B1_child2",
-            "eventId": "b1_child2_id",
-            "data": {"data": "B1_child2"},
-            "parentEventId": "b1_id",
-        },
-        {
-            "eventName": "Event B1_child3",
-            "eventId": "b1_child3_id",
-            "data": {"data": "B1_child3"},
-            "parentEventId": "b1_id",
-        },
-        {"eventName": "Event C1", "eventId": "c1_id", "data": {"data": "C1"}, "parentEventId": "root_id"},
-        {"eventName": "Event D1", "eventId": "d1_id", "data": {"data": "D1"}, "parentEventId": "c1_id"},
-        {"eventName": "Event E1", "eventId": "e1_id", "data": {"data": "E1"}, "parentEventId": "d1_id"},
-        {
-            "eventName": "Event E1_child1",
-            "eventId": "e1_child1_id",
-            "data": {"data": "E1_child1"},
-            "parentEventId": "d1_id",
-        },
-        {
-            "eventName": "Event E1_child2",
-            "eventId": "e1_child2_id",
-            "data": {"data": "E1_child2"},
-            "parentEventId": "d1_id",
-        },
-        {
-            "eventName": "Event E1_child3",
-            "eventId": "e1_child3_id",
-            "data": {"data": "E1_child3"},
-            "parentEventId": "d1_id",
-        },
-        #
-        {"eventName": "Root Event 2", "eventId": "root_id2", "data": {"data": [6, 7, 8, 9, 10]}},
-        {"eventName": "Event A2", "eventId": "a2_id", "data": {"data": "A2"}, "parentEventId": "root_id2"},
-        {
-            "eventName": "Event A2_child1",
-            "eventId": "a2_child1_id",
-            "data": {"data": "A2_child1"},
-            "parentEventId": "a2_id",
-        },
-        {
-            "eventName": "Event A2_child2",
-            "eventId": "a2_child2_id",
-            "data": {"data": "A2_child2"},
-            "parentEventId": "a2_id",
-        },
-        {"eventName": "Event B2", "eventId": "b2_id", "data": {"data": "B2"}, "parentEventId": "root_id2"},
-        {
-            "eventName": "Event B2_child1",
-            "eventId": "b2_child1_id",
-            "data": {"data": "B2_child1"},
-            "parentEventId": "b2_id",
-        },
-        {
-            "eventName": "Event B2_child2",
-            "eventId": "b2_child2_id",
-            "data": {"data": "B2_child2"},
-            "parentEventId": "b2_id",
-        },
-        {
-            "eventName": "Event B2_child3",
-            "eventId": "b2_child3_id",
-            "data": {"data": "B2_child3"},
-            "parentEventId": "b2_id",
-        },
-        {"eventName": "Event C2", "eventId": "c2_id", "data": {"data": "C2"}, "parentEventId": "root_id2"},
-        {"eventName": "Event D2", "eventId": "d2_id", "data": {"data": "D2"}, "parentEventId": "c2_id"},
-        {"eventName": "Event E2", "eventId": "e2_id", "data": {"data": "E2"}, "parentEventId": "d2_id"},
-        {
-            "eventName": "Event E2_child1",
-            "eventId": "e2_child1_id",
-            "data": {"data": "E2_child1"},
-            "parentEventId": "e2_id",
-        },
-        {
-            "eventName": "Event E2_child2",
-            "eventId": "e2_child2_id",
-            "data": {"data": "E2_child2"},
-            "parentEventId": "e2_id",
-        },
-        {
-            "eventName": "Event E2_child3",
-            "eventId": "e2_child3_id",
-            "data": {"data": "E2_child3"},
-            "parentEventId": "e2_id",
-        },
-        #
-        {"eventName": "Root Event 3", "eventId": "root_id3", "data": {"data": [11, 12]}},
-        {"eventName": "Event A3", "eventId": "a3_id", "data": {"data": "A3"}, "parentEventId": "root_id3"},
-        {
-            "eventName": "Event A3_child1",
-            "eventId": "a3_child1_id",
-            "data": {"data": "A3_child1"},
-            "parentEventId": "a3_id",
-        },
-        #
-        {"eventName": "Root Event 4", "eventId": "root_id4", "data": {"data": [13, 14]}, "parentEventId": "Unknown"},
-    ]
-
-
-@pytest.fixture
-def demo_etc(demo_etc_driver, dummy_etc_data):
-    data = Data(dummy_etc_data)
+def demo_etc(demo_etc_driver):
+    data = Data(demo_etc_data_small)
     etc = EventTreeCollection(demo_etc_driver)
     etc.build(data)
     return etc
@@ -2113,8 +1981,8 @@ def demo_etc_with_general_data(demo_etc_driver, general_data):
 
 
 @pytest.fixture
-def demo_petc(demo_etc_driver, dummy_etc_data):
-    data = Data(dummy_etc_data)
+def demo_petc(demo_etc_driver):
+    data = Data(demo_etc_data_small)
     etc = ParentEventTreeCollection(demo_etc_driver)
     etc.build(data)
     return etc
@@ -2126,3 +1994,11 @@ def demo_petc_with_general_data(demo_etc_driver, general_data):
     petc = ParentEventTreeCollection(demo_etc_driver)
     petc.build(data)
     return petc
+
+
+@pytest.fixture
+def demo_etc_big(demo_etc_driver) -> EventTreeCollection:
+    data = Data(demo_etc_data_big)
+    etc = EventTreeCollection(demo_etc_driver)
+    etc.build(data)
+    return etc
