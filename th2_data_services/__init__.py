@@ -11,10 +11,10 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from dataclasses import dataclass
 
 from th2_data_services.data import Data
 from th2_data_services.filter import Filter
+from th2_data_services.utils.resolver import EventFieldsResolver, MessageFieldsResolver
 
 # LOG import logging
 # LOG from logging import NullHandler
@@ -27,35 +27,8 @@ from th2_data_services.filter import Filter
 INTERACTIVE_MODE = False  # Script mode by default.
 
 # Global variable for utils methods.
-@dataclass
-class EVENT_STRUCT:
-    EVENT_ID: str
-    PARENT_EVENT_ID: str
-    STATUS: str
-    NAME: str
-    BATCH_ID: str
-    IS_BATCHED: str
-    EVENT_TYPE: str
-    END_TIMESTAMP: str
-    START_TIMESTAMP: str
-    ATTACHED_MESSAGES_IDS: str
-    BODY: str
-
-
-@dataclass
-class MESSAGE_STRUCT:
-    DIRECTION: str
-    SESSION_ID: str
-    MESSAGE_TYPE: str
-    CONNECTION_ID: str
-    SESSION_ALIAS: str
-    SUBSEQUENCE: str
-    SEQUENCE: str
-    TIMESTAMP: str
-    BODY: str
-    BODY_BASE64: str
-    MESSAGE_ID: str
-    ATTACHED_EVENT_IDS: str
+EVENT_RESOLVER: EventFieldsResolver
+MESSAGE_RESOLVER: MessageFieldsResolver
 
 
 # LOG def add_stderr_logger(level=logging.DEBUG):

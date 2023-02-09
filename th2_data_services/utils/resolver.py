@@ -1,6 +1,7 @@
-from th2_data_services import EVENT_STRUCT, MESSAGE_STRUCT
+from abc import ABC, abstractmethod
 
 
+# # # EXPERIMENTAL
 # def _find_key(record: dict, key_to_find: str) -> str:
 #     if key_to_find in record:
 #         return key_to_find
@@ -19,104 +20,128 @@ from th2_data_services import EVENT_STRUCT, MESSAGE_STRUCT
 #         if not key:
 #             raise KeyError(key)
 #         return record[key]
+#
+#     @staticmethod
+#     def find(record, key):
+#         key = _find_key(record, key)
+#         return record.get(key)
+# # # EXPERIMENTAL
 
-# @staticmethod
-# def find(record, key):
-#     key = _find_key(record, key)
-#     return record.get(key)
 
-
-class GetEventFields:
+class EventFieldsResolver(ABC):
     @staticmethod
+    @abstractmethod
     def id(self, event):
-        return event[EVENT_STRUCT.EVENT_ID]
+        pass
 
     @staticmethod
+    @abstractmethod
     def parent_id(self, event):
-        return event[EVENT_STRUCT.PARENT_EVENT_ID]
+        pass
 
     @staticmethod
+    @abstractmethod
     def status(self, event):
-        return event[EVENT_STRUCT.STATUS]
+        pass
 
     @staticmethod
+    @abstractmethod
     def name(self, event):
-        return event[EVENT_STRUCT.NAME]
+        pass
 
     @staticmethod
+    @abstractmethod
     def batch_id(self, event):
-        return event[EVENT_STRUCT.BATCH_ID]
+        pass
 
     @staticmethod
+    @abstractmethod
     def is_batched(self, event):
-        return event[EVENT_STRUCT.IS_BATCHED]
+        pass
 
     @staticmethod
+    @abstractmethod
     def type(self, event):
-        return event[EVENT_STRUCT.EVENT_TYPE]
+        pass
 
     @staticmethod
+    @abstractmethod
     def start_timestamp(self, event):
-        return event[EVENT_STRUCT.START_TIMESTAMP]
+        pass
 
     @staticmethod
+    @abstractmethod
     def end_timestamp(self, event):
-        return event[EVENT_STRUCT.END_TIMESTAMP]
+        pass
 
     @staticmethod
+    @abstractmethod
     def attached_messages_ids(self, event):
-        return event[EVENT_STRUCT.ATTACHED_MESSAGES_IDS]
+        pass
 
     @staticmethod
+    @abstractmethod
     def body(self, event):
-        return event[EVENT_STRUCT.BODY]
+        pass
 
 
-class GetMessageFields:
+class MessageFieldsResolver(ABC):
     @staticmethod
+    @abstractmethod
     def direction(self, message):
-        return message[MESSAGE_STRUCT.DIRECTION]
+        pass
 
     @staticmethod
+    @abstractmethod
     def session_id(self, message):
-        return message[MESSAGE_STRUCT.SESSION_ID]
+        pass
 
     @staticmethod
+    @abstractmethod
     def type(self, message):
-        return message[MESSAGE_STRUCT.MESSAGE_TYPE]
+        pass
 
     @staticmethod
+    @abstractmethod
     def connection_id(self, message):
-        return message[MESSAGE_STRUCT.CONNECTION_ID]
+        pass
 
     @staticmethod
+    @abstractmethod
     def session_alias(self, message):
-        return message[MESSAGE_STRUCT.SESSION_ALIAS]
+        pass
 
     @staticmethod
+    @abstractmethod
     def subsequence(self, message):
-        return message[MESSAGE_STRUCT.SUBSEQUENCE]
+        pass
 
     @staticmethod
+    @abstractmethod
     def sequence(self, message):
-        return message[MESSAGE_STRUCT.SEQUENCE]
+        pass
 
     @staticmethod
+    @abstractmethod
     def timestamp(self, message):
-        return message[MESSAGE_STRUCT.TIMESTAMP]
+        pass
 
     @staticmethod
+    @abstractmethod
     def body(self, message):
-        return message[MESSAGE_STRUCT.BODY]
+        pass
 
     @staticmethod
+    @abstractmethod
     def body_base64(self, message):
-        return message[MESSAGE_STRUCT.BODY_BASE64]
+        pass
 
     @staticmethod
+    @abstractmethod
     def id(self, message):
-        return message[MESSAGE_STRUCT.MESSAGE_ID]
+        pass
 
     @staticmethod
+    @abstractmethod
     def attached_event_ids(self, message):
-        return message[MESSAGE_STRUCT.ATTACHED_EVENT_IDS]
+        pass

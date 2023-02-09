@@ -25,6 +25,7 @@
 - [`utils.categorizers`](./utils.categorizers.md#module-utilscategorizers)
 - [`utils.json`](./utils.json.md#module-utilsjson)
 - [`utils.misc_utils`](./utils.misc_utils.md#module-utilsmisc_utils)
+- [`utils.resolver`](./utils.resolver.md#module-utilsresolver)
 
 ## Classes
 
@@ -42,6 +43,8 @@
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
 - [`categorizers.EventCategorizer`](./utils.categorizers.md#class-eventcategorizer)
 - [`json.BufferedJSONProcessor`](./utils.json.md#class-bufferedjsonprocessor)
+- [`resolver.EventFieldsResolver`](./utils.resolver.md#class-eventfieldsresolver)
+- [`resolver.MessageFieldsResolver`](./utils.resolver.md#class-messagefieldsresolver)
 
 ## Functions
 
