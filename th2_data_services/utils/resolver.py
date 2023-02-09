@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 # # # EXPERIMENTAL
-# def _find_key(record: dict, key_to_find: str) -> str:
+# def get__find_key(record: dict, key_to_find: str) -> str:
 #     if key_to_find in record:
 #         return key_to_find
 #
@@ -31,117 +31,117 @@ from abc import ABC, abstractmethod
 class EventFieldsResolver(ABC):
     @staticmethod
     @abstractmethod
-    def id(self, event):
+    def get_id(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def parent_id(self, event):
+    def get_parent_id(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def status(self, event):
+    def get_status(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def name(self, event):
+    def get_name(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def batch_id(self, event):
+    def get_batch_id(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def is_batched(self, event):
+    def get_is_batched(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def type(self, event):
+    def get_type(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def start_timestamp(self, event):
+    def get_start_timestamp(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def end_timestamp(self, event):
+    def get_end_timestamp(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def attached_messages_ids(self, event):
+    def get_attached_messages_ids(event):
         pass
 
     @staticmethod
     @abstractmethod
-    def body(self, event):
+    def get_body(event):
         pass
 
 
 class MessageFieldsResolver(ABC):
     @staticmethod
     @abstractmethod
-    def direction(self, message):
+    def get_direction(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def session_id(self, message):
+    def get_session_id(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def type(self, message):
+    def get_type(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def connection_id(self, message):
+    def get_connection_id(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def session_alias(self, message):
+    def get_session_alias(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def subsequence(self, message):
+    def get_subsequence(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def sequence(self, message):
+    def get_sequence(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def timestamp(self, message):
+    def get_timestamp(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def body(self, message):
+    def get_body(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def body_base64(self, message):
+    def get_body_base64(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def id(self, message):
+    def get_id(message):
         pass
 
     @staticmethod
     @abstractmethod
-    def attached_event_ids(self, message):
+    def get_attached_event_ids(message):
         pass
