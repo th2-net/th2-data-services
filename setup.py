@@ -48,6 +48,12 @@ CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
     "lwdp2": [
         "th2-data-services-lwdp>=2,<3",
     ],
+    "utils-rpt-viewer": [
+        "th2-data-services-utils-rpt-viewer",
+    ],
+    "utils-advanced": [
+        "th2-data-services-utils",
+    ]
 }
 
 setup(
