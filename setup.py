@@ -15,7 +15,7 @@
 import json
 from typing import Dict, List
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 with open("package_info.json", "r") as file:
     package_info = json.load(file)
@@ -62,7 +62,7 @@ setup(
     license="Apache License 2.0",
     python_requires=">=3.7",
     install_requires=requirements,
-    packages = ['th2', 'th2.data_services','th2.data_services.config','th2.data_services.event_tree','th2.data_services.interfaces','th2.data_services.interfaces.utils','th2.data_services.utils'],
+    packages = find_namespace_packages(include=['th2.*']),
     extras_require=CORE_EXTRAS_DEPENDENCIES,
     include_package_data=True,
 )
