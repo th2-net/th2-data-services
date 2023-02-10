@@ -251,7 +251,7 @@ def extract_time(message: Dict) -> str:
     Returns:
         str
     """
-    return misc_utils.extract_time_string(message["timestamp"])
+    return misc_utils.extract_timestamp(message["timestamp"])
 
 
 # STREAMABLE

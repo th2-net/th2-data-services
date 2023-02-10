@@ -746,7 +746,7 @@ def extract_time(event) -> str:
     Returns:
         str
     """
-    return misc_utils.extract_time_string(event["startTimestamp"])
+    return misc_utils.extract_timestamp(event["startTimestamp"])
 
 
 # STREAMING

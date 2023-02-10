@@ -49,19 +49,19 @@
 - [`version_checker.get_package_version`](./provider.utils.version_checker.md#function-get_package_version)
 - [`version_checker.get_version_by_pip`](./provider.utils.version_checker.md#function-get_version_by_pip)
 - [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
-- [`misc_utils.analyze_stream_sequence`](./utils.misc_utils.md#function-analyze_stream_sequence)
-- [`misc_utils.create_qty_distribution`](./utils.misc_utils.md#function-create_qty_distribution)
-- [`misc_utils.extract_time_string`](./utils.misc_utils.md#function-extract_time_string)
+- [`misc_utils.analyze_stream_sequence`](./utils.misc_utils.md#function-analyze_stream_sequence): Analyzes stream sequence.
+- [`misc_utils.create_qty_distribution`](./utils.misc_utils.md#function-create_qty_distribution): Returns qty distribution.
+- [`misc_utils.extract_timestamp`](./utils.misc_utils.md#function-extract_timestamp): Extracts timestamp from argument.
 - [`misc_utils.get_category_measurement_p`](./utils.misc_utils.md#function-get_category_measurement_p)
 - [`misc_utils.get_category_totals_p`](./utils.misc_utils.md#function-get_category_totals_p)
-- [`misc_utils.get_objects_frequencies`](./utils.misc_utils.md#function-get_objects_frequencies)
-- [`misc_utils.print_measurement_dict`](./utils.misc_utils.md#function-print_measurement_dict)
-- [`misc_utils.print_stats_dict`](./utils.misc_utils.md#function-print_stats_dict)
-- [`misc_utils.process_objects_stream`](./utils.misc_utils.md#function-process_objects_stream)
-- [`misc_utils.time_interval_filter_seconds_precision`](./utils.misc_utils.md#function-time_interval_filter_seconds_precision)
+- [`misc_utils.get_objects_frequencies`](./utils.misc_utils.md#function-get_objects_frequencies): Gets objects frequencies.
+- [`misc_utils.print_measurement_dict`](./utils.misc_utils.md#function-print_measurement_dict): Prints Measurements.
+- [`misc_utils.print_stats_dict`](./utils.misc_utils.md#function-print_stats_dict): Prints Statistics.
+- [`misc_utils.process_objects_stream`](./utils.misc_utils.md#function-process_objects_stream): Processes object stream with processors.
+- [`misc_utils.time_interval_filter_seconds_precision`](./utils.misc_utils.md#function-time_interval_filter_seconds_precision): TODO: Add Description.
 - [`misc_utils.time_slice_object_filter`](./utils.misc_utils.md#function-time_slice_object_filter)
 - [`misc_utils.timestamp_aggregation_key`](./utils.misc_utils.md#function-timestamp_aggregation_key)
-- [`misc_utils.timestamp_delta_us`](./utils.misc_utils.md#function-timestamp_delta_us)
+- [`misc_utils.timestamp_delta_us`](./utils.misc_utils.md#function-timestamp_delta_us): Returns timestamp delta in milliseconds.
 - [`misc_utils.update_int_measurement`](./utils.misc_utils.md#function-update_int_measurement)
 
 
