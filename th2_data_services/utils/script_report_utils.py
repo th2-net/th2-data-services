@@ -1,53 +1,60 @@
-from qa_utils import message_utils
-from qa_utils import event_utils
+from typing import List
+
+import message_utils
+import event_utils
 from datetime import datetime
 
 
-def tag_rows2flat_dict(collection, flat_list, prefix):
+def tag_rows_to_flat_dict(collection: Dict, flat_list: Dict, prefix: str) -> None:  # noqa
+    # TODO: Add docstrings
     rows = collection["rows"]
     for tag, row in rows.items():
         if row["type"] == "row":
+            # TODO: Remove comment?
             # flat_list[prefix+tag] = row["columns"]["fieldValue"]
-            columns = []
-            for v in row["columns"].values():
-                columns.append(str(v))
+            columns = [str(column) for column in row["columns"].values()]
             flat_list[prefix + tag] = ",".join(columns)
-
         if row["type"] == "collection":
-            new_prefix = prefix + tag + "."
-            tag_rows2flat_dict(row, flat_list, new_prefix)
+            new_prefix = f"{prefix}{tag}."
+            tag_rows_to_flat_dict(row, flat_list, new_prefix)
 
 
-def format_comparison_line(field, failed_collection=False):
+def format_comparison_line(field: Dict, failed_collection: bool = False) -> str:  # noqa
+    # TODO: Add docstrings
     key_piece = "!" if field["key"] else " "
     status_piece = "? "
     if failed_collection:
         status_piece = "# "
-        expected_piece = " [" + field["expected"] + "]" if "expected" in field else " [no_group]"
+        expected_piece = f" [{field['expected']}]" if "expected" in field else " [no_group]"
         actual_piece = field["actual"] if "actual" in field else "no_group"
     else:
         if "status" in field:
             status_piece = "# " if field["status"] == "FAILED" else "  "
-        expected_piece = " [" + field["expected"] + "]" if "expected" in field else " [no_val]"
+        expected_piece = f" [{field['expected']}]" if "expected" in field else " [no_val]"
         actual_piece = field["actual"] if "actual" in field else "no_val"
     return key_piece + status_piece + actual_piece + expected_piece
 
 
-def verification_fields2flat_dict(collection, flat_list, prefix, failed_collection=False):
+def verification_fields_to_flat_dict(
+    collection: Dict, flat_list: Dict, prefix, failed_collection: bool = False
+):  # noqa
+    # TODO: Add docstrings
     if "fields" not in collection:
         flat_list.update(collection)
         return
+
     fields = collection["fields"]
     for tag, field in fields.items():
         if field["type"] == "field":
             flat_list[prefix + tag] = format_comparison_line(field, failed_collection)
         if field["type"] == "collection":
             next_failed_collection = ("status" in field and field["status"] == "FAILED") or failed_collection
-            new_prefix = prefix + tag + "."
-            verification_fields2flat_dict(field, flat_list, new_prefix, next_failed_collection)
+            new_prefix = f"{prefix}{tag}."
+            verification_fields_to_flat_dict(field, flat_list, new_prefix, next_failed_collection)
 
 
-def check_if_verification_leaf_failed(leaf):
+def check_if_verification_leaf_failed(leaf: Dict) -> bool:  # noqa
+    # TODO: Add docstrings
     if "fields" not in leaf:
         return False
 
@@ -66,22 +73,24 @@ def check_if_verification_leaf_failed(leaf):
     return False
 
 
-def verification_fields2simple_dict(collection, parent_dict, failed_collection=False):
+def verification_fields_to_simple_dict(collection: Dict, parent: Dict, failed_collection: bool = False) -> None:  # noqa
+    # TODO: Add docstrings
     if "fields" not in collection:
-        parent_dict.update(collection)
+        parent.update(collection)
         return
     fields = collection["fields"]
     for tag, field in fields.items():
         if field["type"] == "field":
-            parent_dict[tag] = format_comparison_line(field, failed_collection)
+            parent[tag] = format_comparison_line(field, failed_collection)
         if field["type"] == "collection":
             prefix = "# " if check_if_verification_leaf_failed(field) else "  "
-            parent_dict[prefix + tag] = {}
+            parent[prefix + tag] = {}
             next_failed_collection = "status" in field and field["status"] == "FAILED"
-            verification_fields2simple_dict(field, parent_dict[prefix + tag], next_failed_collection)
+            verification_fields_to_simple_dict(field, parent[prefix + tag], next_failed_collection)
 
 
-def item_status_fail(str_irem):
+def item_status_fail(str_irem) -> bool:  # noqa
+    # TODO: Add docstrings
     if len(str_irem) < 2:
         return False
     if str_irem[1] == "#":
@@ -90,35 +99,44 @@ def item_status_fail(str_irem):
     return False
 
 
-def simplify_body_outgoing_message(body):
+def simplify_body_outgoing_message(body) -> Dict:  # noqa
+    # TODO: Add docstrings
     simple_form = {}
     tree = body[0]
-    tag_rows2flat_dict(tree, simple_form, "")
+    tag_rows_to_flat_dict(tree, simple_form, "")
     return simple_form
 
 
-def simplify_body_verification(body):
+# Fields -> Simple Dict
+def simplify_body_verification(body) -> Dict:  # noqa
+    # TODO: Add docstrings
     simple_form = {}
     tree = body[0]
-    verification_fields2flat_dict(tree, simple_form, "")
+    verification_fields_to_flat_dict(tree, simple_form, "")
     return simple_form
 
 
-def simplify_body_verification2(body):
+# Fields -> Flat Dict
+# Rename to ?
+# TODO: Is this useful?
+def simplify_body_verification2(body) -> Dict:  # noqa
+    # TODO: Add docstrings
     simple_form = {}
     tree = body[0]
-    verification_fields2simple_dict(tree, simple_form)
+    verification_fields_to_simple_dict(tree, simple_form)
     return simple_form
 
 
-def simplify_body_tree_table_list(body):
+def simplify_body_tree_table_list(body) -> Dict:  # noqa
+    # TODO: Add docstrings
     simple_form = {}
     for element in body:
-        tag_rows2flat_dict(element, simple_form, "")
+        tag_rows_to_flat_dict(element, simple_form, "")
     return simple_form
 
 
-def enrich_events_tree_with_attached_messages(index, messages, filter_lambda):
+def enrich_events_tree_with_attached_messages(index, messages, filter_lambda) -> Dict:  # noqa
+    # TODO: Add docstrings
     resolved_messages = {}
     leaves = []
     for name, leaf in index.items():
@@ -143,28 +161,46 @@ def enrich_events_tree_with_attached_messages(index, messages, filter_lambda):
         leaf["info"]["raw"] = raw_messages
 
 
-def find_child_by_type(leaf, type):
+def find_child_by_type(leaf: Dict, type: str) -> List:  # noqa
+    """Finds child by type.
+
+    Args:
+        leaf: Child leaf
+        type: Type to match
+
+    Returns:
+        List
+    """
     result = []
-    for name, chld in leaf.items():
-        if "info" in chld:
-            if chld["info"]["type"] == type:
-                result.append((name, chld))
+    for name, child in leaf.items():
+        if "info" in child:
+            if child["info"]["type"] == type:
+                result.append((name, child))
 
     return result
 
 
 def find_child_by_types(leaf, types):
-    """This is ,,,,"""
+    """Finds child by type.
+
+    Args:
+        leaf: Child leaf
+        types: List of types to match
+
+    Returns:
+        List
+    """
     result = []
-    for name, chld in leaf.items():
-        if "info" in chld:
-            if chld["info"]["type"] in types:
-                result.append((name, chld))
+    for name, child in leaf.items():
+        if "info" in child:
+            if child["info"]["type"] in types:
+                result.append((name, child))
 
     return result
 
 
-def id_tags():
+# TODO: Should it be in this file, or perhaps misc?
+def id_tags() -> List[str]:  # noqa
     return [
         "ClOrdID",
         "OrigClOrdID",
@@ -181,7 +217,8 @@ def id_tags():
     ]
 
 
-def defining_tags():
+# TODO: Should it be in this file, or perhaps misc?
+def defining_tags() -> List[str]:  # noqa
     return [
         "OrdStatus",
         "ExecType",
@@ -197,15 +234,16 @@ def defining_tags():
     ]
 
 
-def format_expected_event(expected_as_str, alias_by_id):
-    updated_str = expected_as_str
+def format_expected_event(expected_event_str: str, alias_by_id: Dict) -> str:  # noqa
+    # TODO: Add docstrings
     for k, v in alias_by_id.items():
-        updated_str = updated_str.replace(k, v)
+        expected_event_str = expected_event_str.replace(k, v)
 
-    return updated_str
+    return expected_event_str
 
 
-def format_actual_event(actual_message_dict, actual_message_str, alias_by_id):
+def format_actual_event(actual_message_dict, actual_message_str, alias_by_id):  # noqa
+    # TODO: Add docstrings
     updated_str = actual_message_str
     for k in id_tags():
         if k in actual_message_dict:
@@ -221,7 +259,8 @@ def format_actual_event(actual_message_dict, actual_message_str, alias_by_id):
     return updated_str
 
 
-def find_corresponding_missing_filter(expectation_string, verifications_list):
+def find_corresponding_missing_filter(expectation_string, verifications_list):  # noqa
+    # TODO: Add docstrings
 
     for item in verifications_list:
         if item[1]["info"]["type"] != "Filter":
@@ -253,7 +292,8 @@ def find_corresponding_missing_filter(expectation_string, verifications_list):
     return None
 
 
-def find_corresponding_verification(expectation_string, verifications_list, already_used_verifications_set):
+def find_corresponding_verification(expectation_string, verifications_list, already_used_verifications_set):  # noqa
+    # TODO: Add docstrings
     for item in verifications_list:
         found = True
         keys_found = 0
@@ -280,7 +320,8 @@ def find_corresponding_verification(expectation_string, verifications_list, alre
     return None
 
 
-def process_step_request_id(request_tags, alias_by_id, custom_id_tags):
+def process_step_request_id(request_tags, alias_by_id, custom_id_tags):  # noqa
+    # TODO: Add docstrings
     request_id = ""
     for k in custom_id_tags:
         if k in request_tags:
@@ -303,14 +344,16 @@ def process_step_request_id(request_tags, alias_by_id, custom_id_tags):
     return request_id
 
 
-def get_val_from_verification(formatted_val):
+def get_val_from_verification(formatted_val):  # noqa
+    # TODO: Add docstrings
     value = formatted_val[3:]
     if " [" in value:
         value = value[: value.index(" [")]
     return value
 
 
-def extract_ids_from_dict(fields, is_this_request, is_this_verification, custom_id_tags, r_result, i_result):
+def extract_ids_from_dict(fields, is_this_request, is_this_verification, custom_id_tags, r_result, i_result):  # noqa
+    # TODO: Add docstrings
     for id_field in custom_id_tags:
         if id_field in fields:
             v = fields[id_field]
@@ -326,7 +369,8 @@ def extract_ids_from_dict(fields, is_this_request, is_this_verification, custom_
                         i_result[v] = alias
 
 
-def matrix_model_test_case_analyze_ids(report_leaf, custom_id_tags):
+def matrix_model_test_case_analyze_ids(report_leaf, custom_id_tags):  # noqa
+    # TODO: Add docstrings
     r_result = {}
     i_result = {}
     for step_name, step_leaf in report_leaf.items():
@@ -356,8 +400,9 @@ def matrix_model_test_case_analyze_ids(report_leaf, custom_id_tags):
     return result
 
 
-def matrix_model_test_case_processor(report_leaf):
-    customization_dict = None
+def matrix_model_test_case_processor(report_leaf):  # noqa
+    # TODO: Add docstrings
+    customization_dict = None  # TODO: What is customization_dict?
     custom_id_tags = []
     if customization_dict is not None and "id_tags" in customization_dict:
         custom_id_tags = customization_dict["id_tags"]
@@ -526,7 +571,8 @@ def matrix_model_test_case_processor(report_leaf):
     return result
 
 
-def generate_generic_tree_and_index(events, parents_filter):
+def generate_generic_tree_and_index(events, parents_filter):  # noqa
+    # TODO: Add docstrings
     filtered = events.filter(parents_filter)
     parents = event_utils.get_roots(filtered, 10000)
     if len(parents) == 0:
@@ -536,8 +582,9 @@ def generate_generic_tree_and_index(events, parents_filter):
     return generate_generic_tree_and_index_from_parents_list(events, parents)
 
 
-def generate_generic_tree_and_index_from_parents_list(events, parents):
-    tree, index = event_utils.get_event_tree_from_parents_events(
+def generate_generic_tree_and_index_from_parents_list(events, parents):  # noqa
+    # TODO: Add docstrings
+    tree, index = event_utils.get_event_tree_from_parent_events(
         events,
         parents,
         10,
@@ -553,7 +600,8 @@ def generate_generic_tree_and_index_from_parents_list(events, parents):
     return tree, index
 
 
-def generate_model_matrix_tree_and_index(events, parents_filter, extra=None):
+def generate_model_matrix_tree_and_index(events, parents_filter, extra=None):  # noqa
+    # TODO: Add docstrings
     tree, index = generate_generic_tree_and_index(events, parents_filter)
     event_utils.transform_tree(
         index,
@@ -566,7 +614,8 @@ def generate_model_matrix_tree_and_index(events, parents_filter, extra=None):
     return tree, index
 
 
-def generate_matrix_json_report_limited_batches(events, reports_path, parents_filter, par_btch_len, extra=None):
+def generate_matrix_json_report_limited_batches(events, reports_path, parents_filter, par_btch_len, extra=None):  # noqa
+    # TODO: Add docstrings
     post_processors = {
         "ModelCase": matrix_model_test_case_processor
         if extra is None
@@ -576,13 +625,15 @@ def generate_matrix_json_report_limited_batches(events, reports_path, parents_fi
     generate_generic_json_report_limited_batches(events, reports_path, parents_filter, par_btch_len, post_processors)
 
 
-def extra_post_processor(main_processor, extra_processor):
+def extra_post_processor(main_processor, extra_processor):  # noqa
+    # TODO: Add docstrings
     return lambda report_leaf: extra_processor(main_processor(report_leaf))
 
 
 def generate_generic_json_report_limited_batches(
     events, reports_path, parents_filter, par_btch_len, post_processors_dict=None
-):
+):  # noqa
+    # TODO: Add docstrings
     filtered = events.filter(parents_filter)
     parents = event_utils.get_some(filtered, None, 10000)
     if len(parents) == 0:
@@ -614,18 +665,21 @@ def generate_generic_json_report_limited_batches(
         event_utils.save_tree_as_json(tree_shtrikh, reports_path, lambda n, l: n)
 
 
-def generate_generic_json_report(events, reports_path, parents_filter, one_file=False):
+def generate_generic_json_report(events, reports_path, parents_filter, one_file=False):  # noqa
+    # TODO: Add docstrings
     tree, index = generate_generic_tree_and_index(events, parents_filter)
     event_utils.save_tree_as_json(tree, reports_path, lambda n, l: "all" if one_file else n)
 
 
-def generate_model_matrix_json_report(events, reports_path, parents_filter, one_file=False):
+def generate_model_matrix_json_report(events, reports_path, parents_filter, one_file=False):  # noqa
+    # TODO: Add docstrings
     tree, index = generate_model_matrix_tree_and_index(events, parents_filter)
 
     event_utils.save_tree_as_json(tree, reports_path, lambda n, l: "all" if one_file else n)
 
 
-def collect_element(p, l, elements_to_collect, collected_data):
+def collect_element(p, l, elements_to_collect, collected_data):  # noqa
+    # TODO: Add docstrings
     for element in elements_to_collect:
         sub_list = element[element.index(":") + 1 :].split("/")
         if len(sub_list) != len(p):
@@ -639,7 +693,8 @@ def collect_element(p, l, elements_to_collect, collected_data):
             collected_data[element] = (p, l)
 
 
-def create_parallel_tables(story_item, collected_data):
+def create_parallel_tables(story_item, collected_data):  # noqa
+    # TODO: Add docstrings
     sub_table_names = []
     sub_table_names.extend(story_item.keys())
     keys_lists = []
@@ -669,7 +724,8 @@ def create_parallel_tables(story_item, collected_data):
     return result
 
 
-def collect_ids_for_story(story_items_list, smart, events, messages):
+def collect_ids_for_story(story_items_list, smart, events, messages):  # noqa
+    # TODO: Add docstrings
     for item in story_items_list:
         if type(item) == str:
             if item.startswith("smart:"):
@@ -695,7 +751,8 @@ def collect_ids_for_story(story_items_list, smart, events, messages):
                     messages.add(v)
 
 
-def prepare_story(story_items_list, json_path=None, events=None, event_body_processors=None, messages=None):
+def prepare_story(story_items_list, json_path=None, events=None, event_body_processors=None, messages=None):  # noqa
+    # TODO: Add docstrings
     smart_report_elements_to_collect = set()
     events_to_collect = set()
     messages_to_collect = set()
@@ -736,7 +793,7 @@ def prepare_story(story_items_list, json_path=None, events=None, event_body_proc
                             "_message_type": m["messageType"],
                             "_message_session": m["sessionId"],
                             "_message_direction": m["direction"],
-                            "_message_timestamp": message_utils.extract_time(m),
+                            "_message_timestamp": message_utils.extract_timestamp(m),
                         }
                         b.update(message_utils.message_to_dict(m))
                         collected_data[key] = (m, b)

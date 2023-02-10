@@ -214,7 +214,7 @@ def get_type_totals(events: List[Dict]) -> Dict[str, int]:
 # TODO - USEFUL ???
 #   What the example of this? look very rarely need to use
 # Will return list! Perhaps it's better to return Data?
-def get_events(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> List[Dict]:
+def get_some(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> List[Dict]:
     """Gets limited list of events of specific eventType.
 
     Args:
@@ -811,7 +811,7 @@ def print_events_raw(events: List[Dict], event_type: str, count: int, start: int
         failed (bool, optional): Extract Only Failed Events. Defaults to False.
 
     """
-    records = get_events(events, event_type, count, start, failed)
+    records = get_some(events, event_type, count, start, failed)
     for r in records:
         print(r)
 
@@ -828,7 +828,7 @@ def print_some(events: List[Dict], event_type: str, count: int, start: int = 0, 
         failed (bool, optional): Extract Only Failed Events. Defaults to False.
 
     """
-    records = get_events(events, event_type, count, start, failed)
+    records = get_some(events, event_type, count, start, failed)
     for r in records:
         print_event(r)
 
