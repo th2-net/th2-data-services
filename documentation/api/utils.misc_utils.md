@@ -180,7 +180,7 @@ get_objects_frequencies(
 ) → List[List]
 ```
 
-Gets objects frequencies. 
+Returns objects frequencies based on categorizer. 
 
 
 
