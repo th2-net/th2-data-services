@@ -8,7 +8,6 @@ from tabulate import tabulate
 # TODO -
 #   1. events: List[Dict] -- should be Iterable[Th2Event], where Th2Event = Dict. It can be changed in the future
 #   2. IDEA - it's difficult to understand what you will get when read some functions. I think add examples
-#   3. Rename all docstrings word Gets to Returns. That's different things.
 
 
 # STREAMING
@@ -18,7 +17,7 @@ from th2_data_services.utils.az_tree import get_event_tree_from_parent_id, proce
 def get_category_frequencies(
     events: List[Dict], categories: List[str], categorizer: Callable, aggregation_level: str = "seconds"
 ) -> List[List[str]]:
-    """Gets Event Frequencies Based On Event Category.
+    """Returns event frequencies based on event category.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -48,7 +47,7 @@ def get_category_frequencies(
 #   GetFrequences.by_name_category
 #   GetFrequences.by_category
 def get_type_frequencies(events: List[Dict], types_list: List[str], aggregation_level="seconds") -> List[List[str]]:
-    """Returns Event Frequencies Based On EventType.
+    """Returns event frequencies based on event type.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -72,11 +71,11 @@ def get_type_frequencies(events: List[Dict], types_list: List[str], aggregation_
 # eu.get_category_totals(d2, lambda e: 'aaa')
 # defaultdict(<class 'int'>, {'aaa [ok]': 10000})
 def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status: bool = False) -> Dict[str, int]:
-    """Gets Dictionary quantities of events for different categories.
+    """Returns dictionary quantities of events for different categories.
 
     Args:
         events (List[Dict]): TH2-Events
-        categorizer (Callable): Transformer function
+        categorizer (Callable): Categorizer function
         ignore_status (bool): Concatenate status string, defaults to False.
 
     Returns:
@@ -100,7 +99,7 @@ def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status
 # eu.get_attached_messages_totals(d1)
 # defaultdict(<class 'int'>, {'envtn2_msfix5:first': 25262, 'envtn2_jpmfix1:second': 1702, 'env2_gscofixg2:second': 1702,...
 def get_attached_messages_totals(events: List[Dict]) -> Dict[str, int]:
-    """Returns Dictionary quantities of messages attached to events for each stream.
+    """Returns dictionary quantities of messages attached to events for each stream.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -139,7 +138,7 @@ def get_attached_message_ids(events: List[Dict]) -> Set[str]:
 #   Perhaps we need to find better name
 # we use something similar in our EventTree
 def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
-    """Returns only parent events that not present in the events.
+    """Returns only parent events that are not present in the events.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -167,7 +166,7 @@ def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
 # BE AWARE!! - it can it all your memory
 # O(N*M)
 def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
-    """Gets dict of lists of related events by unique message IDs.
+    """Returns dict of lists of related events by unique message IDs.
 
     Note:
         This object can occupy large amount of memory for big collections of events - use with caution
@@ -194,7 +193,7 @@ def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
 # STREAMING
 # TODO - NOT-READY -- event["successful"] should be updated by resolver
 def get_type_totals(events: List[Dict]) -> Dict[str, int]:
-    """Gets dictionary quantities of events for different event types.
+    """Returns dictionary quantities of events for different event types.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -216,7 +215,7 @@ def get_type_totals(events: List[Dict]) -> Dict[str, int]:
 #   What the example of this? look very rarely need to use
 # Will return list! Perhaps it's better to return Data?
 def get_some(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> List[Dict]:
-    """Gets limited list of events of specific eventType.
+    """Returns limited list of events of specific eventType.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -246,7 +245,7 @@ def get_some(events: List[Dict], event_type: str, count: int, start: int = 0, fa
 
 # NOT STREAMING
 def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> List[Dict]:
-    """Gets limited list of events of linked to any message within specified messages objects collection.
+    """Returns limited list of events of linked to any message within specified messages objects collection.
 
     Args:
         events: TH2-Events
@@ -274,13 +273,13 @@ def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> 
 def get_events_by_category(
     events: List[Dict], category: str, count: int, categorizer: Callable, start=0, failed=False
 ) -> List[Dict]:
-    """Gets limited list of events of specific category produced by custom categorizer.
+    """Returns limited list of events of specific category produced by custom categorizer.
 
     Args:
         events (List[Dict]): TH2-Events
         category (str): Event category to extract
         count (int): Maximum number of events to extract
-        categorizer (Callable): Transformer function
+        categorizer (Callable): Categorizer function
         start (int, optional): Start iteration index, defaults to 0.
         failed (bool, optional): Extract only failed events, defaults to False.
 
@@ -306,7 +305,7 @@ def get_events_by_category(
 # USEFUL
 # NOT STREAMING
 def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
-    """Gets limited list of root events (events without parents).
+    """Returns limited list of root events (events without parents).
 
     Args:
         events (List[Dict]): TH2-Events
@@ -333,7 +332,7 @@ def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
 # USEFUL
 # NOT STREAMING
 def get_parents(events: List[Dict], children: List[Dict]):
-    """Gets all parent events of linked to any event within specified events objects collection.
+    """Returns all parent events of linked to any event within specified events objects collection.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -346,7 +345,7 @@ def get_parents(events: List[Dict], children: List[Dict]):
 
 # NOT STREAMING
 def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: int) -> Tuple[List[Dict], Dict]:
-    """Gets limited list of direct children events.
+    """Returns limited list of direct children events.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -373,7 +372,7 @@ def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: 
 
 # NOT STREAMING
 def get_children_from_parents(events: List[Dict], parents: List[Dict], max_events: int) -> Tuple[Dict[str, list], int]:
-    """Gets limited list of direct children events for each event in parents.
+    """Returns limited list of direct children events for each event in parents.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -399,7 +398,7 @@ def get_children_from_parents(events: List[Dict], parents: List[Dict], max_event
 
 # NOT STREAMING
 def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], max_events: int) -> List[Dict]:
-    """Gets limited list of direct children events for each event in parents.
+    """Returns limited list of direct children events for each event in parents.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -463,7 +462,7 @@ def extract_parent_as_json(
         json_file_path (str): JSON Output Path
         interval_start (str): Interval Start
         interval_end (str): Interval End
-        body_to_simple_processors (Callable, optional): Body Transformer Function. Defaults to None.
+        body_to_simple_processors (Callable, optional): Body Categorizer function. Defaults to None.
     """
     sub_events = sublist([events], datetime.fromisoformat(interval_start), datetime.fromisoformat(interval_end))
     print(f"Sublist Length = {len(sub_events)}")
@@ -554,7 +553,7 @@ def build_roots_cache(events: List[Dict], depth: int, max_level: int) -> Dict:
 
 # STREAMING
 def extract_time(event) -> str:
-    """Gets string representation of events timestamp.
+    """Returns string representation of events timestamp.
 
     Args:
         event: TH2-Event
@@ -582,7 +581,7 @@ def print_attached_messages_totals(events: List[Dict], return_html: bool = False
 def print_category_totals(
     events: List[Dict], categorizer: Callable, return_html: bool = False, ignore_status: bool = False
 ) -> Union[None, str]:
-    """Prints Dictionary quantities of events for different categories.
+    """Prints dictionary quantities of events for different categories.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -659,7 +658,7 @@ def print_some_by_category(
         events (List[Dict]): TH2-Events
         category (str): Event category to extract
         count (int): Maximum number of events to extract
-        categorizer (Callable): Transformer function
+        categorizer (Callable): Categorizer function
         start (int, optional): Start iteration index, defaults to 0.
         failed (bool, optional): Extract only failed events, defaults to False.
 
@@ -749,7 +748,7 @@ def print_category_frequencies(
     Args:
         events (List[Dict]): TH2-Events
         event_types (List[str]): Event Types To Extract
-        categorizer (Callable): Transformer Function
+        categorizer (Callable): Categorizer function
         aggregation_level (str): Aggregation Level
         return_html: Return HTML Format
 

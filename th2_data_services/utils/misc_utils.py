@@ -149,7 +149,7 @@ def get_objects_frequencies(
     object_expander: Callable = None,
     objects_filter: Callable = None,
 ) -> List[List]:
-    """Gets objects frequencies.
+    """Returns objects frequencies based on categorizer.
 
     Args:
         objects_stream: Objects stream
