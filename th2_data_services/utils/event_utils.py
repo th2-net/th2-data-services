@@ -7,6 +7,7 @@ import json
 from collections import defaultdict
 from tabulate import tabulate
 
+
 # TODO -
 #   1. events: List[Dict] -- should be Iterable[Th2Event], where Th2Event = Dict. It can be changed in the future
 #   2. IDEA - it's difficult to understand what you will get when read some functions. I think add examples
@@ -276,11 +277,11 @@ def get_events_by_category(
 
     Args:
         events (List[Dict]): TH2-Events
-        category (str): Event Category To Extract
+        category (str): Event category to extract
         count (int): Maximum number of events to extract
-        categorizer (Callable): Transformer Function
-        start (int, optional): Start Iteration Index. Defaults to 0.
-        failed (bool, optional): Extract Only Failed Events. Defaults to False.
+        categorizer (Callable): Transformer function
+        start (int, optional): Start iteration index, defaults to 0.
+        failed (bool, optional): Extract only failed events, defaults to False.
 
     Returns:
         List[Dict]
@@ -425,6 +426,35 @@ def get_event_tree_from_parent_events(
 ) -> Tuple[Dict, Dict]:
     """Generate tree object based on parents events list.
 
+    | "tree" structure:
+    | {
+    |     "info": { "stats": EventType+Status (Frequency Table) }
+    |     "rootId": {
+    |         "info": { event_details...}
+    |         "body" { ... } # If event has body
+    |         "parentId": {
+    |             "info": { event_details...}
+    |             "body" { ... } # If event has body
+    |             "childId": { ... }
+    |         }
+    |     }
+    |     "rootId2": { ... }
+    | }
+    |
+    | "index" structure:
+    | {
+    |     "rootId": {
+    |         "info": { event_details...}
+    |         "body" { ... } # If event has body
+    |         "parentId": {
+    |             "info": { event_details...}
+    |             "body" { ... } # If event has body
+    |             "childId": { ... }
+    |         }
+    |     }
+    |     "rootId2": { ... }
+    | }
+
     Args:
         events (Dict[List]): TH2-Events
         parents (Dict[List]): TH2-Events
@@ -494,6 +524,23 @@ def get_event_tree_from_parent_id(
     events: List[Dict], parent_id: str, depth: int, max_children: int, body_to_simple_processors: Dict = None
 ) -> Dict:
     """Generate tree object based on parent event id.
+
+    | "tree" structure:
+    | {
+    |     "info": {
+    |           "stats": EventType+Status (Frequency Table)
+    |           parent_event_details...
+    |     }
+    |     "child_id": {
+    |         "info": { event_details...}
+    |         "child_id": {
+    |             "info": { event_details...}
+    |             "body" { ... } # If event has body
+    |             "childId": { ... }
+    |         }
+    |     }
+    |     "child_id2": { ... }
+    | }
 
     Args:
         events (List[Dict]): TH2-Events
@@ -574,9 +621,9 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
     """Saves Tree As JSON Format.
 
     Args:
-        tree (Dict): Collection Of Data
-        json_file_path (str): JSON Path (Must End With .json)
-        file_categorizer (Callable, optional): File Categorizer. Defaults to None.
+        tree (Dict): TH2-Events transformed into tree (with util methods)
+        json_file_path (str): JSON Path (must end with .json)
+        file_categorizer (Callable, optional): File categorizer function. Defaults to None.
 
     Returns:
         None (Saves File)
@@ -602,6 +649,7 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
         arranged_tree["tree"] = tree
 
     for key, leaf in arranged_tree.items():
+        # TODO: [WINDOWS] Fix file name. key may contain `:` which is invalid symbol in filename.
         path = json_file_path.replace(".json", f"_{key}.json")
         with open(path, "w") as out_file:
             json.dump(leaf, out_file, indent=3)
@@ -612,11 +660,11 @@ def transform_tree(index: Dict, post_processors: Dict[str, Callable]) -> None:
     """Transform Tree.
 
     Args:
-        index (Dict): Index Dict
+        index (Dict): TH2-Events transformed into tree index (from util functions)
         post_processors (Dict): Post Processors
 
     Returns:
-        None (Modifies Index Dict)
+        None, Modifies "index"
     """
     for leaf in index.values():
         leaf_type = leaf["info"]["type"]
@@ -627,8 +675,14 @@ def transform_tree(index: Dict, post_processors: Dict[str, Callable]) -> None:
 
 
 # STREAMING? | Depends On `processor`
-def process_trees_from_jsons(path_pattern: str, processor: Callable) -> None:  # noqa
-    # TODO: Add Docstings
+def process_trees_from_jsons(path_pattern: str, processor: Callable) -> None:
+    """Loads JSON files locally and processes them with given function.
+
+    Args:
+        path_pattern: Path to json file(s)
+        processor: Processor function
+
+    """
     dir_path = path_pattern[: path_pattern.rindex("/")] if "/" in path_pattern else ""
     pattern = path_pattern[path_pattern.rindex("/") + 1 :] if "/" in path_pattern else path_pattern
     pattern = pattern.replace(".json", "")
@@ -641,8 +695,15 @@ def process_trees_from_jsons(path_pattern: str, processor: Callable) -> None:  #
 
 
 # STREAMING
-def tree_walk(tree: Dict, processor: Callable, tree_filter: Callable = None, root_path: List = []) -> None:  # noqa
-    # TODO: Add Docstings
+def tree_walk(tree: Dict, processor: Callable, tree_filter: Callable = None, root_path: List = []) -> None:
+    """Process tree by processor [Recursive method].
+
+    Args:
+        tree: TH2-Events transformed into tree (from util functions)
+        processor (Callable): Processor function
+        tree_filter (Callable, optional): Tree filter function. Defaults to None.
+        root_path (List, optional): Root path. Defaults to [].
+    """
     for name, leaf in tree.items():
         if name == "info":
             continue
@@ -659,61 +720,128 @@ def tree_walk(tree: Dict, processor: Callable, tree_filter: Callable = None, roo
 
 
 # STREAMING
-def tree_walk_from_jsons(path_pattern, processor, tree_filter):  # noqa
-    # TODO: Add Docstings
+def tree_walk_from_jsons(path_pattern: str, processor: Callable, tree_filter: Callable) -> None:
+    """Loads JSON file(s) and processes them with given function.
+
+    Args:
+        path_pattern: Path to json file(s)
+        processor: Processor function
+        tree_filter: Tree filter function
+
+    """
     process_trees_from_jsons(path_pattern, lambda tree: tree_walk(tree, processor, tree_filter=tree_filter))
 
 
 # STREAMING
-def tree_update_totals(categorizer, result, p, n, l):  # noqa
-    # TODO: Add Docstings
-    category = categorizer(p, n, l)
-    if category not in result:
-        result[category] = 1
+def tree_update_totals(categorizer: Callable, tree: Dict, path: List[str], name: str, leaf: Dict) -> None:
+    """Updates tree by categorizer function as keys.
+
+    Args:
+        categorizer: Categorizer function
+        tree: Tree
+        path: Event path (from root to event)
+        name: Event name
+        leaf: Leaf (event)
+    """
+    category = categorizer(path, name, leaf)
+    if category not in tree:
+        tree[category] = 1
     else:
-        result[category] += 1
+        tree[category] += 1
 
 
 # STREAMING
-def tree_get_category_totals(tree, categorizer, tree_filter):  # noqa
-    # TODO: Add Docstings
+def tree_get_category_totals(tree: Dict, categorizer: Callable, tree_filter: Callable) -> Dict:
+    """Returns category totals from tree.
+
+    Args:
+        tree: TH2-Events transformed into tree (from util functions)
+        categorizer: Categorizer function
+        tree_filter: Tree filter function
+
+    Returns:
+        Dict
+    """
     result = {}
     tree_walk(tree, partial(tree_update_totals, categorizer, result), tree_filter=tree_filter)
     return result
 
 
 # STREAMING
-def tree_get_category_totals_from_jsons(path_pattern, categorizer, tree_filter):  # noqa
-    # TODO: Add Docstings
+def tree_get_category_totals_from_jsons(path_pattern, categorizer: Callable, tree_filter: Callable) -> Dict:
+    """Returns category totals from JSON file(s).
+
+    Args:
+        path_pattern: Path to JSON file(s)
+        categorizer: Categorizer function
+        tree_filter: Tree filter function
+
+    Returns:
+        Dict
+    """
     result = {}
     process_trees_from_jsons(
         path_pattern,
         lambda tree: tree_walk(tree, partial(tree_update_totals, categorizer, result), tree_filter=tree_filter),
     )
-
-    return result
-
-
-def search_tree(tree, filter_lambda):  # noqa
-    # TODO: Add Docstings
-    result = []
-    tree_walk(tree, lambda p, n, l: result.append((p, l)), tree_filter=filter_lambda)
     return result
 
 
 # NOT STREAMING
-def search_tree_from_jsons(path_pattern, filter_lambda):  # noqa
-    # TODO: Add Docstings
+def search_tree(tree: Dict, tree_filter: Callable[[List, str, Dict], Dict]) -> List:
+    """Searches tree by filter function.
+
+    Args:
+        tree: TH2-Events transformed into tree (from util functions)
+        tree_filter: Filter function.
+        |   e.g. `tree_filter = lambda path, name, leaf: "[fail]" in name`
+
+    Returns:
+        List
+    """
+    result = []
+    tree_walk(tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter)
+    return result
+
+
+# NOT STREAMING
+def search_tree_from_jsons(path_pattern, tree_filter: Callable[[List, str, Dict], Dict]) -> List:
+    """Searches tree by filter function from JSON file(s).
+
+    Args:
+        path_pattern: JSON file(s) location
+        tree_filter: Filter function.
+        |   e.g. `tree_filter = lambda path, name, leaf: "[fail]" in name`
+
+    Returns:
+        List
+    """
     result = []
     process_trees_from_jsons(
-        path_pattern, lambda tree: tree_walk(tree, lambda p, n, l: result.append((p, l)), tree_filter=filter_lambda)
+        path_pattern,
+        lambda tree: tree_walk(tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter),
     )
     return result
 
 
 # NOT STREAMING
-def build_roots_cache(events, depth, max_level):  # noqa
-    # TODO: Add Docstings
+# TODO: Change name
+def build_roots_cache(events: List[Dict], depth: int, max_level: int) -> Dict:
+    """Returns event path for each event.
+
+    | Event path from root to event, it's a string of event names separated by `/`
+    |
+    | result:
+    | { eventId: { eventName: "example event name", eventPath: "rootName/.../currentEventName" }, ... }
+
+    Args:
+        events: TH2-Events
+        depth: Max depth to search
+        max_level: Max events from leaf
+
+    Returns:
+        Dict[str, Dict[str, str]]
+    """
     result = {}
     level = 1
     prev_levels = get_roots(events, max_level)
@@ -836,8 +964,18 @@ def print_some(events: List[Dict], event_type: str, count: int, start: int = 0, 
 # NOT STREAMING
 def print_some_by_category(
     events: List[Dict], category: str, count: int, categorizer: Callable, start: int = 0, failed: bool = False
-):  # noqa
-    # TODO: Add Docstings
+) -> None:
+    """Print limited events by category.
+
+    Args:
+        events (List[Dict]): TH2-Events
+        category (str): Event category to extract
+        count (int): Maximum number of events to extract
+        categorizer (Callable): Transformer function
+        start (int, optional): Start iteration index, defaults to 0.
+        failed (bool, optional): Extract only failed events, defaults to False.
+
+    """
     records = get_events_by_category(events, category, count, categorizer, start, failed)
     for r in records:
         print_event(r)
