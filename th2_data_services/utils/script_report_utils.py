@@ -7,15 +7,31 @@ from datetime import datetime
 import th2_data_services.utils.az_tree
 
 
+# TODO
+#   1. Takes flat_list to put result in this dict.
+#   It's better to create this dict inside and return as a result.
+#   Now don't return anything!
 def tag_rows_to_flat_dict(collection: Dict, flat_list: Dict, prefix: str) -> None:  # noqa
-    # TODO: Add docstrings
-    rows = collection["rows"]
+    """
+
+    rows are used in 'Tree table', 'Table'  but not in the Verification (uses fields)
+
+    Args:
+        collection: 'Tree table' or 'Table'
+        flat_list: NOT a list - dict. Used just to put result to this object.
+        prefix:
+
+    Returns:
+
+    """
+    rows: dict = collection["rows"]
+    # tag - field name
     for tag, row in rows.items():
         if row["type"] == "row":
             # TODO: Remove comment?
             # flat_list[prefix+tag] = row["columns"]["fieldValue"]
-            columns = [str(column) for column in row["columns"].values()]
-            flat_list[prefix + tag] = ",".join(columns)
+            columns_values = [str(column) for column in row["columns"].values()]
+            flat_list[prefix + tag] = ",".join(columns_values)
         if row["type"] == "collection":
             new_prefix = f"{prefix}{tag}."
             tag_rows_to_flat_dict(row, flat_list, new_prefix)
@@ -49,7 +65,7 @@ def format_comparison_line(field: Dict, failed_collection: bool = False) -> str:
 #   Now don't return anything!
 #   2. We can move this function to Viewer utils and grouped to VerificationUtil class
 #   3. verification_fields_to_simple_dict adds '#' to field name if Failed, but this func - NOT.
-#   4. What the idea of failed_collection ??
+#   4. What's the idea of failed_collection ??
 def verification_fields_to_flat_dict(
     collection: Dict, flat_list: Dict, prefix, failed_collection: bool = False
 ):  # noqa
@@ -159,6 +175,8 @@ def verification_fields_to_simple_dict(collection: Dict, parent: Dict, failed_co
 ###########################
 
 
+# TODO - looks really strange that we use space before '#' in such strings
+#   REQUIRE CLARIFICATION
 def item_status_fail(str_irem) -> bool:  # noqa
     # TODO: Add docstrings
     if len(str_irem) < 2:
@@ -167,6 +185,12 @@ def item_status_fail(str_irem) -> bool:  # noqa
         return True
 
     return False
+
+
+############################
+# Simplify functions set  [start]
+###########################
+#
 
 
 def simplify_body_outgoing_message(body) -> Dict:  # noqa
@@ -197,12 +221,19 @@ def simplify_body_verification2(body) -> Dict:  # noqa
     return simple_form
 
 
+# TODO - do we really have to iterate over tree_table(body) like a list?
+#   Why do we expect that it'll be a list?
 def simplify_body_tree_table_list(body) -> Dict:  # noqa
     # TODO: Add docstrings
     simple_form = {}
     for element in body:
         tag_rows_to_flat_dict(element, simple_form, "")
     return simple_form
+
+
+############################
+# Simplify functions set  [end]
+###########################
 
 
 def enrich_events_tree_with_attached_messages(index, messages, filter_lambda) -> Dict:  # noqa
@@ -652,13 +683,15 @@ def generate_generic_tree_and_index(events, parents_filter):  # noqa
     return generate_generic_tree_and_index_from_parents_list(events, parents)
 
 
+# TODO
+#   1. Hardcoded values -- it's better to move them to function parameters with that values
 def generate_generic_tree_and_index_from_parents_list(events, parents):  # noqa
     # TODO: Add docstrings
     tree, index = th2_data_services.utils.az_tree.get_event_tree_from_parent_events(
         events,
         parents,
-        10,
-        1000000,
+        depth=10,
+        max_children=1000000,
         body_to_simple_processors={
             "Outgoing message": simplify_body_outgoing_message,
             "message": simplify_body_outgoing_message,
@@ -746,6 +779,14 @@ def generate_model_matrix_json_report(events, reports_path, parents_filter, one_
     tree, index = generate_model_matrix_tree_and_index(events, parents_filter)
 
     th2_data_services.utils.az_tree.save_tree_as_json(tree, reports_path, lambda n, l: "all" if one_file else n)
+
+
+############################
+# PrepareStory and its functions  [start]
+###########################
+# If I remember correct - the idea to create a function, that will help to create
+# bug reports faster!
+# TODO - so it can become something like BugReportUtils class
 
 
 def collect_element(p, l, elements_to_collect, collected_data):  # noqa
@@ -890,6 +931,11 @@ def prepare_story(story_items_list, json_path=None, events=None, event_body_proc
     return result
 
 
+############################
+# PrepareStory and its functions  [end]
+###########################
+
+
 ver_dict = {
     "type": "verification",
     "fields": {
@@ -929,6 +975,39 @@ ver_dict = {
     },
 }
 
+tree_table = {
+    "type": "treeTable",
+    "name": "tableName",  # this one is optional
+    "rows": {
+        "Row A with some custom name": {
+            "type": "row",
+            "columns": {
+                "Column 1 with some custom name": "some text (A1)",
+                "Column 2": "some text (A2)",
+            },
+        },
+        "Row B with some other name": {
+            "type": "collection",
+            "rows": {
+                "Row BA": {
+                    "type": "row",
+                    "columns": {
+                        "Column 1 with some custom name": "some text (BA1)",
+                        "Column 2": "some text (BA2)",
+                    },
+                },
+                "Row BB": {
+                    "type": "row",
+                    "columns": {
+                        "Column 1 with some custom name": "some text (BB1)",
+                        "Column 2": "some text (BB2)",
+                    },
+                },
+            },
+        },
+    },
+}
+
 
 def test_verification_fields_to_flat_dict():  # noqa
     flat_list = {}
@@ -961,6 +1040,17 @@ def test_verification_fields_to_simple_dict():  # noqa
     {'Field A': ' # value [*]', 
      'Field B': '!# 2531410 [2531410]', 
      '# Sub message A': {'Field C': ' # 9 [9]'}}
+    """
+
+
+def test_simplify_body_tree_table_list():  # noqa
+    # TODO - expects tree_table - like a list
+    r = simplify_body_tree_table_list([tree_table])
+    print(r)
+    """
+    {'Row A with some custom name': 'some text (A1),some text (A2)', 
+     'Row B with some other name.Row BA': 'some text (BA1),some text (BA2)', 
+     'Row B with some other name.Row BB': 'some text (BB1),some text (BB2)'}
     """
 
 
