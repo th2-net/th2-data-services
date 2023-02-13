@@ -4,6 +4,8 @@ import message_utils
 import event_utils
 from datetime import datetime
 
+import th2_data_services.utils.az_tree
+
 
 def tag_rows_to_flat_dict(collection: Dict, flat_list: Dict, prefix: str) -> None:  # noqa
     # TODO: Add docstrings
@@ -584,7 +586,7 @@ def generate_generic_tree_and_index(events, parents_filter):  # noqa
 
 def generate_generic_tree_and_index_from_parents_list(events, parents):  # noqa
     # TODO: Add docstrings
-    tree, index = event_utils.get_event_tree_from_parent_events(
+    tree, index = th2_data_services.utils.az_tree.get_event_tree_from_parent_events(
         events,
         parents,
         10,
@@ -603,7 +605,7 @@ def generate_generic_tree_and_index_from_parents_list(events, parents):  # noqa
 def generate_model_matrix_tree_and_index(events, parents_filter, extra=None):  # noqa
     # TODO: Add docstrings
     tree, index = generate_generic_tree_and_index(events, parents_filter)
-    event_utils.transform_tree(
+    th2_data_services.utils.az_tree.transform_tree(
         index,
         {
             "ModelCase": matrix_model_test_case_processor
@@ -649,7 +651,7 @@ def generate_generic_json_report_limited_batches(
         tree, index = generate_generic_tree_and_index_from_parents_list(events, sublist)
         if post_processors_dict is not None:
             print("Post processing ", datetime.now())
-            event_utils.transform_tree(index, post_processors_dict)
+            th2_data_services.utils.az_tree.transform_tree(index, post_processors_dict)
         tree_shtrikh = {}
         for k, v in tree.items():
             if k == "info":
@@ -662,20 +664,20 @@ def generate_generic_json_report_limited_batches(
             tree_shtrikh[k_shtrikh] = v
 
         print("Saving json ", datetime.now())
-        event_utils.save_tree_as_json(tree_shtrikh, reports_path, lambda n, l: n)
+        th2_data_services.utils.az_tree.save_tree_as_json(tree_shtrikh, reports_path, lambda n, l: n)
 
 
 def generate_generic_json_report(events, reports_path, parents_filter, one_file=False):  # noqa
     # TODO: Add docstrings
     tree, index = generate_generic_tree_and_index(events, parents_filter)
-    event_utils.save_tree_as_json(tree, reports_path, lambda n, l: "all" if one_file else n)
+    th2_data_services.utils.az_tree.save_tree_as_json(tree, reports_path, lambda n, l: "all" if one_file else n)
 
 
 def generate_model_matrix_json_report(events, reports_path, parents_filter, one_file=False):  # noqa
     # TODO: Add docstrings
     tree, index = generate_model_matrix_tree_and_index(events, parents_filter)
 
-    event_utils.save_tree_as_json(tree, reports_path, lambda n, l: "all" if one_file else n)
+    th2_data_services.utils.az_tree.save_tree_as_json(tree, reports_path, lambda n, l: "all" if one_file else n)
 
 
 def collect_element(p, l, elements_to_collect, collected_data):  # noqa
@@ -762,7 +764,7 @@ def prepare_story(story_items_list, json_path=None, events=None, event_body_proc
     collected_data = {}
     # print(smart_report_elements_to_collect)
     if json_path is not None:
-        event_utils.tree_walk_from_jsons(
+        th2_data_services.utils.az_tree.tree_walk_from_jsons(
             json_path, lambda p, n, l: collect_element(p, l, smart_report_elements_to_collect, collected_data), None
         )
     if events is not None:
