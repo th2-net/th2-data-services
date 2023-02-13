@@ -1,17 +1,11 @@
-from collections import Generator
 from typing import Tuple, List, Optional, Generator
 from datetime import datetime
-from th2.data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
+
 
 from th2.data_services.data import Data
-
-from th2_data_services import Data
-from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection
-from th2_data_services_lwdp.data_source import HTTPDataSource
-from th2_data_services_lwdp.commands import http as commands
-from th2_data_services_lwdp.filters.event_filters import NameFilter, TypeFilter
-from th2_data_services_lwdp.events_tree import HttpETCDriver
-
+from th2.data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2.data_services.interfaces import IDataSource
+from th2.data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
@@ -84,7 +78,6 @@ def transform_function(record):
 
 filtered_and_mapped_events = filtered_events.map(transform_function)
 
-
 # [1.3] Data pipeline.
 #       Instead of doing data transformations step by step you can do it in one line.
 filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []).map(transform_function)
@@ -153,7 +146,6 @@ d1 += d3  # d1 will become Data([1,2,3,7,8,9])
 events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
-
 # [2] Working with converters.
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
 # They all implement same methods from base class.
@@ -195,37 +187,19 @@ date_us_from_timestamp = ProtobufTimestampConverter.to_microseconds(protobuf_tim
 date_ns_from_timestamp = ProtobufTimestampConverter.to_nanoseconds(protobuf_timestamp)
 datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(protobuf_timestamp)
 
-
 # [3] Working with EventTree and EventTreeCollection.
 
-# [3.1] Create DataSource object to connect to rpt-data-provider.
-DEMO_HOST = "10.100.66.66"  # th2-kube-demo  Host port where rpt-data-provider is located.
-DEMO_PORT = "30999"  # Node port of rpt-data-provider.
-data_source = HTTPDataSource(f"http://{DEMO_HOST}:{DEMO_PORT}")
+# [3.1] Build a custom EventTree
+# To create an EventTree object you need to provide name, id and data of the root event.
+tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
 
-START_TIME = datetime(year=2021, month=6, day=17, hour=9, minute=44, second=41)  # Datetime in utc format.
-END_TIME = datetime(year=2021, month=6, day=17, hour=12, minute=45, second=50)
-
-# [3.2] Get events.
-events: Data = data_source.command(
-    commands.GetEventsByBookByScopes(
-        book_id="demo_book_1",
-        scopes=["demo_scope"],
-        start_timestamp=START_TIME,
-        end_timestamp=END_TIME,
-        # Use Filter class to apply rpt-data-provider filters.
-        # Do not use multiple classes of the same type.
-        filters=[
-            TypeFilter("Send message"),
-            NameFilter(["ExecutionReport", "NewOrderSingle"]),  # You can use multiple values.
-        ],
-    )
-)
+# To add new node use append_event. parent_id is necessary, data is optional.
+tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
 
 # [3.3] Building the EventTreeCollection.
 
 # If you don't specify data_source for the driver then it won't recover detached events.
-driver = HttpETCDriver()
+driver: IETCDriver  # You should init ETCDriver object. E.g. from LwDP module or your custom class.
 etc = EventTreeCollection(driver)
 etc.build(events)
 
@@ -296,16 +270,13 @@ tree: EventTree = trees[0]
 parentless_trees: List[EventTree] = etc.get_parentless_trees()
 
 # [3.6] Working with ParentEventTreeCollection.
-# ParentEventTreeCollection is a tree like EventTreeCollection, but it has only events that have references.
-driver = HttpETCDriver(data_source=data_source)
+# ParentEventTreeCollection is a tree collection like EventTreeCollection,
+# but it has only events that have references.
+data_source: IDataSource  # You should init DataSource object. E.g. from LwDP module.
+# ETCDriver here is a stub, actually the lib don't have such class.
+# You can take it in LwDP module or create yourself class if you have some special events structure.
+driver = ETCDriver(data_source=data_source)
 etc = ParentEventTreeCollection(driver)
 etc.build(events)
 
 etc.show()
-
-# [3.7] Build a custom EventTree
-# To create an EventTree object you will need name and id, data is optional.
-tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
-
-# To add new node use append_event. parent_id is necessary, data is optional.
-tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
