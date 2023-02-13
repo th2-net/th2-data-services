@@ -12,23 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import annotations
-from abc import ABC, abstractmethod
-
-from th2_data_services.interfaces.command import ICommand
-from th2_data_services.interfaces.source_api import ISourceAPI
-
-#LOG import logging
-
-#LOG logger = logging.getLogger(__name__)
-
-
-class IDataSource(ABC):
-    @abstractmethod
-    def command(self, cmd: ICommand):
-        pass
-
-    @property
-    @abstractmethod
-    def source_api(self) -> ISourceAPI:
-        pass
+from th2.data_services.interfaces.adapter import (
+    IStreamAdapter,
+    IRecordAdapter,
+)
+from th2.data_services.interfaces.command import ICommand
+from th2.data_services.interfaces.data_source import IDataSource
+from th2.data_services.interfaces.source_api import ISourceAPI
+from th2.data_services.interfaces.struct import IEventStruct, IMessageStruct
+from th2.data_services.interfaces.stub_builder import IStub, IEventStub, IMessageStub

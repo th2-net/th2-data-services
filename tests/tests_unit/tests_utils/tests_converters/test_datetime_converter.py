@@ -1,4 +1,4 @@
-from th2_data_services.utils.converters import DatetimeConverter
+from th2.data_services.utils.converters import DatetimeConverter
 
 
 def test_to_datetime(datetime_strings):

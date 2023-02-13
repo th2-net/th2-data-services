@@ -1,4 +1,4 @@
-from th2_data_services import Data
+from th2.data_services.data import Data
 
 DEMO_CHILD_ID = "88a3ee80-d1b4-11eb-b0fb-199708acc7bc"
 DEMO_PARENT_ID = "84db48fc-d1b4-11eb-b0fb-199708acc7bc"

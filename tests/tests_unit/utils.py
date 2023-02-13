@@ -3,7 +3,7 @@ from typing import Optional
 
 from _pytest.logging import LogCaptureFixture
 
-from th2_data_services import Data
+from th2.data_services.data import Data
 
 
 class LogsChecker:
