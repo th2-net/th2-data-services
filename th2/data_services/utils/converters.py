@@ -1,7 +1,7 @@
 from collections import namedtuple
 from datetime import datetime, timezone
 
-from th2_data_services.interfaces.utils.converter import ITimestampConverter
+from th2.data_services.interfaces.utils.converter import ITimestampConverter
 
 _DatetimeTuple = namedtuple("DatetimeTuple", "datetime mantissa")
 

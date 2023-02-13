@@ -1,6 +1,6 @@
 from typing import List
 
-from th2_data_services import Data
+from th2.data_services.data import Data
 
 
 def test_metadata_is_carried(general_data: List[dict]):

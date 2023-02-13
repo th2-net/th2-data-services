@@ -1,5 +1,5 @@
 from tests.tests_unit.test_event_trees.demo_etc_data import demo_etc_data_small
-from th2_data_services import Data
+from th2.data_services.data import Data
 
 EXPECTED_STUB = {
     "attachedMessageIds": [],

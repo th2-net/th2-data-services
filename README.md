@@ -87,10 +87,13 @@ pip install th2-data-services[dependency_name]
 
 **Dependencies list** 
 
-| dependency name | provider version          |
-|:---------------:|---------------------------|
-|      lwdp       | latest version of lwdp    |
-|      lwdp2      | latest version of lwdp v2 |
+|  dependency name  | provider version                      |
+|:-----------------:|---------------------------------------|
+|       lwdp        | latest version of lwdp                |
+|       lwdp2       | latest version of lwdp v2             |
+| utils-rpt-viewer  | latest version of utils-rpt-viewer    |
+| utils-rpt-viewer5 | latest version of utils-rpt-viewer v5 |
+|   utils-advanced  | latest version of ds-utils            |
 
 **Example**
 
@@ -111,17 +114,17 @@ This example shows basic usage of library's features.
 from collections import Generator
 from typing import Tuple, List, Optional
 from datetime import datetime
-from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
+from th2.data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
 
-from th2_data_services import Data
+from th2.data_services import Data
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
 # If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
 # global parameter to True. It'll keep cache files if something went wrong.
-import th2_data_services
+from th2.data_services.config import options
 
-th2_data_services.INTERACTIVE_MODE = True
+options.INTERACTIVE_MODE = True
 
 # Some example data
 events = Data([

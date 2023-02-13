@@ -451,7 +451,12 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
     - metadata gets carried when using Data methods.
     - update_metadata method added to update metadata.
 11. [TH2-4684] Tree names changed from plural to singular. (e.g Event**s**Tree -> EventTree)
-
+12. [TH2-4693] Implemented namespace packages structure, allowing other th2 libraries to be grouped together.
+13. [TH2-4713] Added options module which enables user to tweak library settings.
+14. [TH2-4738] Two new libraries added as extra dependencies. They can be installed as:
+   - pip install th2-data-services[utils-advanced]
+   - pip install th2-data-services[utils-rpt-viewer]
+   - pip install th2-data-services[utils-rpt-viewer5]
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.

@@ -24,8 +24,8 @@ from weakref import finalize
 import types
 from inspect import isgeneratorfunction
 from typing import TypeVar
-from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
-
+from th2.data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
+from th2.data_services.config import options
 # LOG import logging
 
 # LOG logger = logging.getLogger(__name__)
@@ -49,6 +49,7 @@ class Data(Generic[DataIterValues]):
 
     Such approach to data analysis called streaming transformation.
     """
+    
 
     def __init__(self, data: DataSet, cache: bool = False, workflow: WorkFlow = None):
         """Data constructor.
@@ -212,12 +213,11 @@ class Data(Generic[DataIterValues]):
                     # LOG                     self._logger.info("The cache file is not written to the end. Delete tmp cache file")
                     self.__delete_pending_cache()
                 else:  # Data reads cache.
-                    from th2_data_services import INTERACTIVE_MODE  # To escape circular import problem.
 
                     # Do not delete cache file if it reads an external cache file.
                     if not self._read_from_external_cache_file:
                         # Do not delete cache file if it's an interactive mode and Data has read cache.
-                        if not INTERACTIVE_MODE:
+                        if not options.INTERACTIVE_MODE:
                             self.__delete_cache()
 
             self.iter_num -= 1
