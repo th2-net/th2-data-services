@@ -3,13 +3,15 @@ import os
 from collections import namedtuple
 from datetime import datetime
 from pathlib import Path
-from typing import List, NamedTuple
-
+from typing import List, NamedTuple, Sequence, Optional
 import pytest
-
+from tests.tests_unit.test_event_trees.demo_etc_data import demo_etc_data_big, demo_etc_data_small
 from tests.tests_unit.utils import LogsChecker
-from th2_data_services import Data
-from th2_data_services.event_tree import EventTree
+from th2.data_services.data import Data
+from th2.data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2.data_services.event_tree.etc_driver import Th2EventType
+from th2.data_services.event_tree.exceptions import FieldIsNotExist
+from th2.data_services.interfaces import IEventStruct, IEventStub
 
 EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
 
@@ -1804,7 +1806,7 @@ def cache(request):
 @pytest.fixture
 def log_checker(caplog) -> LogsChecker:
     """Activates DS lib logging and returns Log checker class."""
-    caplog.set_level(logging.DEBUG, logger="th2_data_services")
+    caplog.set_level(logging.DEBUG, logger="th2.data_services")
     return LogsChecker(caplog)
 
 
@@ -1883,3 +1885,120 @@ def events_tree_for_test() -> EventTree:
     tree.append_event(event_name="D", event_id="D_id", data=None, parent_id="B_id")
     tree.append_event(event_name="D1", event_id="D1_id", data={"key1": "value1", "key2": "value2"}, parent_id="D_id")
     return tree
+
+
+class DemoEventStruct(IEventStruct):
+    EVENT_ID = "eventId"
+    PARENT_EVENT_ID = "parentEventId"
+    STATUS = "successful"
+    NAME = "eventName"
+    BATCH_ID = "batchId"
+    IS_BATCHED = "isBatched"
+    EVENT_TYPE = "eventType"
+    END_TIMESTAMP = "endTimestamp"
+    START_TIMESTAMP = "startTimestamp"
+    ATTACHED_MESSAGES_IDS = "attachedMessageIds"
+    BODY = "body"
+
+
+class DemoEventStubBuilder(IEventStub):
+    def __init__(self, event_struct):
+        self.event_fields = event_struct
+        super().__init__()  # Requirement to define fields for the template earlier.
+
+    @property
+    def template(self) -> dict:
+        return {
+            self.event_fields.ATTACHED_MESSAGES_IDS: [],
+            self.event_fields.BATCH_ID: "Broken_Event",
+            self.event_fields.END_TIMESTAMP: {"nano": 0, "epochSecond": 0},
+            self.event_fields.START_TIMESTAMP: {"nano": 0, "epochSecond": 0},
+            self.event_fields.EVENT_ID: self.REQUIRED_FIELD,
+            self.event_fields.NAME: "Broken_Event",
+            self.event_fields.EVENT_TYPE: "Broken_Event",
+            self.event_fields.PARENT_EVENT_ID: "Broken_Event",
+            self.event_fields.STATUS: None,
+            self.event_fields.IS_BATCHED: None,
+        }
+
+
+class DemoDriver(IETCDriver):
+    def __init__(
+        self,
+        data_source=None,
+        event_struct=DemoEventStruct(),
+        use_stub: bool = False,
+    ):
+        super().__init__(data_source=data_source, event_struct=event_struct, use_stub=use_stub)
+        self.stub_builder = DemoEventStubBuilder(event_struct)
+
+    def get_event_id(self, event: Th2EventType) -> str:
+        try:
+            if event:
+                return event[self.event_struct.EVENT_ID]
+        except KeyError:
+            raise FieldIsNotExist(self.event_struct.EVENT_ID)
+
+    def get_event_name(self, event: Th2EventType) -> str:
+        try:
+            if event:
+                return event[self.event_struct.NAME]
+        except KeyError:
+            raise FieldIsNotExist(self.event_struct.NAME)
+
+    def get_parent_event_id(self, event) -> Optional[str]:
+        return event.get(self.event_struct.PARENT_EVENT_ID)
+
+    def get_events_by_id_from_source(self, ids: Sequence) -> list:
+        ...
+
+    def build_stub_event(self, id_):
+        return self.stub_builder.build({self.event_struct.EVENT_ID: id_})
+
+    def stub_event_name(self):
+        return self.stub_builder.template[self.event_struct.NAME]
+
+
+@pytest.fixture
+def demo_etc_driver():
+    return DemoDriver()
+
+
+@pytest.fixture
+def demo_etc(demo_etc_driver):
+    data = Data(demo_etc_data_small)
+    etc = EventTreeCollection(demo_etc_driver)
+    etc.build(data)
+    return etc
+
+
+@pytest.fixture
+def demo_etc_with_general_data(demo_etc_driver, general_data):
+    data = Data(general_data)
+    etc = EventTreeCollection(demo_etc_driver)
+    etc.build(data)
+    return etc
+
+
+@pytest.fixture
+def demo_petc(demo_etc_driver):
+    data = Data(demo_etc_data_small)
+    etc = ParentEventTreeCollection(demo_etc_driver)
+    etc.build(data)
+    return etc
+
+
+@pytest.fixture
+def demo_petc_with_general_data(demo_etc_driver, general_data):
+    data = Data(general_data)
+    petc = ParentEventTreeCollection(demo_etc_driver)
+    petc.build(data)
+    return petc
+
+
+@pytest.fixture
+def demo_etc_big(demo_etc_driver) -> EventTreeCollection:
+    data = Data(demo_etc_data_big)
+    etc = EventTreeCollection(demo_etc_driver)
+    etc.build(data)
+    return etc

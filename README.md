@@ -87,15 +87,18 @@ pip install th2-data-services[dependency_name]
 
 **Dependencies list** 
 
-| dependency name | provider version          |
-|:---------------:|---------------------------|
-|      lwdp       | latest version of lwdp    |
-|      lwdp2      | latest version of lwdp v2 |
+|  dependency name  | provider version                      |
+|:-----------------:|---------------------------------------|
+|       lwdp        | latest version of lwdp                |
+|       lwdp2       | latest version of lwdp v2             |
+| utils-rpt-viewer  | latest version of utils-rpt-viewer    |
+| utils-rpt-viewer5 | latest version of utils-rpt-viewer v5 |
+|   utils-advanced  | latest version of ds-utils            |
 
 **Example**
 
 ```
-pip install th2-data-services[lwdp]
+pip install th2-data-services[lwdp1]
 ```
 
 ## 2.2. Example
@@ -108,10 +111,12 @@ This example shows basic usage of library's features.
 
 <!-- start get_started_example.py -->
 ```python
+from collections import Generator
 from typing import Tuple, List, Optional, Generator
 from datetime import datetime
-from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
+from th2.data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
 
+from th2.data_services.data import Data
 
 from th2_data_services import Data
 from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection
@@ -120,13 +125,14 @@ from th2_data_services_lwdp.commands import http as commands
 from th2_data_services_lwdp.filters.event_filters import NameFilter, TypeFilter
 from th2_data_services_lwdp.events_tree import HttpETCDriver
 
+
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
 # If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
 # global parameter to True. It'll keep cache files if something went wrong.
-import th2_data_services
+from th2.data_services.config import options
 
-th2_data_services.INTERACTIVE_MODE = True
+options.INTERACTIVE_MODE = True
 
 # Some example data
 events = Data(

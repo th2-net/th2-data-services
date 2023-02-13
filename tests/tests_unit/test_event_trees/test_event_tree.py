@@ -1,7 +1,9 @@
+from copy import deepcopy
+
 import pytest
 
-from th2_data_services.event_tree import EventTree
-from th2_data_services.event_tree.exceptions import EventIdNotInTree, TreeLoop
+from th2.data_services.event_tree import EventTree
+from th2.data_services.event_tree.exceptions import EventIdNotInTree, TreeLoop
 
 
 def test_getitem(events_tree_for_test: EventTree):
@@ -59,16 +61,22 @@ def test_update_event_name_id_error(events_tree_for_test: EventTree):
 
 
 def test_merge_events_tree(events_tree_for_test: EventTree):
-    tree = events_tree_for_test
-    events_count = len(tree)
+    tree = deepcopy(events_tree_for_test)
 
-    other_tree = EventTree(event_name="RootEvent", event_id="root_id")
-    tree.append_event(event_name="12A", event_id="12A_id", data=None, parent_id="root_id")
-    tree.append_event(event_name="12B", event_id="12B_id", data=None, parent_id="root_id")
+    other_tree_root = dict(event_name="RootEvent", event_id="root_id")
+    other_tree_nodes = [
+        dict(event_name="12A", event_id="12A_id", data={"A": 65}, parent_id="root_id"),
+        dict(event_name="12B", event_id="12B_id", data={"B": 66}, parent_id="root_id"),
+    ]
+    other_tree = EventTree(**other_tree_root)
+    other_tree.append_event(**other_tree_nodes[0])
+    other_tree.append_event(**other_tree_nodes[1])
 
     tree.merge_tree("A_id", other_tree=other_tree)
-    # TODO - this check is peace of shit
-    assert events_count < len(tree)
+
+    merged_tree_events = tree.get_all_events()
+    expected_events = events_tree_for_test.get_all_events() + [event["data"] for event in other_tree_nodes]
+    assert merged_tree_events == expected_events
 
 
 def test_merge_events_tree_id_error(events_tree_for_test: EventTree):
@@ -81,8 +89,16 @@ def test_merge_events_tree_id_error(events_tree_for_test: EventTree):
     assert exc
 
 
-def test_append_event():
-    pass
+def test_append_event(events_tree_for_test):
+    tree = events_tree_for_test
+    node = {
+        "event_name": "0xA",
+        "event_id": "0xA_id",
+        "data": {"msg": "Event Has Been Created"},
+        "parent_id": "root_id",
+    }
+    tree.append_event(**node)
+    assert tree.get_event("0xA_id") == node["data"]
 
 
 @pytest.mark.xfail(reason="Raises exception now in Windows")
