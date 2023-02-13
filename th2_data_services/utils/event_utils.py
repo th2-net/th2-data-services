@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Tuple, Set, Union
+from typing import Callable, Dict, List, Tuple, Set, Union, Optional
 from datetime import datetime
 from th2_data_services.utils import misc_utils
 import json
@@ -9,10 +9,6 @@ from tabulate import tabulate
 #   1. events: List[Dict] -- should be Iterable[Th2Event], where Th2Event = Dict. It can be changed in the future
 #   2. IDEA - it's difficult to understand what you will get when read some functions. I think add examples
 #   3. Rename all docstrings word Gets to Returns. That's different things.
-
-
-# STREAMING
-from th2_data_services.utils.az_tree import get_event_tree_from_parent_id, process_trees_from_jsons, tree_walk
 
 
 def get_category_frequencies(
@@ -215,7 +211,9 @@ def get_type_totals(events: List[Dict]) -> Dict[str, int]:
 # TODO - USEFUL ???
 #   What the example of this? look very rarely need to use
 # Will return list! Perhaps it's better to return Data?
-def get_some(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> List[Dict]:
+def get_some(
+    events: List[Dict], event_type: Optional[str], count: int, start: int = 0, failed: bool = False
+) -> List[Dict]:
     """Gets limited list of events of specific eventType.
 
     Args:
@@ -447,6 +445,8 @@ def sublist(events: List[Dict], start_time: datetime, end_time: datetime) -> Lis
 
 
 # NOT STREAMING
+# TODO - not clear docstring
+# TODO - hardcoded get_event_tree_from_parent_id parameters - is it Ok?
 def extract_parent_as_json(
     events: Dict,
     parent_id: str,
@@ -465,6 +465,9 @@ def extract_parent_as_json(
         interval_end (str): Interval End
         body_to_simple_processors (Callable, optional): Body Transformer Function. Defaults to None.
     """
+    # TODO - temporary imported here to escape circular import
+    from th2_data_services.utils.az_tree import get_event_tree_from_parent_id
+
     sub_events = sublist([events], datetime.fromisoformat(interval_start), datetime.fromisoformat(interval_end))
     print(f"Sublist Length = {len(sub_events)}")
     tree = get_event_tree_from_parent_id(sub_events, parent_id, 10, 10000, body_to_simple_processors)
@@ -473,43 +476,6 @@ def extract_parent_as_json(
 
     with open(json_file_path, "w") as file:
         json.dump(tree, file, indent=3)
-
-
-# NOT STREAMING
-def search_tree(tree: Dict, tree_filter: Callable[[List, str, Dict], Dict]) -> List:
-    """Searches tree by filter function.
-
-    Args:
-        tree: TH2-Events transformed into tree (from util functions)
-        tree_filter: Filter function.
-        |   e.g. `tree_filter = lambda path, name, leaf: "[fail]" in name`
-
-    Returns:
-        List
-    """
-    result = []
-    tree_walk(tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter)
-    return result
-
-
-# NOT STREAMING
-def search_tree_from_jsons(path_pattern, tree_filter: Callable[[List, str, Dict], Dict]) -> List:
-    """Searches tree by filter function from JSON file(s).
-
-    Args:
-        path_pattern: JSON file(s) location
-        tree_filter: Filter function.
-        |   e.g. `tree_filter = lambda path, name, leaf: "[fail]" in name`
-
-    Returns:
-        List
-    """
-    result = []
-    process_trees_from_jsons(
-        path_pattern,
-        lambda tree: tree_walk(tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter),
-    )
-    return result
 
 
 # NOT STREAMING
@@ -616,6 +582,7 @@ def print_event(event: Dict) -> None:
 
 
 # NOT STREAMING
+# PREV name print_some_raw
 def print_events_raw(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> None:
     """Prints limited list of events of specific eventType in dictionary format.
 

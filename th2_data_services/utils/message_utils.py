@@ -1,8 +1,8 @@
 import base64
 from collections import defaultdict
-from typing import List, Dict, Callable, Set
+from typing import List, Dict, Callable, Set, Union
 
-import misc_utils
+from th2_data_services.utils import misc_utils
 from tabulate import tabulate
 
 

@@ -12,6 +12,11 @@ from th2_data_services.utils.event_utils import (
 )
 
 
+# TODO
+#   1. What index is?
+#   2.
+
+
 # NOT STREAMING
 def get_event_tree_from_parent_events(
     events: List[Dict], parents: List[Dict], depth: int, max_children: int, body_to_simple_processors: Dict = None
@@ -324,4 +329,41 @@ def tree_get_category_totals_from_jsons(path_pattern, categorizer: Callable, tre
         path_pattern,
         lambda tree: tree_walk(tree, partial(tree_update_totals, categorizer, result), tree_filter=tree_filter),
     )
+    return result
+
+
+# NOT STREAMING
+def search_tree_from_jsons(path_pattern, tree_filter: Callable[[List, str, Dict], Dict]) -> List:
+    """Searches tree by filter function from JSON file(s).
+
+    Args:
+        path_pattern: JSON file(s) location
+        tree_filter: Filter function.
+        |   e.g. `tree_filter = lambda path, name, leaf: "[fail]" in name`
+
+    Returns:
+        List
+    """
+    result = []
+    process_trees_from_jsons(
+        path_pattern,
+        lambda tree: tree_walk(tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter),
+    )
+    return result
+
+
+# NOT STREAMING
+def search_tree(tree: Dict, tree_filter: Callable[[List, str, Dict], Dict]) -> List:
+    """Searches tree by filter function.
+
+    Args:
+        tree: TH2-Events transformed into tree (from util functions)
+        tree_filter: Filter function.
+        |   e.g. `tree_filter = lambda path, name, leaf: "[fail]" in name`
+
+    Returns:
+        List
+    """
+    result = []
+    tree_walk(tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter)
     return result

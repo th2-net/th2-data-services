@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Dict
 
-import message_utils
-import event_utils
+from th2_data_services.utils import message_utils
+from th2_data_services.utils import event_utils
 from datetime import datetime
 
 import th2_data_services.utils.az_tree
@@ -21,6 +21,12 @@ def tag_rows_to_flat_dict(collection: Dict, flat_list: Dict, prefix: str) -> Non
             tag_rows_to_flat_dict(row, flat_list, new_prefix)
 
 
+############################
+# VerificationUtil  [start]
+###########################
+
+
+# USED FOR verifications only!
 def format_comparison_line(field: Dict, failed_collection: bool = False) -> str:  # noqa
     # TODO: Add docstrings
     key_piece = "!" if field["key"] else " "
@@ -37,15 +43,45 @@ def format_comparison_line(field: Dict, failed_collection: bool = False) -> str:
     return key_piece + status_piece + actual_piece + expected_piece
 
 
+# TODO
+#   1. Takes flat_list to put result in this dict.
+#   It's better to create this dict inside and return as a result.
+#   Now don't return anything!
+#   2. We can move this function to Viewer utils and grouped to VerificationUtil class
+#   3. verification_fields_to_simple_dict adds '#' to field name if Failed, but this func - NOT.
+#   4. What the idea of failed_collection ??
 def verification_fields_to_flat_dict(
     collection: Dict, flat_list: Dict, prefix, failed_collection: bool = False
 ):  # noqa
-    # TODO: Add docstrings
+    """
+    If a field A has a sub-field B, dot notation sting will be returned.
+
+    Examples:
+        failed_collection=False
+        {'hzField A': '   value [*]',
+         'hzField B': '!  2531410 [2531410]',
+         'hzSub message A.Field C': ' # 9 [9]'}
+
+         failed_collection=True
+         {'hzField A': ' # value [*]',
+         'hzField B': '!# 2531410 [2531410]',
+         'hzSub message A.Field C': ' # 9 [9]'}
+
+    Args:
+        collection: verification collection like here https://exactpro.atlassian.net/wiki/spaces/TH2/pages/63766549/rpt-viewer+supported+event+content#Verification
+        flat_list: NOT a list - dict. Used just to put result to this object.
+        prefix: prefix that will be added before each field name.
+        failed_collection: ???
+
+    Returns:
+
+    """
     if "fields" not in collection:
         flat_list.update(collection)
         return
 
     fields = collection["fields"]
+    # tag - is field name here.
     for tag, field in fields.items():
         if field["type"] == "field":
             flat_list[prefix + tag] = format_comparison_line(field, failed_collection)
@@ -55,6 +91,7 @@ def verification_fields_to_flat_dict(
             verification_fields_to_flat_dict(field, flat_list, new_prefix, next_failed_collection)
 
 
+# USED FOR verifications only!
 def check_if_verification_leaf_failed(leaf: Dict) -> bool:  # noqa
     # TODO: Add docstrings
     if "fields" not in leaf:
@@ -75,8 +112,34 @@ def check_if_verification_leaf_failed(leaf: Dict) -> bool:  # noqa
     return False
 
 
+# TODO
+#   1. Takes parent (like flat_list) to put result in this dict.
+#   It's better to create this dict inside and return as a result.
+#   Now don't return anything!
+#   2. We can move this function to Viewer utils and grouped to VerificationUtil class
+#   3. In 'verification_fields_to_flat_dict' we can provide prefix but here - NO!
 def verification_fields_to_simple_dict(collection: Dict, parent: Dict, failed_collection: bool = False) -> None:  # noqa
-    # TODO: Add docstrings
+    """
+
+    Examples:
+        failed_collection=False
+        {'Field A': '   value [*]',
+         'Field B': '!  2531410 [2531410]',
+         '# Sub message A': {'Field C': ' # 9 [9]'}}
+
+        failed_collection=True
+        {'Field A': ' # value [*]',
+         'Field B': '!# 2531410 [2531410]',
+         '# Sub message A': {'Field C': ' # 9 [9]'}}
+
+    Args:
+        collection: verification collection like here https://exactpro.atlassian.net/wiki/spaces/TH2/pages/63766549/rpt-viewer+supported+event+content#Verification
+        parent: NOT a list - dict. Used just to put result to this object.
+        failed_collection: ??
+
+    Returns:
+
+    """
     if "fields" not in collection:
         parent.update(collection)
         return
@@ -89,6 +152,11 @@ def verification_fields_to_simple_dict(collection: Dict, parent: Dict, failed_co
             parent[prefix + tag] = {}
             next_failed_collection = "status" in field and field["status"] == "FAILED"
             verification_fields_to_simple_dict(field, parent[prefix + tag], next_failed_collection)
+
+
+############################
+# VerificationUtil  [end]
+###########################
 
 
 def item_status_fail(str_irem) -> bool:  # noqa
@@ -637,7 +705,7 @@ def generate_generic_json_report_limited_batches(
 ):  # noqa
     # TODO: Add docstrings
     filtered = events.filter(parents_filter)
-    parents = event_utils.get_some(filtered, None, 10000)
+    parents = event_utils.get_some(filtered, event_type=None, count=10000)
     if len(parents) == 0:
         raise SystemError("Reports parents not found")
 
@@ -820,3 +888,82 @@ def prepare_story(story_items_list, json_path=None, events=None, event_body_proc
             result.append(create_parallel_tables(item, collected_data))
 
     return result
+
+
+ver_dict = {
+    "type": "verification",
+    "fields": {
+        "Field A": {
+            "type": "field",
+            "operation": "NOT_EMPTY",
+            "status": "PASSED",
+            "key": False,
+            "actual": "value",
+            "expected": "*",
+        },
+        "Field B": {
+            "type": "field",
+            "operation": "EQUAL",
+            "status": "PASSED",
+            "key": True,
+            "actual": "2531410",
+            "expected": "2531410",
+        },
+        "Sub message A": {
+            "type": "collection",
+            "operation": "EQUAL",
+            "key": False,
+            "actual": "1",
+            "expected": "1",
+            "fields": {
+                "Field C": {
+                    "type": "field",
+                    "operation": "NOT_EQUAL",
+                    "status": "FAILED",
+                    "key": False,
+                    "actual": "9",
+                    "expected": "9",
+                }
+            },
+        },
+    },
+}
+
+
+def test_verification_fields_to_flat_dict():  # noqa
+    flat_list = {}
+    verification_fields_to_flat_dict(collection=ver_dict, flat_list=flat_list, prefix="hz", failed_collection=True)
+    print(flat_list)
+    """
+    failed_collection=False
+    {'hzField A': '   value [*]', 
+     'hzField B': '!  2531410 [2531410]', 
+     'hzSub message A.Field C': ' # 9 [9]'}
+     
+     failed_collection=True
+     {'hzField A': ' # value [*]', 
+     'hzField B': '!# 2531410 [2531410]', 
+     'hzSub message A.Field C': ' # 9 [9]'}
+    """
+
+
+def test_verification_fields_to_simple_dict():  # noqa
+    flat_list = {}
+    verification_fields_to_simple_dict(collection=ver_dict, parent=flat_list, failed_collection=True)
+    print(flat_list)
+    """
+    failed_collection=False
+    {'Field A': '   value [*]', 
+     'Field B': '!  2531410 [2531410]', 
+     '# Sub message A': {'Field C': ' # 9 [9]'}}
+     
+    failed_collection=True
+    {'Field A': ' # value [*]', 
+     'Field B': '!# 2531410 [2531410]', 
+     '# Sub message A': {'Field C': ' # 9 [9]'}}
+    """
+
+
+if __name__ == "__main__":
+    # test_verification_fields_to_flat_dict()
+    test_verification_fields_to_simple_dict()
