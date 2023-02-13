@@ -1,4 +1,4 @@
-#   Copyright 2020-2020 Exactpro (Exactpro Systems Limited)
+#   Copyright 2022-2023 Exactpro (Exactpro Systems Limited)
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -49,15 +49,14 @@ CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
         "th2-data-services-lwdp>=2,<3",
     ],
     "utils-rpt-viewer": [
-      
         "th2-data-services-utils-rpt-viewer",
     ],
-     "utils-rpt-viewer5": [
+    "utils-rpt-viewer5": [
         "th2-data-services-utils-rpt-viewer>=5,<6",
     ],
     "utils-advanced": [
         "th2-data-services-utils",
-    ]
+    ],
 }
 
 setup(
@@ -72,7 +71,7 @@ setup(
     license="Apache License 2.0",
     python_requires=">=3.7",
     install_requires=requirements,
-    packages = find_namespace_packages(include=['th2.*']),
+    packages=find_namespace_packages(include=["th2.*"]),
     extras_require=CORE_EXTRAS_DEPENDENCIES,
     include_package_data=True,
 )
