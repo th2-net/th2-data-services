@@ -456,6 +456,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 14. [TH2-4738] Two new libraries added as extra dependencies. They can be installed as:
    - pip install th2-data-services[utils-advanced]
    - pip install th2-data-services[utils-rpt-viewer]
+   - pip install th2-data-services[utils-rpt-viewer5]
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.

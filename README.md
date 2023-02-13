@@ -87,12 +87,13 @@ pip install th2-data-services[dependency_name]
 
 **Dependencies list** 
 
-|  dependency name  | provider version                   |
-|:-----------------:|------------------------------------|
-|       lwdp        | latest version of lwdp             |
-|       lwdp2       | latest version of lwdp v2          |
-|  utils-rpt-viewer | latest version of ds-utils         |
-|   utils-advanced  | latest version of utils-rpt-viewer |
+|  dependency name  | provider version                      |
+|:-----------------:|---------------------------------------|
+|       lwdp        | latest version of lwdp                |
+|       lwdp2       | latest version of lwdp v2             |
+| utils-rpt-viewer  | latest version of utils-rpt-viewer    |
+| utils-rpt-viewer5 | latest version of utils-rpt-viewer v5 |
+|   utils-advanced  | latest version of ds-utils            |
 
 **Example**
 
