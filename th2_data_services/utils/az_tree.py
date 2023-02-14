@@ -305,9 +305,9 @@ def tree_walk_from_jsons(path_pattern: str, processor: Callable, tree_filter: Ca
         tree_filter: Tree filter function
 
     Examples:
-        >>> process_trees_from_jsons(
+        >>> tree_walk_from_jsons(
                 path_to_json_files="path/to/files.json",
-                processor=# TODO: Add processor example
+                processor=lambda path, name, leaf: leaf.update({name: "/".join(path)}),
                 tree_filter=lambda path, name, leaf: "[fail]" in name
             )
     """
@@ -348,7 +348,15 @@ def tree_get_category_totals(tree: Dict, categorizer: Callable, tree_filter: Cal
         Dict
 
     Examples:
-        # TODO: Add example
+        >>> tree_get_category_totals(
+                tree=az_tree,
+                categorizer=lambda path, name, leaf: leaf['info']['type'] if 'info' in leaf else None,
+                tree_filter=lambda path, name, leaf: "[fail]" not in name)
+            {
+                'Outgoing message': 941,
+                'sendMessage': 95,
+                ...
+            }
     """
     result = {}
     tree_walk(tree, processor=partial(tree_update_totals, categorizer, result), tree_filter=tree_filter)

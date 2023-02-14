@@ -85,7 +85,9 @@ def get_type_frequencies(events: List[Dict], types: List[str], aggregation_level
 # STREAMING
 # TODO - NOT-READY -- event["successful"] should be updated by resolver
 # categorizer - expects that it will return str
-def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status: bool = False) -> Dict[str, int]:
+def get_category_totals(
+    events: List[Dict], categorizer: Callable[[Dict], str], ignore_status: bool = False
+) -> Dict[str, int]:
     """Returns dictionary quantities of events for different categories.
 
     Args:
@@ -771,17 +773,17 @@ def print_roots(events: List[Dict], count: int, start: int = 0) -> None:
 
 
 # STREAMING
-def print_children(events: List[Dict], parent: str, count: int, verbose: bool = True):
+def print_children(events: List[Dict], parent_id: str, count: int, verbose: bool = True):
     """Prints limited list of direct children events.
 
     Args:
         events (List[Dict]): TH2-Events
-        parent (str): Parent ID
+        parent_id (str): Parent ID
         count (int): Maximum number of events to extract
         verbose (bool): Verbose output, defaults to True.
 
     """
-    records = get_children_from_parent_id(events, parent, count)
+    records, _ = get_children_from_parent_id(events, parent_id, count)
     fprint = print_event if verbose is True else print
     for r in records:
         fprint(r)
@@ -799,7 +801,7 @@ def print_type_totals(events: List[Dict], return_html: bool = False) -> Union[No
         Union[None, str]
     """
     event_types = get_type_totals(events)
-    return misc_utils.print_stats_dict(event_types)
+    return misc_utils.print_stats_dict(event_types, return_html=return_html)
 
 
 # STREAMING
@@ -815,7 +817,7 @@ def print_type_frequencies(
         return_html: Return HTML format, defaults to False
 
     """
-    table = get_type_frequencies(events, event_types)
+    table = get_type_frequencies(events, event_types, aggregation_level)
     if return_html:
         return tabulate(table, headers="firstrow", tablefmt="html")
     else:
@@ -857,7 +859,7 @@ def print_children_from_parents(events: List[Dict], parents: List[Dict], max_eve
     Args:
         events (List[Dict]): TH2-Events
         parents (List[Dict]): Parent TH2-Events
-        max_events (int): Maximum number of events to extract, default to 10'000
+        max_events (int): Maximum number of events to extract from each parent, default to 10'000
 
     """
     tree, count = get_children_from_parents(events, parents, max_events)
