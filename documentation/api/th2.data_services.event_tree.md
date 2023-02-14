@@ -23,7 +23,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-- **event_tree**: #  Copyright 2022 Exactpro (Exactpro Systems Limited)
+- **common_event_tree**: #  Copyright 2022 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@
 #  limitations under the License.
 
 - **etc_driver**
-- **event_tree_collection**: #  Copyright 2022 Exactpro (Exactpro Systems Limited)
+- **common_event_tree_collection**: #  Copyright 2022 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-- **parent_event_tree_collection**: #  Copyright 2022 Exactpro (Exactpro Systems Limited)
+- **common_parent_event_tree_collection**: #  Copyright 2022 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.

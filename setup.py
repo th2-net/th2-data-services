@@ -30,15 +30,15 @@ with open("requirements.txt", "r") as file:
     requirements = [line.strip() for line in file.readlines() if not line.startswith("#") and line != "\n"]
 
 CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
-    "rdp": [
-        "th2-data-services-rdp",
-    ],
-    "rdp5": [
-        "th2-data-services-rdp>=5,<6",
-    ],
-    "rdp6": [
-        "th2-data-services-rdp>=6,<7",
-    ],
+    # "rdp": [
+    #     "th2-data-services-rdp",
+    # ],
+    # "rdp5": [
+    #     "th2-data-services-rdp>=5,<6",
+    # ],
+    # "rdp6": [
+    #     "th2-data-services-rdp>=6,<7",
+    # ],
     "lwdp": [
         "th2-data-services-lwdp",
     ],

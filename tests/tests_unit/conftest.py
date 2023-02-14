@@ -8,7 +8,12 @@ import pytest
 from tests.tests_unit.test_event_trees.demo_etc_data import demo_etc_data_big, demo_etc_data_small
 from tests.tests_unit.utils import LogsChecker
 from th2.data_services.data import Data
-from th2.data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2.data_services.event_tree import (
+    CommonEventTree,
+    CommonEventTreeCollection,
+    CommonParentEventTreeCollection,
+    IETCDriver,
+)
 from th2.data_services.event_tree.etc_driver import Th2EventType
 from th2.data_services.event_tree.exceptions import FieldIsNotExist
 from th2.data_services.interfaces import IEventStruct, IEventStub
@@ -1877,8 +1882,8 @@ def tmp_test_folder() -> Path:
 
 
 @pytest.fixture
-def events_tree_for_test() -> EventTree:
-    tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
+def events_tree_for_test() -> CommonEventTree:
+    tree = CommonEventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
     tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
     tree.append_event(event_name="B", event_id="B_id", data=None, parent_id="root_id")
     tree.append_event(event_name="C", event_id="C_id", data={"data": "test data"}, parent_id="B_id")
@@ -1967,7 +1972,7 @@ def demo_etc_driver():
 @pytest.fixture
 def demo_etc(demo_etc_driver):
     data = Data(demo_etc_data_small)
-    etc = EventTreeCollection(demo_etc_driver)
+    etc = CommonEventTreeCollection(demo_etc_driver)
     etc.build(data)
     return etc
 
@@ -1975,7 +1980,7 @@ def demo_etc(demo_etc_driver):
 @pytest.fixture
 def demo_etc_with_general_data(demo_etc_driver, general_data):
     data = Data(general_data)
-    etc = EventTreeCollection(demo_etc_driver)
+    etc = CommonEventTreeCollection(demo_etc_driver)
     etc.build(data)
     return etc
 
@@ -1983,7 +1988,7 @@ def demo_etc_with_general_data(demo_etc_driver, general_data):
 @pytest.fixture
 def demo_petc(demo_etc_driver):
     data = Data(demo_etc_data_small)
-    etc = ParentEventTreeCollection(demo_etc_driver)
+    etc = CommonParentEventTreeCollection(demo_etc_driver)
     etc.build(data)
     return etc
 
@@ -1991,14 +1996,14 @@ def demo_petc(demo_etc_driver):
 @pytest.fixture
 def demo_petc_with_general_data(demo_etc_driver, general_data):
     data = Data(general_data)
-    petc = ParentEventTreeCollection(demo_etc_driver)
+    petc = CommonParentEventTreeCollection(demo_etc_driver)
     petc.build(data)
     return petc
 
 
 @pytest.fixture
-def demo_etc_big(demo_etc_driver) -> EventTreeCollection:
+def demo_etc_big(demo_etc_driver) -> CommonEventTreeCollection:
     data = Data(demo_etc_data_big)
-    etc = EventTreeCollection(demo_etc_driver)
+    etc = CommonEventTreeCollection(demo_etc_driver)
     etc.build(data)
     return etc

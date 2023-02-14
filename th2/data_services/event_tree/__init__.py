@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .event_tree import EventTree
-from .event_tree_collection import EventTreeCollection
-from .parent_event_tree_collection import ParentEventTreeCollection
+from .common_event_tree import CommonEventTree
+from .common_event_tree_collection import CommonEventTreeCollection
+from .common_parent_event_tree_collection import CommonParentEventTreeCollection
 from .etc_driver import IETCDriver

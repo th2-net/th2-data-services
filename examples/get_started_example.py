@@ -3,7 +3,12 @@ from datetime import datetime
 
 
 from th2.data_services.data import Data
-from th2.data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2.data_services.event_tree import (
+    CommonEventTree,
+    CommonEventTreeCollection,
+    CommonParentEventTreeCollection,
+    IETCDriver,
+)
 from th2.data_services.interfaces import IDataSource
 from th2.data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
 
@@ -191,7 +196,7 @@ datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(protobuf_timest
 
 # [3.1] Build a custom EventTree
 # To create an EventTree object you need to provide name, id and data of the root event.
-tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
+tree = CommonEventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
 
 # To add new node use append_event. parent_id is necessary, data is optional.
 tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
@@ -200,13 +205,13 @@ tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id
 
 # If you don't specify data_source for the driver then it won't recover detached events.
 driver: IETCDriver  # You should init ETCDriver object. E.g. from LwDP module or your custom class.
-etc = EventTreeCollection(driver)
+etc = CommonEventTreeCollection(driver)
 etc.build(events)
 
 # Detached events isn't empty.
 assert etc.get_detached_events()
 
-etc = EventTreeCollection(driver)
+etc = CommonEventTreeCollection(driver)
 # Detached events are empty because they were recovered.
 assert not etc.get_detached_events()
 
@@ -234,7 +239,7 @@ ancestor: Optional[dict] = etc.find_ancestor(
 children: Tuple[dict] = etc.get_children("814422e1-9c68-11eb-8598-691ebd7f413d")
 
 # [3.3.7] Get subtree for specified event.
-subtree: EventTree = etc.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
+subtree: CommonEventTree = etc.get_subtree("8e23774d-cf59-11eb-a6e3-55bfdb2b3f21")
 
 # [3.3.8] Get full path to the event.
 # Looks like [ancestor_root, ancestor_level1, ancestor_level2, event]
@@ -259,15 +264,15 @@ etc.show()
 # EventTree has the same methods as EventTreeCollection, but only for its own tree.
 
 # [3.4.1] Get collection trees.
-trees: List[EventTree] = etc.get_trees()
-tree: EventTree = trees[0]
+trees: List[CommonEventTree] = etc.get_trees()
+tree: CommonEventTree = trees[0]
 
 # But EventTree provides a work with the tree, but does not modify it.
 # If you want to modify the tree, use EventTreeCollections.
 
 # [3.5] Working with ParentlessTree.
 # ParentlessTree is EventTree which has detached events with stubs.
-parentless_trees: List[EventTree] = etc.get_parentless_trees()
+parentless_trees: List[CommonEventTree] = etc.get_parentless_trees()
 
 # [3.6] Working with ParentEventTreeCollection.
 # ParentEventTreeCollection is a tree collection like EventTreeCollection,
@@ -276,7 +281,7 @@ data_source: IDataSource  # You should init DataSource object. E.g. from LwDP mo
 # ETCDriver here is a stub, actually the lib don't have such class.
 # You can take it in LwDP module or create yourself class if you have some special events structure.
 driver = ETCDriver(data_source=data_source)
-etc = ParentEventTreeCollection(driver)
+etc = CommonParentEventTreeCollection(driver)
 etc.build(events)
 
 etc.show()
