@@ -59,6 +59,8 @@ def add_text_to_file(file_path_list, text_path):
         if len(file_path_list[1])>4:
             if file_path_list[1][-4:]==year:
                 text = text.format(file_path_list[1])
+            elif file_path_list[1]=="missing":
+                text = text.format(year)
             else:
                 text = text.format(file_path_list[1][:-4]+year)
         else:
