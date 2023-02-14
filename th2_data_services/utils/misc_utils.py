@@ -79,7 +79,7 @@ def extract_timestamp(timestamp_element: Dict) -> str:
         str
     """
     timestamp = datetime.fromtimestamp(timestamp_element["epochSecond"])
-    return f"{timestamp.isoformat()}.{timestamp_element['nano'].zfill(9)}"
+    return f"{timestamp.isoformat()}.{str(timestamp_element['nano']).zfill(9)}"
 
 
 # STREAMABLE
@@ -149,7 +149,7 @@ def get_objects_frequencies(
     object_expander: Callable = None,
     objects_filter: Callable = None,
 ) -> List[List]:
-    """Gets objects frequencies.
+    """Returns objects frequencies based on categorizer.
 
     Args:
         objects_stream: Objects stream
