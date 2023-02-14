@@ -79,7 +79,7 @@ def extract_timestamp(timestamp_element: Dict) -> str:
         str
     """
     timestamp = datetime.fromtimestamp(timestamp_element["epochSecond"])
-    return f"{timestamp.isoformat()}.{timestamp_element['nano'].zfill(9)}"
+    return f"{timestamp.isoformat()}.{str(timestamp_element['nano']).zfill(9)}"
 
 
 # STREAMABLE

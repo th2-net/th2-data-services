@@ -6,9 +6,10 @@ from os import listdir, path
 from typing import List, Dict, Tuple, Callable
 
 from th2_data_services.utils.event_utils import (
-    extract_time,
+    extract_start_timestamp,
     get_children_from_parents_as_list,
     get_children_from_parent_id,
+    sublist,
 )
 
 
@@ -18,44 +19,49 @@ def get_event_tree_from_parent_events(
 ) -> Tuple[Dict, Dict]:
     """Generate tree object based on parents events list.
 
-    | "tree" structure:
-    | {
-    |     "info": { "stats": EventType+Status (Frequency Table) }
-    |     "rootId": {
-    |         "info": { event_details...}
-    |         "body" { ... } # If event has body
-    |         "parentId": {
-    |             "info": { event_details...}
-    |             "body" { ... } # If event has body
-    |             "childId": { ... }
-    |         }
-    |     }
-    |     "rootId2": { ... }
-    | }
-    |
-    | "index" structure:
-    | {
-    |     "rootId": {
-    |         "info": { event_details...}
-    |         "body" { ... } # If event has body
-    |         "parentId": {
-    |             "info": { event_details...}
-    |             "body" { ... } # If event has body
-    |             "childId": { ... }
-    |         }
-    |     }
-    |     "rootId2": { ... }
-    | }
-
     Args:
         events (Dict[List]): TH2-Events
         parents (Dict[List]): TH2-Events
-        depth (int): Max Iteration
-        max_children (int): Max Children
-        body_to_simple_processors (Dict, optional): Body Transformer Function, Defaults To None
+        depth (int): Max iteration
+        max_children (int): Max children
+        body_to_simple_processors (Dict, optional): Body transformer function, defaults to None
 
     Returns:
         Tuple(Dict, Dict): Tree, Index
+
+    Example:
+        >>> get_event_tree_from_parent_events(events=events,
+                                              parents=parent_events,
+                                              depth=10,
+                                              max_children=100)
+        (
+            { # tree
+                "info": { "stats": EventType+Status (Frequency Table) }
+                "rootId": {
+                    "info": { event_details...}
+                    "body" { ... } # If event has body
+                    "parentId": {
+                        "info": { event_details...}
+                        "body" { ... } # If event has body
+                        "childId": { ... }
+                    }
+                }
+                "rootId2": { ... }
+            }
+            ,
+            { # index
+                "rootId": {
+                    "info": { event_details...}
+                    "body" { ... } # If event has body
+                    "parentId": {
+                        "info": { event_details...}
+                        "body" { ... } # If event has body
+                        "childId": { ... }
+                    }
+                }
+                "rootId2": { ... }
+            }
+        )
     """
     index = {}
     iteration = 0
@@ -69,7 +75,7 @@ def get_event_tree_from_parent_events(
                     "name": child["eventName"],
                     "type": child["eventType"],
                     "id": child["eventId"],
-                    "time": extract_time(child),
+                    "time": extract_start_timestamp(child),
                 },
                 "body": child["body"],
             }
@@ -101,8 +107,9 @@ def get_event_tree_from_parent_events(
                 leaf.pop("body")
 
             if body_to_simple_processors is not None:
-                if (eventType := child["eventType"]) in body_to_simple_processors:
-                    leaf["body"] = body_to_simple_processors[eventType](child["body"])
+                event_type = child["eventType"]
+                if event_type in body_to_simple_processors:
+                    leaf["body"] = body_to_simple_processors[event_type](child["body"])
 
         current_children = get_children_from_parents_as_list(events, current_children, max_children)
         print(f"get_event_tree_from_parent - {iteration} len_children={len(current_children)} {datetime.now()}")
@@ -117,23 +124,6 @@ def get_event_tree_from_parent_id(
 ) -> Dict:
     """Generate tree object based on parent event id.
 
-    | "tree" structure:
-    | {
-    |     "info": {
-    |           "stats": EventType+Status (Frequency Table)
-    |           parent_event_details...
-    |     }
-    |     "child_id": {
-    |         "info": { event_details...}
-    |         "child_id": {
-    |             "info": { event_details...}
-    |             "body" { ... } # If event has body
-    |             "childId": { ... }
-    |         }
-    |     }
-    |     "child_id2": { ... }
-    | }
-
     Args:
         events (List[Dict]): TH2-Events
         parent_id (str): Parent ID
@@ -143,13 +133,36 @@ def get_event_tree_from_parent_id(
 
     Returns:
         Dict: Tree
+
+    Example:
+        >>> get_event_tree_from_parent_id(events=events,
+                                          parent_id="demo_parent_id",
+                                          depth=10,
+                                          max_children=1000)
+            { # tree
+               "info": {
+                    "stats": EventType+Status (Frequency Table)
+                    parent_event_details...
+               }
+               "child_id": {
+                  "info": { event_details...}
+                  "child_id": {
+                     "info": { event_details...}
+                     "body" { ... } # If event has body
+                     "childId": { ... }
+                  }
+               }
+               "child_id2": { ... }
+            }
     """
     current_children, parent = get_children_from_parent_id(events, parent_id, max_children)
     print(f"get_event_tree_from_parent - initial {datetime.now()}")
     tree, _ = get_event_tree_from_parent_events(
         events, current_children, depth, max_children, body_to_simple_processors
     )
-    tree["info"].update({"name": parent["eventName"], "type": parent["eventType"], "time": extract_time(parent)})
+    tree["info"].update(
+        {"name": parent["eventName"], "type": parent["eventType"], "time": extract_start_timestamp(parent)}
+    )
     if len(parent["body"]) != 0:
         tree["body"] = parent["body"]
 
@@ -167,6 +180,12 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
 
     Returns:
         None (Saves File)
+
+    Example:
+        >>> save_tree_as_json(tree=az_tree,
+                              json_file_path="path/to/output.json",
+                              # file_categorizer=lambda key, leaf: key
+            )
     """
     path = json_file_path.replace(".json", "_summary.json")
     arranged_tree = {}
@@ -196,7 +215,7 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
 
 
 # STREAMING
-def transform_tree(index: Dict, post_processors: Dict[str, Callable]) -> None:
+def transform_tree(index: Dict, post_processors: Dict[str, Callable[[Dict], Dict]]) -> None:
     """Transform Tree.
 
     Args:
@@ -205,6 +224,9 @@ def transform_tree(index: Dict, post_processors: Dict[str, Callable]) -> None:
 
     Returns:
         None, Modifies "index"
+
+    Example:
+        # TODO: Add example...
     """
     for leaf in index.values():
         leaf_type = leaf["info"]["type"]
@@ -222,6 +244,11 @@ def process_trees_from_jsons(path_pattern: str, processor: Callable) -> None:
         path_pattern: Path to json file(s)
         processor: Processor function
 
+    Example:
+        >>> process_trees_from_jsons(
+                path_to_json_files="path/to/files.json",
+                processor: # TODO: Add processor example
+            )
     """
     dir_path = path_pattern[: path_pattern.rindex("/")] if "/" in path_pattern else ""
     pattern = path_pattern[path_pattern.rindex("/") + 1 :] if "/" in path_pattern else path_pattern
@@ -231,6 +258,7 @@ def process_trees_from_jsons(path_pattern: str, processor: Callable) -> None:
         if pattern in file:
             with open(path.join(dir_path, file)) as f:
                 tree = json.load(f)
+                # TODO: Does data change here? How does this work?
                 processor(tree)
 
 
@@ -243,11 +271,16 @@ def tree_walk(tree: Dict, processor: Callable, tree_filter: Callable = None, roo
         processor (Callable): Processor function
         tree_filter (Callable, optional): Tree filter function. Defaults to None.
         root_path (List, optional): Root path. Defaults to [].
+
+    Examples:
+        >>> tree_walk(tree=az_tree,
+                      processor=lambda path, name, leaf: leaf.update({name: "/".join(path)}),
+                      tree_filter=lambda path, name, leaf: "[fail]" in name),
+                      # root_path=[rootName, ..., eventName])
+
     """
     for name, leaf in tree.items():
-        if name == "info":
-            continue
-        if type(leaf) is not dict:
+        if name == "info" or type(leaf) is not dict:
             continue
         new_path = [name, *root_path]
         if tree_filter is not None:
@@ -268,6 +301,12 @@ def tree_walk_from_jsons(path_pattern: str, processor: Callable, tree_filter: Ca
         processor: Processor function
         tree_filter: Tree filter function
 
+    Examples:
+        >>> process_trees_from_jsons(
+                path_to_json_files="path/to/files.json",
+                processor=# TODO: Add processor example
+                tree_filter=lambda path, name, leaf: "[fail]" in name
+            )
     """
     process_trees_from_jsons(path_pattern, lambda tree: tree_walk(tree, processor, tree_filter=tree_filter))
 
@@ -282,6 +321,9 @@ def tree_update_totals(categorizer: Callable, tree: Dict, path: List[str], name:
         path: Event path (from root to event)
         name: Event name
         leaf: Leaf (event)
+
+    Examples:
+        # TODO: Add example
     """
     category = categorizer(path, name, leaf)
     if category not in tree:
@@ -301,9 +343,12 @@ def tree_get_category_totals(tree: Dict, categorizer: Callable, tree_filter: Cal
 
     Returns:
         Dict
+
+    Examples:
+        # TODO: Add example
     """
     result = {}
-    tree_walk(tree, partial(tree_update_totals, categorizer, result), tree_filter=tree_filter)
+    tree_walk(tree, processor=partial(tree_update_totals, categorizer, result), tree_filter=tree_filter)
     return result
 
 
@@ -318,10 +363,119 @@ def tree_get_category_totals_from_jsons(path_pattern, categorizer: Callable, tre
 
     Returns:
         Dict
+
+    Examples:
+        # TODO: Add example
     """
     result = {}
     process_trees_from_jsons(
         path_pattern,
         lambda tree: tree_walk(tree, partial(tree_update_totals, categorizer, result), tree_filter=tree_filter),
+    )
+    return result
+
+
+# NOT STREAMING
+def extract_parent_as_json(
+    events: List[Dict],
+    parent_id: str,
+    json_file_path: str,
+    interval_start: str,
+    interval_end: str,
+    body_to_simple_processors: Callable = None,
+):
+    """Parse parent into JSON format.
+
+    Args:
+        events (Dict): TH2-Events
+        parent_id (str): Parent ID
+        json_file_path (str): JSON output path
+        interval_start (str): Interval start
+        interval_end (str): Interval end
+        body_to_simple_processors (Callable, optional): Body categorizer function, defaults to None.
+
+    Example:
+        >>> extract_parent_as_json(
+                events=data,
+                parent_id="demo_parent_id",
+                json_file_path="path/to/output.json",
+                interval_start="2022-03-16T08:40:16",
+                interval_end="2022-03-16T14:40:16"
+            )
+
+    JSON structure:
+        {
+            "info": {
+                  "stats": EventType+Status (Frequency Table),
+                  parent_event_details...
+            }
+            "child_id": {
+                "info": { event_details...}
+                "child_id": {
+                    "info": { event_details...}
+                    "body" { ... } # If event has body
+                    "childId": { ... }
+                }
+            }
+            "child_id2": { ... }
+        }
+    """
+    sub_events = sublist(events, datetime.fromisoformat(interval_start), datetime.fromisoformat(interval_end))
+    print(f"Sublist length = {len(sub_events)}")
+    tree = get_event_tree_from_parent_id(sub_events, parent_id, 10, 10000, body_to_simple_processors)
+    if not tree:
+        return
+    types_set = set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL"))
+    tree["info"]["types_list"] = list(types_set)
+
+    with open(json_file_path, "w") as file:
+        json.dump(tree, file, indent=3)
+
+
+# NOT STREAMING
+def search_tree(tree: Dict, tree_filter: Callable[[List, str, Dict], Dict]) -> List[Dict]:
+    """Searches tree by filter function.
+
+    Args:
+        tree: TH2-Events transformed into tree (from util functions)
+        tree_filter: Filter function.
+
+    Returns:
+        List[Dict]
+
+    Example:
+        >>> search_tree(tree=az_tree,
+                        tree_filter=lambda path, name, leaf: "[fail]" in name)
+            [
+                {**TH2-Event}, # "[fail]" in eventName
+                ...
+            ]
+    """
+    result = []
+    tree_walk(tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter)
+    return result
+
+
+# NOT STREAMING
+def search_tree_from_jsons(path_to_json_files, tree_filter: Callable[[List, str, Dict], Dict]) -> List:
+    """Searches tree by filter function from JSON file(s).
+
+    Args:
+        path_to_json_files: JSON file(s) location
+        tree_filter: Filter function.
+
+    Returns:
+        List
+
+    Examples:
+        >>> search_tree_from_jsons(
+                path_to_json_files="path/to/files.json",
+                tree_filter=lambda path, name, leaf: "[fail]" in name
+            )
+    """
+    result = []
+    process_trees_from_jsons(
+        path_to_json_files,
+        lambda tree: tree_walk(tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter),
     )
     return result
