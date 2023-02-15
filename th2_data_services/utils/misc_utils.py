@@ -1,7 +1,9 @@
 from collections import defaultdict
-from typing import List, Dict, Union, Callable, Any, Tuple
+from typing import List, Dict, Union, Callable, Any, Tuple, Iterable
 from tabulate import tabulate
 from datetime import datetime
+
+from th2_data_services.events_tree.events_tree import Th2Event
 
 
 # STREAMABLE
@@ -141,7 +143,7 @@ def timestamp_aggregation_key(
 
 # STREAMABLE
 def get_objects_frequencies(
-    objects_stream: List[Dict],
+    objects_stream: Iterable[Th2Event],
     categories: List,
     categorizer: Callable,
     timestamp_function: Callable,
@@ -219,7 +221,7 @@ def get_objects_frequencies(
 
 # STREAMABLE (?)
 def analyze_stream_sequence(
-    stream: List[Dict],
+    stream: Iterable[Th2Event],
     sequence_extractor: Callable,
     timestamp_extractor: Callable,
     seq_filter: Callable = None,
@@ -323,7 +325,7 @@ def time_slice_object_filter(timestamp_field: Dict, timestamp_iso: str, duration
 
 # STREAMABLE ?
 def process_objects_stream(
-    stream: List[Dict], processors: List[Tuple[Callable, Dict]], expander: Callable = None
+    stream: Iterable[Th2Event], processors: List[Tuple[Callable, Dict]], expander: Callable = None
 ) -> None:
     """Processes object stream with processors.
 

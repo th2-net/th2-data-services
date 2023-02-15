@@ -10,7 +10,7 @@
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L8"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L10"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `print_stats_dict`
 
@@ -42,7 +42,7 @@ Prints Statistics.
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L44"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L46"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `print_measurement_dict`
 
@@ -67,7 +67,7 @@ Prints Measurements.
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L72"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L74"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `extract_timestamp`
 
@@ -90,7 +90,7 @@ Extracts timestamp from argument.
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L86"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L88"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `time_interval_filter_seconds_precision`
 
@@ -120,7 +120,7 @@ TODO: Add Description.
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L103"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L105"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `timestamp_delta_us`
 
@@ -145,7 +145,7 @@ Returns timestamp delta in milliseconds.
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L118"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L120"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `timestamp_aggregation_key`
 
@@ -164,13 +164,13 @@ timestamp_aggregation_key(
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L143"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L145"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `get_objects_frequencies`
 
 ```python
 get_objects_frequencies(
-    objects_stream: List[Dict],
+    objects_stream: Iterable[dict],
     categories: List,
     categorizer: Callable,
     timestamp_function: Callable,
@@ -202,13 +202,13 @@ Returns objects frequencies based on categorizer.
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L221"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L223"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `analyze_stream_sequence`
 
 ```python
 analyze_stream_sequence(
-    stream: List[Dict],
+    stream: Iterable[dict],
     sequence_extractor: Callable,
     timestamp_extractor: Callable,
     seq_filter: Callable = None,
@@ -236,7 +236,7 @@ Analyzes stream sequence.
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L316"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L318"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `time_slice_object_filter`
 
@@ -255,13 +255,13 @@ time_slice_object_filter(
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L325"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L327"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `process_objects_stream`
 
 ```python
 process_objects_stream(
-    stream: List[Dict],
+    stream: Iterable[dict],
     processors: List[Tuple[Callable, Dict]],
     expander: Callable = None
 ) → None
@@ -280,7 +280,7 @@ Processes object stream with processors.
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L348"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L350"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `get_category_totals_p`
 
@@ -300,7 +300,7 @@ get_category_totals_p(
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L365"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L367"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `update_int_measurement`
 
@@ -315,7 +315,7 @@ update_int_measurement(metric: int, measurement_data, exp_10_bucket: int = 0)
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L399"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L401"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `get_category_measurement_p`
 
@@ -336,7 +336,7 @@ get_category_measurement_p(
 
 ---
 
-<a href="../../th2_data_services/utils/misc_utils.py#L426"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/misc_utils.py#L428"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `create_qty_distribution`
 
