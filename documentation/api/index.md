@@ -6,49 +6,244 @@
 
 - [`data`](./data.md#module-data)
 - [`decode_error_handler`](./decode_error_handler.md#module-decode_error_handler)
+- [`events_tree`](./events_tree.md#module-events_tree)
+- [`events_tree.events_tree`](./events_tree.events_tree.md#module-events_treeevents_tree)
+- [`events_tree.exceptions`](./events_tree.exceptions.md#module-events_treeexceptions)
+- [`filter`](./filter.md#module-filter)
 - [`interfaces`](./interfaces.md#module-interfaces)
 - [`interfaces.adapter`](./interfaces.adapter.md#module-interfacesadapter)
 - [`interfaces.command`](./interfaces.command.md#module-interfacescommand)
+- [`interfaces.data_source`](./interfaces.data_source.md#module-interfacesdata_source)
+- [`interfaces.events_tree`](./interfaces.events_tree.md#module-interfacesevents_tree)
+- [`interfaces.events_tree.events_tree_collection`](./interfaces.events_tree.events_tree_collection.md#module-interfacesevents_treeevents_tree_collection)
+- [`interfaces.events_tree.parent_events_tree_collection`](./interfaces.events_tree.parent_events_tree_collection.md#module-interfacesevents_treeparent_events_tree_collection)
 - [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
 - [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
 - [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
 - [`provider`](./provider.md#module-provider)
+- [`provider.adapters`](./provider.adapters.md#module-provideradapters)
+- [`provider.adapters.adapter_sse`](./provider.adapters.adapter_sse.md#module-provideradaptersadapter_sse)
+- [`provider.command`](./provider.command.md#module-providercommand)
 - [`provider.exceptions`](./provider.exceptions.md#module-providerexceptions)
+- [`provider.interfaces`](./provider.interfaces.md#module-providerinterfaces)
+- [`provider.interfaces.command`](./provider.interfaces.command.md#module-providerinterfacescommand): Interfaces for Provider Commands.
+- [`provider.interfaces.data_source`](./provider.interfaces.data_source.md#module-providerinterfacesdata_source): Interfaces for Provider Data Source.
+- [`provider.interfaces.filter`](./provider.interfaces.filter.md#module-providerinterfacesfilter)
+- [`provider.interfaces.source_api`](./provider.interfaces.source_api.md#module-providerinterfacessource_api)
+- [`provider.interfaces.struct`](./provider.interfaces.struct.md#module-providerinterfacesstruct)
+- [`provider.interfaces.stub_builder`](./provider.interfaces.stub_builder.md#module-providerinterfacesstub_builder)
 - [`provider.utils`](./provider.utils.md#module-providerutils)
+- [`provider.utils.converters`](./provider.utils.converters.md#module-providerutilsconverters)
 - [`provider.utils.version_checker`](./provider.utils.version_checker.md#module-providerutilsversion_checker)
+- [`provider.v5`](./provider.v5.md#module-providerv5)
+- [`provider.v5.adapters`](./provider.v5.adapters.md#module-providerv5adapters)
+- [`provider.v5.adapters.basic_adapters`](./provider.v5.adapters.basic_adapters.md#module-providerv5adaptersbasic_adapters)
+- [`provider.v5.adapters.event_adapters`](./provider.v5.adapters.event_adapters.md#module-providerv5adaptersevent_adapters)
+- [`provider.v5.adapters.message_adapters`](./provider.v5.adapters.message_adapters.md#module-providerv5adaptersmessage_adapters)
+- [`provider.v5.command_resolver`](./provider.v5.command_resolver.md#module-providerv5command_resolver)
+- [`provider.v5.commands`](./provider.v5.commands.md#module-providerv5commands)
+- [`provider.v5.commands.grpc`](./provider.v5.commands.grpc.md#module-providerv5commandsgrpc)
+- [`provider.v5.commands.http`](./provider.v5.commands.http.md#module-providerv5commandshttp)
+- [`provider.v5.data_source`](./provider.v5.data_source.md#module-providerv5data_source)
+- [`provider.v5.data_source.grpc`](./provider.v5.data_source.grpc.md#module-providerv5data_sourcegrpc)
+- [`provider.v5.data_source.http`](./provider.v5.data_source.http.md#module-providerv5data_sourcehttp)
+- [`provider.v5.events_tree`](./provider.v5.events_tree.md#module-providerv5events_tree)
+- [`provider.v5.events_tree.events_tree_collection`](./provider.v5.events_tree.events_tree_collection.md#module-providerv5events_treeevents_tree_collection)
+- [`provider.v5.events_tree.parent_events_tree_collection`](./provider.v5.events_tree.parent_events_tree_collection.md#module-providerv5events_treeparent_events_tree_collection)
+- [`provider.v5.filters`](./provider.v5.filters.md#module-providerv5filters)
+- [`provider.v5.filters.event_filters`](./provider.v5.filters.event_filters.md#module-providerv5filtersevent_filters)
+- [`provider.v5.filters.filter`](./provider.v5.filters.filter.md#module-providerv5filtersfilter)
+- [`provider.v5.filters.message_filters`](./provider.v5.filters.message_filters.md#module-providerv5filtersmessage_filters)
+- [`provider.v5.interfaces`](./provider.v5.interfaces.md#module-providerv5interfaces)
+- [`provider.v5.interfaces.command`](./provider.v5.interfaces.command.md#module-providerv5interfacescommand)
+- [`provider.v5.provider_api`](./provider.v5.provider_api.md#module-providerv5provider_api)
+- [`provider.v5.provider_api.grpc`](./provider.v5.provider_api.grpc.md#module-providerv5provider_apigrpc)
+- [`provider.v5.provider_api.http`](./provider.v5.provider_api.http.md#module-providerv5provider_apihttp)
+- [`provider.v5.stub_builder`](./provider.v5.stub_builder.md#module-providerv5stub_builder)
 - [`provider.v6`](./provider.v6.md#module-providerv6)
 - [`provider.v6.commands`](./provider.v6.commands.md#module-providerv6commands)
 - [`provider.v6.filters`](./provider.v6.filters.md#module-providerv6filters)
+- [`provider.v6.struct`](./provider.v6.struct.md#module-providerv6struct)
+- [`provider.v6.stub_builder`](./provider.v6.stub_builder.md#module-providerv6stub_builder)
 - [`sse_client`](./sse_client.md#module-sse_client)
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 - [`utils`](./utils.md#module-utils)
+- [`utils.az_tree`](./utils.az_tree.md#module-utilsaz_tree)
 - [`utils.categorizers`](./utils.categorizers.md#module-utilscategorizers)
+- [`utils.converters`](./utils.converters.md#module-utilsconverters)
+- [`utils.event_utils`](./utils.event_utils.md#module-utilsevent_utils)
 - [`utils.json`](./utils.json.md#module-utilsjson)
+- [`utils.message_utils`](./utils.message_utils.md#module-utilsmessage_utils)
 - [`utils.misc_utils`](./utils.misc_utils.md#module-utilsmisc_utils)
+- [`utils.script_report_utils`](./utils.script_report_utils.md#module-utilsscript_report_utils)
 
 ## Classes
 
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
+- [`events_tree.EventsTree`](./events_tree.events_tree.md#class-eventstree): EventsTree is a tree-based data structure of events.
+- [`exceptions.EventIdNotInTree`](./events_tree.exceptions.md#class-eventidnotintree)
+- [`exceptions.FieldIsNotExist`](./events_tree.exceptions.md#class-fieldisnotexist)
+- [`filter.Filter`](./filter.md#class-filter): The class for using rpt-data-provider filters API.
 - [`adapter.IAdapter`](./interfaces.adapter.md#class-iadapter): High level interface for Adapter.
 - [`adapter.IEventAdapter`](./interfaces.adapter.md#class-ieventadapter): Interface of Adapter for events.
 - [`adapter.IMessageAdapter`](./interfaces.adapter.md#class-imessageadapter): Interface of Adapter for messages.
 - [`command.ICommand`](./interfaces.command.md#class-icommand): High level interface for Command.
+- [`data_source.IDataSource`](./interfaces.data_source.md#class-idatasource)
+- [`events_tree_collection.EventsTreeCollection`](./interfaces.events_tree.events_tree_collection.md#class-eventstreecollection): EventsTreeCollection objective is building 'EventsTree's and storing them.
+- [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
+- [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
+- [`adapter_sse.StreamingSSEAdapter`](./provider.adapters.adapter_sse.md#class-streamingsseadapter)
+- [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
 - [`exceptions.CommandError`](./provider.exceptions.md#class-commanderror): Exception raised for errors in the command.
 - [`exceptions.EventNotFound`](./provider.exceptions.md#class-eventnotfound)
 - [`exceptions.MessageNotFound`](./provider.exceptions.md#class-messagenotfound)
+- [`command.IGRPCProviderCommand`](./provider.interfaces.command.md#class-igrpcprovidercommand): Interface of command for rpt-data-provider which works via GRPC.
+- [`command.IHTTPProviderCommand`](./provider.interfaces.command.md#class-ihttpprovidercommand): Interface of command for rpt-data-provider which works via HTTP.
+- [`command.IProviderCommand`](./provider.interfaces.command.md#class-iprovidercommand): Interface of command for rpt-data-provider.
+- [`data_source.IGRPCProviderDataSource`](./provider.interfaces.data_source.md#class-igrpcproviderdatasource): Interface of DataSource that provides work with rpt-data-provider via GRPC.
+- [`data_source.IHTTPProviderDataSource`](./provider.interfaces.data_source.md#class-ihttpproviderdatasource): Interface of DataSource that provides work with rpt-data-provider via HTTP.
+- [`data_source.IProviderDataSource`](./provider.interfaces.data_source.md#class-iproviderdatasource)
+- [`filter.IProviderFilter`](./provider.interfaces.filter.md#class-iproviderfilter)
+- [`source_api.IGRPCProviderSourceAPI`](./provider.interfaces.source_api.md#class-igrpcprovidersourceapi): Interface for Source API of rpt-data-provider which works via GRPC.
+- [`source_api.IHTTPProviderSourceAPI`](./provider.interfaces.source_api.md#class-ihttpprovidersourceapi): Interface for Source API of rpt-data-provider which works via HTTP.
+- [`source_api.IProviderSourceAPI`](./provider.interfaces.source_api.md#class-iprovidersourceapi): Interface for Source API of rpt-data-provider.
+- [`struct.IEventStruct`](./provider.interfaces.struct.md#class-ieventstruct): Just to mark Event Struct class.
+- [`struct.IMessageStruct`](./provider.interfaces.struct.md#class-imessagestruct): Just to mark Message Struct class.
+- [`stub_builder.IEventStub`](./provider.interfaces.stub_builder.md#class-ieventstub): Just to mark Event Stub class.
+- [`stub_builder.IMessageStub`](./provider.interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
+- [`stub_builder.IStub`](./provider.interfaces.stub_builder.md#class-istub)
+- [`converters.Th2TimestampConverter`](./provider.utils.converters.md#class-th2timestampconverter): Converts Th2 timestamps.
+- [`basic_adapters.GRPCObjectToDictAdapter`](./provider.v5.adapters.basic_adapters.md#class-grpcobjecttodictadapter): GRPC Adapter decodes a GRPC object into a Dict object.
+- [`event_adapters.DeleteEventWrappersAdapter`](./provider.v5.adapters.event_adapters.md#class-deleteeventwrappersadapter): Adapter that deletes unnecessary wrappers in events.
+- [`message_adapters.CodecPipelinesAdapter`](./provider.v5.adapters.message_adapters.md#class-codecpipelinesadapter): Adapter for codec-pipeline messages from provider v5.
+- [`message_adapters.DeleteMessageWrappersAdapter`](./provider.v5.adapters.message_adapters.md#class-deletemessagewrappersadapter): Adapter that deletes unnecessary wrappers in messages.
+- [`grpc.GetEventById`](./provider.v5.commands.grpc.md#class-geteventbyid): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetEventByIdGRPCObject`](./provider.v5.commands.grpc.md#class-geteventbyidgrpcobject): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetEvents`](./provider.v5.commands.grpc.md#class-getevents): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetEventsById`](./provider.v5.commands.grpc.md#class-geteventsbyid): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetEventsGRPCObjects`](./provider.v5.commands.grpc.md#class-geteventsgrpcobjects): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessageById`](./provider.v5.commands.grpc.md#class-getmessagebyid): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessageByIdGRPCObject`](./provider.v5.commands.grpc.md#class-getmessagebyidgrpcobject): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessages`](./provider.v5.commands.grpc.md#class-getmessages): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessagesById`](./provider.v5.commands.grpc.md#class-getmessagesbyid): A Class-Command for request to rpt-data-provider.
+- [`grpc.GetMessagesGRPCObject`](./provider.v5.commands.grpc.md#class-getmessagesgrpcobject): A Class-Command for request to rpt-data-provider.
+- [`http.GetEventById`](./provider.v5.commands.http.md#class-geteventbyid): A Class-Command for request to rpt-data-provider.
+- [`http.GetEvents`](./provider.v5.commands.http.md#class-getevents): A Class-Command for request to rpt-data-provider.
+- [`http.GetEventsById`](./provider.v5.commands.http.md#class-geteventsbyid): A Class-Command for request to rpt-data-provider.
+- [`http.GetEventsSSEBytes`](./provider.v5.commands.http.md#class-geteventsssebytes): A Class-Command for request to rpt-data-provider.
+- [`http.GetEventsSSEEvents`](./provider.v5.commands.http.md#class-geteventssseevents): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessageById`](./provider.v5.commands.http.md#class-getmessagebyid): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessages`](./provider.v5.commands.http.md#class-getmessages): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessagesById`](./provider.v5.commands.http.md#class-getmessagesbyid): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessagesSSEBytes`](./provider.v5.commands.http.md#class-getmessagesssebytes): A Class-Command for request to rpt-data-provider.
+- [`http.GetMessagesSSEEvents`](./provider.v5.commands.http.md#class-getmessagessseevents): A Class-Command for request to rpt-data-provider.
+- [`grpc.GRPCProvider5DataSource`](./provider.v5.data_source.grpc.md#class-grpcprovider5datasource): DataSource class which provide work with rpt-data-provider.
+- [`http.HTTPProvider5DataSource`](./provider.v5.data_source.http.md#class-httpprovider5datasource): DataSource class which provide work with rpt-data-provider.
+- [`events_tree_collection.EventsTreeCollectionProvider5`](./provider.v5.events_tree.events_tree_collection.md#class-eventstreecollectionprovider5): EventsTreesCollections for data-provider v5.
+- [`parent_events_tree_collection.ParentEventsTreeCollectionProvider5`](./provider.v5.events_tree.parent_events_tree_collection.md#class-parenteventstreecollectionprovider5): ParentEventsTreeCollection for data-provider v5.
+- [`event_filters.AttachedMessageIdFilter`](./provider.v5.filters.event_filters.md#class-attachedmessageidfilter): Filters the events that are linked to the specified message id.
+- [`event_filters.BodyFilter`](./provider.v5.filters.event_filters.md#class-bodyfilter): Will match the events which body contains one of the given substrings.
+- [`event_filters.FailedStatusFilter`](./provider.v5.filters.event_filters.md#class-failedstatusfilter): Will match the events which status equals failed.
+- [`event_filters.NameFilter`](./provider.v5.filters.event_filters.md#class-namefilter): Will match the events which name contains one of the given substrings.
+- [`event_filters.PassedStatusFilter`](./provider.v5.filters.event_filters.md#class-passedstatusfilter): Will match the events which status equals passed.
+- [`event_filters.TypeFilter`](./provider.v5.filters.event_filters.md#class-typefilter): Will match the events which type contains one of the given substrings.
+- [`filter.Provider5EventFilter`](./provider.v5.filters.filter.md#class-provider5eventfilter): Base class for Event Filters of Provider v5.
+- [`filter.Provider5Filter`](./provider.v5.filters.filter.md#class-provider5filter): General interface for Filters of Provider v5.
+- [`filter.Provider5MessageFilter`](./provider.v5.filters.filter.md#class-provider5messagefilter): Base class for Message Filters of Provider v5.
+- [`message_filters.AttachedEventIdsFilter`](./provider.v5.filters.message_filters.md#class-attachedeventidsfilter): Filters the messages that are linked to the specified event id.
+- [`message_filters.BodyBinaryFilter`](./provider.v5.filters.message_filters.md#class-bodybinaryfilter): Will match the messages by their binary body.
+- [`message_filters.BodyFilter`](./provider.v5.filters.message_filters.md#class-bodyfilter): Will match the messages by their parsed body.
+- [`message_filters.TypeFilter`](./provider.v5.filters.message_filters.md#class-typefilter): Will match the messages by their full type name.
+- [`command.IGRPCProvider5Command`](./provider.v5.interfaces.command.md#class-igrpcprovider5command): Interface of command for rpt-data-provider.
+- [`command.IHTTPProvider5Command`](./provider.v5.interfaces.command.md#class-ihttpprovider5command): Interface of command for rpt-data-provider.
+- [`grpc.BasicRequest`](./provider.v5.provider_api.grpc.md#class-basicrequest): BasicRequest(start_timestamp, end_timestamp, result_count_limit, keep_open, search_direction, filters)
+- [`grpc.GRPCProvider5API`](./provider.v5.provider_api.grpc.md#class-grpcprovider5api)
+- [`http.HTTPProvider5API`](./provider.v5.provider_api.http.md#class-httpprovider5api)
+- [`stub_builder.Provider5EventStubBuilder`](./provider.v5.stub_builder.md#class-provider5eventstubbuilder)
+- [`stub_builder.Provider5MessageStubBuilder`](./provider.v5.stub_builder.md#class-provider5messagestubbuilder)
+- [`struct.GRPCProvider6EventStruct`](./provider.v6.struct.md#class-grpcprovider6eventstruct): Interface for Event of data-provider v6.
+- [`stub_builder.Provider6EventStubBuilder`](./provider.v6.stub_builder.md#class-provider6eventstubbuilder)
+- [`stub_builder.Provider6MessageStubBuilder`](./provider.v6.stub_builder.md#class-provider6messagestubbuilder)
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
 - [`categorizers.EventCategorizer`](./utils.categorizers.md#class-eventcategorizer)
+- [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
 - [`json.BufferedJSONProcessor`](./utils.json.md#class-bufferedjsonprocessor)
 
 ## Functions
 
 - [`decode_error_handler.handler`](./decode_error_handler.md#function-handler): Decode error handler that tries change utf-8 character to Unicode.
+- [`adapter_sse.get_default_sse_adapter`](./provider.adapters.adapter_sse.md#function-get_default_sse_adapter)
 - [`version_checker.get_package_version`](./provider.utils.version_checker.md#function-get_package_version)
 - [`version_checker.get_version_by_pip`](./provider.utils.version_checker.md#function-get_version_by_pip)
 - [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
+- [`command_resolver.resolver_get_event_by_id`](./provider.v5.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
+- [`command_resolver.resolver_get_events_by_id`](./provider.v5.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
+- [`az_tree.get_event_tree_from_parent_events`](./utils.az_tree.md#function-get_event_tree_from_parent_events): Generate tree object based on parents events list.
+- [`az_tree.get_event_tree_from_parent_id`](./utils.az_tree.md#function-get_event_tree_from_parent_id): Generate tree object based on parent event id.
+- [`az_tree.process_trees_from_jsons`](./utils.az_tree.md#function-process_trees_from_jsons): Loads JSON files locally and processes them with given function.
+- [`az_tree.save_tree_as_json`](./utils.az_tree.md#function-save_tree_as_json): Saves Tree As JSON Format.
+- [`az_tree.search_tree`](./utils.az_tree.md#function-search_tree): Searches tree by filter function.
+- [`az_tree.search_tree_from_jsons`](./utils.az_tree.md#function-search_tree_from_jsons): Searches tree by filter function from JSON file(s).
+- [`az_tree.transform_tree`](./utils.az_tree.md#function-transform_tree): Transform Tree.
+- [`az_tree.tree_get_category_totals`](./utils.az_tree.md#function-tree_get_category_totals): Returns category totals from tree.
+- [`az_tree.tree_get_category_totals_from_jsons`](./utils.az_tree.md#function-tree_get_category_totals_from_jsons): Returns category totals from JSON file(s).
+- [`az_tree.tree_update_totals`](./utils.az_tree.md#function-tree_update_totals): Updates tree by categorizer function as keys.
+- [`az_tree.tree_walk`](./utils.az_tree.md#function-tree_walk): Process tree by processor [Recursive method].
+- [`az_tree.tree_walk_from_jsons`](./utils.az_tree.md#function-tree_walk_from_jsons): Loads JSON file(s) and processes them with given function.
+- [`event_utils.build_roots_cache`](./utils.event_utils.md#function-build_roots_cache): Returns event path for each event.
+- [`event_utils.extract_parent_as_json`](./utils.event_utils.md#function-extract_parent_as_json): Parse parent into JSON format.
+- [`event_utils.extract_start_timestamp`](./utils.event_utils.md#function-extract_start_timestamp): Returns string representation of events timestamp.
+- [`event_utils.get_attached_message_ids`](./utils.event_utils.md#function-get_attached_message_ids): Returns the set of unique message IDs linked to all events.
+- [`event_utils.get_attached_message_ids_index`](./utils.event_utils.md#function-get_attached_message_ids_index): Returns dict of lists of related events by unique message IDs.
+- [`event_utils.get_attached_messages_totals`](./utils.event_utils.md#function-get_attached_messages_totals): Returns dictionary quantities of messages attached to events for each stream.
+- [`event_utils.get_category_frequencies`](./utils.event_utils.md#function-get_category_frequencies): Returns event frequencies based on event category.
+- [`event_utils.get_category_totals`](./utils.event_utils.md#function-get_category_totals): Returns dictionary quantities of events for different categories.
+- [`event_utils.get_children_from_parent_id`](./utils.event_utils.md#function-get_children_from_parent_id): Returns limited list of direct children events.
+- [`event_utils.get_children_from_parents`](./utils.event_utils.md#function-get_children_from_parents): Returns limited list of direct children events for each event in parents.
+- [`event_utils.get_children_from_parents_as_list`](./utils.event_utils.md#function-get_children_from_parents_as_list): Returns limited list of direct children events for each event in parents.
+- [`event_utils.get_events_by_category`](./utils.event_utils.md#function-get_events_by_category): Returns limited list of events of specific category produced by custom categorizer.
+- [`event_utils.get_parents`](./utils.event_utils.md#function-get_parents): Returns all parent events of linked to any event within specified events objects collection.
+- [`event_utils.get_prior_parent_ids`](./utils.event_utils.md#function-get_prior_parent_ids): Returns only parent events that are not present in the events.
+- [`event_utils.get_related_events`](./utils.event_utils.md#function-get_related_events): Returns limited list of events of linked to any message within specified messages objects collection.
+- [`event_utils.get_roots`](./utils.event_utils.md#function-get_roots): Returns limited list of root events (events without parents).
+- [`event_utils.get_some`](./utils.event_utils.md#function-get_some): Returns limited list of events of specific eventType.
+- [`event_utils.get_type_frequencies`](./utils.event_utils.md#function-get_type_frequencies): Returns event frequencies based on event type.
+- [`event_utils.get_type_totals`](./utils.event_utils.md#function-get_type_totals): Returns dictionary quantities of events for different event types.
+- [`event_utils.print_attached_messages_totals`](./utils.event_utils.md#function-print_attached_messages_totals): Prints Dictionary quantities of messages attached to events for each stream + direction.
+- [`event_utils.print_category_frequencies`](./utils.event_utils.md#function-print_category_frequencies): Prints table of events per seconds or each second when there were events within events stream.
+- [`event_utils.print_category_totals`](./utils.event_utils.md#function-print_category_totals): Prints dictionary quantities of events for different categories.
+- [`event_utils.print_children`](./utils.event_utils.md#function-print_children): Prints limited list of direct children events.
+- [`event_utils.print_children_from_parents`](./utils.event_utils.md#function-print_children_from_parents): Prints limited list of direct children events for each event in parents_list.
+- [`event_utils.print_children_stats_from_parents`](./utils.event_utils.md#function-print_children_stats_from_parents): Prints statistics with number of children and their duration for each event in parents_list.
+- [`event_utils.print_event`](./utils.event_utils.md#function-print_event): Prints event in human-readable format.
+- [`event_utils.print_events_raw`](./utils.event_utils.md#function-print_events_raw): Prints limited list of events of specific eventType in dictionary format.
+- [`event_utils.print_roots`](./utils.event_utils.md#function-print_roots): Prints limited list of root events (events without parents).
+- [`event_utils.print_some`](./utils.event_utils.md#function-print_some): Prints limited list of events of specific eventType in human-readable format.
+- [`event_utils.print_some_by_category`](./utils.event_utils.md#function-print_some_by_category): Print limited events by category.
+- [`event_utils.print_type_frequencies`](./utils.event_utils.md#function-print_type_frequencies): Prints table of events per seconds or each second when there were events within events stream.
+- [`event_utils.print_type_totals`](./utils.event_utils.md#function-print_type_totals): Prints dictionary quantities of events for different event types.
+- [`event_utils.sublist`](./utils.event_utils.md#function-sublist): Filter Events Based On Timeframe.
+- [`message_utils.expand_message`](./utils.message_utils.md#function-expand_message): Extract compounded message into list of individual messages.
+- [`message_utils.extract_time`](./utils.message_utils.md#function-extract_time): Extracts timestamp from message.
+- [`message_utils.get_category_frequencies`](./utils.message_utils.md#function-get_category_frequencies)
+- [`message_utils.get_messages_examples`](./utils.message_utils.md#function-get_messages_examples)
+- [`message_utils.get_raw_body_str`](./utils.message_utils.md#function-get_raw_body_str)
+- [`message_utils.get_some`](./utils.message_utils.md#function-get_some): Returns limited list of messages from the stream.
+- [`message_utils.get_totals`](./utils.message_utils.md#function-get_totals): Returns dictionary quantities of events for different message categories.
+- [`message_utils.message_fields_to_flat_dict`](./utils.message_utils.md#function-message_fields_to_flat_dict)
+- [`message_utils.message_to_dict`](./utils.message_utils.md#function-message_to_dict): Converts message body to dict.
+- [`message_utils.print_category_frequencies`](./utils.message_utils.md#function-print_category_frequencies)
+- [`message_utils.print_message`](./utils.message_utils.md#function-print_message): Print message (verbose).
+- [`message_utils.print_message_raw_source`](./utils.message_utils.md#function-print_message_raw_source)
+- [`message_utils.print_some`](./utils.message_utils.md#function-print_some): Prints limited list of messages from the stream in dictionary format.
+- [`message_utils.print_some_raw`](./utils.message_utils.md#function-print_some_raw): Prints limited list of messages from the stream in dictionary format.
+- [`message_utils.print_some_raw_source`](./utils.message_utils.md#function-print_some_raw_source): Prints limited list of messages from the stream in ascii from raw binary format.
+- [`message_utils.print_totals`](./utils.message_utils.md#function-print_totals): Prints dictionary quantities of events for different message categories.
+- [`message_utils.resolve_count_message_ids`](./utils.message_utils.md#function-resolve_count_message_ids): Resolves set of message IDs. # TODO: Update Description.
+- [`message_utils.resolve_message_ids`](./utils.message_utils.md#function-resolve_message_ids): Resolves set of message IDs. # TODO: Update Description.
 - [`misc_utils.analyze_stream_sequence`](./utils.misc_utils.md#function-analyze_stream_sequence): Analyzes stream sequence.
 - [`misc_utils.create_qty_distribution`](./utils.misc_utils.md#function-create_qty_distribution): Returns qty distribution.
 - [`misc_utils.extract_timestamp`](./utils.misc_utils.md#function-extract_timestamp): Extracts timestamp from argument.
@@ -63,6 +258,45 @@
 - [`misc_utils.timestamp_aggregation_key`](./utils.misc_utils.md#function-timestamp_aggregation_key)
 - [`misc_utils.timestamp_delta_us`](./utils.misc_utils.md#function-timestamp_delta_us): Returns timestamp delta in milliseconds.
 - [`misc_utils.update_int_measurement`](./utils.misc_utils.md#function-update_int_measurement)
+- [`script_report_utils.check_if_verification_leaf_failed`](./utils.script_report_utils.md#function-check_if_verification_leaf_failed)
+- [`script_report_utils.collect_element`](./utils.script_report_utils.md#function-collect_element)
+- [`script_report_utils.collect_ids_for_story`](./utils.script_report_utils.md#function-collect_ids_for_story)
+- [`script_report_utils.create_parallel_tables`](./utils.script_report_utils.md#function-create_parallel_tables)
+- [`script_report_utils.defining_tags`](./utils.script_report_utils.md#function-defining_tags)
+- [`script_report_utils.enrich_events_tree_with_attached_messages`](./utils.script_report_utils.md#function-enrich_events_tree_with_attached_messages)
+- [`script_report_utils.extra_post_processor`](./utils.script_report_utils.md#function-extra_post_processor)
+- [`script_report_utils.extract_ids_from_dict`](./utils.script_report_utils.md#function-extract_ids_from_dict)
+- [`script_report_utils.find_child_by_type`](./utils.script_report_utils.md#function-find_child_by_type): Finds child by type.
+- [`script_report_utils.find_child_by_types`](./utils.script_report_utils.md#function-find_child_by_types): Finds child by type.
+- [`script_report_utils.find_corresponding_missing_filter`](./utils.script_report_utils.md#function-find_corresponding_missing_filter)
+- [`script_report_utils.find_corresponding_verification`](./utils.script_report_utils.md#function-find_corresponding_verification)
+- [`script_report_utils.format_actual_event`](./utils.script_report_utils.md#function-format_actual_event)
+- [`script_report_utils.format_comparison_line`](./utils.script_report_utils.md#function-format_comparison_line)
+- [`script_report_utils.format_expected_event`](./utils.script_report_utils.md#function-format_expected_event)
+- [`script_report_utils.generate_generic_json_report`](./utils.script_report_utils.md#function-generate_generic_json_report)
+- [`script_report_utils.generate_generic_json_report_limited_batches`](./utils.script_report_utils.md#function-generate_generic_json_report_limited_batches)
+- [`script_report_utils.generate_generic_tree_and_index`](./utils.script_report_utils.md#function-generate_generic_tree_and_index)
+- [`script_report_utils.generate_generic_tree_and_index_from_parents_list`](./utils.script_report_utils.md#function-generate_generic_tree_and_index_from_parents_list)
+- [`script_report_utils.generate_matrix_json_report_limited_batches`](./utils.script_report_utils.md#function-generate_matrix_json_report_limited_batches)
+- [`script_report_utils.generate_model_matrix_json_report`](./utils.script_report_utils.md#function-generate_model_matrix_json_report)
+- [`script_report_utils.generate_model_matrix_tree_and_index`](./utils.script_report_utils.md#function-generate_model_matrix_tree_and_index)
+- [`script_report_utils.get_val_from_verification`](./utils.script_report_utils.md#function-get_val_from_verification)
+- [`script_report_utils.id_tags`](./utils.script_report_utils.md#function-id_tags)
+- [`script_report_utils.item_status_fail`](./utils.script_report_utils.md#function-item_status_fail)
+- [`script_report_utils.matrix_model_test_case_analyze_ids`](./utils.script_report_utils.md#function-matrix_model_test_case_analyze_ids)
+- [`script_report_utils.matrix_model_test_case_processor`](./utils.script_report_utils.md#function-matrix_model_test_case_processor)
+- [`script_report_utils.prepare_story`](./utils.script_report_utils.md#function-prepare_story)
+- [`script_report_utils.process_step_request_id`](./utils.script_report_utils.md#function-process_step_request_id)
+- [`script_report_utils.simplify_body_outgoing_message`](./utils.script_report_utils.md#function-simplify_body_outgoing_message)
+- [`script_report_utils.simplify_body_tree_table_list`](./utils.script_report_utils.md#function-simplify_body_tree_table_list)
+- [`script_report_utils.simplify_body_verification`](./utils.script_report_utils.md#function-simplify_body_verification)
+- [`script_report_utils.simplify_body_verification2`](./utils.script_report_utils.md#function-simplify_body_verification2)
+- [`script_report_utils.tag_rows_to_flat_dict`](./utils.script_report_utils.md#function-tag_rows_to_flat_dict): rows are used in 'Tree table', 'Table'  but not in the Verification (uses fields)
+- [`script_report_utils.test_simplify_body_tree_table_list`](./utils.script_report_utils.md#function-test_simplify_body_tree_table_list)
+- [`script_report_utils.test_verification_fields_to_flat_dict`](./utils.script_report_utils.md#function-test_verification_fields_to_flat_dict)
+- [`script_report_utils.test_verification_fields_to_simple_dict`](./utils.script_report_utils.md#function-test_verification_fields_to_simple_dict)
+- [`script_report_utils.verification_fields_to_flat_dict`](./utils.script_report_utils.md#function-verification_fields_to_flat_dict): If a field A has a sub-field B, dot notation sting will be returned.
+- [`script_report_utils.verification_fields_to_simple_dict`](./utils.script_report_utils.md#function-verification_fields_to_simple_dict): Examples:
 
 
 ---

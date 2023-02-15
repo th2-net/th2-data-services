@@ -4,11 +4,10 @@
 
 # %%
 from th2_data_services import Data
+from th2_data_services.utils import az_tree, event_utils
 from datetime import datetime
 import os
 import json
-import az_tree
-import event_utils
 
 # %% [markdown]
 # ## Data
@@ -26,15 +25,6 @@ event = list(events.limit(1))[0]
 # messages = Data.from_cache_file('./messages.pickle')
 
 # %%
-# # Build DS-core ETC (OPTIONAL (Will take few seconds to build))
-# from th2_data_services.event_tree import EventTreeCollection
-# from th2_data_services_lwdp.event_tree import HttpETCDriver
-#
-# driver = HttpETCDriver()
-# etc = EventTreeCollection(driver)
-# etc.build(events)
-
-# %%
 parent_events = event_utils.get_roots(events, 1000)
 
 # %%
@@ -48,7 +38,7 @@ parent = parent_events[0]
 
 # %%
 type_totals = event_utils.get_type_totals(events=events)
-type_totals
+print(type_totals)
 
 # %% [markdown]
 # ### Get Type Frequencies
@@ -57,7 +47,7 @@ type_totals
 type_frequencies = event_utils.get_type_frequencies(
     events=events, types=["Service event", "ModelMatrix"], aggregation_level="hours"
 )
-type_frequencies
+print(type_frequencies)
 
 
 # %% [markdown]
@@ -65,7 +55,7 @@ type_frequencies
 
 # %%
 category_totals = event_utils.get_category_totals(events=events, categorizer=lambda event: event["type"])
-category_totals
+print(category_totals)
 
 
 # %% [markdown]
@@ -75,28 +65,28 @@ category_totals
 category_frequencies = event_utils.get_category_frequencies(
     events=events, categories=["Service event", "ModelMatrix"], categorizer=lambda event: event["eventType"]
 )
-category_frequencies
+print(category_frequencies)
 
 # %% [markdown]
 # ### Get Attached Message Ids
 
 # %%
 attached_message_ids = event_utils.get_attached_message_ids(events=events)
-attached_message_ids
+print(attached_message_ids)
 
 # %% [markdown]
 # ### Get Attached Messages Totals
 
 # %%
 attached_messages_totals = event_utils.get_attached_messages_totals(events=events)
-attached_messages_totals
+print(attached_messages_totals)
 
 # %% [markdown]
 # ### Get Prior Parent Ids
 
 # %%
 prior_parent_ids = event_utils.get_prior_parent_ids(events=events)
-prior_parent_ids
+print(prior_parent_ids)
 
 # %% [markdown]
 # ### Get Attached Message Ids Index
@@ -104,14 +94,14 @@ prior_parent_ids
 # %%
 # Can taka a lot of time (~48sec)
 attached_message_ids_index = event_utils.get_attached_message_ids_index(events=events)
-attached_message_ids_index
+print(attached_message_ids_index)
 
 # %% [markdown]
 # ### Get Roots
 
 # %%
 roots = event_utils.get_roots(events=events, count=10)
-roots
+print(roots)
 
 # %% [markdown]
 # ### Get Parents
@@ -122,14 +112,14 @@ parents = event_utils.get_parents(events=events, children=children_of_parent_1)
 # or to find all parents
 # parents = event_utils.get_parents(events=events, children=events)
 assert [parent_1] == parents
-parents
+print(parents)
 
 # %% [markdown]
 # ### Get Some
 
 # %%
 some = event_utils.get_some(events=events, event_type="ModelCase", count=10)
-some
+print(some)
 
 # %% [markdown]
 # ### Get Events By Category
@@ -143,7 +133,7 @@ events_by_category = event_utils.get_events_by_category(
     count=10,
     categorizer=lambda event: event["successful"],
 )
-events_by_category
+print(events_by_category)
 
 
 # %% [markdown]
@@ -161,7 +151,7 @@ events_by_category
 children_from_parent_id = event_utils.get_children_from_parent_id(
     events=events, parent_id="f0c3f6e8-fae7-40b6-8125-a16df981775d", max_events=10
 )
-children_from_parent_id
+print(children_from_parent_id)
 
 
 # %% [markdown]
@@ -172,7 +162,7 @@ children_from_parents, children_count = event_utils.get_children_from_parents(
     events=events, parents=parent_events, max_events=1
 )
 print(f"Children count: {children_count}")
-children_from_parents
+print(children_from_parents)
 
 
 # %% [markdown]
@@ -182,7 +172,7 @@ children_from_parents
 children_from_parents_as_list = event_utils.get_children_from_parents_as_list(
     events=events, parents=parent_events, max_events=1
 )
-children_from_parents_as_list
+print(children_from_parents_as_list)
 
 # %% [markdown]
 # ### Sublist
@@ -193,7 +183,7 @@ sublist = event_utils.sublist(
     start_time=datetime.fromisoformat("2022-03-16T10:50:16"),
     end_time=datetime.fromisoformat("2022-03-16T10:53:16"),
 )
-sublist
+print(sublist)
 
 
 # %% [markdown]
@@ -201,14 +191,14 @@ sublist
 
 # %%
 roots_cache = event_utils.build_roots_cache(events=events, depth=3, max_level=3)
-roots_cache
+print(roots_cache)
 
 # %% [markdown]
 # ### Extract Start Timestamp
 
 # %%
 start_timestamp = event_utils.extract_start_timestamp(event=event)
-start_timestamp
+print(start_timestamp)
 
 # %% [markdown]
 # ### Print Type Totals
