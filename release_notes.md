@@ -378,7 +378,11 @@ This release implements performance bug fixes and provides Data object cache fil
 
 ## Feature
 1. [TH2-4601] Added `clear_cache` method to data object to remove cache file.
-
+2. [TH2-4751] Add event/message field resolvers.
+   - Global variables added
+     - EVENT_FIELDS_RESOLVER: EventFieldsResolver
+     - MESSAGE_FIELDS_RESOLVER: MessageFieldsResolver
+   
 ## BugFixes
 1. [TH2-4603] Fix += joining feature. Now it keeps cache status.
 2. [TH2-4604] `Data.from_cache_file` method has return value now.

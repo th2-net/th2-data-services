@@ -68,15 +68,13 @@
 - [`sse_client`](./sse_client.md#module-sse_client)
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 - [`utils`](./utils.md#module-utils)
-- [`utils.az_tree`](./utils.az_tree.md#module-utilsaz_tree)
 - [`utils.categorizers`](./utils.categorizers.md#module-utilscategorizers)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
 - [`utils.download_data`](./utils.download_data.md#module-utilsdownload_data)
 - [`utils.event_utils`](./utils.event_utils.md#module-utilsevent_utils)
 - [`utils.json`](./utils.json.md#module-utilsjson)
-- [`utils.message_utils`](./utils.message_utils.md#module-utilsmessage_utils)
 - [`utils.misc_utils`](./utils.misc_utils.md#module-utilsmisc_utils)
-- [`utils.script_report_utils`](./utils.script_report_utils.md#module-utilsscript_report_utils)
+- [`utils.resolver`](./utils.resolver.md#module-utilsresolver)
 
 ## Classes
 
@@ -172,6 +170,8 @@
 - [`categorizers.EventCategorizer`](./utils.categorizers.md#class-eventcategorizer)
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
 - [`json.BufferedJSONProcessor`](./utils.json.md#class-bufferedjsonprocessor)
+- [`resolver.EventFieldsResolver`](./utils.resolver.md#class-eventfieldsresolver)
+- [`resolver.MessageFieldsResolver`](./utils.resolver.md#class-messagefieldsresolver)
 
 ## Functions
 
@@ -262,45 +262,6 @@
 - [`misc_utils.timestamp_aggregation_key`](./utils.misc_utils.md#function-timestamp_aggregation_key)
 - [`misc_utils.timestamp_delta_us`](./utils.misc_utils.md#function-timestamp_delta_us): Returns timestamp delta in milliseconds.
 - [`misc_utils.update_int_measurement`](./utils.misc_utils.md#function-update_int_measurement)
-- [`script_report_utils.check_if_verification_leaf_failed`](./utils.script_report_utils.md#function-check_if_verification_leaf_failed)
-- [`script_report_utils.collect_element`](./utils.script_report_utils.md#function-collect_element)
-- [`script_report_utils.collect_ids_for_story`](./utils.script_report_utils.md#function-collect_ids_for_story)
-- [`script_report_utils.create_parallel_tables`](./utils.script_report_utils.md#function-create_parallel_tables)
-- [`script_report_utils.defining_tags`](./utils.script_report_utils.md#function-defining_tags)
-- [`script_report_utils.enrich_events_tree_with_attached_messages`](./utils.script_report_utils.md#function-enrich_events_tree_with_attached_messages)
-- [`script_report_utils.extra_post_processor`](./utils.script_report_utils.md#function-extra_post_processor)
-- [`script_report_utils.extract_ids_from_dict`](./utils.script_report_utils.md#function-extract_ids_from_dict)
-- [`script_report_utils.find_child_by_type`](./utils.script_report_utils.md#function-find_child_by_type): Finds child by type.
-- [`script_report_utils.find_child_by_types`](./utils.script_report_utils.md#function-find_child_by_types): Finds child by type.
-- [`script_report_utils.find_corresponding_missing_filter`](./utils.script_report_utils.md#function-find_corresponding_missing_filter)
-- [`script_report_utils.find_corresponding_verification`](./utils.script_report_utils.md#function-find_corresponding_verification)
-- [`script_report_utils.format_actual_event`](./utils.script_report_utils.md#function-format_actual_event)
-- [`script_report_utils.format_comparison_line`](./utils.script_report_utils.md#function-format_comparison_line)
-- [`script_report_utils.format_expected_event`](./utils.script_report_utils.md#function-format_expected_event)
-- [`script_report_utils.generate_generic_json_report`](./utils.script_report_utils.md#function-generate_generic_json_report)
-- [`script_report_utils.generate_generic_json_report_limited_batches`](./utils.script_report_utils.md#function-generate_generic_json_report_limited_batches)
-- [`script_report_utils.generate_generic_tree_and_index`](./utils.script_report_utils.md#function-generate_generic_tree_and_index)
-- [`script_report_utils.generate_generic_tree_and_index_from_parents_list`](./utils.script_report_utils.md#function-generate_generic_tree_and_index_from_parents_list)
-- [`script_report_utils.generate_matrix_json_report_limited_batches`](./utils.script_report_utils.md#function-generate_matrix_json_report_limited_batches)
-- [`script_report_utils.generate_model_matrix_json_report`](./utils.script_report_utils.md#function-generate_model_matrix_json_report)
-- [`script_report_utils.generate_model_matrix_tree_and_index`](./utils.script_report_utils.md#function-generate_model_matrix_tree_and_index)
-- [`script_report_utils.get_val_from_verification`](./utils.script_report_utils.md#function-get_val_from_verification)
-- [`script_report_utils.id_tags`](./utils.script_report_utils.md#function-id_tags)
-- [`script_report_utils.item_status_fail`](./utils.script_report_utils.md#function-item_status_fail)
-- [`script_report_utils.matrix_model_test_case_analyze_ids`](./utils.script_report_utils.md#function-matrix_model_test_case_analyze_ids)
-- [`script_report_utils.matrix_model_test_case_processor`](./utils.script_report_utils.md#function-matrix_model_test_case_processor)
-- [`script_report_utils.prepare_story`](./utils.script_report_utils.md#function-prepare_story)
-- [`script_report_utils.process_step_request_id`](./utils.script_report_utils.md#function-process_step_request_id)
-- [`script_report_utils.simplify_body_outgoing_message`](./utils.script_report_utils.md#function-simplify_body_outgoing_message)
-- [`script_report_utils.simplify_body_tree_table_list`](./utils.script_report_utils.md#function-simplify_body_tree_table_list)
-- [`script_report_utils.simplify_body_verification`](./utils.script_report_utils.md#function-simplify_body_verification)
-- [`script_report_utils.simplify_body_verification2`](./utils.script_report_utils.md#function-simplify_body_verification2)
-- [`script_report_utils.tag_rows_to_flat_dict`](./utils.script_report_utils.md#function-tag_rows_to_flat_dict): rows are used in 'Tree table', 'Table'  but not in the Verification (uses fields)
-- [`script_report_utils.test_simplify_body_tree_table_list`](./utils.script_report_utils.md#function-test_simplify_body_tree_table_list)
-- [`script_report_utils.test_verification_fields_to_flat_dict`](./utils.script_report_utils.md#function-test_verification_fields_to_flat_dict)
-- [`script_report_utils.test_verification_fields_to_simple_dict`](./utils.script_report_utils.md#function-test_verification_fields_to_simple_dict)
-- [`script_report_utils.verification_fields_to_flat_dict`](./utils.script_report_utils.md#function-verification_fields_to_flat_dict): If a field A has a sub-field B, dot notation sting will be returned.
-- [`script_report_utils.verification_fields_to_simple_dict`](./utils.script_report_utils.md#function-verification_fields_to_simple_dict): Examples:
 
 
 ---
