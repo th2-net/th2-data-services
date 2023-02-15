@@ -260,6 +260,20 @@ get_direction(message)
 
 ---
 
+<a href="../../th2_data_services/utils/resolver.py#L149"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_fields`
+
+```python
+get_fields(message)
+```
+
+
+
+
+
+---
+
 <a href="../../th2_data_services/utils/resolver.py#L139"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_id`

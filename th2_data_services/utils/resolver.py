@@ -145,3 +145,8 @@ class MessageFieldsResolver(ABC):
     @abstractmethod
     def get_attached_event_ids(message):
         pass
+
+    @staticmethod
+    @abstractmethod
+    def get_fields(message):
+        pass

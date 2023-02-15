@@ -1,7 +1,7 @@
 import base64
 from collections import defaultdict
 from typing import List, Dict, Callable, Set, Union
-
+from th2_data_services import MESSAGE_FIELDS_RESOLVER
 from th2_data_services.utils import misc_utils
 from tabulate import tabulate
 
@@ -19,10 +19,10 @@ def expand_message(message: Dict) -> List[Dict]:
     Returns:
         List[Dict]
     """
-    if "/" not in message["messageType"]:
+    if "/" not in MESSAGE_FIELDS_RESOLVER.get_type(message):
         return [message]
     result = []
-    fields = message["body"]["fields"]
+    fields = MESSAGE_FIELDS_RESOLVER.get_body(message)["fields"]
     for msg_type in fields.keys():
         msg_index = len(result)
         if "-" in msg_type:
@@ -35,11 +35,13 @@ def expand_message(message: Dict) -> List[Dict]:
         new_msg["messageType"] = msg_type
         new_msg["body"] = {}
         new_msg["body"]["metadata"] = {}
-        new_msg["body"]["metadata"].update(message["body"]["metadata"])
+        new_msg["body"]["metadata"].update(MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"])
         new_msg["body"]["metadata"]["id"] = {}
-        new_msg["body"]["metadata"]["id"].update(message["body"]["metadata"]["id"])
+        new_msg["body"]["metadata"]["id"].update(MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"])
         new_msg["body"]["metadata"]["messageType"] = msg_type
-        new_msg["body"]["metadata"]["id"]["subsequence"] = [message["body"]["metadata"]["id"]["subsequence"][msg_index]]
+        new_msg["body"]["metadata"]["id"]["subsequence"] = [
+            MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"]["subsequence"][msg_index]
+        ]
         new_msg["body"]["fields"] = fields[msg_type]["messageValue"]["fields"]
         result.append(new_msg)
 
@@ -207,7 +209,7 @@ def print_some(messages: List[Dict], max_count: int, start: int = 0, filter_: Ca
 # STREAMABLE
 def message_fields_to_flat_dict(message: Dict, result: Dict, prefix: str):  # noqa
     # TODO: Add Docstings
-    for field, content in message["fields"].items():
+    for field, content in MESSAGE_FIELDS_RESOLVER.get_fields(message).items():
         if "simpleValue" in content:
             result[prefix + field] = content["simpleValue"]
 
@@ -237,7 +239,7 @@ def message_to_dict(message: Dict):
         Dict
     """
     result = {}
-    message_fields_to_flat_dict(message["body"], result, "")
+    message_fields_to_flat_dict(MESSAGE_FIELDS_RESOLVER.get_body(message), result, "")
     return result
 
 
@@ -251,7 +253,7 @@ def extract_time(message: Dict) -> str:
     Returns:
         str
     """
-    return misc_utils.extract_timestamp(message["timestamp"])
+    return misc_utils.extract_timestamp(MESSAGE_FIELDS_RESOLVER.get_timestamp(message))
 
 
 # STREAMABLE
@@ -263,17 +265,18 @@ def print_message(message: Dict) -> None:
 
     """
     print(
-        f"{extract_time(message)} > {message['sessionId']} {message['direction']} "
-        f"{message['messageType']} {message_to_dict(message)}"
+        f"{extract_time(message)} > {MESSAGE_FIELDS_RESOLVER.get_session_id(message)} "
+        f"{MESSAGE_FIELDS_RESOLVER.get_direction(message)} "
+        f"{MESSAGE_FIELDS_RESOLVER.get_type(message)} "
+        f"{message_to_dict(message)}"
     )
 
 
 # STREAMABLE
-# Todo: Is This Useful?
-def get_raw_body_str(m):  # noqa
-    my_bytes = base64.b64decode(m["bodyBase64"].encode("ascii"))
+# Todo: Is This Useful
+def get_raw_body_str(message: Dict):  # noqa
+    my_bytes = base64.b64decode(MESSAGE_FIELDS_RESOLVER.get_body_base64(message).encode("ascii"))
     my_bytes = my_bytes.replace(b"\x01", b".")
-
     raw_body = my_bytes.decode("ascii")
     return raw_body
 
@@ -283,8 +286,10 @@ def get_raw_body_str(m):  # noqa
 def print_message_raw_source(message: Dict) -> None:  # noqa
     raw_body = get_raw_body_str(message)
     print(
-        f"{extract_time(message)} > {message['sessionId']} {message['direction']} "
-        f"{message['messageType']} {raw_body}"
+        f"{extract_time(message)} > {MESSAGE_FIELDS_RESOLVER.get_session_id(message)} "
+        f"{MESSAGE_FIELDS_RESOLVER.get_direction(message)} "
+        f"{MESSAGE_FIELDS_RESOLVER.get_type(message)} "
+        f"{raw_body}"
     )
 
 
@@ -305,8 +310,8 @@ def resolve_count_message_ids(messages: List[Dict], ids: Set) -> None:
         None, Modifies `ids`
     """
     for message in messages:
-        if message["messageId"] in ids:
-            ids.remove(message["messageId"])
+        if MESSAGE_FIELDS_RESOLVER.get_id(message) in ids:
+            ids.remove(MESSAGE_FIELDS_RESOLVER.get_id(message))
 
 
 # NOT STREAMABLE
@@ -326,7 +331,7 @@ def resolve_message_ids(messages: List[Dict], ids: Set) -> Dict[str, Dict]:
     """
     result = {}
     for message in messages:
-        msg_id = message["messageId"]
+        msg_id = MESSAGE_FIELDS_RESOLVER.get_id(message)
         if msg_id in ids:
             result[msg_id] = message
             ids.remove(msg_id)
@@ -347,7 +352,7 @@ def get_category_frequencies(
         messages,
         categories,
         categorizer,
-        lambda message: message["timestamp"]["epochSecond"],
+        lambda message: MESSAGE_FIELDS_RESOLVER.get_timestamp(message)["epochSecond"],
         aggregation_level=aggregation_level,
         object_expander=expand_message,
         objects_filter=filter_,
