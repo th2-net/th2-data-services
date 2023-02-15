@@ -1,11 +1,11 @@
-from functools import partial
-from os import listdir, path
 from typing import Callable, Dict, List, Tuple, Set, Union
 from datetime import datetime
-
-from th2_data_services import EVENT_FIELDS_RESOLVER, MESSAGE_FIELDS_RESOLVER
 from th2_data_services.utils import misc_utils
+from th2_data_services import EVENT_FIELDS_RESOLVER, MESSAGE_FIELDS_RESOLVER
 import json
+from th2_data_services.utils import misc_utils
+from typing import Callable, Dict, List, Tuple, Set, Union, Optional
+from datetime import datetime
 from collections import defaultdict
 from tabulate import tabulate
 
@@ -19,7 +19,7 @@ from tabulate import tabulate
 def get_category_frequencies(
     events: List[Dict], categories: List[str], categorizer: Callable, aggregation_level: str = "seconds"
 ) -> List[List[str]]:
-    """Gets Event Frequencies Based On Event Category.
+    """Returns event frequencies based on event category.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -29,6 +29,21 @@ def get_category_frequencies(
 
     Returns:
         List[List[str]]
+
+    Example:
+        >>> get_category_frequencies(events=events,
+                                     categories=["Info", "ModelMatrix"],
+                                     categorizer=lambda e: e["eventType"],
+                                     aggregation_level="seconds" # Optional
+                                     )
+        [
+            ['timestamp', 'Info', 'ModelMatrix'],
+            ['2022-03-16T02:00:00', 4, 0],
+            ['2022-03-16T02:00:31', 1, 0],
+            ['2022-03-16T02:00:32', 4, 0],
+            ...
+        ]
+
     """
     return misc_utils.get_objects_frequencies(
         events,
@@ -48,39 +63,55 @@ def get_category_frequencies(
 #   GetFrequences.by_type_category
 #   GetFrequences.by_name_category
 #   GetFrequences.by_category
-def get_type_frequencies(events: List[Dict], types_list: List[str], aggregation_level="seconds") -> List[List[str]]:
-    """Returns Event Frequencies Based On EventType.
+def get_type_frequencies(events: List[Dict], types: List[str], aggregation_level="seconds") -> List[List[str]]:
+    """Returns event frequencies based on event type.
 
     Args:
         events (List[Dict]): TH2-Events
-        types_list (List[str]): Event Types
+        types (List[str]): Event Types
         aggregation_level (Optional, str): Aggregation Level
 
     Returns:
         List[List[str]]: List Of Frequency Lists
+
+    Example:
+        >>> get_type_frequencies(events=events, types=["Info", "ModelMatrix"])
+        [
+            ['timestamp', 'Info', 'ModelMatrix'],
+            ['2022-03-16T02:00:00', 4, 0],
+            ['2022-03-16T02:00:31', 1, 0],
+            ['2022-03-16T02:00:32', 4, 0],
+            ...
+        ]
     """
-    return get_category_frequencies(events, types_list, lambda e: EVENT_FIELDS_RESOLVER.get_type(e), aggregation_level)
+    return get_category_frequencies(events, types, lambda e: EVENT_FIELDS_RESOLVER.get_type(e), aggregation_level)
 
 
 # USEFUL
 # STREAMING
+# TODO - NOT-READY -- event["successful"] should be updated by resolver
 # categorizer - expects that it will return str
-# --
-# example
-# eu.get_category_totals(d2, lambda e: EVENT_FIELDS_RESOLVER.get_type(e))
-# defaultdict(<class 'int'>, {'Service event [ok]': 9531, 'Info [ok]': 469})
-# eu.get_category_totals(d2, lambda e: 'aaa')
-# defaultdict(<class 'int'>, {'aaa [ok]': 10000})
-def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status: bool = False) -> Dict[str, int]:
-    """Gets Dictionary quantities of events for different categories.
+def get_category_totals(
+    events: List[Dict], categorizer: Callable[[Dict], str], ignore_status: bool = False
+) -> Dict[str, int]:
+    """Returns dictionary quantities of events for different categories.
 
     Args:
         events (List[Dict]): TH2-Events
-        categorizer (Callable): Transformer function
+        categorizer (Callable): Categorizer function
         ignore_status (bool): Concatenate status string, defaults to False.
 
     Returns:
         Dict[str, int]
+
+    Example:
+        >>> get_category_totals(events=events,
+                                categorizer=lambda e: e["eventType"])
+            defaultdict(<class 'int'>, {'Service event [ok]': 9531, 'Info [ok]': 469})
+        >>> get_category_totals(events=events,
+                                categorizer=lambda e: e["eventType"],
+                                ignore_status=True)
+            defaultdict(<class 'int'>, {'Service event': 9531, 'Info': 469})
     """
     event_categories = defaultdict(int)
     for event in events:
@@ -99,13 +130,17 @@ def get_category_totals(events: List[Dict], categorizer: Callable, ignore_status
 # eu.get_attached_messages_totals(d1)
 # defaultdict(<class 'int'>, {'envtn2_msfix5:first': 25262, 'envtn2_jpmfix1:second': 1702, 'env2_gscofixg2:second': 1702,...
 def get_attached_messages_totals(events: List[Dict]) -> Dict[str, int]:
-    """Returns Dictionary quantities of messages attached to events for each stream.
+    """Returns dictionary quantities of messages attached to events for each stream.
 
     Args:
         events (List[Dict]): TH2-Events
 
     Returns:
         Dict[str, int]
+
+    Example:
+        >>> get_attached_messages_totals(events=events)
+            defaultdict(<class 'int'>, {'envtn2_msfix5:first': 25262, 'envtn2_jpmfix1:second': 1702, ...)
     """
     streams = defaultdict(int)
     for event in events:
@@ -126,6 +161,14 @@ def get_attached_message_ids(events: List[Dict]) -> Set[str]:
 
     Returns:
         Set[str]
+
+    Example:
+        >>> get_attached_message_ids(events=events)
+            {
+              'demo_fix5:first:1646738629665873718',
+              'demo_fixg2:second:1646736618848913837',
+              ...
+            }
     """
     return set(message_id for event in events for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event))
 
@@ -136,13 +179,21 @@ def get_attached_message_ids(events: List[Dict]) -> Set[str]:
 #   Perhaps we need to find better name
 # we use something similar in our EventTree
 def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
-    """Returns only parent events that not present in the events.
+    """Returns only parent events that are not present in the events.
 
     Args:
         events (List[Dict]): TH2-Events
 
     Returns:
         Set[str]
+
+    Example:
+        >>> get_prior_parent_ids(events=events)
+            {
+                '009b3122-9ec1-ec11-91bd-ed37395ac9af',
+                '014ac1d8-9ed2-ec11-ba0d-13099b4139e8',
+                ...
+            }
     """
     all_event_ids = set()
     parent_ids = set()
@@ -160,20 +211,31 @@ def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
 
 # USEFUL
 # NOT STREAMING - keeps events
-# BE AWARE!! - it can it all your memory
+# BE AWARE!! - it can take up all your memory
 # O(N*M)
 def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
-    """Gets dict of lists of related events by unique message IDs.
+    """Returns dict of lists of related events by unique message IDs.
 
-    Note:
-        This object can occupy large amount of memory for big collections of events - use with caution
+    Notes:
+        - This object can occupy large amount of memory for big collections of events - use with caution
         Keeps in memory all events that are linked to messages.
+        - Event path from root to event, it's a string of event names separated by `/`.
 
     Args:
         events (List[Dict]): TH2-Events
 
     Returns:
         Dict[str, list]
+
+    Example:
+        >>> get_attached_message_ids_index(events=events)
+            {
+                eventId: {
+                    eventName: "example event name",
+                    eventPath: "rootName/.../currentEventName"
+                },
+                ...
+            }
     """
     result = defaultdict(list)
     for event in events:
@@ -183,19 +245,26 @@ def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
     return result
 
 
-# USEFULL ??? Do we need ignore status??
+# TODO - USEFULL ??? Do we need ignore status??
 # partly the same as get_category_totals and WO ignore status
 # Because it's the same we can you get_category_totals inside
 #
 # STREAMING
 def get_type_totals(events: List[Dict]) -> Dict[str, int]:
-    """Gets dictionary quantities of events for different event types.
+    """Returns dictionary quantities of events for different event types.
 
     Args:
         events (List[Dict]): TH2-Events
 
     Returns:
         Dict[str, int]
+
+    Example:
+        >>> get_type_totals(events=events)
+            {
+                "eventType eventStatus": count,
+                ...
+            }
     """
     event_types = defaultdict(int)
     for event in events:
@@ -210,8 +279,10 @@ def get_type_totals(events: List[Dict]) -> Dict[str, int]:
 # TODO - USEFUL ???
 #   What the example of this? look very rarely need to use
 # Will return list! Perhaps it's better to return Data?
-def get_events(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> List[Dict]:
-    """Gets limited list of events of specific eventType.
+def get_some(
+    events: List[Dict], event_type: Optional[str], count: int, start: int = 0, failed: bool = False
+) -> List[Dict]:
+    """Returns limited list of events of specific eventType.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -222,6 +293,18 @@ def get_events(events: List[Dict], event_type: str, count: int, start: int = 0, 
 
     Returns:
         List[Dict]
+
+    Example:
+        >>> get_some(events=events,
+                     event_type="ModelCase",
+                     count=100,
+                     start=0
+                     failed=False)
+            [
+                {**TH2-Event},
+                ...
+            ]
+
     """
     result = []
     limit = start + count
@@ -241,7 +324,7 @@ def get_events(events: List[Dict], event_type: str, count: int, start: int = 0, 
 
 # NOT STREAMING
 def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> List[Dict]:
-    """Gets limited list of events of linked to any message within specified messages objects collection.
+    """Returns limited list of events of linked to any message within specified messages objects collection.
 
     Args:
         events: TH2-Events
@@ -250,6 +333,15 @@ def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> 
 
     Returns:
         List[Dict]
+
+    Example:
+        >>> get_related_events(events=events,
+                               messages=messages,
+                               count=10)
+            [
+                {**TH2-Event},
+                ...
+            ]
     """
     result = []
     msg_ids = set(MESSAGE_FIELDS_RESOLVER.get_id(message) for message in messages)
@@ -265,21 +357,28 @@ def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> 
 
 
 # NOT STREAMING
+# TODO - duplicates get_some (get_events)
 def get_events_by_category(
     events: List[Dict], category: str, count: int, categorizer: Callable, start=0, failed=False
 ) -> List[Dict]:
-    """Gets limited list of events of specific category produced by custom categorizer.
+    """Returns limited list of events of specific category produced by custom categorizer.
 
     Args:
         events (List[Dict]): TH2-Events
-        category (str): Event Category To Extract
+        category (str): Event category to extract
         count (int): Maximum number of events to extract
-        categorizer (Callable): Transformer Function
-        start (int, optional): Start Iteration Index. Defaults to 0.
-        failed (bool, optional): Extract Only Failed Events. Defaults to False.
+        categorizer (Callable): Categorizer function
+        start (int, optional): Start iteration index, defaults to 0.
+        failed (bool, optional): Extract only failed events, defaults to False.
 
     Returns:
         List[Dict]
+
+    >>> # TODO: example!
+        [
+            {**TH2-Event},
+            ...
+        ]
     """
     result = []
     limit = start + count
@@ -297,9 +396,10 @@ def get_events_by_category(
     return result
 
 
+# USEFUL
 # NOT STREAMING
 def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
-    """Gets limited list of root events (events without parents).
+    """Returns limited list of root events (events without parents).
 
     Args:
         events (List[Dict]): TH2-Events
@@ -323,14 +423,24 @@ def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
     return result
 
 
+# USEFUL
 # NOT STREAMING
-def get_parents(events: List[Dict], children: List[Dict]):
-    """Gets all parent events of linked to any event within specified events objects collection.
+def get_parents(events: List[Dict], children: List[Dict]) -> List[Dict]:
+    """Returns all parent events of linked to any event within specified events objects collection.
 
     Args:
         events (List[Dict]): TH2-Events
         children (List[Dict]): Extract Parents By Child Events
 
+    Returns:
+        List[Dict]
+
+    Example:
+        >>> get_parents(events=events, children=subevents)
+            [
+                {**TH2-Event} # Parent
+                ...
+            ]
     """
     parent_ids = set(EVENT_FIELDS_RESOLVER.get_parent_id(child) for child in children)
     return [event for event in events if EVENT_FIELDS_RESOLVER.get_id(event) in parent_ids]
@@ -338,7 +448,7 @@ def get_parents(events: List[Dict], children: List[Dict]):
 
 # NOT STREAMING
 def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: int) -> Tuple[List[Dict], Dict]:
-    """Gets limited list of direct children events.
+    """Returns limited list of direct children events.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -347,6 +457,15 @@ def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: 
 
     Returns:
         Tuple[List[Dict], Dict]: Children Events, Parent Event
+
+    Example:
+        >>> get_children_from_parent_id(events=events,
+                                        parent_id="demo_parent_id",
+                                        max_events=10)
+            (
+                [{**TH2-Event}, ...], # Child Events
+                {**TH2-Event}         # Parent Event
+            )
     """
     children = []
     resolved_parent = {}
@@ -365,25 +484,37 @@ def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: 
 
 # NOT STREAMING
 def get_children_from_parents(events: List[Dict], parents: List[Dict], max_events: int) -> Tuple[Dict[str, list], int]:
-    """Gets limited list of direct children events for each event in parents.
+    """Returns limited list of direct children events for each event in parents.
 
     Args:
         events (List[Dict]): TH2-Events
         parents (List[str]): TH2-Events
-        max_events (int): Maximum number of events to extract
+        max_events (int): Maximum number of events to extract from parent
 
     Returns:
         Tuple(Dict[str, list], int): Parent-Children, Events Count
+
+    Example:
+        >>> get_children_from_parents(events=events,
+                                      parents=parent_events,
+                                      max_events=2)
+            (
+                {
+                    "parentEvent_1": [{**TH2-ChildEvent1, **TH2-ChildEvent2}]
+                    "parentEvent_2": [{**TH2-ChildEvent1, **TH2-ChildEvent2}],
+                    ...
+                },
+                child_events_count
+            )
     """
-    parent_ids = set(EVENT_FIELDS_RESOLVER.get_id(parent) for parent in parents)
-    result = defaultdict(list)
+    result = {EVENT_FIELDS_RESOLVER.get_id(parent): [] for parent in parents}
     events_count = 0
     for event in events:
         parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
-        if parent_id not in parent_ids:
+        if parent_id not in result:
             continue
-        events_count += 1
-        if len(result[parent_id]) <= max_events:
+        if len(result[parent_id]) < max_events:
+            events_count += 1
             result[parent_id].append(event)
 
     return result, events_count
@@ -391,7 +522,7 @@ def get_children_from_parents(events: List[Dict], parents: List[Dict], max_event
 
 # NOT STREAMING
 def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], max_events: int) -> List[Dict]:
-    """Gets limited list of direct children events for each event in parents.
+    """Returns limited list of direct children events for each event in parents.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -400,6 +531,17 @@ def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], m
 
     Returns:
         Dict[str, list]: Children Events
+
+    Example:
+        >>> get_children_from_parents_as_list(events=events,
+                                              parents=parent_events,
+                                              max_events=2)
+            [
+                {**TH2-Parent1_Child1}, {**TH2-Parent1_Child2},
+                {**TH2-Parent2_Child2}, {**TH2-Parent2_Child2},
+                ...
+            ]
+
     """
     parent_ids = set(EVENT_FIELDS_RESOLVER.get_id(parent) for parent in parents)
     result = []
@@ -408,120 +550,11 @@ def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], m
         parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
         if parent_id not in parent_ids:
             continue
-        if parents_counts[parent_id] <= max_events:
+        if parents_counts[parent_id] < max_events:
             result.append(event)
         parents_counts[parent_id] += 1
 
     return result
-
-
-# NOT STREAMING
-def get_event_tree_from_parent_events(
-    events: List[Dict], parents: List[Dict], depth: int, max_children: int, body_to_simple_processors: Dict = None
-) -> Tuple[Dict, Dict]:
-    """Generate tree object based on parents events list.
-
-    Args:
-        events (Dict[List]): TH2-Events
-        parents (Dict[List]): TH2-Events
-        depth (int): Max Iteration
-        max_children (int): Max Children
-        body_to_simple_processors (Dict, optional): Body Transformer Function, Defaults To None
-
-    Returns:
-        Tuple(Dict, Dict): Tree, Index
-    """
-    index = {}
-    iteration = 0
-    stats = defaultdict(int, TOTAL=0)
-    tree = {"info": {"stats": stats}}
-    current_children = parents
-    while len(current_children) > 0 and iteration < depth:
-        for child in current_children:
-            attached_ids = EVENT_FIELDS_RESOLVER.get_attached_messages_ids(child)
-            event_name = EVENT_FIELDS_RESOLVER.get_name(child)
-            event_type = EVENT_FIELDS_RESOLVER.get_type(child)
-            event_body = EVENT_FIELDS_RESOLVER.get_body(child)
-            leaf = {
-                "info": {
-                    "name": event_name,
-                    "type": event_type,
-                    "id": EVENT_FIELDS_RESOLVER.get_id(child),
-                    "time": extract_time(child),
-                },
-                "body": event_body,
-            }
-            if len(attached_ids) > 0:
-                leaf["info"]["attachedMessageIds"] = attached_ids
-
-            if iteration == 0:
-                dt = tree
-            else:
-                dt = index[EVENT_FIELDS_RESOLVER.get_parent_id(child)]
-
-            child_event_status = "[ok]" if EVENT_FIELDS_RESOLVER.get_status(child) else "[fail]"
-            leaf_index = len(dt)
-
-            if "body" in dt:
-                leaf_index -= 1
-
-            child_event_str = f"{leaf_index} {child_event_status} {event_name}"
-            dt[child_event_str] = leaf
-            index[EVENT_FIELDS_RESOLVER.get_id(child)] = leaf
-
-            # Calculating stats
-            stats_key = f"{event_type} {child_event_status}"
-            stats[stats_key] += 1
-            stats["TOTAL"] += 1
-
-            # Simplifying body
-            if len(event_body) == 0:
-                leaf.pop("body")
-
-            if body_to_simple_processors is not None:
-                if event_type in body_to_simple_processors:
-                    leaf["body"] = body_to_simple_processors[event_type](event_body)
-
-        current_children = get_children_from_parents_as_list(events, current_children, max_children)
-        print(f"get_event_tree_from_parent - {iteration} len_children={len(current_children)} {datetime.now()}")
-        iteration += 1
-
-    return tree, index
-
-
-# NOT STREAMING
-def get_event_tree_from_parent_id(
-    events: List[Dict], parent_id: str, depth: int, max_children: int, body_to_simple_processors: Dict = None
-) -> Dict:
-    """Generate tree object based on parent event id.
-
-    Args:
-        events (List[Dict]): TH2-Events
-        parent_id (str): Parent ID
-        depth (int): Max Iteration
-        max_children (int): Max Children
-        body_to_simple_processors (Dict, optional): Body Transformer Function. Defaults to None. e.g. {eventType: processor_function}
-
-    Returns:
-        Dict: Tree
-    """
-    current_children, parent = get_children_from_parent_id(events, parent_id, max_children)
-    print(f"get_event_tree_from_parent - initial {datetime.now()}")
-    tree, _ = get_event_tree_from_parent_events(
-        events, current_children, depth, max_children, body_to_simple_processors
-    )
-    tree["info"].update(
-        {
-            "name": EVENT_FIELDS_RESOLVER.get_name(parent),
-            "type": EVENT_FIELDS_RESOLVER.get_type(parent),
-            "time": extract_time(parent),
-        }
-    )
-    body = EVENT_FIELDS_RESOLVER.get_body(parent)
-    if len(body) != 0:
-        tree["body"] = body
-
-    return tree
 
 
 # NOT STREAMING
@@ -530,11 +563,20 @@ def sublist(events: List[Dict], start_time: datetime, end_time: datetime) -> Lis
 
     Args:
         events (List[Dict]): TH2-Events
-        start_time (datetime): Start
-        end_time (datetime): End Time
+        start_time (datetime): Start time
+        end_time (datetime): End time
 
     Returns:
         List[Dict]: Filtered Events.
+
+    Example:
+        >>> sublist(events=events,
+                    start_time=datetime.fromisoformat("2022-03-16T10:50:16"),
+                    end_time=datetime.fromisoformat("2022-03-16T10:53:16"))
+            [
+                {**TH2-Event},
+                ...
+            ]
     """
     result = []
     start_time = datetime.timestamp(start_time)
@@ -548,183 +590,37 @@ def sublist(events: List[Dict], start_time: datetime, end_time: datetime) -> Lis
 
 
 # NOT STREAMING
-def extract_parent_as_json(
-    events: Dict,
-    parent_id: str,
-    json_file_path: str,
-    interval_start: str,
-    interval_end: str,
-    body_to_simple_processors: Callable = None,
-):
-    """Parse Parent Into JSON Format.
+# TODO: Change name
+def build_roots_cache(events: List[Dict], depth: int, max_level: int) -> Dict:
+    """Returns event path for each event.
+
+    Notes:
+        Event path from root to event, it's a string of event names separated by `/`
 
     Args:
-        events (Dict): TH2-Events
-        parent_id (str): Parent ID
-        json_file_path (str): JSON Output Path
-        interval_start (str): Interval Start
-        interval_end (str): Interval End
-        body_to_simple_processors (Callable, optional): Body Transformer Function. Defaults to None.
-    """
-    sub_events = sublist([events], datetime.fromisoformat(interval_start), datetime.fromisoformat(interval_end))
-    print(f"Sublist Length = {len(sub_events)}")
-    tree = get_event_tree_from_parent_id(sub_events, parent_id, 10, 10000, body_to_simple_processors)
-    types_set = set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL"))
-    tree["info"]["types_list"] = list(types_set)
-
-    with open(json_file_path, "w") as file:
-        json.dump(tree, file, indent=3)
-
-
-# NOT STREAMING
-def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callable = None) -> None:
-    """Saves Tree As JSON Format.
-
-    Args:
-        tree (Dict): Collection Of Data
-        json_file_path (str): JSON Path (Must End With .json)
-        file_categorizer (Callable, optional): File Categorizer. Defaults to None.
+        events: TH2-Events
+        depth: Max depth to search
+        max_level: Max events from leaf
 
     Returns:
-        None (Saves File)
+        Dict[str, Dict[str, str]]
+
+    Example:
+        >>> build_roots_cache(events=events,
+                              depth=10,
+                              max_level=10)
+            {
+                eventId: {
+                    eventName: "example event name",
+                    eventPath: "rootName/.../currentEventName"
+                },
+                ...
+            }
     """
-    path = json_file_path.replace(".json", "_summary.json")
-    arranged_tree = {}
-    summary = {"stats": tree["info"]["stats"]}
-    types_set = list(set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL")))
-    summary["types_list"] = types_set
-
-    with open(path, "w") as summary_file:
-        json.dump(summary, summary_file, indent=3)
-
-    if file_categorizer is not None:
-        for key, leaf in tree.items():
-            if key == "info" or key == "body":
-                continue
-            category = file_categorizer(key, leaf)
-            if category not in arranged_tree:
-                arranged_tree[category] = {}
-            arranged_tree[file_categorizer(key, leaf)][key] = leaf
-    else:
-        arranged_tree["tree"] = tree
-
-    for key, leaf in arranged_tree.items():
-        path = json_file_path.replace(".json", f"_{key}.json")
-        with open(path, "w") as out_file:
-            json.dump(leaf, out_file, indent=3)
-
-
-# STREAMING
-def transform_tree(index: Dict, post_processors: Dict[str, Callable]) -> None:
-    """Transform Tree.
-
-    Args:
-        index (Dict): Index Dict
-        post_processors (Dict): Post Processors
-
-    Returns:
-        None (Modifies Index Dict)
-    """
-    for leaf in index.values():
-        leaf_type = leaf["info"]["type"]
-        if leaf_type in post_processors:
-            modified_leaf = post_processors[leaf_type](leaf)
-            leaf.clear()
-            leaf.update(modified_leaf)
-
-
-# STREAMING? | Depends On `processor`
-def process_trees_from_jsons(path_pattern: str, processor: Callable) -> None:  # noqa
-    # TODO: Add Docstings
-    dir_path = path_pattern[: path_pattern.rindex("/")] if "/" in path_pattern else ""
-    pattern = path_pattern[path_pattern.rindex("/") + 1 :] if "/" in path_pattern else path_pattern
-    pattern = pattern.replace(".json", "")
-    files = listdir(dir_path)
-    for file in files:
-        if pattern in file:
-            with open(path.join(dir_path, file)) as f:
-                tree = json.load(f)
-                processor(tree)
-
-
-# STREAMING
-def tree_walk(tree: Dict, processor: Callable, tree_filter: Callable = None, root_path: List = []) -> None:  # noqa
-    # TODO: Add Docstings
-    for name, leaf in tree.items():
-        if name == "info":
-            continue
-        if type(leaf) is not dict:
-            continue
-        new_path = [name, *root_path]
-        if tree_filter is not None:
-            if tree_filter(new_path, name, leaf):
-                processor(new_path, name, leaf)
-        else:
-            processor(new_path, name, leaf)
-
-        tree_walk(leaf, processor, tree_filter=tree_filter, root_path=new_path)
-
-
-# STREAMING
-def tree_walk_from_jsons(path_pattern, processor, tree_filter):  # noqa
-    # TODO: Add Docstings
-    process_trees_from_jsons(path_pattern, lambda tree: tree_walk(tree, processor, tree_filter=tree_filter))
-
-
-# STREAMING
-def tree_update_totals(categorizer, result, p, n, l):  # noqa
-    # TODO: Add Docstings
-    category = categorizer(p, n, l)
-    if category not in result:
-        result[category] = 1
-    else:
-        result[category] += 1
-
-
-# STREAMING
-def tree_get_category_totals(tree, categorizer, tree_filter):  # noqa
-    # TODO: Add Docstings
-    result = {}
-    tree_walk(tree, partial(tree_update_totals, categorizer, result), tree_filter=tree_filter)
-    return result
-
-
-# STREAMING
-def tree_get_category_totals_from_jsons(path_pattern, categorizer, tree_filter):  # noqa
-    # TODO: Add Docstings
-    result = {}
-    process_trees_from_jsons(
-        path_pattern,
-        lambda tree: tree_walk(tree, partial(tree_update_totals, categorizer, result), tree_filter=tree_filter),
-    )
-
-    return result
-
-
-def search_tree(tree, filter_lambda):  # noqa
-    # TODO: Add Docstings
-    result = []
-    tree_walk(tree, lambda p, n, l: result.append((p, l)), tree_filter=filter_lambda)
-    return result
-
-
-# NOT STREAMING
-def search_tree_from_jsons(path_pattern, filter_lambda):  # noqa
-    # TODO: Add Docstings
-    result = []
-    process_trees_from_jsons(
-        path_pattern, lambda tree: tree_walk(tree, lambda p, n, l: result.append((p, l)), tree_filter=filter_lambda)
-    )
-    return result
-
-
-# NOT STREAMING
-def build_roots_cache(events, depth, max_level):  # noqa
-    # TODO: Add Docstings
     result = {}
     level = 1
     prev_levels = get_roots(events, max_level)
-    print("First level :", len(prev_levels))
+    print(f"Level {level}: {len(prev_levels)} events")
     for prev_level in prev_levels:
         result[EVENT_FIELDS_RESOLVER.get_id(prev_level)] = {
             "eventName": EVENT_FIELDS_RESOLVER.get_name(prev_level),
@@ -732,7 +628,11 @@ def build_roots_cache(events, depth, max_level):  # noqa
         }
     while level < depth:
         next_levels = get_children_from_parents_as_list(events, prev_levels, max_level)
-        print("Next level :", len(next_levels))
+        next_levels_count = len(next_levels)
+        if next_levels_count == 0:
+            break
+        level += 1
+        print(f"Level {level}: {next_levels_count} events")
         for next_level in next_levels:
             event_id = EVENT_FIELDS_RESOLVER.get_id(next_level)
             parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(next_level)
@@ -740,15 +640,14 @@ def build_roots_cache(events, depth, max_level):  # noqa
                 "eventName": EVENT_FIELDS_RESOLVER.get_name(next_level),
                 "eventPath": result[parent_id]["eventPath"] + "/" + EVENT_FIELDS_RESOLVER.get_name(next_level),
             }
-        prev_level = next_levels
-        level += 1
+        prev_levels = next_levels
 
     return result
 
 
 # STREAMING
-def extract_time(event) -> str:
-    """Gets string representation of events timestamp.
+def extract_start_timestamp(event: Dict) -> str:
+    """Returns string representation of events timestamp.
 
     Args:
         event: TH2-Event
@@ -756,7 +655,7 @@ def extract_time(event) -> str:
     Returns:
         str
     """
-    return misc_utils.extract_time_string(EVENT_FIELDS_RESOLVER.get_start_timestamp(event))
+    return misc_utils.extract_timestamp(EVENT_FIELDS_RESOLVER.get_start_timestamp(event))
 
 
 # STREAMING
@@ -776,7 +675,7 @@ def print_attached_messages_totals(events: List[Dict], return_html: bool = False
 def print_category_totals(
     events: List[Dict], categorizer: Callable, return_html: bool = False, ignore_status: bool = False
 ) -> Union[None, str]:
-    """Prints Dictionary quantities of events for different categories.
+    """Prints dictionary quantities of events for different categories.
 
     Args:
         events (List[Dict]): TH2-Events
@@ -800,7 +699,7 @@ def print_event(event: Dict) -> None:
 
     """
     print(
-        f"{extract_time(event)} > [{'ok' if EVENT_FIELDS_RESOLVER.get_status(event) else 'fail'}] "
+        f"{extract_start_timestamp(event)} > [{'ok' if EVENT_FIELDS_RESOLVER.get_status(event) else 'fail'}] "
         f"Type: {EVENT_FIELDS_RESOLVER.get_type(event)} "
         f"Name: {EVENT_FIELDS_RESOLVER.get_name(event)} "
         f"ID: {EVENT_FIELDS_RESOLVER.get_id(event)} "
@@ -810,6 +709,7 @@ def print_event(event: Dict) -> None:
 
 
 # NOT STREAMING
+# PREV name print_some_raw
 def print_events_raw(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> None:
     """Prints limited list of events of specific eventType in dictionary format.
 
@@ -821,7 +721,7 @@ def print_events_raw(events: List[Dict], event_type: str, count: int, start: int
         failed (bool, optional): Extract Only Failed Events. Defaults to False.
 
     """
-    records = get_events(events, event_type, count, start, failed)
+    records = get_some(events, event_type, count, start, failed)
     for r in records:
         print(r)
 
@@ -838,7 +738,7 @@ def print_some(events: List[Dict], event_type: str, count: int, start: int = 0, 
         failed (bool, optional): Extract Only Failed Events. Defaults to False.
 
     """
-    records = get_events(events, event_type, count, start, failed)
+    records = get_some(events, event_type, count, start, failed)
     for r in records:
         print_event(r)
 
@@ -846,14 +746,24 @@ def print_some(events: List[Dict], event_type: str, count: int, start: int = 0, 
 # NOT STREAMING
 def print_some_by_category(
     events: List[Dict], category: str, count: int, categorizer: Callable, start: int = 0, failed: bool = False
-):  # noqa
-    # TODO: Add Docstings
+) -> None:
+    """Print limited events by category.
+
+    Args:
+        events (List[Dict]): TH2-Events
+        category (str): Event category to extract
+        count (int): Maximum number of events to extract
+        categorizer (Callable): Categorizer function
+        start (int, optional): Start iteration index, defaults to 0.
+        failed (bool, optional): Extract only failed events, defaults to False.
+
+    """
     records = get_events_by_category(events, category, count, categorizer, start, failed)
     for r in records:
         print_event(r)
 
 
-# NOT STREAMING
+# STREAMING
 def print_roots(events: List[Dict], count: int, start: int = 0) -> None:
     """Prints limited list of root events (events without parents).
 
@@ -868,18 +778,18 @@ def print_roots(events: List[Dict], count: int, start: int = 0) -> None:
         print_event(r)
 
 
-# NOT STREAMING
-def print_children(events: List[Dict], parent: str, count: int, verbose: bool = True):
+# STREAMING
+def print_children(events: List[Dict], parent_id: str, count: int, verbose: bool = True):
     """Prints limited list of direct children events.
 
     Args:
         events (List[Dict]): TH2-Events
-        parent (str): Parent ID
+        parent_id (str): Parent ID
         count (int): Maximum number of events to extract
         verbose (bool): Verbose output, defaults to True.
 
     """
-    records = get_children_from_parent_id(events, parent, count)
+    records, _ = get_children_from_parent_id(events, parent_id, count)
     fprint = print_event if verbose is True else print
     for r in records:
         fprint(r)
@@ -897,7 +807,7 @@ def print_type_totals(events: List[Dict], return_html: bool = False) -> Union[No
         Union[None, str]
     """
     event_types = get_type_totals(events)
-    return misc_utils.print_stats_dict(event_types)
+    return misc_utils.print_stats_dict(event_types, return_html=return_html)
 
 
 # STREAMING
@@ -913,7 +823,7 @@ def print_type_frequencies(
         return_html: Return HTML format, defaults to False
 
     """
-    table = get_type_frequencies(events, event_types)
+    table = get_type_frequencies(events, event_types, aggregation_level)
     if return_html:
         return tabulate(table, headers="firstrow", tablefmt="html")
     else:
@@ -933,7 +843,7 @@ def print_category_frequencies(
     Args:
         events (List[Dict]): TH2-Events
         event_types (List[str]): Event Types To Extract
-        categorizer (Callable): Transformer Function
+        categorizer (Callable): Categorizer function
         aggregation_level (str): Aggregation Level
         return_html: Return HTML Format
 
@@ -941,7 +851,11 @@ def print_category_frequencies(
         Union[None, str]
     """
     data = get_category_frequencies(events, event_types, categorizer, aggregation_level)
-    return misc_utils.print_stats_dict(data, return_html)
+    if return_html:
+        return tabulate(data, headers="firstrow", tablefmt="html")
+    else:
+        print(tabulate(data, headers="firstrow", tablefmt="grid"))
+        return None
 
 
 # NOT STREAMING
@@ -951,7 +865,7 @@ def print_children_from_parents(events: List[Dict], parents: List[Dict], max_eve
     Args:
         events (List[Dict]): TH2-Events
         parents (List[Dict]): Parent TH2-Events
-        max_events (int): Maximum number of events to extract, default to 10'000
+        max_events (int): Maximum number of events to extract from each parent, default to 10'000
 
     """
     tree, count = get_children_from_parents(events, parents, max_events)
@@ -1010,3 +924,62 @@ def print_children_stats_from_parents(
         return tabulate(table, headers="firstrow", tablefmt="html")
     else:
         print(tabulate(table, headers="firstrow", tablefmt="grid"))
+
+
+# NOT STREAMING
+def extract_parent_as_json(
+    events: List[Dict],
+    parent_id: str,
+    json_file_path: str,
+    interval_start: str,
+    interval_end: str,
+    body_to_simple_processors: Callable = None,
+):
+    """Parse parent into JSON format.
+
+    Args:
+        events (Dict): TH2-Events
+        parent_id (str): Parent ID
+        json_file_path (str): file JSON output path
+        interval_start (str): Use events from this timestamp
+        interval_end (str): Use events till this timestamp
+        body_to_simple_processors (Callable, optional): Body categorizer function, defaults to None.
+
+    Example:
+        >>> extract_parent_as_json(
+                events=data,
+                parent_id="demo_parent_id",
+                json_file_path="path/to/output.json",
+                interval_start="2022-03-16T08:40:16",
+                interval_end="2022-03-16T14:40:16"
+            )
+
+    JSON structure:
+        {
+            "info": {
+                  "stats": EventType+Status (Frequency Table),
+                  parent_event_details...
+            }
+            "child_id": {
+                "info": { event_details...}
+                "child_id": {
+                    "info": { event_details...}
+                    "body" { ... } # If event has body
+                    "childId": { ... }
+                }
+            }
+            "child_id2": { ... }
+        }
+    """
+    from th2_data_services.utils.az_tree import get_event_tree_from_parent_id
+
+    sub_events = sublist(events, datetime.fromisoformat(interval_start), datetime.fromisoformat(interval_end))
+    print(f"Sublist length = {len(sub_events)}")
+    tree = get_event_tree_from_parent_id(sub_events, parent_id, 10, 10000, body_to_simple_processors)
+    if not tree:
+        return
+    types_set = set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL"))
+    tree["info"]["types_list"] = list(types_set)
+
+    with open(json_file_path, "w") as file:
+        json.dump(tree, file, indent=3)
