@@ -1,33 +1,6 @@
 from abc import ABC, abstractmethod
 
 
-# # # EXPERIMENTAL
-# def _find_key(record: dict, key_to_find: str) -> str:
-#     if key_to_find in record:
-#         return key_to_find
-#
-#     key_to_find = key_to_find.lower()
-#     for key in record:
-#         if key_to_find == key.lower():
-#             return key
-#
-#
-# class FieldResolver:
-#
-#     @staticmethod
-#     def get(record, key):
-#         key_found = _find_key(record, key)
-#         if not key_found:
-#             raise KeyError(key)
-#         return record[key_found]
-#
-#     @staticmethod
-#     def find(record, key):
-#         key = _find_key(record, key)
-#         return record.get(key)
-# # # EXPERIMENTAL
-
-
 class EventFieldsResolver(ABC):
     @staticmethod
     @abstractmethod
