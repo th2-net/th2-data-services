@@ -71,6 +71,7 @@
 - [`utils.az_tree`](./utils.az_tree.md#module-utilsaz_tree)
 - [`utils.categorizers`](./utils.categorizers.md#module-utilscategorizers)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
+- [`utils.download_data`](./utils.download_data.md#module-utilsdownload_data)
 - [`utils.event_utils`](./utils.event_utils.md#module-utilsevent_utils)
 - [`utils.json`](./utils.json.md#module-utilsjson)
 - [`utils.message_utils`](./utils.message_utils.md#module-utilsmessage_utils)
@@ -193,6 +194,9 @@
 - [`az_tree.tree_update_totals`](./utils.az_tree.md#function-tree_update_totals): Updates tree by categorizer function as keys.
 - [`az_tree.tree_walk`](./utils.az_tree.md#function-tree_walk): Process tree by processor [Recursive method].
 - [`az_tree.tree_walk_from_jsons`](./utils.az_tree.md#function-tree_walk_from_jsons): Loads JSON file(s) and processes them with given function.
+- [`download_data.download_events`](./utils.download_data.md#function-download_events): Downloads events.
+- [`download_data.download_events_and_messages`](./utils.download_data.md#function-download_events_and_messages): Downloads events and messages.
+- [`download_data.prepare_story_from_storage`](./utils.download_data.md#function-prepare_story_from_storage)
 - [`event_utils.build_roots_cache`](./utils.event_utils.md#function-build_roots_cache): Returns event path for each event.
 - [`event_utils.extract_parent_as_json`](./utils.event_utils.md#function-extract_parent_as_json): Parse parent into JSON format.
 - [`event_utils.extract_start_timestamp`](./utils.event_utils.md#function-extract_start_timestamp): Returns string representation of events timestamp.
