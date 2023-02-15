@@ -70,6 +70,8 @@
 - [`utils`](./utils.md#module-utils)
 - [`utils.categorizers`](./utils.categorizers.md#module-utilscategorizers)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
+- [`utils.download_data`](./utils.download_data.md#module-utilsdownload_data)
+- [`utils.event_utils`](./utils.event_utils.md#module-utilsevent_utils)
 - [`utils.json`](./utils.json.md#module-utilsjson)
 - [`utils.misc_utils`](./utils.misc_utils.md#module-utilsmisc_utils)
 - [`utils.resolver`](./utils.resolver.md#module-utilsresolver)
@@ -180,6 +182,72 @@
 - [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
 - [`command_resolver.resolver_get_event_by_id`](./provider.v5.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
 - [`command_resolver.resolver_get_events_by_id`](./provider.v5.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
+- [`az_tree.get_event_tree_from_parent_events`](./utils.az_tree.md#function-get_event_tree_from_parent_events): Generate tree object based on parents events list.
+- [`az_tree.get_event_tree_from_parent_id`](./utils.az_tree.md#function-get_event_tree_from_parent_id): Generate tree object based on parent event id.
+- [`az_tree.process_trees_from_jsons`](./utils.az_tree.md#function-process_trees_from_jsons): Loads JSON files locally and processes them with given function.
+- [`az_tree.save_tree_as_json`](./utils.az_tree.md#function-save_tree_as_json): Saves Tree As JSON Format.
+- [`az_tree.search_tree`](./utils.az_tree.md#function-search_tree): Searches tree by filter function.
+- [`az_tree.search_tree_from_jsons`](./utils.az_tree.md#function-search_tree_from_jsons): Searches tree by filter function from JSON file(s).
+- [`az_tree.transform_tree`](./utils.az_tree.md#function-transform_tree): Transform Tree.
+- [`az_tree.tree_get_category_totals`](./utils.az_tree.md#function-tree_get_category_totals): Returns category totals from tree.
+- [`az_tree.tree_get_category_totals_from_jsons`](./utils.az_tree.md#function-tree_get_category_totals_from_jsons): Returns category totals from JSON file(s).
+- [`az_tree.tree_update_totals`](./utils.az_tree.md#function-tree_update_totals): Updates tree by categorizer function as keys.
+- [`az_tree.tree_walk`](./utils.az_tree.md#function-tree_walk): Process tree by processor [Recursive method].
+- [`az_tree.tree_walk_from_jsons`](./utils.az_tree.md#function-tree_walk_from_jsons): Loads JSON file(s) and processes them with given function.
+- [`download_data.download_events`](./utils.download_data.md#function-download_events): Downloads events.
+- [`download_data.download_events_and_messages`](./utils.download_data.md#function-download_events_and_messages): Downloads events and messages.
+- [`download_data.prepare_story_from_storage`](./utils.download_data.md#function-prepare_story_from_storage)
+- [`event_utils.build_roots_cache`](./utils.event_utils.md#function-build_roots_cache): Returns event path for each event.
+- [`event_utils.extract_parent_as_json`](./utils.event_utils.md#function-extract_parent_as_json): Parse parent into JSON format.
+- [`event_utils.extract_start_timestamp`](./utils.event_utils.md#function-extract_start_timestamp): Returns string representation of events timestamp.
+- [`event_utils.get_attached_message_ids`](./utils.event_utils.md#function-get_attached_message_ids): Returns the set of unique message IDs linked to all events.
+- [`event_utils.get_attached_message_ids_index`](./utils.event_utils.md#function-get_attached_message_ids_index): Returns dict of lists of related events by unique message IDs.
+- [`event_utils.get_attached_messages_totals`](./utils.event_utils.md#function-get_attached_messages_totals): Returns dictionary quantities of messages attached to events for each stream.
+- [`event_utils.get_category_frequencies`](./utils.event_utils.md#function-get_category_frequencies): Returns event frequencies based on event category.
+- [`event_utils.get_category_totals`](./utils.event_utils.md#function-get_category_totals): Returns dictionary quantities of events for different categories.
+- [`event_utils.get_children_from_parent_id`](./utils.event_utils.md#function-get_children_from_parent_id): Returns limited list of direct children events.
+- [`event_utils.get_children_from_parents`](./utils.event_utils.md#function-get_children_from_parents): Returns limited list of direct children events for each event in parents.
+- [`event_utils.get_children_from_parents_as_list`](./utils.event_utils.md#function-get_children_from_parents_as_list): Returns limited list of direct children events for each event in parents.
+- [`event_utils.get_events_by_category`](./utils.event_utils.md#function-get_events_by_category): Returns limited list of events of specific category produced by custom categorizer.
+- [`event_utils.get_parents`](./utils.event_utils.md#function-get_parents): Returns all parent events of linked to any event within specified events objects collection.
+- [`event_utils.get_prior_parent_ids`](./utils.event_utils.md#function-get_prior_parent_ids): Returns only parent events that are not present in the events.
+- [`event_utils.get_related_events`](./utils.event_utils.md#function-get_related_events): Returns limited list of events of linked to any message within specified messages objects collection.
+- [`event_utils.get_roots`](./utils.event_utils.md#function-get_roots): Returns limited list of root events (events without parents).
+- [`event_utils.get_some`](./utils.event_utils.md#function-get_some): Returns limited list of events of specific eventType.
+- [`event_utils.get_type_frequencies`](./utils.event_utils.md#function-get_type_frequencies): Returns event frequencies based on event type.
+- [`event_utils.get_type_totals`](./utils.event_utils.md#function-get_type_totals): Returns dictionary quantities of events for different event types.
+- [`event_utils.print_attached_messages_totals`](./utils.event_utils.md#function-print_attached_messages_totals): Prints Dictionary quantities of messages attached to events for each stream + direction.
+- [`event_utils.print_category_frequencies`](./utils.event_utils.md#function-print_category_frequencies): Prints table of events per seconds or each second when there were events within events stream.
+- [`event_utils.print_category_totals`](./utils.event_utils.md#function-print_category_totals): Prints dictionary quantities of events for different categories.
+- [`event_utils.print_children`](./utils.event_utils.md#function-print_children): Prints limited list of direct children events.
+- [`event_utils.print_children_from_parents`](./utils.event_utils.md#function-print_children_from_parents): Prints limited list of direct children events for each event in parents_list.
+- [`event_utils.print_children_stats_from_parents`](./utils.event_utils.md#function-print_children_stats_from_parents): Prints statistics with number of children and their duration for each event in parents_list.
+- [`event_utils.print_event`](./utils.event_utils.md#function-print_event): Prints event in human-readable format.
+- [`event_utils.print_events_raw`](./utils.event_utils.md#function-print_events_raw): Prints limited list of events of specific eventType in dictionary format.
+- [`event_utils.print_roots`](./utils.event_utils.md#function-print_roots): Prints limited list of root events (events without parents).
+- [`event_utils.print_some`](./utils.event_utils.md#function-print_some): Prints limited list of events of specific eventType in human-readable format.
+- [`event_utils.print_some_by_category`](./utils.event_utils.md#function-print_some_by_category): Print limited events by category.
+- [`event_utils.print_type_frequencies`](./utils.event_utils.md#function-print_type_frequencies): Prints table of events per seconds or each second when there were events within events stream.
+- [`event_utils.print_type_totals`](./utils.event_utils.md#function-print_type_totals): Prints dictionary quantities of events for different event types.
+- [`event_utils.sublist`](./utils.event_utils.md#function-sublist): Filter Events Based On Timeframe.
+- [`message_utils.expand_message`](./utils.message_utils.md#function-expand_message): Extract compounded message into list of individual messages.
+- [`message_utils.extract_time`](./utils.message_utils.md#function-extract_time): Extracts timestamp from message.
+- [`message_utils.get_category_frequencies`](./utils.message_utils.md#function-get_category_frequencies)
+- [`message_utils.get_messages_examples`](./utils.message_utils.md#function-get_messages_examples)
+- [`message_utils.get_raw_body_str`](./utils.message_utils.md#function-get_raw_body_str)
+- [`message_utils.get_some`](./utils.message_utils.md#function-get_some): Returns limited list of messages from the stream.
+- [`message_utils.get_totals`](./utils.message_utils.md#function-get_totals): Returns dictionary quantities of events for different message categories.
+- [`message_utils.message_fields_to_flat_dict`](./utils.message_utils.md#function-message_fields_to_flat_dict)
+- [`message_utils.message_to_dict`](./utils.message_utils.md#function-message_to_dict): Converts message body to dict.
+- [`message_utils.print_category_frequencies`](./utils.message_utils.md#function-print_category_frequencies)
+- [`message_utils.print_message`](./utils.message_utils.md#function-print_message): Print message (verbose).
+- [`message_utils.print_message_raw_source`](./utils.message_utils.md#function-print_message_raw_source)
+- [`message_utils.print_some`](./utils.message_utils.md#function-print_some): Prints limited list of messages from the stream in dictionary format.
+- [`message_utils.print_some_raw`](./utils.message_utils.md#function-print_some_raw): Prints limited list of messages from the stream in dictionary format.
+- [`message_utils.print_some_raw_source`](./utils.message_utils.md#function-print_some_raw_source): Prints limited list of messages from the stream in ascii from raw binary format.
+- [`message_utils.print_totals`](./utils.message_utils.md#function-print_totals): Prints dictionary quantities of events for different message categories.
+- [`message_utils.resolve_count_message_ids`](./utils.message_utils.md#function-resolve_count_message_ids): Resolves set of message IDs. # TODO: Update Description.
+- [`message_utils.resolve_message_ids`](./utils.message_utils.md#function-resolve_message_ids): Resolves set of message IDs. # TODO: Update Description.
 - [`misc_utils.analyze_stream_sequence`](./utils.misc_utils.md#function-analyze_stream_sequence): Analyzes stream sequence.
 - [`misc_utils.create_qty_distribution`](./utils.misc_utils.md#function-create_qty_distribution): Returns qty distribution.
 - [`misc_utils.extract_timestamp`](./utils.misc_utils.md#function-extract_timestamp): Extracts timestamp from argument.
