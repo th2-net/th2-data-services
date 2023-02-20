@@ -1,19 +1,19 @@
 from th2_data_services.utils import misc_utils
-from typing import Callable, Dict, List
+from typing import Callable, Iterable, List
 
 from th2_data_services.utils.misc_utils import CategoryFrequencies
+from th2_data_services import EVENT_FIELDS_RESOLVER
+from th2_data_services.events_tree.events_tree import Th2Event
 
 
+# STREAMING
 def get_category_frequencies(
-    events: List[Dict], categories: List[str], categorizer: Callable, aggregation_level: str = "seconds"
+    events: Iterable[Th2Event], categories: List[str], categorizer: Callable, aggregation_level: str = "seconds"
 ) -> CategoryFrequencies:
     """Returns event frequencies based on event category.
 
-    categorizer extracts from events some string to calculate its freq
-    categories - are values that we want to calculate
-
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
         categories (List[str]): Event Categories
         categorizer (Callable): Categorizer Method
         aggregation_level (Optional, str): Aggregation Level
@@ -40,7 +40,8 @@ def get_category_frequencies(
         events,
         categories,
         categorizer,
-        lambda e: e["startTimestamp"]["epochSecond"],
+        # TODO -- we shouldn't know internal structure!!! - epochSeconds
+        lambda e: EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
         aggregation_level=aggregation_level,
     )
 
@@ -56,11 +57,13 @@ def get_category_frequencies(
 #   GetFrequences.by_category
 #    OR maybe better to separate them to modules
 #    utils.frequencies.
-def get_type_frequencies(events: List[Dict], types: List[str], aggregation_level="seconds") -> CategoryFrequencies:
+def get_type_frequencies(
+    events: Iterable[Th2Event], types: List[str], aggregation_level="seconds"
+) -> CategoryFrequencies:
     """Returns event frequencies based on event type.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
         types (List[str]): Event Types
         aggregation_level (Optional, str): Aggregation Level
 
@@ -77,4 +80,4 @@ def get_type_frequencies(events: List[Dict], types: List[str], aggregation_level
             ...
         ]
     """
-    return get_category_frequencies(events, types, lambda e: e["eventType"], aggregation_level)
+    return get_category_frequencies(events, types, lambda e: EVENT_FIELDS_RESOLVER.get_type(e), aggregation_level)

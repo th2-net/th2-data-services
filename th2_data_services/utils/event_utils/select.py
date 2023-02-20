@@ -1,14 +1,16 @@
 # The module for selecting events by some rules
 from collections import defaultdict
 from datetime import datetime
-from typing import List, Dict, Callable, Tuple, Set
+from typing import Callable, Dict, Iterable, Set, Tuple
+from th2_data_services import EVENT_FIELDS_RESOLVER, MESSAGE_FIELDS_RESOLVER
+from th2_data_services.events_tree.events_tree import Th2Event
 
 
 # TODO - THEY ALL ARE NOT STREAMING!!
 #   1. what about iter functions or return Data obj?  The second one sounds better
 
 
-def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> List[Dict]:
+def get_related_events(events: Iterable[Th2Event], messages: Iterable[Th2Event], count: int) -> Iterable[Th2Event]:
     """Returns limited list of events of linked to any message within specified messages objects collection.
 
     Args:
@@ -29,10 +31,10 @@ def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> 
             ]
     """
     result = []
-    msg_ids = set(message["messageId"] for message in messages)
+    msg_ids = set(MESSAGE_FIELDS_RESOLVER.get_id(message) for message in messages)
 
     for event in events:
-        for msg_id in event["attachedMessageIds"]:
+        for msg_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
             if msg_id in msg_ids:
                 result.append(event)
                 if len(result) == count:
@@ -43,8 +45,8 @@ def get_related_events(events: List[Dict], messages: List[Dict], count: int) -> 
 
 # TODO - duplicates get_some (get_events)
 def get_events_by_category(
-    events: List[Dict], category: str, count: int, categorizer: Callable, start=0, failed=False
-) -> List[Dict]:
+    events: Iterable[Th2Event], category: str, count: int, categorizer: Callable, start=0, failed=False
+) -> Iterable[Th2Event]:
     """Returns limited list of events of specific category produced by custom categorizer.
 
     Args:
@@ -69,7 +71,7 @@ def get_events_by_category(
     counter = 0
     for event in events:
         if categorizer(event) == category:
-            if failed and event["successful"]:
+            if failed and EVENT_FIELDS_RESOLVER.get_status(event):
                 continue
             if counter >= start:
                 result.append(event)
@@ -80,7 +82,7 @@ def get_events_by_category(
     return result
 
 
-def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
+def get_roots(events: Iterable[Th2Event], count: int, start: int = 0) -> Iterable[Th2Event]:
     """Returns limited list of root events (events without parents).
 
     Args:
@@ -95,7 +97,7 @@ def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
     limit = start + count
     counter = 0
     for event in events:
-        if event["parentEventId"] is None:
+        if EVENT_FIELDS_RESOLVER.get_parent_id(event) is None:
             if counter >= start:
                 result.append(event)
             counter += 1
@@ -105,7 +107,7 @@ def get_roots(events: List[Dict], count: int, start: int = 0) -> List[Dict]:
     return result
 
 
-def get_parents(events: List[Dict], children: List[Dict]) -> List[Dict]:
+def get_parents(events: Iterable[Th2Event], children: Iterable[Th2Event]) -> Iterable[Th2Event]:
     """Returns all parent events of linked to any event within specified events objects collection.
 
     Args:
@@ -122,11 +124,13 @@ def get_parents(events: List[Dict], children: List[Dict]) -> List[Dict]:
                 ...
             ]
     """
-    parent_ids = set(child["parentEventId"] for child in children)
-    return [event for event in events if event["eventId"] in parent_ids]
+    parent_ids = set(EVENT_FIELDS_RESOLVER.get_parent_id(child) for child in children)
+    return [event for event in events if EVENT_FIELDS_RESOLVER.get_id(event) in parent_ids]
 
 
-def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: int) -> Tuple[List[Dict], Dict]:
+def get_children_from_parent_id(
+    events: Iterable[Th2Event], parent_id: str, max_events: int
+) -> Tuple[Iterable[Th2Event], Th2Event]:
     """Returns limited list of direct children events.
 
     Args:
@@ -150,9 +154,9 @@ def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: 
     resolved_parent = {}
     counter = 0
     for event in events:
-        if event["eventId"] == parent_id:
+        if EVENT_FIELDS_RESOLVER.get_id(event) == parent_id:
             resolved_parent = event
-        if event["parentEventId"] == parent_id:
+        if EVENT_FIELDS_RESOLVER.get_parent_id(event) == parent_id:
             children.append(event)
             counter += 1
             if counter == max_events:
@@ -161,7 +165,9 @@ def get_children_from_parent_id(events: List[Dict], parent_id: str, max_events: 
     return children, resolved_parent
 
 
-def get_children_from_parents(events: List[Dict], parents: List[Dict], max_events: int) -> Tuple[Dict[str, list], int]:
+def get_children_from_parents(
+    events: Iterable[Th2Event], parents: Iterable[Th2Event], max_events: int
+) -> Tuple[Dict[str, list], int]:
     """Returns limited list of direct children events for each event in parents.
 
     Args:
@@ -185,10 +191,10 @@ def get_children_from_parents(events: List[Dict], parents: List[Dict], max_event
                 child_events_count
             )
     """
-    result = {parent["eventId"]: [] for parent in parents}
+    result = {EVENT_FIELDS_RESOLVER.get_id(parent): [] for parent in parents}
     events_count = 0
     for event in events:
-        parent_id = event["parentEventId"]
+        parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
         if parent_id not in result:
             continue
         if len(result[parent_id]) < max_events:
@@ -198,12 +204,14 @@ def get_children_from_parents(events: List[Dict], parents: List[Dict], max_event
     return result, events_count
 
 
-def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], max_events: int) -> List[Dict]:
+def get_children_from_parents_as_list(
+    events: Iterable[Th2Event], parents: Iterable[Th2Event], max_events: int
+) -> Iterable[Th2Event]:
     """Returns limited list of direct children events for each event in parents.
 
     Args:
-        events (List[Dict]): TH2-Events
-        parents (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
+        parents (Iterable[Th2Event]): TH2-Events
         max_events(int): Maximum number of events to extract
 
     Returns:
@@ -220,11 +228,11 @@ def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], m
             ]
 
     """
-    parent_ids = set(parent["eventId"] for parent in parents)
+    parent_ids = set(EVENT_FIELDS_RESOLVER.get_id(parent) for parent in parents)
     result = []
     parents_counts = defaultdict(int)
     for event in events:
-        parent_id = event["parentEventId"]
+        parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
         if parent_id not in parent_ids:
             continue
         if parents_counts[parent_id] < max_events:
@@ -234,16 +242,16 @@ def get_children_from_parents_as_list(events: List[Dict], parents: List[Dict], m
     return result
 
 
-def sublist(events: List[Dict], start_time: datetime, end_time: datetime) -> List[Dict]:
+def sublist(events: Iterable[Th2Event], start_time: datetime, end_time: datetime) -> Iterable[Th2Event]:
     """Filter Events Based On Timeframe.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
         start_time (datetime): Start time
         end_time (datetime): End time
 
     Returns:
-        List[Dict]: Filtered Events.
+        Iterable[Th2Event]: Filtered Events.
 
     Example:
         >>> sublist(events=events,
@@ -258,7 +266,7 @@ def sublist(events: List[Dict], start_time: datetime, end_time: datetime) -> Lis
     start_time = datetime.timestamp(start_time)
     end_time = datetime.timestamp(end_time)
     for event in events:
-        event_time = event["startTimestamp"]["epochSecond"]
+        event_time = EVENT_FIELDS_RESOLVER.get_start_timestamp(event)["epochSecond"]
         if start_time <= event_time <= end_time:
             result.append(event)
 
@@ -268,11 +276,11 @@ def sublist(events: List[Dict], start_time: datetime, end_time: datetime) -> Lis
 # USEFUL
 # NOT STREAMING
 # TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
-def get_attached_message_ids(events: List[Dict]) -> Set[str]:
+def get_attached_message_ids(events: Iterable[Th2Event]) -> Set[str]:
     """Returns the set of unique message IDs linked to all events.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
 
     Returns:
         Set[str]
@@ -285,7 +293,7 @@ def get_attached_message_ids(events: List[Dict]) -> Set[str]:
               ...
             }
     """
-    return set(message_id for event in events for message_id in event["attachedMessageIds"])
+    return set(message_id for event in events for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event))
 
 
 # USEFUL
@@ -294,11 +302,11 @@ def get_attached_message_ids(events: List[Dict]) -> Set[str]:
 # TODO - It returns only parent events that not present in the events.
 #   Perhaps we need to find better name
 # we use something similar in our EventTree
-def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
+def get_prior_parent_ids(events: Iterable[Th2Event]) -> Set[str]:
     """Returns only parent events that are not present in the events.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
 
     Returns:
         Set[str]
@@ -314,8 +322,8 @@ def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
     all_event_ids = set()
     parent_ids = set()
     for event in events:
-        parent_id = event["parentEventId"]
-        event_id = event["eventId"]
+        parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
+        event_id = EVENT_FIELDS_RESOLVER.get_id(event)
         if parent_id is not None and not parent_id in all_event_ids:
             parent_ids.add(parent_id)
         if event_id in parent_ids:
@@ -330,7 +338,7 @@ def get_prior_parent_ids(events: List[Dict]) -> Set[str]:
 # TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
 # BE AWARE!! - it can take up all your memory
 # O(N*M)
-def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
+def get_attached_message_ids_index(events: Iterable[Th2Event]) -> Dict[str, list]:
     """Returns dict of lists of related events by unique message IDs.
 
     Notes:
@@ -339,7 +347,7 @@ def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
         - Event path from root to event, it's a string of event names separated by `/`.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
 
     Returns:
         Dict[str, list]
@@ -356,7 +364,7 @@ def get_attached_message_ids_index(events: List[Dict]) -> Dict[str, list]:
     """
     result = defaultdict(list)
     for event in events:
-        for message_id in event["attachedMessageIds"]:
+        for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
             result[message_id].append(event)
 
     return result

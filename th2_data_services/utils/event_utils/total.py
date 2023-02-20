@@ -1,6 +1,7 @@
-from typing import Callable, Dict, List
+from typing import Callable, Dict, Iterable
 from collections import defaultdict
-
+from th2_data_services import EVENT_FIELDS_RESOLVER
+from th2_data_services.events_tree.events_tree import Th2Event
 import th2_data_services.utils.display
 
 """
@@ -42,7 +43,7 @@ class StatsTotal(dict[str, int]):
 # TODO - NOT-READY -- event["successful"] should be updated by resolver
 # categorizer - expects that it will return str
 def get_category_totals(
-    events: List[Dict], categorizer: Callable[[Dict], str], ignore_status: bool = False
+    events: Iterable[Th2Event], categorizer: Callable[[Dict], str], ignore_status: bool = False
 ) -> StatsTotal:
     """Returns dictionary quantities of events for different categories.
 
@@ -67,7 +68,7 @@ def get_category_totals(
     for event in events:
         category = categorizer(event)
         if not ignore_status:
-            status = " [ok]" if event["successful"] else " [fail]"
+            status = " [ok]" if EVENT_FIELDS_RESOLVER.get_status(event) else " [fail]"
             category += status
         event_categories[category] += 1
 
@@ -77,7 +78,7 @@ def get_category_totals(
 # USEFUL
 # STREAMING
 # TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
-def get_attached_messages_totals(events: List[Dict]) -> StatsTotal:
+def get_attached_messages_totals(events: Iterable[Th2Event]) -> StatsTotal:
     """Returns dictionary quantities of messages attached to events for each stream.
 
     Args:
@@ -93,7 +94,7 @@ def get_attached_messages_totals(events: List[Dict]) -> StatsTotal:
     """
     streams = defaultdict(int)
     for event in events:
-        for message_id in event["attachedMessageIds"]:
+        for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
             key = message_id[: message_id.rindex(":")]
             streams[key] += 1
 
@@ -106,7 +107,7 @@ def get_attached_messages_totals(events: List[Dict]) -> StatsTotal:
 #
 # STREAMING
 # TODO - NOT-READY -- event["successful"] should be updated by resolver
-def get_type_totals(events: List[Dict]) -> StatsTotal:
+def get_type_totals(events: Iterable[Th2Event]) -> StatsTotal:
     """Returns dictionary quantities of events for different event types.
 
     Args:

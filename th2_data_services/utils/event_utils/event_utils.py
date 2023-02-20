@@ -1,7 +1,8 @@
 import json
-
+from th2_data_services import EVENT_FIELDS_RESOLVER
+from th2_data_services.events_tree.events_tree import Th2Event
 import th2_data_services.utils.time
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, Iterable, Optional
 from datetime import datetime
 
 # TODO -
@@ -17,25 +18,24 @@ from th2_data_services.utils.event_utils.select import (
 )
 
 
+# NOT STREAMING
+# TODO - USEFUL ???
+#   What the example of this? look very rarely need to use
+# Will return list! Perhaps it's better to return Data?
 def get_some(
-    events: List[Dict], event_type: Optional[str], count: int, start: int = 0, failed: bool = False
-) -> List[Dict]:
-    # NOT STREAMING
-    # TODO - USEFUL ???
-    #   What the example of this? look very rarely need to use
-    # Will return list! Perhaps it's better to return Data?
-    # TODO - move to select?
+    events: Iterable[Th2Event], event_type: Optional[str], count: int, start: int = 0, failed: bool = False
+) -> Iterable[Th2Event]:
     """Returns limited list of events of specific eventType.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
         event_type (str): Event Type To Extract
         count (int): Maximum number of events to extract
         start (int, optional): Start Iteration Index. Defaults to 0.
         failed (bool, optional): Extract Only Failed Events. Defaults to False.
 
     Returns:
-        List[Dict]
+        Iterable[Th2Event]
 
     Example:
         >>> get_some(events=events,
@@ -53,8 +53,8 @@ def get_some(
     limit = start + count
     counter = 0
     for event in events:
-        if event["eventType"] == event_type:
-            if failed and event["successful"]:
+        if EVENT_FIELDS_RESOLVER.get_type(event) == event_type:
+            if failed and EVENT_FIELDS_RESOLVER.get_status(event):
                 continue
             if counter >= start:
                 result.append(event)
@@ -67,7 +67,7 @@ def get_some(
 
 # NOT STREAMING
 # TODO: Change name
-def build_roots_cache(events: List[Dict], depth: int, max_level: int) -> Dict:
+def build_roots_cache(events: Iterable[Th2Event], depth: int, max_level: int) -> Dict:
     """Returns event path for each event.
 
     Notes:
@@ -98,8 +98,10 @@ def build_roots_cache(events: List[Dict], depth: int, max_level: int) -> Dict:
     prev_levels = get_roots(events, max_level)
     print(f"Level {level}: {len(prev_levels)} events")
     for prev_level in prev_levels:
-        result[prev_level["eventId"]] = {"eventName": prev_level["eventName"], "eventPath": prev_level["eventName"]}
-
+        result[EVENT_FIELDS_RESOLVER.get_id(prev_level)] = {
+            "eventName": EVENT_FIELDS_RESOLVER.get_name(prev_level),
+            "eventPath": EVENT_FIELDS_RESOLVER.get_name(prev_level),
+        }
     while level < depth:
         next_levels = get_children_from_parents_as_list(events, prev_levels, max_level)
         next_levels_count = len(next_levels)
@@ -108,11 +110,11 @@ def build_roots_cache(events: List[Dict], depth: int, max_level: int) -> Dict:
         level += 1
         print(f"Level {level}: {next_levels_count} events")
         for next_level in next_levels:
-            event_id = next_level["eventId"]
-            parent_id = next_level["parentEventId"]
+            event_id = EVENT_FIELDS_RESOLVER.get_id(next_level)
+            parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(next_level)
             result[event_id] = {
-                "eventName": next_level["eventName"],
-                "eventPath": result[parent_id]["eventPath"] + "/" + next_level["eventName"],
+                "eventName": EVENT_FIELDS_RESOLVER.get_name(next_level),
+                "eventPath": result[parent_id]["eventPath"] + "/" + EVENT_FIELDS_RESOLVER.get_name(next_level),
             }
         prev_levels = next_levels
 
@@ -130,12 +132,12 @@ def extract_start_timestamp(event: Dict) -> str:
     Returns:
         str
     """
-    return th2_data_services.utils.time.extract_timestamp(event["startTimestamp"])
+    return th2_data_services.utils.time.extract_timestamp(EVENT_FIELDS_RESOLVER.get_start_timestamp(event))
 
 
 # NOT STREAMING
 def extract_parent_as_json(
-    events: List[Dict],
+    events: Iterable[Th2Event],
     parent_id: str,
     json_file_path: str,
     interval_start: str,

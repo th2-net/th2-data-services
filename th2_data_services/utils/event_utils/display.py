@@ -1,8 +1,8 @@
-from typing import Callable, Dict, List, Union
+from typing import Callable, Iterable, Union
 from datetime import datetime
 from tabulate import tabulate
-from typing import List, Dict, Callable
-
+from typing import Callable
+from th2_data_services import EVENT_FIELDS_RESOLVER
 from th2_data_services.utils.event_utils.event_utils import extract_start_timestamp, get_some
 from th2_data_services.utils.event_utils.select import (
     get_children_from_parents,
@@ -10,15 +10,16 @@ from th2_data_services.utils.event_utils.select import (
     get_roots,
     get_children_from_parent_id,
 )
+from th2_data_services.events_tree.events_tree import Th2Event
 
 
 # TODO
 #   COMMENTED - because we don't need it more. We will return classes that have good representation!
-# def print_attached_messages_totals(events: List[Dict], return_html: bool = False) -> Union[None, str]:
+# def print_attached_messages_totals(events: Iterable[Th2Event], return_html: bool = False) -> Union[None, str]:
 #     """Prints Dictionary quantities of messages attached to events for each stream + direction.
 #
 #     Args:
-#         events (List[Dict]): TH2-Events
+#         events (Iterable[Th2Event]): TH2-Events
 #         return_html (bool): Return HTML Format
 #
 #     """
@@ -29,12 +30,12 @@ from th2_data_services.utils.event_utils.select import (
 # TODO
 #   COMMENTED - because we don't need it more. We will return classes that have good representation!
 # def print_category_totals(
-#     events: List[Dict], categorizer: Callable, return_html: bool = False, ignore_status: bool = False
+#     events: Iterable[Th2Event], categorizer: Callable, return_html: bool = False, ignore_status: bool = False
 # ) -> Union[None, str]:
 #     """Prints dictionary quantities of events for different categories.
 #
 #     Args:
-#         events (List[Dict]): TH2-Events
+#         events (Iterable[Th2Event]): TH2-Events
 #         categorizer (Callable): Categorizer Method
 #         return_html (bool): Return HTML Format, defaults to False
 #         ignore_status (bool): Get status of events, defaults to False
@@ -47,30 +48,32 @@ from th2_data_services.utils.event_utils.select import (
 
 
 # STREAMING
-def print_event(event: Dict) -> None:
+def print_event(event: Th2Event) -> None:
     """Prints event in human-readable format.
 
     Args:
-        event (List[Dict]): TH2-Events
+        event (Th2Event): TH2-Event
 
     """
     print(
-        f"{extract_start_timestamp(event)} > [{'ok' if event['successful'] else 'fail'}] "
-        f"Type: {event['eventType']} "
-        f"Name: {event['eventName']} "
-        f"ID: {event['eventId']} "
-        f"Parent:{event['parentEventId']} "
-        f"Body:{event['body']}"
+        f"{extract_start_timestamp(event)} > [{'ok' if EVENT_FIELDS_RESOLVER.get_status(event) else 'fail'}] "
+        f"Type: {EVENT_FIELDS_RESOLVER.get_type(event)} "
+        f"Name: {EVENT_FIELDS_RESOLVER.get_name(event)} "
+        f"ID: {EVENT_FIELDS_RESOLVER.get_id(event)} "
+        f"Parent:{EVENT_FIELDS_RESOLVER.get_parent_id(event)} "
+        f"Body:{EVENT_FIELDS_RESOLVER.get_body(event)}"
     )
 
 
 # NOT STREAMING
 # PREV name print_some_raw
-def print_events_raw(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> None:
+def print_events_raw(
+    events: Iterable[Th2Event], event_type: str, count: int, start: int = 0, failed: bool = False
+) -> None:
     """Prints limited list of events of specific eventType in dictionary format.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
         event_type (set): Event Type To Extract
         count (int): Maximum number of events to extract
         start (int, optional): Start Iteration Index. Defaults to 0.
@@ -83,11 +86,11 @@ def print_events_raw(events: List[Dict], event_type: str, count: int, start: int
 
 
 # NOT STREAMING
-def print_some(events: List[Dict], event_type: str, count: int, start: int = 0, failed: bool = False) -> None:
+def print_some(events: Iterable[Th2Event], event_type: str, count: int, start: int = 0, failed: bool = False) -> None:
     """Prints limited list of events of specific eventType in human-readable format.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
         event_type (set): Event Type To Extract
         count (int): Maximum number of events to extract
         start (int, optional): Start Iteration Index. Defaults to 0.
@@ -101,12 +104,12 @@ def print_some(events: List[Dict], event_type: str, count: int, start: int = 0, 
 
 # NOT STREAMING
 def print_some_by_category(
-    events: List[Dict], category: str, count: int, categorizer: Callable, start: int = 0, failed: bool = False
+    events: Iterable[Th2Event], category: str, count: int, categorizer: Callable, start: int = 0, failed: bool = False
 ) -> None:
     """Print limited events by category.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
         category (str): Event category to extract
         count (int): Maximum number of events to extract
         categorizer (Callable): Categorizer function
@@ -120,11 +123,11 @@ def print_some_by_category(
 
 
 # STREAMING
-def print_roots(events: List[Dict], count: int, start: int = 0) -> None:
+def print_roots(events: Iterable[Th2Event], count: int, start: int = 0) -> None:
     """Prints limited list of root events (events without parents).
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
         count (int): Maximum number of events to extract
         start (int, optional): Start Iteration Index. Defaults to 0.
 
@@ -135,11 +138,11 @@ def print_roots(events: List[Dict], count: int, start: int = 0) -> None:
 
 
 # STREAMING
-def print_children(events: List[Dict], parent_id: str, count: int, verbose: bool = True):
+def print_children(events: Iterable[Th2Event], parent_id: str, count: int, verbose: bool = True):
     """Prints limited list of direct children events.
 
     Args:
-        events (List[Dict]): TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
         parent_id (str): Parent ID
         count (int): Maximum number of events to extract
         verbose (bool): Verbose output, defaults to True.
@@ -152,12 +155,14 @@ def print_children(events: List[Dict], parent_id: str, count: int, verbose: bool
 
 
 # NOT STREAMING
-def print_children_from_parents(events: List[Dict], parents: List[Dict], max_events: int = 10_000) -> None:
+def print_children_from_parents(
+    events: Iterable[Th2Event], parents: Iterable[Th2Event], max_events: int = 10_000
+) -> None:
     """Prints limited list of direct children events for each event in parents_list.
 
     Args:
-        events (List[Dict]): TH2-Events
-        parents (List[Dict]): Parent TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
+        parents (Iterable[Th2Event]): Parent TH2-Events
         max_events (int): Maximum number of events to extract from each parent, default to 10'000
 
     """
@@ -165,21 +170,21 @@ def print_children_from_parents(events: List[Dict], parents: List[Dict], max_eve
     print(f"####### Retrieved Children: {count}")
     for parent in parents:
         print(parent)
-        print(f">>>>>>> Children: {len(tree[parent['eventId']])}")
-        for child in tree[parent["eventId"]]:
+        print(f">>>>>>> Children: {len(tree[EVENT_FIELDS_RESOLVER.get_id(parent)])}")
+        for child in tree[EVENT_FIELDS_RESOLVER.get_id(parent)]:
             print_event(child)
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
 
 # NOT STREAMING
 def print_children_stats_from_parents(
-    events: List[Dict], parents: List[Dict], max_events: int = 10_000, return_html: bool = False
+    events: Iterable[Th2Event], parents: Iterable[Th2Event], max_events: int = 10_000, return_html: bool = False
 ) -> Union[None, str]:
     """Prints statistics with number of children and their duration for each event in parents_list.
 
     Args:
-        events (List[Dict]): TH2-Events
-        parents (List[Dict]): Parent TH2-Events
+        events (Iterable[Th2Event]): TH2-Events
+        parents (Iterable[Th2Event]): Parent TH2-Events
         max_events (int): Maximum number of events to extract, default to 10'000
         return_html (bool): Return HTML format, defaults to False
 
@@ -189,22 +194,22 @@ def print_children_stats_from_parents(
     for parent in parents:
         start_timestamp, end_timestamp = 0, 0
         events_passed, events_failed = 0, 0
-        for child in tree[parent["eventId"]]:
-            child_start_time_epoch = child["startTimestamp"]["epochSecond"]
+        for child in tree[EVENT_FIELDS_RESOLVER.get_id(parent)]:
+            child_start_time_epoch = EVENT_FIELDS_RESOLVER.get_start_timestamp(child)["epochSecond"]
             if child_start_time_epoch > end_timestamp:
                 end_timestamp = child_start_time_epoch
             if start_timestamp == 0 or child_start_time_epoch < start_timestamp:
                 start_timestamp = child_start_time_epoch
 
-            if child["successful"]:
+            if EVENT_FIELDS_RESOLVER.get_status(child):
                 events_passed += 1
             else:
                 events_failed += 1
 
         table.append(
             [
-                parent["eventName"],
-                "[ok]" if parent["successful"] else "[fail]",
+                EVENT_FIELDS_RESOLVER.get_name(parent),
+                "[ok]" if EVENT_FIELDS_RESOLVER.get_status(parent) else "[fail]",
                 events_passed,
                 events_failed,
                 datetime.fromtimestamp(start_timestamp).isoformat(),
@@ -225,7 +230,7 @@ def print_children_stats_from_parents(
 # TODO - bad function, that not only prints but also gets
 #   If we want to have pretty look, we can implement __repr__ functions
 # def print_type_frequencies(
-#     events: List[Dict], event_types: List[str], aggregation_level: str = "seconds", return_html=False
+#     events: Iterable[Th2Event], event_types: List[str], aggregation_level: str = "seconds", return_html=False
 # ) -> Union[None, str]:
 #     """Prints table of events per seconds or each second when there were events within events stream.
 #
@@ -241,6 +246,7 @@ def print_children_stats_from_parents(
 #         return tabulate(table, headers="firstrow", tablefmt="html")
 #     else:
 #         print(tabulate(table, headers="firstrow", tablefmt="grid"))
+
 #
 #
 # # STREAMING
