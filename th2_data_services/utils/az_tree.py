@@ -5,11 +5,9 @@ from functools import partial
 from os import listdir, path
 from typing import List, Dict, Tuple, Callable
 
-from th2_data_services.utils.event_utils import (
-    extract_start_timestamp,
-    get_children_from_parents_as_list,
-    get_children_from_parent_id,
-)
+from th2_data_services.utils.event_utils.event_utils import extract_start_timestamp
+from th2_data_services.utils.event_utils.select import get_children_from_parents_as_list, get_children_from_parent_id
+
 
 # TODO
 #   1. What index is?

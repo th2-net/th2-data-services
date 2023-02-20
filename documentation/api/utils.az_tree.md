@@ -10,7 +10,7 @@
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `get_event_tree_from_parent_events`
 
@@ -82,7 +82,7 @@ Generate tree object based on parents events list.
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L125"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L123"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `get_event_tree_from_parent_id`
 
@@ -141,7 +141,7 @@ Generate tree object based on parent event id.
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L176"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L174"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `save_tree_as_json`
 
@@ -180,7 +180,7 @@ Saves Tree As JSON Format.
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L221"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L219"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `transform_tree`
 
@@ -213,7 +213,7 @@ Transform Tree.
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L243"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L241"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `process_trees_from_jsons`
 
@@ -242,7 +242,7 @@ Loads JSON files locally and processes them with given function.
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L269"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L267"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `tree_walk`
 
@@ -278,7 +278,7 @@ Process tree by processor [Recursive method].
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L299"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L297"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `tree_walk_from_jsons`
 
@@ -313,7 +313,7 @@ Loads JSON file(s) and processes them with given function.
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L318"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L316"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `tree_update_totals`
 
@@ -347,7 +347,7 @@ Updates tree by categorizer function as keys.
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L339"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L337"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `tree_get_category_totals`
 
@@ -391,7 +391,7 @@ Returns category totals from tree.
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L367"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L365"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `tree_get_category_totals_from_jsons`
 
@@ -426,7 +426,7 @@ Returns category totals from JSON file(s).
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L390"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L388"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `search_tree`
 
@@ -465,7 +465,7 @@ Searches tree by filter function.
 
 ---
 
-<a href="../../th2_data_services/utils/az_tree.py#L414"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/az_tree.py#L412"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `search_tree_from_jsons`
 

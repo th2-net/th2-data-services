@@ -8,6 +8,10 @@ from th2_data_services.utils import event_utils, script_report_utils
 import th2_data_services
 
 
+# TODO
+#   1. We cannot leave it as is because ds-core doesn't know anything about provider
+#   2. It's more better to create a special command for that
+#   (unfortunately we cannot do it now because we cannot change Data object in the map func)
 def download_events(
     start_timestamp: str,
     end_timestamp: str,
@@ -37,7 +41,8 @@ def download_events(
             start_timestamp=datetime.fromisoformat(start_timestamp),
             end_timestamp=datetime.fromisoformat(end_timestamp),
             attached_messages=True,
-            filters=[TypeFilter(["Checkpoint for session", "Checkpoint"], negative=True)],  # TODO: Add custom filters?
+            filters=[TypeFilter(["Checkpoint for session", "Checkpoint"], negative=True)],
+            # TODO: Add custom filters?
             cache=True,
         )
     )

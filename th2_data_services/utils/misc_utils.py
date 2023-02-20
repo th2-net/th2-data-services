@@ -1,156 +1,48 @@
 from collections import defaultdict
-from typing import List, Dict, Union, Callable, Any, Tuple, Iterable
+from typing import Any, Callable, Dict, Iterable, List, Tuple
 from tabulate import tabulate
 from datetime import datetime
 
 from th2_data_services.events_tree.events_tree import Th2Event
 
-
-# STREAMABLE
-def print_stats_dict(
-    data: Dict, return_html: bool = False, sort_values: bool = False, tabulate_style: str = "grid"
-) -> Union[None, str]:
-    """Prints Statistics.
-
-    Args:
-        data: Dictionary of data
-        return_html: Return HTML format, defaults to False
-        sort_values: Sort result, defaults to False
-        tabulate_style: Table format style, defaults to "grid"
-
-    Returns:
-        None if return_html is False else str
-    """
-    table = [["category", "count"]]  # Header
-    total = 0
-    result = []
-    for item in data.items():
-        result.append([item[0], str(item[1])])
-        total += item[1]
-
-    if sort_values:
-        result.sort(key=lambda item: int(item[1]), reverse=True)
-
-    table.extend(result)
-    table.append(["CATEGORIES", str(len(data))])
-    table.append(["TOTAL", str(total)])
-
-    if return_html:
-        return tabulate(table, headers="firstrow", tablefmt="html")
-    else:
-        print(tabulate(table, headers="firstrow", tablefmt=tabulate_style))
-        return None
+# TODO - we have special converters for it in ds-2.0 (ProtobufTimestampConverter)
+from th2_data_services.utils.time import timestamp_aggregation_key
 
 
-# STREAMABLE
-def print_measurement_dict(data: Dict, return_html: bool = False):
-    """Prints Measurements.
+class CategoryFrequencies(list):
+    def __init__(self, val):
+        """TODO - add.
 
-    Args:
-        data: Dictionary of data
-        return_html: Return HTML format, defaults to False
+        Args:
+            val: add
+        """
+        super().__init__(val)
 
-    Returns:
-        None if return_html is False else str
-    """
-    header = list(set(key for value in data.values() for key in value if key != "distr"))
-    header.sort()
-    table = [["category", *header]]
+    def __repr__(self):
+        return tabulate(self, headers="firstrow", tablefmt="grid")
 
-    for key, value in data.items():
-        row = [key]
-        for header_name in header:
-            row.append(str(value[header_name]))
-        table.append(row)
+    def _repr_html_(self):
+        # TODO - non zero and non None values we can highlight
+        # FOR Jupyter
+        return tabulate(self, headers="firstrow", tablefmt="html")
 
-    if return_html:
-        return tabulate(table, headers="firstrow", tablefmt="html")
-    else:
-        print(tabulate(table, headers="firstrow", tablefmt="grid"))
-        return None
+    def __html__(self):
+        self._repr_html_()
 
-
-# STREAMABLE
-def extract_timestamp(timestamp_element: Dict) -> str:
-    """Extracts timestamp from argument.
-
-    Args:
-        timestamp_element:
-
-    Returns:
-        str
-    """
-    timestamp = datetime.fromtimestamp(timestamp_element["epochSecond"])
-    return f"{timestamp.isoformat()}.{str(timestamp_element['nano']).zfill(9)}"
-
-
-# STREAMABLE
-def time_interval_filter_seconds_precision(
-    timestamp_element: Dict, start_timestamp: Union[int, float], end_timestamp: Union[int, float]
-) -> bool:
-    """TODO: Add Description.
-
-    Args:
-        timestamp_element: Timestamp element
-        start_timestamp: Start timestamp
-        end_timestamp: End timestamp
-
-    Returns:
-        bool
-    """
-    return start_timestamp <= timestamp_element["epochSecond"] <= end_timestamp
-
-
-# STREAMABLE
-def timestamp_delta_us(start_timestamp: Dict, end_timestamp: Dict) -> float:
-    """Returns timestamp delta in milliseconds.
-
-    Args:
-        start_timestamp: Start timestamp
-        end_timestamp: End timestamp
-
-    Returns:
-        float
-    """
-    seconds_delta = (end_timestamp["epochSecond"] - start_timestamp["epochSecond"]) * 1000000
-    nano_delta = (end_timestamp["nano"] - start_timestamp["nano"]) / 1000
-    return seconds_delta + nano_delta
-
-
-def timestamp_aggregation_key(
-    global_anchor_timestamp: int, timestamp: int, aggregation_level: str = "seconds"
-) -> int:  # noqa
-    # TODO: Add docstings
-    if aggregation_level == "seconds":
-        return timestamp
-
-    aggregation_levels = {
-        "minutes": 60,
-        "30min": 1800,
-        "hours": 3600,
-        "1min": 60,
-        "5min": 300,
-        "10sec": 10,
-        "30sec": 30,
-    }
-    try:
-        interval = aggregation_levels[aggregation_level]
-    except KeyError:
-        raise KeyError(f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}")
-
-    return global_anchor_timestamp + interval * ((timestamp - global_anchor_timestamp) // interval)
+    def show_format(self, **kwargs):
+        return tabulate(self, **kwargs)
 
 
 # STREAMABLE
 def get_objects_frequencies(
     objects_stream: Iterable[Th2Event],
-    categories: List,
+    categories: List,  # TODO - can be None to collect all values
     categorizer: Callable,
     timestamp_function: Callable,
     aggregation_level: str = "seconds",
     object_expander: Callable = None,
     objects_filter: Callable = None,
-) -> List[List]:
+) -> CategoryFrequencies:
     """Returns objects frequencies based on categorizer.
 
     Args:
@@ -216,7 +108,7 @@ def get_objects_frequencies(
 
         results.append(line)
 
-    return results
+    return CategoryFrequencies(results)
 
 
 # STREAMABLE (?)
@@ -314,15 +206,6 @@ def analyze_stream_sequence(
     return result
 
 
-# STREAMABLE
-def time_slice_object_filter(timestamp_field: Dict, timestamp_iso: str, duration_seconds: int):  # noqa
-    # TODO: Add docstings
-    ts1 = datetime.fromisoformat(timestamp_iso).timestamp()
-    ts2 = ts1 + duration_seconds
-
-    return lambda obj: time_interval_filter_seconds_precision(obj[timestamp_field], ts1, ts2)
-
-
 # STREAMABLE ?
 def process_objects_stream(
     stream: Iterable[Th2Event], processors: List[Tuple[Callable, Dict]], expander: Callable = None
@@ -347,6 +230,7 @@ def process_objects_stream(
 
 
 # TODO: Is this useful?
+#   similar to totals for events, but evenets also have status field
 def get_category_totals_p(record: Dict, categorizer: Callable, filter_: Callable, result) -> Any:  # noqa
     # TODO: Add docstings
     if record is None:
@@ -363,8 +247,8 @@ def get_category_totals_p(record: Dict, categorizer: Callable, filter_: Callable
 
 
 # TODO: Is this useful?
-# TODO: Is `exp_10_bucket` argument necessary?
-def update_int_measurement(metric: int, measurement_data, exp_10_bucket: int = 0):  # noqa
+#   Used by get_category_measurement_p
+def update_int_measurement(metric: int, measurement_data):  # noqa
     # TODO: Add docstings
     count = 1
     if "count" in measurement_data:

@@ -14,7 +14,7 @@
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L14"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `tag_rows_to_flat_dict`
 
@@ -39,111 +39,7 @@ rows are used in 'Tree table', 'Table'  but not in the Verification (uses fields
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L46"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>function</kbd> `format_comparison_line`
-
-```python
-format_comparison_line(field: Dict, failed_collection: bool = False) → str
-```
-
-
-
-
-
-
----
-
-<a href="../../th2_data_services/utils/script_report_utils.py#L69"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>function</kbd> `verification_fields_to_flat_dict`
-
-```python
-verification_fields_to_flat_dict(
-    collection: Dict,
-    flat_list: Dict,
-    prefix,
-    failed_collection: bool = False
-)
-```
-
-If a field A has a sub-field B, dot notation sting will be returned. 
-
-
-
-**Examples:**
-  failed_collection=False  {'hzField A': '   value [*]',  'hzField B': '!  2531410 [2531410]',  'hzSub message A.Field C': ' # 9 [9]'} 
-
- failed_collection=True  {'hzField A': ' # value [*]',  'hzField B': '!# 2531410 [2531410]',  'hzSub message A.Field C': ' # 9 [9]'} 
-
-
-
-**Args:**
- 
- - <b>`collection`</b>:  verification collection like here https://exactpro.atlassian.net/wiki/spaces/TH2/pages/63766549/rpt-viewer+supported+event+content#Verification 
- - <b>`flat_list`</b>:  NOT a list - dict. Used just to put result to this object. 
- - <b>`prefix`</b>:  prefix that will be added before each field name. 
- - <b>`failed_collection`</b>:  ??? 
-
-
-
-**Returns:**
- 
-
-
----
-
-<a href="../../th2_data_services/utils/script_report_utils.py#L111"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>function</kbd> `check_if_verification_leaf_failed`
-
-```python
-check_if_verification_leaf_failed(leaf: Dict) → bool
-```
-
-
-
-
-
-
----
-
-<a href="../../th2_data_services/utils/script_report_utils.py#L137"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>function</kbd> `verification_fields_to_simple_dict`
-
-```python
-verification_fields_to_simple_dict(
-    collection: Dict,
-    parent: Dict,
-    failed_collection: bool = False
-) → None
-```
-
-
-
-**Examples:**
-  failed_collection=False  {'Field A': '   value [*]',  'Field B': '!  2531410 [2531410]',  '# Sub message A': {'Field C': ' # 9 [9]'}} 
-
- failed_collection=True  {'Field A': ' # value [*]',  'Field B': '!# 2531410 [2531410]',  '# Sub message A': {'Field C': ' # 9 [9]'}} 
-
-
-
-**Args:**
- 
- - <b>`collection`</b>:  verification collection like here https://exactpro.atlassian.net/wiki/spaces/TH2/pages/63766549/rpt-viewer+supported+event+content#Verification 
- - <b>`parent`</b>:  NOT a list - dict. Used just to put result to this object. 
- - <b>`failed_collection`</b>:  ?? 
-
-
-
-**Returns:**
- 
-
-
----
-
-<a href="../../th2_data_services/utils/script_report_utils.py#L180"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L47"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `item_status_fail`
 
@@ -158,7 +54,7 @@ item_status_fail(str_irem) → bool
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L196"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L63"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `simplify_body_outgoing_message`
 
@@ -173,37 +69,7 @@ simplify_body_outgoing_message(body) → Dict
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L205"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>function</kbd> `simplify_body_verification`
-
-```python
-simplify_body_verification(body) → Dict
-```
-
-
-
-
-
-
----
-
-<a href="../../th2_data_services/utils/script_report_utils.py#L216"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>function</kbd> `simplify_body_verification2`
-
-```python
-simplify_body_verification2(body) → Dict
-```
-
-
-
-
-
-
----
-
-<a href="../../th2_data_services/utils/script_report_utils.py#L226"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L73"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `simplify_body_tree_table_list`
 
@@ -218,7 +84,7 @@ simplify_body_tree_table_list(body) → Dict
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L239"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L86"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `enrich_events_tree_with_attached_messages`
 
@@ -233,7 +99,7 @@ enrich_events_tree_with_attached_messages(index, messages, filter_lambda) → Di
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L265"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L112"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `find_child_by_type`
 
@@ -258,7 +124,7 @@ Finds child by type.
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L284"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L131"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `find_child_by_types`
 
@@ -283,7 +149,7 @@ Finds child by type.
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L304"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L151"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `id_tags`
 
@@ -298,7 +164,7 @@ id_tags() → List[str]
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L322"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L169"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `defining_tags`
 
@@ -313,7 +179,7 @@ defining_tags() → List[str]
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L338"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L185"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `format_expected_event`
 
@@ -328,7 +194,7 @@ format_expected_event(expected_event_str: str, alias_by_id: Dict) → str
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L346"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L193"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `format_actual_event`
 
@@ -343,7 +209,7 @@ format_actual_event(actual_message_dict, actual_message_str, alias_by_id)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L363"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L210"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `find_corresponding_missing_filter`
 
@@ -358,7 +224,7 @@ find_corresponding_missing_filter(expectation_string, verifications_list)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L396"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L243"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `find_corresponding_verification`
 
@@ -377,7 +243,7 @@ find_corresponding_verification(
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L424"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L271"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `process_step_request_id`
 
@@ -392,7 +258,7 @@ process_step_request_id(request_tags, alias_by_id, custom_id_tags)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L448"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L295"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `get_val_from_verification`
 
@@ -407,7 +273,7 @@ get_val_from_verification(formatted_val)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L456"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L303"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `extract_ids_from_dict`
 
@@ -429,7 +295,7 @@ extract_ids_from_dict(
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L473"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L320"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `matrix_model_test_case_analyze_ids`
 
@@ -444,7 +310,7 @@ matrix_model_test_case_analyze_ids(report_leaf, custom_id_tags)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L504"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L351"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `matrix_model_test_case_processor`
 
@@ -459,7 +325,7 @@ matrix_model_test_case_processor(report_leaf)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L675"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L522"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `generate_generic_tree_and_index`
 
@@ -474,7 +340,7 @@ generate_generic_tree_and_index(events, parents_filter)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L688"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L535"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `generate_generic_tree_and_index_from_parents_list`
 
@@ -489,7 +355,7 @@ generate_generic_tree_and_index_from_parents_list(events, parents)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L706"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L553"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `generate_model_matrix_tree_and_index`
 
@@ -504,7 +370,7 @@ generate_model_matrix_tree_and_index(events, parents_filter, extra=None)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L720"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L567"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `generate_matrix_json_report_limited_batches`
 
@@ -525,7 +391,7 @@ generate_matrix_json_report_limited_batches(
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L731"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L578"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `extra_post_processor`
 
@@ -540,7 +406,7 @@ extra_post_processor(main_processor, extra_processor)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L736"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L583"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `generate_generic_json_report_limited_batches`
 
@@ -561,7 +427,7 @@ generate_generic_json_report_limited_batches(
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L771"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L618"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `generate_generic_json_report`
 
@@ -581,7 +447,7 @@ generate_generic_json_report(
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L777"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L624"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `generate_model_matrix_json_report`
 
@@ -601,7 +467,7 @@ generate_model_matrix_json_report(
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L792"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L639"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `collect_element`
 
@@ -616,7 +482,7 @@ collect_element(p, l, elements_to_collect, collected_data)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L807"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L654"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `create_parallel_tables`
 
@@ -631,7 +497,7 @@ create_parallel_tables(story_item, collected_data)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L838"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L685"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `collect_ids_for_story`
 
@@ -646,7 +512,7 @@ collect_ids_for_story(story_items_list, smart, events, messages)
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L865"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L712"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `prepare_story`
 
@@ -667,7 +533,7 @@ prepare_story(
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L1012"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L859"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `test_verification_fields_to_flat_dict`
 
@@ -682,7 +548,7 @@ test_verification_fields_to_flat_dict()
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L1029"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L876"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `test_verification_fields_to_simple_dict`
 
@@ -697,7 +563,7 @@ test_verification_fields_to_simple_dict()
 
 ---
 
-<a href="../../th2_data_services/utils/script_report_utils.py#L1046"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/utils/script_report_utils.py#L893"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `test_simplify_body_tree_table_list`
 
