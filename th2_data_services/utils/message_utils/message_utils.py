@@ -1,9 +1,10 @@
 import base64
 from collections import defaultdict
-from typing import List, Dict, Callable, Set, Union
+from typing import Callable, Dict, List, Set
 
+import th2_data_services.utils.display
+import th2_data_services.utils.time
 from th2_data_services.utils import misc_utils
-from tabulate import tabulate
 
 
 # # NOT STREAMABLE
@@ -94,7 +95,7 @@ def print_totals(messages: List[Dict], categorizers: List[Callable], filter_: Ca
 
     """
     result = get_totals(messages, categorizers, filter_)
-    misc_utils.print_stats_dict(result)
+    th2_data_services.utils.display.print_stats_dict(result)
 
 
 # NOT STREAMABLE
@@ -206,6 +207,7 @@ def print_some(messages: List[Dict], max_count: int, start: int = 0, filter_: Ca
 
 # STREAMABLE
 def message_fields_to_flat_dict(message: Dict, result: Dict, prefix: str):  # noqa
+    # Actual if provider returns data in Protobuf style
     # TODO: Add Docstings
     for field, content in message["fields"].items():
         if "simpleValue" in content:
@@ -251,7 +253,7 @@ def extract_time(message: Dict) -> str:
     Returns:
         str
     """
-    return misc_utils.extract_timestamp(message["timestamp"])
+    return th2_data_services.utils.time.extract_timestamp(message["timestamp"])
 
 
 # STREAMABLE
@@ -341,7 +343,7 @@ def get_category_frequencies(
     categorizer: Callable,
     aggregation_level: str = "seconds",
     filter_: Callable = None,
-):  # noqa
+) -> CategoryFrequencies:  # noqa
     # TODO: Add Descriptive Docstrings
     return misc_utils.get_objects_frequencies(
         messages,
@@ -354,23 +356,24 @@ def get_category_frequencies(
     )
 
 
-# NOT STREAMABLE
-def print_category_frequencies(
-    messages: List[Dict],
-    categories: List[str],
-    categorizer: Callable,
-    aggregation_level: str = "seconds",
-    filter_: Callable = None,
-    return_html=False,
-) -> Union[None, str]:  # noqa
-    # TODO: Add Descriptive Docstrings
-    result = get_category_frequencies(messages, categories, categorizer, aggregation_level, filter_)
-
-    if return_html:
-        return tabulate(result, headers="firstrow", tablefmt="html")
-    else:
-        print(tabulate(result, headers="firstrow", tablefmt="grid"))
-        return None
+# TODO
+#   COMMENTED - because we don't need it more. We will return classes that have good representation!
+# def print_category_frequencies(
+#     messages: List[Dict],
+#     categories: List[str],
+#     categorizer: Callable,
+#     aggregation_level: str = "seconds",
+#     filter_: Callable = None,
+#     return_html=False,
+# ) -> Union[None, str]:  # noqa
+#     # TODO: Add Descriptive Docstrings
+#     result = get_category_frequencies(messages, categories, categorizer, aggregation_level, filter_)
+#
+#     if return_html:
+#         return tabulate(result, headers="firstrow", tablefmt="html")
+#     else:
+#         print(tabulate(result, headers="firstrow", tablefmt="grid"))
+#         return None
 
 
 # NOT STREAMABLE
