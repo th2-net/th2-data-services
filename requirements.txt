@@ -1,4 +1,4 @@
-wheel==0.37.1  # To get rid of wheel building errors
+wheel==0.38.1  # To get rid of wheel building errors
 sseclient-py~=1.7
 grpcio-tools==1.38.1  # Do not change
 requests~=2.28
