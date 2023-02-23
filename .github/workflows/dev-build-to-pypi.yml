@@ -65,3 +65,7 @@ jobs:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
           repository_url: https://upload.pypi.org/legacy/
+  scan:
+    name: Vulnerabilities scan
+    uses: th2-net/.github/.github/workflows/python-scan.yml@python-scan
+
