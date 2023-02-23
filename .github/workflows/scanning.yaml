@@ -1,0 +1,10 @@
+name: '[RELEASE] Build and publish Python distributions to PyPI'
+
+on:
+  push:
+
+jobs:
+  scan:
+    name: Vulnerabilities scan
+    uses: th2-net/.github/.github/workflows/python-scan.yml@python-scan
+
