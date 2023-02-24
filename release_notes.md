@@ -386,4 +386,4 @@ This release implements performance bug fixes and provides Data object cache fil
 
 ## Improvements
 1. Updated Wheel to `~0.38`
-2. Added vulnerabilities scanning
+2. [TH2-4802] Added vulnerabilities scanning
