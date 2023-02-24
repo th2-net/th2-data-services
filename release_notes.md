@@ -377,5 +377,5 @@ This release implements performance bug fixes and provides Data object cache fil
 # v1.3.1
 
 ## Improvements
-1. Updated Wheel to `0.38.1`
+1. Updated Wheel to `~0.38`
 2. Added vulnerabilities scanning
