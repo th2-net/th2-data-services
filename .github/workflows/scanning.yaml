@@ -1,0 +1,10 @@
+name: 'Vulnerabilities scanning'
+
+on:
+  push:
+
+jobs:
+  scan:
+    name: Vulnerabilities scan
+    uses: th2-net/.github/.github/workflows/python-scan.yml@main
+

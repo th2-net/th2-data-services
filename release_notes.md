@@ -373,3 +373,9 @@ This release implements performance bug fixes and provides Data object cache fil
 2. [TH2-4380] Fixed apply_adpater feature for GetMessages / GetEvents / GetEventById / GetMessageById
 3. [TH2-3767] Fixed bug with limit of Data object in Windows.
 4. [TH2-4460] Fixed bug where GRPC omitted fields with None value in response.
+
+# v1.3.1
+
+## Improvements
+1. Updated Wheel to `~0.38`
+2. Added vulnerabilities scanning
