@@ -3,6 +3,23 @@ from typing import Dict, Union
 from tabulate import tabulate
 
 
+def calculate_stats_dict(data: Dict, sort_values: bool = False):
+    table = [["category", "count"]]  # Header
+    total = 0
+    result = []
+    for item in data.items():
+        result.append([item[0], str(item[1])])
+        total += item[1]
+
+    if sort_values:
+        result.sort(key=lambda item: int(item[1]), reverse=True)
+
+    table.extend(result)
+    table.append(["CATEGORIES", str(len(data))])
+    table.append(["TOTAL", str(total)])
+    return table
+
+
 def print_stats_dict(
     data: Dict, return_html: bool = False, sort_values: bool = False, tabulate_style: str = "grid"
 ) -> Union[None, str]:
@@ -17,19 +34,7 @@ def print_stats_dict(
     Returns:
         None if return_html is False else str
     """
-    table = [["category", "count"]]  # Header
-    total = 0
-    result = []
-    for item in data.items():
-        result.append([item[0], str(item[1])])
-        total += item[1]
-
-    if sort_values:
-        result.sort(key=lambda item: int(item[1]), reverse=True)
-
-    table.extend(result)
-    table.append(["CATEGORIES", str(len(data))])
-    table.append(["TOTAL", str(total)])
+    table = calculate_stats_dict(data, sort_values)
 
     if return_html:
         return tabulate(table, headers="firstrow", tablefmt="html")
