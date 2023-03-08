@@ -49,6 +49,10 @@ class Provider5EventFieldsResolver(EventFieldsResolver):
 
 class Provider5MessageFieldsResolver(MessageFieldsResolver):
     @staticmethod
+    def get_subsequence(message):
+        raise NotImplementedError
+
+    @staticmethod
     def get_direction(message):
         return message[provider5_message_struct.DIRECTION]
 
