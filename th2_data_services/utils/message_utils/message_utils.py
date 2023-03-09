@@ -394,6 +394,7 @@ def get_messages_examples(
     messages: Iterable[Th2Event], categories: List[str], categorizer: Callable, filter_: Callable = None
 ) -> Dict:  # noqa
     # TODO: Add Docstrings
+    # It returns {category_name: message}
     result = {}
     categories = set(categories)
     for message in messages:

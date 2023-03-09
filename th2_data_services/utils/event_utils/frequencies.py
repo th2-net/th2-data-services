@@ -1,15 +1,17 @@
 from th2_data_services.utils import misc_utils
 from typing import Callable, Iterable, List
 
-from th2_data_services.utils.aggregation_classes import CategoryFrequencies
 from th2_data_services import EVENT_FIELDS_RESOLVER
 from th2_data_services.events_tree.events_tree import Th2Event
 
 
 # STREAMING
+from th2_data_services.utils.summary import FrequencyCategoryTable
+
+
 def get_category_frequencies(
     events: Iterable[Th2Event], categories: List[str], categorizer: Callable, aggregation_level: str = "seconds"
-) -> CategoryFrequencies:
+) -> FrequencyCategoryTable:
     """Returns event frequencies based on event category.
 
     Args:
@@ -59,7 +61,7 @@ def get_category_frequencies(
 #    utils.frequencies.
 def get_type_frequencies(
     events: Iterable[Th2Event], types: List[str], aggregation_level="seconds"
-) -> CategoryFrequencies:
+) -> FrequencyCategoryTable:
     """Returns event frequencies based on event type.
 
     Args:
