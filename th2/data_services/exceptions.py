@@ -24,15 +24,15 @@ class EventNotFound(Exception):
 
 
 class MessageNotFound(Exception):
-    def __init__(self, id_):
+    def __init__(self, error_description):
         """Exception for the case when the the message was not found in data source.
         Args:
             id_: Event id.
         """
-        self._id = id_
+        self._error_description = error_description
 
     def __str__(self):
-        return f"Unable to find the message with id '{self._id}'"
+        return self._error_description
 
 
 class CommandError(Exception):
