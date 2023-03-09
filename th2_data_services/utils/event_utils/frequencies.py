@@ -1,7 +1,7 @@
 from th2_data_services.utils import misc_utils
 from typing import Callable, Iterable, List
 
-from th2_data_services.utils.misc_utils import CategoryFrequencies
+from th2_data_services.utils.aggregation_classes import CategoryFrequencies
 from th2_data_services import EVENT_FIELDS_RESOLVER
 from th2_data_services.events_tree.events_tree import Th2Event
 
@@ -36,7 +36,7 @@ def get_category_frequencies(
         ]
 
     """
-    return misc_utils.get_objects_frequencies(
+    return misc_utils.get_objects_frequencies2(
         events,
         categories,
         categorizer,

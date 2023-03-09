@@ -1,49 +1,29 @@
 from collections import defaultdict
 from typing import Any, Callable, Dict, Iterable, List, Tuple
-from tabulate import tabulate
-from datetime import datetime
+from datetime import datetime, timezone
 
 from th2_data_services.events_tree.events_tree import Th2Event
 
 # TODO - we have special converters for it in ds-2.0 (ProtobufTimestampConverter)
+from th2_data_services.utils.aggregation_classes import CategoryFrequencies
 from th2_data_services.utils.time import timestamp_aggregation_key
+from th2_data_services.utils.summary import FrequencyCategoryTable
 
-
-class CategoryFrequencies(list):
-    def __init__(self, val):
-        """TODO - add.
-
-        Args:
-            val: add
-        """
-        super().__init__(val)
-
-    def __repr__(self):
-        return tabulate(self, headers="firstrow", tablefmt="grid")
-
-    def _repr_html_(self):
-        # TODO - non zero and non None values we can highlight
-        # FOR Jupyter
-        return tabulate(self, headers="firstrow", tablefmt="html")
-
-    def __html__(self):
-        self._repr_html_()
-
-    def show_format(self, **kwargs):
-        return tabulate(self, **kwargs)
-
+# TODO - we have get_objects_frequencies and get_objects_frequencies2 -- we need to unify it
 
 # STREAMABLE
 def get_objects_frequencies(
-    objects_stream: Iterable[Th2Event],
-    categories: List,  # TODO - can be None to collect all values
-    categorizer: Callable,
-    timestamp_function: Callable,
-    aggregation_level: str = "seconds",
-    object_expander: Callable = None,
-    objects_filter: Callable = None,
+        objects_stream: Iterable[Th2Event],
+        categories: List,  # TODO - can be None to collect all values or []
+        categorizer: Callable,
+        timestamp_function: Callable,
+        aggregation_level: str = "seconds",
+        object_expander: Callable = None,
+        objects_filter: Callable = None,
 ) -> CategoryFrequencies:
     """Returns objects frequencies based on categorizer.
+
+    Returns timestamps in UTC format.
 
     Args:
         objects_stream: Objects stream
@@ -71,7 +51,8 @@ def get_objects_frequencies(
                 anchor = timestamp_function(expanded_object)
 
             if not categories:
-                epoch = timestamp_aggregation_key(anchor, timestamp_function(expanded_object), aggregation_level)
+                epoch = timestamp_aggregation_key(anchor, timestamp_function(expanded_object),
+                                                  aggregation_level)
                 category = categorizer(expanded_object)
                 categories_set.add(category)
                 if epoch not in frequencies:
@@ -99,25 +80,108 @@ def get_objects_frequencies(
     results = [header]
     timestamps = list(sorted(frequencies.keys()))
     for timestamp in timestamps:
-        line = [datetime.fromtimestamp(timestamp).isoformat()]
+        line = [datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')]
         if categories:
             line.extend(frequencies[timestamp])
         else:
             for category in categories_set:
-                line.append(frequencies[timestamp][category]) if category in frequencies[timestamp] else line.append(0)
+                line.append(frequencies[timestamp][category]) if category in frequencies[
+                    timestamp] else line.append(0)
 
         results.append(line)
 
     return CategoryFrequencies(results)
 
 
+def get_objects_frequencies2(
+        objects_stream: Iterable[Th2Event],
+        categories: List,  # TODO - can be None to collect all values or []
+        categorizer: Callable,
+        timestamp_function: Callable,
+        aggregation_level: str = "seconds",
+        object_expander: Callable = None,
+        objects_filter: Callable = None,
+) -> FrequencyCategoryTable:
+    """Returns objects frequencies based on categorizer.
+
+    Returns timestamps in UTC format.
+
+    Args:
+        objects_stream: Objects stream
+        categories: Categories list
+        categorizer: Categorizer function
+        timestamp_function: Timestamp function
+        aggregation_level: Aggregation level
+        object_expander: Object expander function
+        objects_filter: Object filter function
+
+    Returns:
+        List[List]
+    """
+    frequencies = {}
+    anchor = 0
+    categories_set = set()
+    for obj in objects_stream:
+        expanded_objects = [obj] if object_expander is None else object_expander(obj)
+        for expanded_object in expanded_objects:
+            if objects_filter is not None:
+                if not objects_filter(expanded_object):
+                    continue
+
+            if anchor == 0:
+                anchor = timestamp_function(expanded_object)
+
+            if not categories:
+                epoch = timestamp_aggregation_key(anchor, timestamp_function(expanded_object),
+                                                  aggregation_level)
+                category = categorizer(expanded_object)
+                categories_set.add(category)
+                if epoch not in frequencies:
+                    frequencies[epoch] = {category: 1}
+                elif category not in frequencies[epoch]:
+                    frequencies[epoch][category] = 1
+                else:
+                    frequencies[epoch][category] += 1
+            else:
+                for i in range(len(categories)):
+                    if categorizer(expanded_object) == categories[i]:
+                        epoch = timestamp_aggregation_key(
+                            anchor, timestamp_function(expanded_object), aggregation_level
+                        )
+                        if epoch not in frequencies:
+                            frequencies[epoch] = [0] * len(categories)
+                        frequencies[epoch][i] += 1
+
+    header = ["timestamp"]
+    if categories:
+        header.extend(categories)
+    else:
+        header.extend(categories_set)
+
+    results = [header]
+    timestamps = list(sorted(frequencies.keys()))
+    for timestamp in timestamps:
+        line = [datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')]
+        if categories:
+            line.extend(frequencies[timestamp])
+        else:
+            for category in categories_set:
+                line.append(frequencies[timestamp][category]) if category in frequencies[
+                    timestamp] else line.append(0)
+
+        results.append(line)
+
+    r = FrequencyCategoryTable(header=header, rows=results[1:])
+
+    return r
+
 # STREAMABLE (?)
 def analyze_stream_sequence(
-    stream: Iterable[Th2Event],
-    sequence_extractor: Callable,
-    timestamp_extractor: Callable,
-    seq_filter: Callable = None,
-    object_expander: Callable = None,
+        stream: Iterable[Th2Event],
+        sequence_extractor: Callable,
+        timestamp_extractor: Callable,
+        seq_filter: Callable = None,
+        object_expander: Callable = None,
 ) -> List[Dict]:
     """Analyzes stream sequence.
 
@@ -198,7 +262,8 @@ def analyze_stream_sequence(
                     )
                 if curr_seq == prev_seq:
                     result.append(
-                        {"type": "duplicate", "seq": prev_seq, "timestamp_1": prev_time, "timestamp_2": curr_time}
+                        {"type": "duplicate", "seq": prev_seq, "timestamp_1": prev_time,
+                         "timestamp_2": curr_time}
                     )
             prev_seq = curr_seq
             prev_time = curr_time
@@ -208,7 +273,8 @@ def analyze_stream_sequence(
 
 # STREAMABLE ?
 def process_objects_stream(
-    stream: Iterable[Th2Event], processors: List[Tuple[Callable, Dict]], expander: Callable = None
+        stream: Iterable[Th2Event], processors: List[Tuple[Callable, Dict]],
+        expander: Callable = None
 ) -> None:
     """Processes object stream with processors.
 
@@ -231,10 +297,12 @@ def process_objects_stream(
 
 # TODO: Is this useful?
 #   similar to totals for events, but evenets also have status field
-def get_category_totals_p(record: Dict, categorizer: Callable, filter_: Callable, result) -> Any:  # noqa
+def get_category_totals_p(record: Dict, categorizer: Callable, filter_: Callable,
+                          result) -> Any:  # noqa
     # TODO: Add docstings
     if record is None:
-        return get_category_totals_p, {"categorizer": categorizer, "obj_filter": filter_, "result": result}
+        return get_category_totals_p, {"categorizer": categorizer, "obj_filter": filter_,
+                                       "result": result}
 
     if filter_ is not None and not filter_(record):
         return None
