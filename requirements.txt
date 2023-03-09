@@ -9,3 +9,4 @@ types-protobuf==3.19.22
 importlib_metadata
 orjson~=3.8
 tabulate
+prettytable  # Temporary required for summary
