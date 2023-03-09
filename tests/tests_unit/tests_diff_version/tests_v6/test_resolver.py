@@ -1,5 +1,7 @@
-from th2_data_services.provider.v6.resolver import Provider6EventFieldsResolver, Provider6MessageFieldsResolver
+from th2_data_services.provider.v6.resolver import Provider6EventFieldsResolver, \
+    Provider6MessageFieldsResolver
 import inspect
+
 
 def test_resolver_event():
     event = {
@@ -31,8 +33,10 @@ def test_resolver_event():
         'get_type': 'ds-lib-test-event'
     }
 
-    for function_name,function in inspect.getmembers(Provider6EventFieldsResolver, predicate=inspect.isfunction):
+    for function_name, function in inspect.getmembers(Provider6EventFieldsResolver,
+                                                      predicate=inspect.isfunction):
         assert function(event) == expected_values[function_name]
+
 
 def test_resolver_message():
     message = {
@@ -50,7 +54,8 @@ def test_resolver_message():
                 "id": "ds-lib-session1:first:1668429677955474105.",
                 "message": {
                     "metadata": {
-                        "id": {"connectionId": {"sessionAlias": "ds-lib-session1"}, "sequence": "1668429677955474105"},
+                        "id": {"connectionId": {"sessionAlias": "ds-lib-session1"},
+                               "sequence": "1668429677955474105"},
                         "messageType": "Incoming",
                         "properties": {"com.exactpro.th2.cradle.grpc.protocol": "json"},
                         "protocol": "json",
@@ -60,7 +65,7 @@ def test_resolver_message():
             }
         ],
     }
-    
+
     expected_values = {
         'get_attached_event_ids': [],
         'get_body': [{
@@ -101,10 +106,13 @@ def test_resolver_message():
         'get_sequence': '1668429677955474105',
         'get_session_alias': 'ds-lib-session1',
         'get_session_id': 'ds-lib-session1',
-        'get_subsequence': None,
+        # 'get_subsequence': None,
         'get_timestamp': '2022-11-14T12:41:18.094248000Z',
         'get_type': 'Incoming'
     }
 
-    for function_name,function in inspect.getmembers(Provider6MessageFieldsResolver, predicate=inspect.isfunction):
+    for function_name, function in inspect.getmembers(Provider6MessageFieldsResolver,
+                                                      predicate=inspect.isfunction):
+        if function_name == 'get_subsequence':
+            continue
         assert function(message) == expected_values[function_name]
