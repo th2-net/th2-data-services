@@ -628,11 +628,11 @@ class Data:
             Data: Data object.
 
         Raises:
-            FileExistsError if provided file is not exist.
+            FileNotFoundError if provided file does not exist.
 
         """
         if not Path(filename).resolve().exists():
-            raise FileExistsError
+            raise FileNotFoundError(f"{filepath} doesn't exist")
 
         data_obj = cls([], cache=True)
         data_obj._set_custom_cache_destination(filename=filename)
