@@ -632,7 +632,7 @@ class Data:
 
         """
         if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filepath} doesn't exist")
+            raise FileNotFoundError(f"{filename} doesn't exist")
 
         data_obj = cls([], cache=True)
         data_obj._set_custom_cache_destination(filename=filename)
