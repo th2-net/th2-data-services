@@ -393,20 +393,22 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         MessageNotFound: If message by id wasn't found.
     """
 
-    def __init__(self, id: str, use_stub: bool = False):
+    def __init__(self, id: str, only_raw = False, use_stub: bool = False):
         """GetMessageById constructor.
 
         Args:
             id: Message id.
+            only_raw: If True the command returns only the base 64 version of body.
             use_stub: If True the command returns stub instead of exception.
         """
         super().__init__()
         self._id = id
+        self._only_raw = only_raw
         self._stub_status = use_stub
 
     def handle(self, data_source: HTTPProvider5DataSource) -> dict:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
-        url = api.get_url_find_message_by_id(self._id)
+        url = api.get_url_find_message_by_id(self._id, self._only_raw)
 
         # LOG         logger.info(url)
 

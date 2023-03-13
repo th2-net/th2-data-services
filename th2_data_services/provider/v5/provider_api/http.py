@@ -85,8 +85,10 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             query += f"ids={id}&"
         return self.__encode_url(f"{self._url}/events?{query[:-1]}")
 
-    def get_url_find_message_by_id(self, message_id: str) -> str:
+    def get_url_find_message_by_id(self, message_id: str, only_raw) -> str:
         """REST-API `message` call returns a single message with the specified id."""
+        if only_raw:
+            return self.__encode_url(f"{self._url}/message/{message_id}?onlyRaw=True")
         return self.__encode_url(f"{self._url}/message/{message_id}")
 
     def get_url_messages_filters(self) -> str:
