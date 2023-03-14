@@ -1,3 +1,4 @@
+from copy import copy
 from operator import itemgetter
 from typing import List, Union
 from tabulate import tabulate
@@ -51,11 +52,13 @@ def namedtuple_with_slice(name, args):  # noqa
 class PerfectTable:
     def __init__(self, header: List[str]):  # noqa
         self._headers = tuple(header)
-        Row = namedtuple_with_slice("Row", self._headers)
-        self.row_class = Row
+        self.row_class = self._create_row_class(self._headers)
         self._rows = []
         self._columns = defaultdict(tuple)
         # self._add_headers_as_attr()
+
+    def _create_row_class(self, headers):
+        return namedtuple_with_slice("Row", headers)
 
     def __contains__(self, item):
         return item in self._headers
@@ -87,6 +90,11 @@ class PerfectTable:
     #         prop = property(lambda self: self.get_column(h))  # self._create_prop_for_attrs(h)
     #         setattr(self, h, prop)
 
+    def _check_columns_existence(self, columns):
+        for c in columns:
+            if c not in self.header:
+                raise ValueError(f"Column '{c}' is not in the table columns: {self.header}")
+
     def get_list_repr(self):
         return [self.header, *self.rows]
 
@@ -101,13 +109,12 @@ class PerfectTable:
             rows = tuple(row for row in reader)  # 'generator' object is not subscriptable  если генератор
 
         self._headers = tuple(rows[0])
-        Row = namedtuple_with_slice("Row", self._headers)
-        self.row_class = Row
+        self.row_class = self._create_row_class(self.header)
         x: list
         if strip:
-            self._rows = [Row(*[v.strip() for v in x if isinstance(v, str)]) for x in rows[1:]]
+            self._rows = [self.row_class(*[v.strip() for v in x if isinstance(v, str)]) for x in rows[1:]]
         else:
-            self._rows = [Row(*x) for x in rows[1:]]
+            self._rows = [self.row_class(*x) for x in rows[1:]]
 
         # # TODO - Думаю стоит инициализировать это лениво, по требованию.
         # #   запросили колонку, добавляем
@@ -161,7 +168,10 @@ class PerfectTable:
         for row in rows:
             self.add_row(row)
 
-    def add_row(self, row):
+    def _append_row(self, row: List):
+        self._rows.append(self.row_class(*row))
+
+    def add_row(self, row: List):
         """Add a row to the table.
 
         Args:
@@ -172,7 +182,7 @@ class PerfectTable:
             raise ValueError(
                 "Row has incorrect number of values, " f"(actual) {len(row)}!={len(self.header)} (expected)"
             )
-        self._rows.append(self.row_class(*row))
+        self._append_row(row)
 
     def filter(self, condition):
         """Returns new table. Not update current.
@@ -192,6 +202,7 @@ class PerfectTable:
 
     def sort_by(self, columns: Union[List[str], str], ascending=True):
         """Sort (updates the object) and returns self."""
+        self._check_columns_existence(columns)
 
         if isinstance(columns, str):
             columns = [columns]
@@ -204,13 +215,23 @@ class PerfectTable:
 
         return self
 
-    # def order_by(self, columns: List[str]):
-    #     # TODO - in progress
-    #     self._check_columns_existence(columns)
-    #     c_idxes = {c_name: self.get_header().index(c_name) for c_name in columns}
-    #     # new_header =
-    #     self._table.del_column()
-    #     return self
+    def change_columns_order(self, columns_order: List[str]):
+        self._check_columns_existence(columns_order)
+        header_len = len(self.header)
+        assert len(columns_order) == header_len
+
+        # {col_name: idx} in the original table
+        c_idxes = {c_name: self.header.index(c_name) for c_name in columns_order}
+
+        new_header = columns_order
+        orig_rows = copy(self.rows)
+        self._headers = tuple(new_header)
+        self._rows = []
+        self.row_class = self._create_row_class(new_header)
+        for row in orig_rows:
+            self._append_row([row[c_idxes[column_name]] for column_name in columns_order])
+
+        return self
 
 
 if __name__ == "__main__":
@@ -224,4 +245,10 @@ if __name__ == "__main__":
     ])
 
     print(t.sort_by(['a', 'b', 'c']))
-    print(t.sort_by(['b', 'a']))
+    # print(t.sort_by(['b', 'a']))
+    print(t.change_columns_order(['b', 'c', 'a']))
+    print(t.sort_by('b', ascending=True))
+    print(t.header)
+    print(t['a'])
+    print(t['b'])
+    print(t['c'])
