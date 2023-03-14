@@ -1,3 +1,4 @@
+import re
 from copy import copy
 from operator import itemgetter
 from typing import List, Union
@@ -8,33 +9,24 @@ import csv
 
 
 def pars_arg(arg) -> str:  # noqa
-    return (
-        arg.strip()
-        .replace(" ", "_")
-        .replace("(", "_")
-        .replace(")", "_")
-        .replace("[", "_")
-        .replace("]", "_")
-        .replace("/", "_")
-        .replace("\\", "_")
-        .replace("-", "_")
-        .replace(":", "_")
-        .replace(",", "_")
-    )
+    res = re.sub('[^0-9a-zA-Z]+', '_', arg)
+    if res[0].isdigit():
+        res = '_' + res
+
+    return res
 
 
 def namedtuple_with_slice(name, args):  # noqa
-    # TODO - create regexp
     args_dict = {arg: pars_arg(arg) for arg in args}
     new_args = [pars_arg(arg) for arg in args]
-    # adopted_args = (arg.strip().replace('(', '_').replace(')', '_') for arg in orig_args)
     cls = namedtuple(name, new_args)  # TODO - we can have the same values!!!
 
     def getitem(self, index):
         # `type(self)` can result in issues in case of multiple inheritance.
         # But shouldn't be an issue here.
         if isinstance(index, int):
-            value = super(type(self), self).__getitem__(index)  # Superclass for namedtuple is sequence
+            value = super(type(self), self).__getitem__(
+                index)  # Superclass for namedtuple is sequence
         elif isinstance(index, slice):
             value = super(type(self), self).__getitem__(index)
             cls = namedtuple(name, new_args[index])
@@ -106,13 +98,15 @@ class PerfectTable:
         with open(path, "r") as f_obj:
             reader = csv.reader(f_obj, delimiter=",")
 
-            rows = tuple(row for row in reader)  # 'generator' object is not subscriptable  если генератор
+            rows = tuple(
+                row for row in reader)  # 'generator' object is not subscriptable  если генератор
 
         self._headers = tuple(rows[0])
         self.row_class = self._create_row_class(self.header)
         x: list
         if strip:
-            self._rows = [self.row_class(*[v.strip() for v in x if isinstance(v, str)]) for x in rows[1:]]
+            self._rows = [self.row_class(*[v.strip() for v in x if isinstance(v, str)]) for x in
+                          rows[1:]]
         else:
             self._rows = [self.row_class(*x) for x in rows[1:]]
 
