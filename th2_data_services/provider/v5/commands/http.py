@@ -393,18 +393,18 @@ class GetMessageById(IHTTPProvider5Command, ProviderAdaptableCommand):
         MessageNotFound: If message by id wasn't found.
     """
 
-    def __init__(self, id: str, only_raw: bool = False, use_stub: bool = False):
+    def __init__(self, id: str, use_stub: bool = False, only_raw: bool = False):
         """GetMessageById constructor.
 
         Args:
             id: Message id.
-            only_raw: If True the command returns message without parsed body.
             use_stub: If True the command returns stub instead of exception.
+            only_raw: If True the command returns message without parsed body.
         """
         super().__init__()
         self._id = id
-        self._only_raw = only_raw
         self._stub_status = use_stub
+        self._only_raw = only_raw
 
     def handle(self, data_source: HTTPProvider5DataSource) -> dict:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
@@ -439,19 +439,19 @@ class GetMessagesById(IHTTPProvider5Command, ProviderAdaptableCommand):
         MessageNotFound: If any message by id wasn't found.
     """
 
-    def __init__(self, ids: List[str], only_raw: bool = False, use_stub: bool = False):
+    def __init__(self, ids: List[str], use_stub: bool = False, only_raw: bool = False):
         """GetMessagesById constructor.
 
         Args:
             ids: Message id list.
-            only_raw: If True the command returns messages without parsed body.
             use_stub: If True the command returns stub instead of exception.
+            only_raw: If True the command returns messages without parsed body.
         """
         super().__init__()
         self._ids: ids = ids
-        self._only_raw = only_raw
         self._stub_status = use_stub
-
+        self._only_raw = only_raw
+        
     def handle(self, data_source: HTTPProvider5DataSource) -> List[dict]:  # noqa: D102
         result = []
         for message_id in self._ids:
