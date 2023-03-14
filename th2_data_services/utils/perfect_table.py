@@ -202,10 +202,10 @@ class PerfectTable:
 
     def sort_by(self, columns: Union[List[str], str], ascending=True):
         """Sort (updates the object) and returns self."""
-        self._check_columns_existence(columns)
-
         if isinstance(columns, str):
             columns = [columns]
+
+        self._check_columns_existence(columns)
 
         s_rows = self.rows
         for sort_col in columns[::-1]:

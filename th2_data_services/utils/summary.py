@@ -292,6 +292,17 @@ class TotalCategoryTable(CategoryTable):
     def total(self):
         return sum(self['count'])
 
+
+    def _totals_line(self):
+        totals = []
+        for col_name in self.header:
+            try:
+                totals.append(sum(self[col_name]))
+            except:
+                totals.append('')
+
+        return totals
+
     def add_rows_from_dict(self, d: dict):
         result = []
         for category_name, category_value in d.items():
@@ -308,9 +319,11 @@ class TotalCategoryTable(CategoryTable):
 
     def get_list_repr(self):
         additional_rows = [
-            ['' for i in range(len(self.header) - 1)] + [self.total]
+            # ['' for i in range(len(self.header) - 1)] + [self.total],
+            ['count'] + ['' for _ in range(len(self.header)-1)] + [len(self.rows)] ,
+            ['totals']+self._totals_line(),
         ]
-        return [self.header, *self.rows, *additional_rows]
+        return [[' ']+list(self.header), *[[' ']+list(row) for row in self.rows], *additional_rows]
 
 
 class Category:
