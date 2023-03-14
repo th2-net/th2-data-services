@@ -250,6 +250,30 @@ class FrequencyCategoryTable(CategoryTable):
 
         return fct
 
+    def by_categories(self, names: List[str], exclude_zero_values=True):
+        """Returns CategoryFrequencies for requested column."""
+        header_lst = self.header
+        for name in names:
+            if name not in self.get_categories():
+                raise ValueError(f"'{name}' is not categories: {self.get_categories()}")
+
+        col_name_idxs = []
+        for name in names:
+            col_name_idxs.append(header_lst.index(name))
+
+        timestamp_col_name = header_lst[0]
+        fct = FrequencyCategoryTable(header=[timestamp_col_name, *names])
+
+        for row in self.rows:
+            vals = [row[idx] for idx in col_name_idxs]
+            if exclude_zero_values:
+                if any(vals) != 0:
+                    fct.add_row([row[self.service_columns['timestamp']],  *vals])
+            else:
+                fct.add_row([row[self.service_columns['timestamp']], *vals])
+
+        return fct
+
 
 class TotalCategoryTable(CategoryTable):
     # Хочу сложные категории type | status | count
