@@ -264,6 +264,10 @@ class TotalCategoryTable(CategoryTable):
 
     # TODO - add as an option add_total
 
+    @property
+    def total(self):
+        return sum(self['count'])
+
     def add_rows_from_dict(self, d: dict):
         result = []
         for category_name, category_value in d.items():
@@ -278,8 +282,11 @@ class TotalCategoryTable(CategoryTable):
     def get_categories(self) -> List:
         return [row[:-1] for row in self.rows]
 
-    def get_total(self):
-        pass
+    def get_list_repr(self):
+        additional_rows = [
+            ['' for i in range(len(self.header) - 1)] + [self.total]
+        ]
+        return [self.header, *self.rows, *additional_rows]
 
 
 class Category:
@@ -412,15 +419,7 @@ class CategoryTotalCalculator:
             for key, cnt in c.items():
                 t.add_row([*key, cnt])
 
-        return TotalCategoryTable(header=t.field_names, rows=t.rows)
-
-    def get_TotalCategoryTable(self):
-        # TODO - можем возвращать StatsTotal, у нас есть get_category_totals
-        #  который возвращает
-
-        # PrettyTable -- оччень очень мощная таблица, возможно
-        # всё таки есть смысл её возвращать или её наследника
-        pass
+        return TotalCategoryTable(header=t.field_names, rows=t.rows).sort_by([self.counter_field_name], ascending=False)
 
     def show(self):
         """Prints all tables.

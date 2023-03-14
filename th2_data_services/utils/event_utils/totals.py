@@ -92,7 +92,7 @@ def get_category_totals2(
     #     order = [order]
     ctc = CategoryTotalCalculator(metrics, [metrics])
     ctc.handle_objects(events)
-    tct = ctc.get_table(metrics, add_total=True)
+    tct = ctc.get_table(metrics)
     return tct
 
 

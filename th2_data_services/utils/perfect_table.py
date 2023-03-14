@@ -1,4 +1,5 @@
-from typing import List
+from operator import itemgetter
+from typing import List, Union
 from tabulate import tabulate
 
 from collections import namedtuple, defaultdict
@@ -66,7 +67,7 @@ class PerfectTable:
         if isinstance(item, int) or isinstance(item, slice):
             return self._rows[item]
         elif isinstance(item, str):
-            return self._columns[item]
+            return self.get_column(item)
 
     def __repr__(self):
         # use tabulate
@@ -189,9 +190,19 @@ class PerfectTable:
                 new.add_row(row)
         return new
 
-    # def sort_by(self, columns: List[str]):
-    #     """Sort (update the object) and returns self."""
-    #     return self
+    def sort_by(self, columns: Union[List[str], str], ascending=True):
+        """Sort (updates the object) and returns self."""
+
+        if isinstance(columns, str):
+            columns = [columns]
+
+        s_rows = self.rows
+        for sort_col in columns[::-1]:
+            s_rows = sorted(s_rows, key=itemgetter(sort_col), reverse=not ascending)
+
+        self._rows = s_rows
+
+        return self
 
     # def order_by(self, columns: List[str]):
     #     # TODO - in progress
@@ -203,14 +214,14 @@ class PerfectTable:
 
 
 if __name__ == "__main__":
-    t = PerfectTable(header=["a", "b", "c"])
-    t.add_rows(
-        [
-            [1, 2, 3],
-            [4, 5, 6],
-            [7, 8, 9],
-        ]
-    )
+    t = PerfectTable(['a', 'b', 'c'])
+    t.add_rows([
+        (4, 'c', 0),
+        (3, 'z', 1),
+        (3, 'a', 2),
+        (3, 'x', 3),
+        (1, 'b', 4),
+    ])
 
-    print(t)
-    print(t)
+    print(t.sort_by(['a', 'b', 'c']))
+    print(t.sort_by(['b', 'a']))
