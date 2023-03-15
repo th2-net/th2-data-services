@@ -17,15 +17,15 @@ from typing import List, Union
 class ResponseFormats:
     def __init__(self):
         """ResponseFormats Constructor."""
-        self.correct_formats = ["PROTO_PARSED", "JSON_PARSED", "BASE_64"]
 
-    @property
-    def is_valid_response_format(self, formats: Union[str, List[str]]):
+    @staticmethod
+    def is_valid_response_format(formats: Union[str, List[str]]):
+        correct_formats = ["PROTO_PARSED", "JSON_PARSED", "BASE_64"]
         if isinstance(formats, str):
             formats = [formats]
         if not isinstance(formats, list):
             raise Exception("Wrong type. formats should be list or string")
         if "JSON_PARSED" in formats and "PROTO_PARSED" in formats:
             raise Exception("response_formats can't have both both JSON_PARSED and PROTO_PARSED values")
-        if all(format in self.correct_formats for format in formats):
+        if not all(format in correct_formats for format in formats):
             raise Exception("Possible values for response_formats are PROTO_PARSED, JSON_PARSED and BASE_64")
