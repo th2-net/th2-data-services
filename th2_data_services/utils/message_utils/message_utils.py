@@ -247,6 +247,9 @@ def message_to_dict(message: Th2Event):
     Returns:
         Dict
     """
+    if "simpleBody" in message:
+        return message["simpleBody"]
+
     result = {}
     message_fields_to_flat_dict(MESSAGE_FIELDS_RESOLVER.get_body(message), result, "")
     return result
