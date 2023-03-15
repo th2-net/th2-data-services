@@ -30,6 +30,7 @@ from th2_data_services.provider.command import ProviderAdaptableCommand
 from th2_data_services.sse_client import SSEClient
 from th2_data_services.provider.adapters.adapter_sse import get_default_sse_adapter
 from th2_data_services.decode_error_handler import UNICODE_REPLACE_HANDLER
+from th2_data_services.provider.v5.response_formats import ResponseFormats
 
 # LOG import logging
 
@@ -492,6 +493,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         attached_events: bool = False,
         lookup_limit_days: int = None,
         filters: MessageFilters = None,
+        response_formats: Union[List[str],str] = None,
     ):
         """GetMessagesSSEBytes constructor.
 
@@ -510,6 +512,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             lookup_limit_days: The number of days that will be viewed on
                 the first request to get the one closest to the specified timestamp.
             filters: Filters using in search for messages.
+            response_formats: Formats of message the response should return.
         """
         super().__init__()
         self._start_timestamp = int(1000 * start_timestamp.replace(tzinfo=timezone.utc).timestamp())
@@ -527,6 +530,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._attached_events = attached_events
         self._lookup_limit_days = lookup_limit_days
         self._filters = filters
+        self._response_formats = response_formats
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Generator[dict, None, None]:  # noqa: D102
         api: HTTPProvider5API = data_source.source_api
@@ -541,6 +545,7 @@ class GetMessagesSSEBytes(IHTTPProvider5Command, ProviderAdaptableCommand):
             attached_events=self._attached_events,
             lookup_limit_days=self._lookup_limit_days,
             filters=_convert_filters_to_string(self._filters),
+            response_formats=self._response_formats,
         ).replace("&stream=", "")
 
         fixed_part_len = len(url)
@@ -587,6 +592,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         attached_events: bool = False,
         lookup_limit_days: int = None,
         filters: MessageFilters = None,
+        response_formats: Union[List[str],str] = None,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
     ):
@@ -607,6 +613,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             lookup_limit_days: The number of days that will be viewed on
                 the first request to get the one closest to the specified timestamp.
             filters: Filters using in search for messages.
+            response_formats: Formats of message the response should return.
             char_enc: Character encode that will use SSEClient.
             decode_error_handler: Decode error handler.
         """
@@ -622,6 +629,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._attached_events = attached_events
         self._lookup_limit_days = lookup_limit_days
         self._filters = filters
+        self._response_formats = response_formats
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
 
@@ -637,6 +645,7 @@ class GetMessagesSSEEvents(IHTTPProvider5Command, ProviderAdaptableCommand):
             attached_events=self._attached_events,
             lookup_limit_days=self._lookup_limit_days,
             filters=self._filters,
+            response_formats=self._response_formats,
         ).handle(data_source)
 
         client = SSEClient(
@@ -676,6 +685,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         attached_events: bool = False,
         lookup_limit_days: int = None,
         filters: MessageFilters = None,
+        response_formats: Union[List[str],str] = None,
         char_enc: str = "utf-8",
         decode_error_handler: str = UNICODE_REPLACE_HANDLER,
         cache: bool = False,
@@ -698,6 +708,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
             lookup_limit_days: The number of days that will be viewed on
                 the first request to get the one closest to the specified timestamp.
             filters: Filters using in search for messages.
+            response_formats: Formats of message the response should return.
             char_enc: Encoding for the byte stream.
             decode_error_handler: Registered decode error handler.
             cache: If True, all requested data from rpt-data-provider will be saved to cache.
@@ -715,12 +726,14 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._attached_events = attached_events
         self._lookup_limit_days = lookup_limit_days
         self._filters = filters
+        self._response_formats = response_formats
         self._char_enc = char_enc
         self._decode_error_handler = decode_error_handler
         self._cache = cache
         self._sse_handler = sse_handler or get_default_sse_adapter()
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
+        ResponseFormats.is_valid_response_format(self._response_formats)
         sse_events_stream_obj = GetMessagesSSEEvents(
             start_timestamp=self._start_timestamp,
             end_timestamp=self._end_timestamp,
@@ -732,6 +745,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
             attached_events=self._attached_events,
             lookup_limit_days=self._lookup_limit_days,
             filters=self._filters,
+            response_formats=self._response_formats,
         )
 
         sse_events_stream = partial(sse_events_stream_obj.handle, data_source)
