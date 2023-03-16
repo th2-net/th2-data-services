@@ -730,7 +730,7 @@ class GetMessages(IHTTPProvider5Command, ProviderAdaptableCommand):
         self._decode_error_handler = decode_error_handler
         self._cache = cache
         self._sse_handler = sse_handler or get_default_sse_adapter()
-        self._response_formats = response_formats
+        self._response_formats = [response_formats] if isinstance(response_formats,str) else response_formats
 
     def handle(self, data_source: HTTPProvider5DataSource) -> Data:  # noqa: D102
         ResponseFormats.is_valid_response_format(self._response_formats)
