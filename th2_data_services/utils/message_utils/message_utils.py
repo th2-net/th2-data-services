@@ -224,7 +224,7 @@ def print_some(messages: Iterable[Th2Message], max_count: int, start: int = 0,
 def message_fields_to_flat_dict(message: dict, result: Dict, prefix: str):  # noqa
     # Actual if provider returns data in Protobuf style
     # TODO: Add Docstings
-    for field, content in message["fields"]:
+    for field, content in message["fields"].items():
         if "simpleValue" in content:
             result[prefix + field] = content["simpleValue"]
 
