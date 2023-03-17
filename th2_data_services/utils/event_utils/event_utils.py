@@ -53,7 +53,7 @@ def get_some(
     limit = start + count
     counter = 0
     for event in events:
-        if EVENT_FIELDS_RESOLVER.get_type(event) == event_type:
+        if event_type is None or EVENT_FIELDS_RESOLVER.get_type(event) == event_type:
             if failed and EVENT_FIELDS_RESOLVER.get_status(event):
                 continue
             if counter >= start:
