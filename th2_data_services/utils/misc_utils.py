@@ -12,6 +12,7 @@ from th2_data_services.utils.summary import FrequencyCategoryTable
 # TODO - we have get_objects_frequencies and get_objects_frequencies2 -- we need to unify it
 
 # STREAMABLE
+# TODO - this is deprecated and should be removed. Use  get_objects_frequencies2
 def get_objects_frequencies(
         objects_stream: Iterable[Th2Event],
         categories: List,  # TODO - can be None to collect all values or []
