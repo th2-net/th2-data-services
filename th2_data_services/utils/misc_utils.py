@@ -394,3 +394,37 @@ def create_qty_distribution(categories: Dict, category_filter: Callable) -> Dict
             result[value] += 1
 
     return result
+
+
+def calc_percentile_in_measurement_dict(d):
+    for item in d.values():
+        distr = item["distr"]
+        total = item["count"]
+        x_series = list(distr.keys())
+        x_series.sort()
+        sum = 0
+        x_prev = 0
+        for x in x_series:
+            sum += distr[x]
+            if sum > 0.5 * total:
+                if "max50" not in item:
+                    item["max50"] = x_prev
+            if sum > 0.9 * total:
+                if "max90" not in item:
+                    item["max90"] = x_prev
+            if sum > 0.99 * total:
+                if "max99" not in item:
+                    item["max99"] = x_prev
+            if sum > 0.999 * total:
+                if "max99.9" not in item:
+                    item["max99.9"] = x_prev
+            x_prev = x
+
+        if "max50" not in item:
+            item["max50"] = x_prev
+        if "max90" not in item:
+            item["max90"] = x_prev
+        if "max99" not in item:
+            item["max99"] = x_prev
+        if "max99.9" not in item:
+            item["max99.9"] = x_prev
