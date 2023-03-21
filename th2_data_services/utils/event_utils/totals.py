@@ -53,7 +53,12 @@ These functions return how many events were in some category.
 
 # TODO - we have categorizer and Category now
 #   It's a good idea to unite them
-@deprecated(reason='Use "get_category_totals2" instead. It provides more advantages.')
+@deprecated(reason='Use "get_category_totals2" instead. \n'
+                   'It provides more advantages. \n'
+                   'Make sure, it has another interface.\n'
+                   'Example:\n'
+                   '  metrics = [Category("date", lambda m: m["eventType"])] \n '
+                   '  totals.get_category_totals2(events, metrics).sort_by("date")')
 def get_category_totals(
         events: Iterable[Th2Event], categorizer: Callable[[Dict], str], ignore_status: bool = False
 ) -> CategoryTotal:

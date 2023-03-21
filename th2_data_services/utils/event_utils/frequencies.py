@@ -1,3 +1,5 @@
+from deprecated.classic import deprecated
+
 from th2_data_services.utils import misc_utils
 from typing import Callable, Iterable, List
 from th2_data_services import EVENT_FIELDS_RESOLVER
@@ -6,6 +8,12 @@ from th2_data_services.utils.aggregation_classes import FrequencyCategoryTable
 
 
 # STREAMING
+from th2_data_services.utils.category import Category
+
+
+@deprecated(reason='Use "get_category_frequencies2" instead. \n'
+                   'We want to have unification in functions.\n'
+                   'Tell DS team if you dont agree or have some ideas.')
 def get_category_frequencies(
         events: Iterable[Th2Event],
         categories: List[str],
@@ -44,6 +52,47 @@ def get_category_frequencies(
         categorizer,
         # TODO -- we shouldn't know internal structure!!! - epochSeconds
         lambda e: EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
+        aggregation_level=aggregation_level,
+    )
+
+# Doesn't use category name now. Category values are table header.
+def get_category_frequencies2(
+        events: Iterable[Th2Event],
+        category: Category,
+        aggregation_level: str = "seconds"
+) -> FrequencyCategoryTable:
+    """Returns event frequencies based on event category.
+
+    Args:
+        events (Iterable[Th2Event]): TH2-Events
+        categories (List[str]): Event Categories
+        categorizer (Callable): Categorizer Method
+        aggregation_level (Optional, str): Aggregation Level
+
+    Returns:
+        List[List[str]]
+
+    Example:
+        >>> get_category_frequencies(events=events,
+                                     categories=["Info", "ModelMatrix"],
+                                     categorizer=lambda e: e["eventType"],
+                                     aggregation_level="seconds" # Optional
+                                     )
+        [
+            ['timestamp', 'Info', 'ModelMatrix'],
+            ['2022-03-16T02:00:00', 4, 0],
+            ['2022-03-16T02:00:31', 1, 0],
+            ['2022-03-16T02:00:32', 4, 0],
+            ...
+        ]
+
+    """
+    return misc_utils.get_objects_frequencies2(
+        events,
+        categories=[],
+        categorizer=category.get_func,
+        # TODO -- we shouldn't know internal structure!!! - epochSeconds
+        timestamp_function=lambda e: EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
         aggregation_level=aggregation_level,
     )
 
