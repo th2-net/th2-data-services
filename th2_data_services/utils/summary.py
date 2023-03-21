@@ -67,7 +67,7 @@ def get_all_metric_combinations(metrics: Union[List[str], List[Category]]):
 
 # Сначала нужно все метрики вытаскивать, а только потом соединять
 
-class CategoryTotalCalculator:
+class TotalCategoryCalculator:
     def __init__(self,
                  categories: List[Category],
                  combinations: Union[List[Sequence[str]], List[Sequence[Category]]]):
@@ -205,7 +205,7 @@ if __name__ == '__main__':
 
     all_metrics_combinations = get_all_metric_combinations(metrics_list)
     print(all_metrics_combinations)
-    sc = CategoryTotalCalculator(metrics_list, all_metrics_combinations)
+    sc = TotalCategoryCalculator(metrics_list, all_metrics_combinations)
 
     for m in messages:
         sc.append(m)
