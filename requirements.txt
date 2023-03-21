@@ -10,3 +10,4 @@ importlib_metadata
 orjson~=3.8
 tabulate
 prettytable  # Temporary required for summary
+deprecated

@@ -6,6 +6,7 @@ from collections import Counter
 import itertools
 
 from th2_data_services.utils.aggregation_classes import TotalCategoryTable
+from th2_data_services.utils.category import Category
 
 """
 Положим есть 3 метрики
@@ -40,15 +41,6 @@ ab = {in/0: +=1}
 
 
 """
-
-class Category:
-    def __init__(self, name: str, get_func):
-        self.name: str = name
-        self.get_func = get_func
-
-    def __repr__(self):
-        return f"Category<{self.name}>"
-
 
 CategoryCombination = TypeVar('CategoryCombination', Sequence[str], Sequence[Category])
 

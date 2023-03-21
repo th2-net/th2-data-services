@@ -2,6 +2,8 @@ from collections import defaultdict
 from typing import Any, Callable, Dict, Iterable, List, Tuple
 from datetime import datetime, timezone
 
+from deprecated.classic import deprecated
+
 from th2_data_services.events_tree.events_tree import Th2Event
 
 # TODO - we have special converters for it in ds-2.0 (ProtobufTimestampConverter)
@@ -11,8 +13,8 @@ from th2_data_services.utils.time import timestamp_aggregation_key
 
 # TODO - we have get_objects_frequencies and get_objects_frequencies2 -- we need to unify it
 
-# STREAMABLE
-# TODO - this is deprecated and should be removed. Use  get_objects_frequencies2
+
+@deprecated(reason='Use "get_objects_frequencies2" instead. It provides more advantages.')
 def get_objects_frequencies(
         objects_stream: Iterable[Th2Event],
         categories: List,  # TODO - can be None to collect all values or []
@@ -94,15 +96,17 @@ def get_objects_frequencies(
     return CategoryFrequencies(results)
 
 
+# STREAMABLE
 def get_objects_frequencies2(
         objects_stream: Iterable[Th2Event],
-        categories: List,  # TODO - can be None to collect all values or []
+        categories: List[str],  # TODO - can be None to collect all values or []
         categorizer: Callable,
         timestamp_function: Callable,
         aggregation_level: str = "seconds",
         object_expander: Callable = None,
         objects_filter: Callable = None,
 ) -> FrequencyCategoryTable:
+    # TODO - used by both messages and events get_category_frequencies
     """Returns objects frequencies based on categorizer.
 
     Returns timestamps in UTC format.

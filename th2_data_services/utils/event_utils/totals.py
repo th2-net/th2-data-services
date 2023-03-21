@@ -1,10 +1,14 @@
 from typing import Callable, Dict, Iterable, List, Union, Sequence
 from collections import defaultdict
+
+from deprecated.classic import deprecated
+
 from th2_data_services import EVENT_FIELDS_RESOLVER
 from th2_data_services.events_tree.events_tree import Th2Event
 from th2_data_services.utils.aggregation_classes import CategoryTotal, CategoryTable, \
     TotalCategoryTable
-from th2_data_services.utils.total_category_calculator import TotalCategoryCalculator, Category
+from th2_data_services.utils.total_category_calculator import TotalCategoryCalculator
+from th2_data_services.utils.category import Category
 
 """
 These functions return how many events were in some category.
@@ -47,6 +51,9 @@ These functions return how many events were in some category.
 #
 #     return CategoryTotal(event_categories)
 
+# TODO - we have categorizer and Category now
+#   It's a good idea to unite them
+@deprecated(reason='Use "get_category_totals2" instead. It provides more advantages.')
 def get_category_totals(
         events: Iterable[Th2Event], categorizer: Callable[[Dict], str], ignore_status: bool = False
 ) -> CategoryTotal:
@@ -80,12 +87,27 @@ def get_category_totals(
     return CategoryTotal(event_categories)
 
 
-# TODO - it will more advanced totals with multiple columns
+# TODO - it will be renamed to get_category_totals
 def get_category_totals2(
         events: Iterable[Th2Event],
         categories: List[Category],
         # order=None
 ) -> TotalCategoryTable:
+    """More advanced totals with multiple columns.
+
+    Examples:
+        metrics = [
+            Category('date', lambda m: Th2TimestampConverter.to_datetime(m['startTimestamp']).date()) ]
+        totals.get_category_totals2(events, metrics).sort_by('date')
+
+    Args:
+        events:
+        categories:
+
+    Returns:
+
+    """
+
     # if order is None:
     #     order = [metrics]
     # else:

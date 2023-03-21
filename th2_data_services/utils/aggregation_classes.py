@@ -192,8 +192,7 @@ class FrequencyCategoryTable(CategoryTable):
 
 
 class TotalCategoryTable(CategoryTable):
-    # Хочу сложные категории type | status | count
-    # Но как тогда по категории значение получать?
+    # This class allows to create tables with multiple categories. e.g  type | status | count
     def __init__(self, header, rows=None):
         super().__init__(header)
         self.service_columns = {
@@ -202,12 +201,9 @@ class TotalCategoryTable(CategoryTable):
         if rows is not None:
             self.add_rows(rows)
 
-    # TODO - add as an option add_total
-
     @property
     def total(self):
         return sum(self['count'])
-
 
     def _totals_line(self):
         totals = []
@@ -230,6 +226,7 @@ class TotalCategoryTable(CategoryTable):
 
         self.add_rows(result)
 
+    # TODO - I'm not sure that it's categories!
     def get_categories(self) -> List:
         return [row[:-1] for row in self.rows]
 
