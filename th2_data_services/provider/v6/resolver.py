@@ -1,4 +1,4 @@
-from th2_data_services.utils.resolver import EventFieldsResolver, MessageFieldsResolver
+from th2_data_services.interfaces.utils.resolver import EventFieldsResolver, MessageFieldsResolver
 from th2_data_services.provider.v6.struct import http_provider6_event_struct, http_provider6_message_struct
 
 class Provider6EventFieldsResolver(EventFieldsResolver):

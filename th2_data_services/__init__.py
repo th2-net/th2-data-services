@@ -14,7 +14,7 @@
 
 from th2_data_services.data import Data
 from th2_data_services.filter import Filter
-from th2_data_services.utils.resolver import EventFieldsResolver, MessageFieldsResolver
+from th2_data_services.interfaces.utils.resolver import EventFieldsResolver, MessageFieldsResolver
 
 # LOG import logging
 # LOG from logging import NullHandler
