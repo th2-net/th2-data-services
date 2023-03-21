@@ -3,6 +3,8 @@ from typing import List
 
 from tabulate import tabulate
 
+from th2_data_services.utils.perfect_table import PerfectTable
+
 
 class AggrClassBase(ABC):
     @abstractmethod
@@ -120,3 +122,121 @@ class CategoryFrequencies(list, AggrClassBase):
                 res.append([row[0], val])
 
         return res
+
+
+# TODO -- new tables
+#   They will change deprecated above
+
+class CategoryTable(ABC, PerfectTable):
+    def __init__(self, header: List[str]):
+        super().__init__(header)
+        self._service_columns = {}  # {'col_name': 'idx'}
+        self._service_rows = []  # [idx]
+
+
+class FrequencyCategoryTable(CategoryTable):
+    def __init__(self, header: List[str], rows=None):
+        super().__init__(header)
+        self.service_columns = {
+            "timestamp": 0,
+        }  # {'col_name': 'idx'}
+        if rows is not None:
+            self.add_rows(rows)
+
+    def get_categories(self) -> List[str]:
+        """Returns categories."""
+        return self.header[1:]  # Skip timestamp.
+
+    def by_category(self, name, exclude_zero_values=True):
+        """Returns CategoryFrequencies for requested column."""
+        header_lst = self.header
+        if name not in self.get_categories():
+            raise ValueError(f"'{name}' is not categories: {self.get_categories()}")
+        col_name_idx = header_lst.index(name)
+        timestamp_col_name = header_lst[0]
+        fct = FrequencyCategoryTable(header=[timestamp_col_name, name])
+
+        for row in self.rows:
+            val = row[col_name_idx]
+            if exclude_zero_values:
+                if val != 0:
+                    fct.add_row([row[self.service_columns['timestamp']], val])
+            else:
+                fct.add_row([row[self.service_columns['timestamp']], val])
+
+        return fct
+
+    def by_categories(self, names: List[str], exclude_zero_values=True):
+        """Returns CategoryFrequencies for requested column."""
+        header_lst = self.header
+        for name in names:
+            if name not in self.get_categories():
+                raise ValueError(f"'{name}' is not categories: {self.get_categories()}")
+
+        col_name_idxs = []
+        for name in names:
+            col_name_idxs.append(header_lst.index(name))
+
+        timestamp_col_name = header_lst[0]
+        fct = FrequencyCategoryTable(header=[timestamp_col_name, *names])
+
+        for row in self.rows:
+            vals = [row[idx] for idx in col_name_idxs]
+            if exclude_zero_values:
+                if any(vals) != 0:
+                    fct.add_row([row[self.service_columns['timestamp']],  *vals])
+            else:
+                fct.add_row([row[self.service_columns['timestamp']], *vals])
+
+        return fct
+
+
+class TotalCategoryTable(CategoryTable):
+    # Хочу сложные категории type | status | count
+    # Но как тогда по категории значение получать?
+    def __init__(self, header, rows=None):
+        super().__init__(header)
+        self.service_columns = {
+            "timestamp": 0,
+        }  # {'col_name': 'idx'}
+        if rows is not None:
+            self.add_rows(rows)
+
+    # TODO - add as an option add_total
+
+    @property
+    def total(self):
+        return sum(self['count'])
+
+
+    def _totals_line(self):
+        totals = []
+        for col_name in self.header:
+            try:
+                totals.append(sum(self[col_name]))
+            except:
+                totals.append('')
+
+        return totals
+
+    def add_rows_from_dict(self, d: dict):
+        result = []
+        for category_name, category_value in d.items():
+            result.append([category_name, str(category_value)])
+            # total += category_value
+
+        # if sort_values:
+        #     result.sort(key=lambda item: int(item[1]), reverse=True)
+
+        self.add_rows(result)
+
+    def get_categories(self) -> List:
+        return [row[:-1] for row in self.rows]
+
+    def get_list_repr(self):
+        additional_rows = [
+            # ['' for i in range(len(self.header) - 1)] + [self.total],
+            ['count'] + ['' for _ in range(len(self.header)-1)] + [len(self.rows)] ,
+            ['totals']+self._totals_line(),
+        ]
+        return [[' ']+list(self.header), *[[' ']+list(row) for row in self.rows], *additional_rows]

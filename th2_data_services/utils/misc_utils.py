@@ -5,9 +5,9 @@ from datetime import datetime, timezone
 from th2_data_services.events_tree.events_tree import Th2Event
 
 # TODO - we have special converters for it in ds-2.0 (ProtobufTimestampConverter)
-from th2_data_services.utils.aggregation_classes import CategoryFrequencies
+from th2_data_services.utils.aggregation_classes import CategoryFrequencies, FrequencyCategoryTable
 from th2_data_services.utils.time import timestamp_aggregation_key
-from th2_data_services.utils.summary import FrequencyCategoryTable
+
 
 # TODO - we have get_objects_frequencies and get_objects_frequencies2 -- we need to unify it
 

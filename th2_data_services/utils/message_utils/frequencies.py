@@ -2,7 +2,7 @@ from th2_data_services import MESSAGE_FIELDS_RESOLVER
 from typing import Callable, Dict, Iterable, List, Set
 from th2_data_services.utils import misc_utils
 from th2_data_services.utils.message_utils.message_utils import expand_message
-from th2_data_services.utils.summary import FrequencyCategoryTable
+from th2_data_services.utils.aggregation_classes import FrequencyCategoryTable
 
 Th2Message = dict
 

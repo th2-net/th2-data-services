@@ -2,9 +2,9 @@ from typing import Callable, Dict, Iterable, List, Union, Sequence
 from collections import defaultdict
 from th2_data_services import EVENT_FIELDS_RESOLVER
 from th2_data_services.events_tree.events_tree import Th2Event
-from th2_data_services.utils.aggregation_classes import CategoryTotal
-from th2_data_services.utils.summary import CategoryTable, TotalCategoryTable, \
-    CategoryTotalCalculator, Category
+from th2_data_services.utils.aggregation_classes import CategoryTotal, CategoryTable, \
+    TotalCategoryTable
+from th2_data_services.utils.summary import CategoryTotalCalculator, Category
 
 """
 These functions return how many events were in some category.
@@ -83,16 +83,16 @@ def get_category_totals(
 # TODO - it will more advanced totals with multiple columns
 def get_category_totals2(
         events: Iterable[Th2Event],
-        metrics: List[Category],
+        categories: List[Category],
         # order=None
 ) -> TotalCategoryTable:
     # if order is None:
     #     order = [metrics]
     # else:
     #     order = [order]
-    ctc = CategoryTotalCalculator(metrics, [metrics])
+    ctc = CategoryTotalCalculator(categories, [categories])
     ctc.handle_objects(events)
-    tct = ctc.get_table(metrics)
+    tct = ctc.get_table(categories)
     return tct
 
 
