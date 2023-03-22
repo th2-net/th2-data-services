@@ -1,7 +1,7 @@
 from typing import List, Dict
 
-from th2_data_services.utils import message_utils
-from th2_data_services.utils import event_utils
+from th2_data_services.utils.message_utils import message_utils
+from th2_data_services.utils.event_utils import event_utils
 from datetime import datetime
 import th2_data_services.utils.az_tree
 
