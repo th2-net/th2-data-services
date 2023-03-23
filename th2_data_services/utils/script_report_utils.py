@@ -162,6 +162,8 @@ def id_tags() -> List[str]:  # noqa
         "RegulatoryTradeID",
         "QuoteMsgID",
         "TradeReportID",
+        "ClientOrderID",
+        "OriginalClientOrderID"
     ]
 
 
@@ -173,12 +175,17 @@ def defining_tags() -> List[str]:  # noqa
         "header.MsgType",
         "LeavesQty",
         "QuoteRespType",
-        "QuoteStatus," "QuoteType",
+        "QuoteStatus",
+        "QuoteType",
         "CxlRejReason",
         "Text",
         "IOITransType",
         "QuoteRequestRejectReason",
         "TrdRptStatus",
+        "OrderStatus",
+        "header.MessageType",
+        "LeavesQuantity",
+        "ReasonText"
     ]
 
 
