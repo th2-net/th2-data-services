@@ -221,6 +221,7 @@ def print_some(messages: Iterable[Th2Message], max_count: int, start: int = 0,
 
 
 # STREAMABLE
+# TODO - We will not use this in the future, I think, because LwDP can provide JSON_PARSED immediately.
 def message_fields_to_flat_dict(message: dict, result: Dict, prefix: str):  # noqa
     # Actual if provider returns data in Protobuf style
     # TODO: Add Docstings
@@ -245,6 +246,7 @@ def message_fields_to_flat_dict(message: dict, result: Dict, prefix: str):  # no
 # parameters are: message object
 # max: maximum messages to retrieve # TODO: Add Argument?
 # result: dictionary representing body in flat format
+# TODO - We will not use this in the future, I think, because LwDP can provide JSON_PARSED immediately.
 def message_to_dict(message: Th2Message):
     """Converts message body to dict.
 
