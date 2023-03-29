@@ -1,15 +1,4 @@
-<!-- markdownlint-disable -->
-
-<a href="../../th2/data_services/config/__init__.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-# <kbd>module</kbd> `th2.data_services.config`
-
-
-
-
-**Global Variables**
----------------
-- **config**: #  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -22,11 +11,17 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+class Category:
+    def __init__(self, name: str, get_func):
+        """
+        Category is category name + categorizer function.
 
+        Args:
+            name:
+            get_func:
+        """
+        self.name: str = name
+        self.get_func = get_func
 
-
-
-
----
-
-_This file was automatically generated via [lazydocs](https://github.com/ml-tooling/lazydocs)._
+    def __repr__(self):
+        return f"Category<{self.name}>"

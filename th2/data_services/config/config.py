@@ -11,8 +11,15 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
+from th2.data_services.interfaces.utils.resolver import EventFieldsResolver, MessageFieldsResolver
+
+
 class TH2Config:
     def __init__(self) -> None:
         self.INTERACTIVE_MODE = False
-    
+        self.EVENT_FIELDS_RESOLVER: EventFieldsResolver = None
+        self.MESSAGE_FIELDS_RESOLVER: MessageFieldsResolver = None
+
+
 options = TH2Config()

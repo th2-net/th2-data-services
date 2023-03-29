@@ -6,3 +6,6 @@ setuptools~=65.5
 urllib3~=1.26
 treelib==1.6.1
 types-protobuf==3.19.22
+tabulate
+prettytable  # Temporary required for summary
+deprecated

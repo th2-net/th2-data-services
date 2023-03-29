@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2/data_services/interfaces/adapter.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2/data_services/interfaces/adapter.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IStreamAdapter`
 Interface of Adapter for streams. 
@@ -21,7 +21,7 @@ Interface of Adapter for streams.
 
 ---
 
-<a href="../../th2/data_services/interfaces/adapter.py#L22"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2/data_services/interfaces/adapter.py#L21"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
@@ -34,7 +34,7 @@ Stream handle function that should yield data (not return).
 
 ---
 
-<a href="../../th2/data_services/interfaces/adapter.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2/data_services/interfaces/adapter.py#L26"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IRecordAdapter`
 Interface of Adapter for record. 
@@ -44,7 +44,7 @@ Interface of Adapter for record.
 
 ---
 
-<a href="../../th2/data_services/interfaces/adapter.py#L30"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2/data_services/interfaces/adapter.py#L29"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 
