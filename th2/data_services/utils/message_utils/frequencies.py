@@ -6,8 +6,6 @@ from th2.data_services.utils.aggregation_classes import FrequencyCategoryTable
 
 from th2.data_services.config import options
 
-MESSAGE_FIELDS_RESOLVER = options.MESSAGE_FIELDS_RESOLVER
-
 Th2Message = dict
 
 
@@ -24,7 +22,7 @@ def get_category_frequencies(
         categories,
         categorizer,
         # TODO -- we shouldn't know internal structure!!! - epochSeconds
-        lambda message: MESSAGE_FIELDS_RESOLVER.get_timestamp(message)["epochSecond"],
+        lambda message: options.MESSAGE_FIELDS_RESOLVER.get_timestamp(message)["epochSecond"],
         aggregation_level=aggregation_level,
         object_expander=expand_message,
         objects_filter=filter_,

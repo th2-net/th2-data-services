@@ -16,19 +16,13 @@ from deprecated.classic import deprecated
 from th2.data_services.utils import misc_utils
 from typing import Callable, Iterable, List
 
-# from th2.data_services import EVENT_FIELDS_RESOLVER
 from th2.data_services.utils._types import Th2Event
 from th2.data_services.utils.aggregation_classes import FrequencyCategoryTable
-
 from th2.data_services.config import options
-
-EVENT_FIELDS_RESOLVER = options.EVENT_FIELDS_RESOLVER
-
-
-# STREAMING
 from th2.data_services.utils.category import Category
 
 
+# STREAMING
 @deprecated(
     reason='Use "get_category_frequencies2" instead. \n'
     "We want to have unification in functions.\n"
@@ -68,7 +62,7 @@ def get_category_frequencies(
         categories,
         categorizer,
         # TODO -- we shouldn't know internal structure!!! - epochSeconds
-        lambda e: EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
+        lambda e: options.EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
         aggregation_level=aggregation_level,
     )
 
@@ -108,7 +102,7 @@ def get_category_frequencies2(
         categories=[],
         categorizer=category.get_func,
         # TODO -- we shouldn't know internal structure!!! - epochSeconds
-        timestamp_function=lambda e: EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
+        timestamp_function=lambda e: options.EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
         aggregation_level=aggregation_level,
     )
 
@@ -147,4 +141,6 @@ def get_type_frequencies(
             ...
         ]
     """
-    return get_category_frequencies(events, types, lambda e: EVENT_FIELDS_RESOLVER.get_type(e), aggregation_level)
+    return get_category_frequencies(
+        events, types, lambda e: options.EVENT_FIELDS_RESOLVER.get_type(e), aggregation_level
+    )

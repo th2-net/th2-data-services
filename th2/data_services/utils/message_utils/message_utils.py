@@ -22,8 +22,6 @@ from th2.data_services.utils._types import Th2Message
 
 from th2.data_services.config import options
 
-MESSAGE_FIELDS_RESOLVER = options.MESSAGE_FIELDS_RESOLVER
-
 
 # # NOT STREAMABLE
 # Extract compounded message into list of individual messages
@@ -38,10 +36,10 @@ def expand_message(message: Th2Message) -> Iterable[Th2Message]:
     Returns:
         Iterable[Th2Message]
     """
-    if "/" not in MESSAGE_FIELDS_RESOLVER.get_type(message):
+    if "/" not in options.MESSAGE_FIELDS_RESOLVER.get_type(message):
         return [message]
     result = []
-    fields = MESSAGE_FIELDS_RESOLVER.get_body(message)["fields"]
+    fields = options.MESSAGE_FIELDS_RESOLVER.get_body(message)["fields"]
     for msg_type in fields.keys():
         msg_index = len(result)
         if "-" in msg_type:
@@ -54,12 +52,12 @@ def expand_message(message: Th2Message) -> Iterable[Th2Message]:
         new_msg["messageType"] = msg_type
         new_msg["body"] = {}
         new_msg["body"]["metadata"] = {}
-        new_msg["body"]["metadata"].update(MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"])
+        new_msg["body"]["metadata"].update(options.MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"])
         new_msg["body"]["metadata"]["id"] = {}
-        new_msg["body"]["metadata"]["id"].update(MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"])
+        new_msg["body"]["metadata"]["id"].update(options.MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"])
         new_msg["body"]["metadata"]["messageType"] = msg_type
         new_msg["body"]["metadata"]["id"]["subsequence"] = [
-            MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"]["subsequence"][msg_index]
+            options.MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"]["subsequence"][msg_index]
         ]
         new_msg["body"]["fields"] = fields[msg_type]["messageValue"]["fields"]
         result.append(new_msg)
@@ -270,7 +268,7 @@ def message_to_dict(message: Th2Message):
         return message["simpleBody"]
 
     result = {}
-    message_fields_to_flat_dict(MESSAGE_FIELDS_RESOLVER.get_body(message), result, "")
+    message_fields_to_flat_dict(options.MESSAGE_FIELDS_RESOLVER.get_body(message), result, "")
     return result
 
 
@@ -284,7 +282,7 @@ def extract_time(message: Th2Message) -> str:
     Returns:
         str
     """
-    return th2.data_services.utils.time.extract_timestamp(MESSAGE_FIELDS_RESOLVER.get_timestamp(message))
+    return th2.data_services.utils.time.extract_timestamp(options.MESSAGE_FIELDS_RESOLVER.get_timestamp(message))
 
 
 # STREAMABLE
@@ -296,9 +294,9 @@ def print_message(message: Th2Message) -> None:
 
     """
     print(
-        f"{extract_time(message)} > {MESSAGE_FIELDS_RESOLVER.get_session_id(message)} "
-        f"{MESSAGE_FIELDS_RESOLVER.get_direction(message)} "
-        f"{MESSAGE_FIELDS_RESOLVER.get_type(message)} "
+        f"{extract_time(message)} > {options.MESSAGE_FIELDS_RESOLVER.get_session_id(message)} "
+        f"{options.MESSAGE_FIELDS_RESOLVER.get_direction(message)} "
+        f"{options.MESSAGE_FIELDS_RESOLVER.get_type(message)} "
         f"{message_to_dict(message)}"
     )
 
@@ -306,7 +304,7 @@ def print_message(message: Th2Message) -> None:
 # STREAMABLE
 # Todo: Is This Useful
 def get_raw_body_str(message: Dict):  # noqa
-    my_bytes = base64.b64decode(MESSAGE_FIELDS_RESOLVER.get_body_base64(message).encode("ascii"))
+    my_bytes = base64.b64decode(options.MESSAGE_FIELDS_RESOLVER.get_body_base64(message).encode("ascii"))
     my_bytes = my_bytes.replace(b"\x01", b".")
     raw_body = my_bytes.decode("ascii")
     return raw_body
@@ -317,9 +315,9 @@ def get_raw_body_str(message: Dict):  # noqa
 def print_message_raw_source(message: Th2Message) -> None:  # noqa
     raw_body = get_raw_body_str(message)
     print(
-        f"{extract_time(message)} > {MESSAGE_FIELDS_RESOLVER.get_session_id(message)} "
-        f"{MESSAGE_FIELDS_RESOLVER.get_direction(message)} "
-        f"{MESSAGE_FIELDS_RESOLVER.get_type(message)} "
+        f"{extract_time(message)} > {options.MESSAGE_FIELDS_RESOLVER.get_session_id(message)} "
+        f"{options.MESSAGE_FIELDS_RESOLVER.get_direction(message)} "
+        f"{options.MESSAGE_FIELDS_RESOLVER.get_type(message)} "
         f"{raw_body}"
     )
 
@@ -341,8 +339,8 @@ def resolve_count_message_ids(messages: Iterable[Th2Message], ids: Set) -> None:
         None, Modifies `ids`
     """
     for message in messages:
-        if MESSAGE_FIELDS_RESOLVER.get_id(message) in ids:
-            ids.remove(MESSAGE_FIELDS_RESOLVER.get_id(message))
+        if options.MESSAGE_FIELDS_RESOLVER.get_id(message) in ids:
+            ids.remove(options.MESSAGE_FIELDS_RESOLVER.get_id(message))
 
 
 # NOT STREAMABLE
@@ -362,7 +360,7 @@ def resolve_message_ids(messages: Iterable[Th2Message], ids: Set) -> Dict[str, T
     """
     result = {}
     for message in messages:
-        msg_id = MESSAGE_FIELDS_RESOLVER.get_id(message)
+        msg_id = options.MESSAGE_FIELDS_RESOLVER.get_id(message)
         if msg_id in ids:
             result[msg_id] = message
             ids.remove(msg_id)

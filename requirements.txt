@@ -2,7 +2,7 @@ wheel>=0.38.1  # To get rid of wheel building errors
 sseclient-py~=1.7
 grpcio-tools==1.38.1  # Do not change
 requests~=2.28
-setuptools~=65.5
+# setuptools~=65.5
 urllib3~=1.26
 treelib==1.6.1
 types-protobuf==3.19.22

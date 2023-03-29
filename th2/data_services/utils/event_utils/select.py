@@ -3,13 +3,8 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Callable, Dict, Iterable, Set, Tuple
 
-# from th2.data_services import EVENT_FIELDS_RESOLVER, MESSAGE_FIELDS_RESOLVER
 from th2.data_services.utils._types import Th2Event
-
 from th2.data_services.config import options
-
-EVENT_FIELDS_RESOLVER = options.EVENT_FIELDS_RESOLVER
-MESSAGE_FIELDS_RESOLVER = options.MESSAGE_FIELDS_RESOLVER
 
 
 # TODO - THEY ALL ARE NOT STREAMING!!
@@ -37,10 +32,10 @@ def get_related_events(events: Iterable[Th2Event], messages: Iterable[Th2Event],
             ]
     """
     result = []
-    msg_ids = set(MESSAGE_FIELDS_RESOLVER.get_id(message) for message in messages)
+    msg_ids = set(options.MESSAGE_FIELDS_RESOLVER.get_id(message) for message in messages)
 
     for event in events:
-        for msg_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
+        for msg_id in options.EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
             if msg_id in msg_ids:
                 result.append(event)
                 if len(result) == count:
@@ -77,7 +72,7 @@ def get_events_by_category(
     counter = 0
     for event in events:
         if categorizer(event) == category:
-            if failed and EVENT_FIELDS_RESOLVER.get_status(event):
+            if failed and options.EVENT_FIELDS_RESOLVER.get_status(event):
                 continue
             if counter >= start:
                 result.append(event)
@@ -103,7 +98,7 @@ def get_roots(events: Iterable[Th2Event], count: int, start: int = 0) -> Iterabl
     limit = start + count
     counter = 0
     for event in events:
-        if EVENT_FIELDS_RESOLVER.get_parent_id(event) is None:
+        if options.EVENT_FIELDS_RESOLVER.get_parent_id(event) is None:
             if counter >= start:
                 result.append(event)
             counter += 1
@@ -130,8 +125,8 @@ def get_parents(events: Iterable[Th2Event], children: Iterable[Th2Event]) -> Ite
                 ...
             ]
     """
-    parent_ids = set(EVENT_FIELDS_RESOLVER.get_parent_id(child) for child in children)
-    return [event for event in events if EVENT_FIELDS_RESOLVER.get_id(event) in parent_ids]
+    parent_ids = set(options.EVENT_FIELDS_RESOLVER.get_parent_id(child) for child in children)
+    return [event for event in events if options.EVENT_FIELDS_RESOLVER.get_id(event) in parent_ids]
 
 
 def get_children_from_parent_id(
@@ -160,9 +155,9 @@ def get_children_from_parent_id(
     resolved_parent = {}
     counter = 0
     for event in events:
-        if EVENT_FIELDS_RESOLVER.get_id(event) == parent_id:
+        if options.EVENT_FIELDS_RESOLVER.get_id(event) == parent_id:
             resolved_parent = event
-        if EVENT_FIELDS_RESOLVER.get_parent_id(event) == parent_id:
+        if options.EVENT_FIELDS_RESOLVER.get_parent_id(event) == parent_id:
             children.append(event)
             counter += 1
             if counter == max_events:
@@ -197,10 +192,10 @@ def get_children_from_parents(
                 child_events_count
             )
     """
-    result = {EVENT_FIELDS_RESOLVER.get_id(parent): [] for parent in parents}
+    result = {options.EVENT_FIELDS_RESOLVER.get_id(parent): [] for parent in parents}
     events_count = 0
     for event in events:
-        parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
+        parent_id = options.EVENT_FIELDS_RESOLVER.get_parent_id(event)
         if parent_id not in result:
             continue
         if len(result[parent_id]) < max_events:
@@ -234,11 +229,11 @@ def get_children_from_parents_as_list(
             ]
 
     """
-    parent_ids = set(EVENT_FIELDS_RESOLVER.get_id(parent) for parent in parents)
+    parent_ids = set(options.EVENT_FIELDS_RESOLVER.get_id(parent) for parent in parents)
     result = []
     parents_counts = defaultdict(int)
     for event in events:
-        parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
+        parent_id = options.EVENT_FIELDS_RESOLVER.get_parent_id(event)
         if parent_id not in parent_ids:
             continue
         if parents_counts[parent_id] < max_events:
@@ -272,7 +267,7 @@ def sublist(events: Iterable[Th2Event], start_time: datetime, end_time: datetime
     start_time = datetime.timestamp(start_time)
     end_time = datetime.timestamp(end_time)
     for event in events:
-        event_time = EVENT_FIELDS_RESOLVER.get_start_timestamp(event)["epochSecond"]
+        event_time = options.EVENT_FIELDS_RESOLVER.get_start_timestamp(event)["epochSecond"]
         if start_time <= event_time <= end_time:
             result.append(event)
 
@@ -299,7 +294,9 @@ def get_attached_message_ids(events: Iterable[Th2Event]) -> Set[str]:
               ...
             }
     """
-    return set(message_id for event in events for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event))
+    return set(
+        message_id for event in events for message_id in options.EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event)
+    )
 
 
 # USEFUL
@@ -328,8 +325,8 @@ def get_prior_parent_ids(events: Iterable[Th2Event]) -> Set[str]:
     all_event_ids = set()
     parent_ids = set()
     for event in events:
-        parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(event)
-        event_id = EVENT_FIELDS_RESOLVER.get_id(event)
+        parent_id = options.EVENT_FIELDS_RESOLVER.get_parent_id(event)
+        event_id = options.EVENT_FIELDS_RESOLVER.get_id(event)
         if parent_id is not None and not parent_id in all_event_ids:
             parent_ids.add(parent_id)
         if event_id in parent_ids:
@@ -370,7 +367,7 @@ def get_attached_message_ids_index(events: Iterable[Th2Event]) -> Dict[str, list
     """
     result = defaultdict(list)
     for event in events:
-        for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
+        for message_id in options.EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
             result[message_id].append(event)
 
     return result

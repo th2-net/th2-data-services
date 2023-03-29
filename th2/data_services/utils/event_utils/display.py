@@ -16,7 +16,6 @@ from datetime import datetime
 from tabulate import tabulate
 from typing import Callable
 
-# from th2.data_services.config.config import EVENT_FIELDS_RESOLVER
 from th2.data_services.utils.event_utils.event_utils import extract_start_timestamp, get_some
 from th2.data_services.utils.event_utils.select import (
     get_children_from_parents,
@@ -27,8 +26,6 @@ from th2.data_services.utils.event_utils.select import (
 from th2.data_services.utils._types import Th2Event
 
 from th2.data_services.config import options
-
-EVENT_FIELDS_RESOLVER = options.EVENT_FIELDS_RESOLVER
 
 
 # TODO
@@ -74,12 +71,12 @@ def print_event(event: Th2Event) -> None:
 
     """
     print(
-        f"{extract_start_timestamp(event)} > [{'ok' if EVENT_FIELDS_RESOLVER.get_status(event) else 'fail'}] "
-        f"Type: {EVENT_FIELDS_RESOLVER.get_type(event)} "
-        f"Name: {EVENT_FIELDS_RESOLVER.get_name(event)} "
-        f"ID: {EVENT_FIELDS_RESOLVER.get_id(event)} "
-        f"Parent:{EVENT_FIELDS_RESOLVER.get_parent_id(event)} "
-        f"Body:{EVENT_FIELDS_RESOLVER.get_body(event)}"
+        f"{extract_start_timestamp(event)} > [{'ok' if options.EVENT_FIELDS_RESOLVER.get_status(event) else 'fail'}] "
+        f"Type: {options.EVENT_FIELDS_RESOLVER.get_type(event)} "
+        f"Name: {options.EVENT_FIELDS_RESOLVER.get_name(event)} "
+        f"ID: {options.EVENT_FIELDS_RESOLVER.get_id(event)} "
+        f"Parent:{options.EVENT_FIELDS_RESOLVER.get_parent_id(event)} "
+        f"Body:{options.EVENT_FIELDS_RESOLVER.get_body(event)}"
     )
 
 
@@ -188,8 +185,8 @@ def print_children_from_parents(
     print(f"####### Retrieved Children: {count}")
     for parent in parents:
         print(parent)
-        print(f">>>>>>> Children: {len(tree[EVENT_FIELDS_RESOLVER.get_id(parent)])}")
-        for child in tree[EVENT_FIELDS_RESOLVER.get_id(parent)]:
+        print(f">>>>>>> Children: {len(tree[options.EVENT_FIELDS_RESOLVER.get_id(parent)])}")
+        for child in tree[options.EVENT_FIELDS_RESOLVER.get_id(parent)]:
             print_event(child)
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
@@ -212,22 +209,22 @@ def print_children_stats_from_parents(
     for parent in parents:
         start_timestamp, end_timestamp = 0, 0
         events_passed, events_failed = 0, 0
-        for child in tree[EVENT_FIELDS_RESOLVER.get_id(parent)]:
-            child_start_time_epoch = EVENT_FIELDS_RESOLVER.get_start_timestamp(child)["epochSecond"]
+        for child in tree[options.EVENT_FIELDS_RESOLVER.get_id(parent)]:
+            child_start_time_epoch = options.EVENT_FIELDS_RESOLVER.get_start_timestamp(child)["epochSecond"]
             if child_start_time_epoch > end_timestamp:
                 end_timestamp = child_start_time_epoch
             if start_timestamp == 0 or child_start_time_epoch < start_timestamp:
                 start_timestamp = child_start_time_epoch
 
-            if EVENT_FIELDS_RESOLVER.get_status(child):
+            if options.EVENT_FIELDS_RESOLVER.get_status(child):
                 events_passed += 1
             else:
                 events_failed += 1
 
         table.append(
             [
-                EVENT_FIELDS_RESOLVER.get_name(parent),
-                "[ok]" if EVENT_FIELDS_RESOLVER.get_status(parent) else "[fail]",
+                options.EVENT_FIELDS_RESOLVER.get_name(parent),
+                "[ok]" if options.EVENT_FIELDS_RESOLVER.get_status(parent) else "[fail]",
                 events_passed,
                 events_failed,
                 datetime.fromtimestamp(start_timestamp).isoformat(),
