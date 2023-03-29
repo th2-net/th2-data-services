@@ -22,7 +22,11 @@ class TH2Config:
         self.MESSAGE_FIELDS_RESOLVER: MessageFieldsResolver = None
 
     def __str__(self):
-        s = f"{self.INTERACTIVE_MODE=}\n" f"{self.EVENT_FIELDS_RESOLVER=}\n" f"{self.MESSAGE_FIELDS_RESOLVER=}"
+        s = (
+            f"INTERACTIVE_MODE={self.INTERACTIVE_MODE}\n"
+            f"EVENT_FIELDS_RESOLVER={self.EVENT_FIELDS_RESOLVER}\n"
+            f"MESSAGE_FIELDS_RESOLVER={self.MESSAGE_FIELDS_RESOLVER}"
+        )
         return s
 
 
