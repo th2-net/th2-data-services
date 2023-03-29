@@ -5,8 +5,7 @@ from typing import Callable, Dict, Iterable, List, Set
 from th2_data_services.utils import misc_utils
 import th2_data_services.utils.display
 import th2_data_services.utils.time
-
-Th2Message = dict
+from th2_data_services.utils._types import Th2Message
 
 
 # # NOT STREAMABLE

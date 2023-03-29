@@ -1,4 +1,4 @@
-from typing import Callable, Iterable, Union
+from typing import Iterable, Union
 from datetime import datetime
 from tabulate import tabulate
 from typing import Callable
@@ -10,7 +10,7 @@ from th2_data_services.utils.event_utils.select import (
     get_roots,
     get_children_from_parent_id,
 )
-from th2_data_services.events_tree.events_tree import Th2Event
+from th2_data_services.utils._types import Th2Event
 
 
 # TODO

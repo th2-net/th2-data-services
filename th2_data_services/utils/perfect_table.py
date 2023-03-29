@@ -41,6 +41,7 @@ def namedtuple_with_slice(name, args):  # noqa
     return cls
 
 
+# TODO - this table should be placed to another repo in the future.
 class PerfectTable:
     def __init__(self, header: List[str]):  # noqa
         self._headers = tuple(header)

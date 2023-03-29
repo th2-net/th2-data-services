@@ -3,7 +3,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Callable, Dict, Iterable, Set, Tuple
 from th2_data_services import EVENT_FIELDS_RESOLVER, MESSAGE_FIELDS_RESOLVER
-from th2_data_services.events_tree.events_tree import Th2Event
+from th2_data_services.utils._types import Th2Event
 
 
 # TODO - THEY ALL ARE NOT STREAMING!!

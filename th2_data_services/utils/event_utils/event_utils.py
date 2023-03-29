@@ -1,6 +1,6 @@
 import json
 from th2_data_services import EVENT_FIELDS_RESOLVER
-from th2_data_services.events_tree.events_tree import Th2Event
+from th2_data_services.utils._types import Th2Event
 import th2_data_services.utils.time
 from typing import Callable, Dict, Iterable, Optional
 from datetime import datetime

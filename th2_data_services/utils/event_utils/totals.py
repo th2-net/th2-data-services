@@ -4,7 +4,7 @@ from collections import defaultdict
 from deprecated.classic import deprecated
 
 from th2_data_services import EVENT_FIELDS_RESOLVER
-from th2_data_services.events_tree.events_tree import Th2Event
+from th2_data_services.utils._types import Th2Event
 from th2_data_services.utils.aggregation_classes import CategoryTotal, CategoryTable, \
     TotalCategoryTable
 from th2_data_services.utils.total_category_calculator import TotalCategoryCalculator

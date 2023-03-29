@@ -9,16 +9,16 @@ from th2_data_services.utils.aggregation_classes import TotalCategoryTable
 from th2_data_services.utils.category import Category
 
 """
-Положим есть 3 метрики
+Suppose there are 3 metrics
 A, B, C
 
-A бывае In, Out
+A happens In, Out
 
-B - любое значение
+B - any value
 
-C - тоже любое
+C - also any
 
-Нужно сформировать комбинации
+Combinations need to be made.
 
 A
 AB
@@ -31,9 +31,9 @@ C
 
 ABC
 
-Порядок влияет только на отображение.
+The order affects only the display.
 
-пример
+example
 1. A: in, B: 0, C: x
 
 a += 1
@@ -57,7 +57,7 @@ def get_all_metric_combinations(metrics: Union[List[str], List[Category]]):
     return metric_combinations
 
 
-# Сначала нужно все метрики вытаскивать, а только потом соединять
+# First you need to pull out all the metrics, and only then connect
 
 class TotalCategoryCalculator:
     def __init__(self,
@@ -119,9 +119,9 @@ class TotalCategoryCalculator:
         for o in objects:
             self.append(o)
 
-    # TODO - хорошо, что у нас есть такое, а не сразу все сообщения крутит внутри.
-    #   т.к. get_category_totals_p  принимает 1 элемент, для того, чтобы можно было итерировать в
-    #   итератор процессорах.!!
+    # TODO - it's good that we have this, and not immediately all the messages are twisted inside.
+    #   because get_category_totals_p takes 1 element, in order to be able to iterate over
+    #   iterator processors.!!
     def append(self, m: dict):
         """Put some object to take it into account."""
         metric_values = {}
