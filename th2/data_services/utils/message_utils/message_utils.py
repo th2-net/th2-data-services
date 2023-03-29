@@ -119,11 +119,7 @@ def print_totals(messages: Iterable[Th2Message], categorizers: List[Callable], f
 
 
 # NOT STREAMABLE
-# Gets limited list of messages from the stream
-# parameters are: iterable messages object
-# max: maximum messages to retrieve
-# start(optional): extract events starting form this number (to investigate middle of the stream)
-# result: List of message objects
+# TODO - Can we have single function for events and messages?
 def get_some(
     messages: Iterable[Th2Message], max_count: int, start: int = 0, filter_: Callable = None
 ) -> Iterable[Th2Message]:
@@ -140,7 +136,8 @@ def get_some(
     """
     result = []
     counter = 0
-    max_count += start
+    limit = start + max_count
+
     for message in messages:
         expanded_messages = expand_message(message)
         for expanded_message in expanded_messages:
@@ -149,9 +146,9 @@ def get_some(
             if counter >= start:
                 result.append(expanded_message)
             counter += 1
-            if counter >= max_count:
+            if counter >= limit:
                 break
-        if counter >= max_count:
+        if counter >= limit:
             break
     result.sort(key=extract_time, reverse=False)
 

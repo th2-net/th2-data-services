@@ -16,6 +16,9 @@ from typing import Dict, Union
 
 
 # TODO - looks ok, but it's better to add such feature to utils.converters
+from deprecated.classic import deprecated
+
+
 def extract_timestamp(timestamp_element: Dict) -> str:
     """Extracts timestamp from argument.
 
@@ -27,6 +30,11 @@ def extract_timestamp(timestamp_element: Dict) -> str:
     """
     timestamp = datetime.fromtimestamp(timestamp_element["epochSecond"])
     return f"{timestamp.isoformat()}.{str(timestamp_element['nano']).zfill(9)}"
+
+
+@deprecated("Use `extract_timestamp` instead")
+def extract_time_string(timestamp_element):
+    return extract_timestamp(timestamp_element)
 
 
 # TODO - to be honest, the name of the function is difficult

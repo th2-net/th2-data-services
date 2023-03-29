@@ -77,3 +77,6 @@ class ProtobufTimestampConverter(ITimestampConverter[dict]):
     def parse_timestamp(cls, timestamp: dict) -> (str, str):
         seconds, nanoseconds = timestamp["epochSecond"], f"{timestamp['nano']:0>9}"
         return seconds, nanoseconds
+
+
+Th2TimestampConverter = ProtobufTimestampConverter
