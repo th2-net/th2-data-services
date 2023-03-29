@@ -16,7 +16,6 @@ from collections import defaultdict
 
 from deprecated.classic import deprecated
 
-# from th2.data_services import EVENT_FIELDS_RESOLVER
 from th2.data_services.utils._types import Th2Event
 from th2.data_services.utils.aggregation_classes import CategoryTotal, TotalCategoryTable
 from th2.data_services.utils.total_category_calculator import TotalCategoryCalculator
@@ -24,7 +23,6 @@ from th2.data_services.utils.category import Category
 
 from th2.data_services.config import options
 
-EVENT_FIELDS_RESOLVER = options.EVENT_FIELDS_RESOLVER
 
 """
 These functions return how many events were in some category.
@@ -61,7 +59,7 @@ These functions return how many events were in some category.
 #     for event in events:
 #         category = categorizer(event)
 #         if not ignore_status:
-#             status = " [ok]" if EVENT_FIELDS_RESOLVER.get_status(event) else " [fail]"
+#             status = " [ok]" if options.EVENT_FIELDS_RESOLVER.get_status(event) else " [fail]"
 #             category += status
 #         event_categories[category] += 1
 #
@@ -103,7 +101,7 @@ def get_category_totals(
     for event in events:
         category = categorizer(event)
         if not ignore_status:
-            status = " [ok]" if EVENT_FIELDS_RESOLVER.get_status(event) else " [fail]"
+            status = " [ok]" if options.EVENT_FIELDS_RESOLVER.get_status(event) else " [fail]"
             category += status
         event_categories[category] += 1
 
@@ -160,7 +158,7 @@ def get_attached_messages_totals(events: Iterable[Th2Event]) -> CategoryTotal:
     """
     streams = defaultdict(int)
     for event in events:
-        for message_id in EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
+        for message_id in options.EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event):
             key = message_id[: message_id.rindex(":")]
             streams[key] += 1
 

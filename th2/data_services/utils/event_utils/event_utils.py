@@ -13,15 +13,12 @@
 #  limitations under the License.
 import json
 
-# from th2.data_services import EVENT_FIELDS_RESOLVER
 from th2.data_services.utils._types import Th2Event
 import th2.data_services.utils.time
 from typing import Callable, Dict, Iterable, Optional
 from datetime import datetime
 
 from th2.data_services.config import options
-
-EVENT_FIELDS_RESOLVER = options.EVENT_FIELDS_RESOLVER
 
 # TODO -
 #   1. events: List[Dict] -- should be Iterable[Th2Event], where Th2Event = Dict. It can be changed in the future
@@ -71,8 +68,8 @@ def get_some(
     limit = start + count
     counter = 0
     for event in events:
-        if event_type is None or EVENT_FIELDS_RESOLVER.get_type(event) == event_type:
-            if failed and EVENT_FIELDS_RESOLVER.get_status(event):
+        if event_type is None or options.EVENT_FIELDS_RESOLVER.get_type(event) == event_type:
+            if failed and options.EVENT_FIELDS_RESOLVER.get_status(event):
                 continue
             if counter >= start:
                 result.append(event)
@@ -116,9 +113,9 @@ def build_roots_cache(events: Iterable[Th2Event], depth: int, max_level: int) ->
     prev_levels = get_roots(events, max_level)
     print(f"Level {level}: {len(prev_levels)} events")
     for prev_level in prev_levels:
-        result[EVENT_FIELDS_RESOLVER.get_id(prev_level)] = {
-            "eventName": EVENT_FIELDS_RESOLVER.get_name(prev_level),
-            "eventPath": EVENT_FIELDS_RESOLVER.get_name(prev_level),
+        result[options.EVENT_FIELDS_RESOLVER.get_id(prev_level)] = {
+            "eventName": options.EVENT_FIELDS_RESOLVER.get_name(prev_level),
+            "eventPath": options.EVENT_FIELDS_RESOLVER.get_name(prev_level),
         }
     while level < depth:
         next_levels = get_children_from_parents_as_list(events, prev_levels, max_level)
@@ -128,11 +125,11 @@ def build_roots_cache(events: Iterable[Th2Event], depth: int, max_level: int) ->
         level += 1
         print(f"Level {level}: {next_levels_count} events")
         for next_level in next_levels:
-            event_id = EVENT_FIELDS_RESOLVER.get_id(next_level)
-            parent_id = EVENT_FIELDS_RESOLVER.get_parent_id(next_level)
+            event_id = options.EVENT_FIELDS_RESOLVER.get_id(next_level)
+            parent_id = options.EVENT_FIELDS_RESOLVER.get_parent_id(next_level)
             result[event_id] = {
-                "eventName": EVENT_FIELDS_RESOLVER.get_name(next_level),
-                "eventPath": result[parent_id]["eventPath"] + "/" + EVENT_FIELDS_RESOLVER.get_name(next_level),
+                "eventName": options.EVENT_FIELDS_RESOLVER.get_name(next_level),
+                "eventPath": result[parent_id]["eventPath"] + "/" + options.EVENT_FIELDS_RESOLVER.get_name(next_level),
             }
         prev_levels = next_levels
 
@@ -150,7 +147,7 @@ def extract_start_timestamp(event: Dict) -> str:
     Returns:
         str
     """
-    return th2.data_services.utils.time.extract_timestamp(EVENT_FIELDS_RESOLVER.get_start_timestamp(event))
+    return th2.data_services.utils.time.extract_timestamp(options.EVENT_FIELDS_RESOLVER.get_start_timestamp(event))
 
 
 # NOT STREAMING
