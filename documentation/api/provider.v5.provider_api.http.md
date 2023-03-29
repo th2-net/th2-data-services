@@ -52,7 +52,7 @@ HTTP Provider5 API.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L250"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L252"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `execute_request`
 
@@ -76,7 +76,7 @@ Sends a GET request to provider.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L227"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L229"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `execute_sse_request`
 
@@ -100,7 +100,7 @@ Create stream connection.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L113"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L115"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_url_event_filter_info`
 
@@ -114,7 +114,7 @@ https://github.com/th2-net/th2-rpt-data-provider#filters-api
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L99"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L101"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_url_events_filters`
 
@@ -161,14 +161,14 @@ Deprecated, use `get_url_find_event_by_id` instead.
 ### <kbd>method</kbd> `get_url_find_message_by_id`
 
 ```python
-get_url_find_message_by_id(message_id: str) → str
+get_url_find_message_by_id(message_id: str, only_raw: bool = False) → str
 ```
 
 REST-API `message` call returns a single message with the specified id. 
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L120"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L122"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_url_match_event_by_id`
 
@@ -184,7 +184,7 @@ https://github.com/th2-net/th2-rpt-data-provider#filters-api
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L129"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L131"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_url_match_message_by_id`
 
@@ -200,7 +200,7 @@ https://github.com/th2-net/th2-rpt-data-provider#filters-api
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L106"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L108"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_url_message_filter_info`
 
@@ -226,7 +226,7 @@ REST-API `messageStreams` call returns a list of message stream names.
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L92"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L94"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_url_messages_filters`
 
@@ -240,7 +240,7 @@ https://github.com/th2-net/th2-rpt-data-provider#filters-api
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L138"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L140"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_url_search_sse_events`
 
@@ -266,7 +266,7 @@ https://github.com/th2-net/th2-rpt-data-provider#sse-requests-api
 
 ---
 
-<a href="../../th2_data_services/provider/v5/provider_api/http.py#L181"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/provider/v5/provider_api/http.py#L183"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_url_search_sse_messages`
 

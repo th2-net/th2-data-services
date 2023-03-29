@@ -182,7 +182,7 @@ Creates Data object from cache file with provided name.
 
 
 **Raises:**
- FileExistsError if provided file is not exist. 
+ FileNotFoundError if provided file does not exist. 
 
 ---
 

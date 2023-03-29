@@ -2,7 +2,6 @@ import base64
 from collections import defaultdict
 from th2_data_services import MESSAGE_FIELDS_RESOLVER
 from typing import Callable, Dict, Iterable, List, Set
-from th2_data_services.utils import misc_utils
 import th2_data_services.utils.display
 import th2_data_services.utils.time
 from th2_data_services.utils._types import Th2Message
@@ -39,8 +38,7 @@ def expand_message(message: Th2Message) -> Iterable[Th2Message]:
         new_msg["body"]["metadata"] = {}
         new_msg["body"]["metadata"].update(MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"])
         new_msg["body"]["metadata"]["id"] = {}
-        new_msg["body"]["metadata"]["id"].update(
-            MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"])
+        new_msg["body"]["metadata"]["id"].update(MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"])
         new_msg["body"]["metadata"]["messageType"] = msg_type
         new_msg["body"]["metadata"]["id"]["subsequence"] = [
             MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"]["subsequence"][msg_index]
@@ -58,8 +56,7 @@ def expand_message(message: Th2Message) -> Iterable[Th2Message]:
 # result contains calculation for keys: "category1 category2 ... categoryN"
 # result: dictionary {string: int}
 def get_totals(
-        messages: Iterable[Th2Message], categorizers: List[Callable[[Dict], str]],
-        filter_: Callable = None
+    messages: Iterable[Th2Message], categorizers: List[Callable[[Dict], str]], filter_: Callable = None
 ) -> Dict[str, int]:
     """Returns dictionary quantities of events for different message categories.
 
@@ -92,8 +89,7 @@ def get_totals(
 # category_list: list categorizer functions
 # result contains calculation for keys: "category1 category2 ... categoryN"
 # result: table -> stdout
-def print_totals(messages: Iterable[Th2Message], categorizers: List[Callable],
-                 filter_: Callable = None) -> None:
+def print_totals(messages: Iterable[Th2Message], categorizers: List[Callable], filter_: Callable = None) -> None:
     """Prints dictionary quantities of events for different message categories.
 
     Args:
@@ -107,13 +103,9 @@ def print_totals(messages: Iterable[Th2Message], categorizers: List[Callable],
 
 
 # NOT STREAMABLE
-# Gets limited list of messages from the stream
-# parameters are: iterable messages object
-# max: maximum messages to retrieve
-# start(optional): extract events starting form this number (to investigate middle of the stream)
-# result: List of message objects
+# TODO - Can we have single function for events and messages?
 def get_some(
-        messages: Iterable[Th2Message], max_count: int, start: int = 0, filter_: Callable = None
+    messages: Iterable[Th2Message], max_count: int, start: int = 0, filter_: Callable = None
 ) -> Iterable[Th2Message]:
     """Returns limited list of messages from the stream.
 
@@ -128,7 +120,8 @@ def get_some(
     """
     result = []
     counter = 0
-    max_count += start
+    limit = start + max_count
+
     for message in messages:
         expanded_messages = expand_message(message)
         for expanded_message in expanded_messages:
@@ -137,9 +130,9 @@ def get_some(
             if counter >= start:
                 result.append(expanded_message)
             counter += 1
-            if counter >= max_count:
+            if counter >= limit:
                 break
-        if counter >= max_count:
+        if counter >= limit:
             break
     result.sort(key=extract_time, reverse=False)
 
@@ -153,8 +146,7 @@ def get_some(
 # start(optional): extract events starting form this number (to investigate middle of the stream)
 # maxPrint(optional): maximum messages to print
 # result: List of message objects in dictionary format -> stdout
-def print_some_raw(messages: Iterable[Th2Message], max_count: int, start: int = 0,
-                   filter_: Callable = None) -> None:
+def print_some_raw(messages: Iterable[Th2Message], max_count: int, start: int = 0, filter_: Callable = None) -> None:
     """Prints limited list of messages from the stream in dictionary format.
 
     Args:
@@ -178,7 +170,7 @@ def print_some_raw(messages: Iterable[Th2Message], max_count: int, start: int = 
 # maxPrint(optional): maximum messages to print
 # result: List of message objects in ascii from raw binary format -> stdout
 def print_some_raw_source(
-        messages: Iterable[Th2Message], max_count: int, start: int = 0, filter_: Callable = None
+    messages: Iterable[Th2Message], max_count: int, start: int = 0, filter_: Callable = None
 ) -> None:
     """Prints limited list of messages from the stream in ascii from raw binary format.
 
@@ -202,8 +194,7 @@ def print_some_raw_source(
 # start(optional): extract events starting form this number (to investigate middle of the stream)
 # maxPrint(optional): maximum messages to print
 # result: List of message objects in dictionary format -> stdout
-def print_some(messages: Iterable[Th2Message], max_count: int, start: int = 0,
-               filter_: Callable = None) -> None:
+def print_some(messages: Iterable[Th2Message], max_count: int, start: int = 0, filter_: Callable = None) -> None:
     """Prints limited list of messages from the stream in dictionary format.
 
     Args:
@@ -236,8 +227,7 @@ def message_fields_to_flat_dict(message: dict, result: Dict, prefix: str):  # no
             list_values = content["listValue"]["values"]
             for i in range(len(list_values)):
                 new_prefix = f"{prefix}{field}."
-                message_fields_to_flat_dict({"fields": {str(i): list_values[i]}}, result,
-                                            new_prefix)
+                message_fields_to_flat_dict({"fields": {str(i): list_values[i]}}, result, new_prefix)
 
 
 # STREAMABLE
@@ -273,8 +263,7 @@ def extract_time(message: Th2Message) -> str:
     Returns:
         str
     """
-    return th2_data_services.utils.time.extract_timestamp(
-        MESSAGE_FIELDS_RESOLVER.get_timestamp(message))
+    return th2_data_services.utils.time.extract_timestamp(MESSAGE_FIELDS_RESOLVER.get_timestamp(message))
 
 
 # STREAMABLE
@@ -384,8 +373,7 @@ def resolve_message_ids(messages: Iterable[Th2Message], ids: Set) -> Dict[str, T
 # NOT STREAMABLE
 # TODO: Is This Useful?
 def get_messages_examples(
-        messages: Iterable[Th2Message], categories: List[str], categorizer: Callable,
-        filter_: Callable = None
+    messages: Iterable[Th2Message], categories: List[str], categorizer: Callable, filter_: Callable = None
 ) -> Dict:  # noqa
     # TODO: Add Docstrings
     # It returns {category_name: message}

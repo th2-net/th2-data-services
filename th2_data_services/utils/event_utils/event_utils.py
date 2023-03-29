@@ -19,18 +19,18 @@ from th2_data_services.utils.event_utils.select import (
 
 
 # NOT STREAMING
-# TODO - USEFUL ???
-#   What the example of this? look very rarely need to use
+# TODO - Can we have single function for events and messages?
+#
 # Will return list! Perhaps it's better to return Data?
 def get_some(
-    events: Iterable[Th2Event], event_type: Optional[str], count: int, start: int = 0, failed: bool = False
+    events: Iterable[Th2Event], event_type: Optional[str], max_count: int, start: int = 0, failed: bool = False  # ??
 ) -> Iterable[Th2Event]:
     """Returns limited list of events of specific eventType.
 
     Args:
         events (Iterable[Th2Event]): TH2-Events
         event_type (str): Event Type To Extract
-        count (int): Maximum number of events to extract
+        max_count (int): Maximum number of events to extract
         start (int, optional): Start Iteration Index. Defaults to 0.
         failed (bool, optional): Extract Only Failed Events. Defaults to False.
 
@@ -50,11 +50,12 @@ def get_some(
 
     """
     result = []
-    limit = start + count
     counter = 0
+    limit = start + max_count
+
     for event in events:
-        if event_type is None or EVENT_FIELDS_RESOLVER.get_type(event) == event_type:
-            if failed and EVENT_FIELDS_RESOLVER.get_status(event):
+        if event_type is None or options.EVENT_FIELDS_RESOLVER.get_type(event) == event_type:
+            if failed and options.EVENT_FIELDS_RESOLVER.get_status(event):
                 continue
             if counter >= start:
                 result.append(event)

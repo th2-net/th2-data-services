@@ -2,6 +2,9 @@
 from collections import defaultdict
 from datetime import datetime
 from typing import Callable, Dict, Iterable, Set, Tuple
+
+from deprecated.classic import deprecated
+
 from th2_data_services import EVENT_FIELDS_RESOLVER, MESSAGE_FIELDS_RESOLVER
 from th2_data_services.utils._types import Th2Event
 
@@ -202,6 +205,11 @@ def get_children_from_parents(
             result[parent_id].append(event)
 
     return result, events_count
+
+
+@deprecated("Use `get_children_from_parents` instead")
+def get_children_for_events_list(evnts, parents_list, max_events):  # noqa
+    return get_children_from_parents(evnts, parents_list, max_events)
 
 
 def get_children_from_parents_as_list(

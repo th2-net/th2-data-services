@@ -3,6 +3,9 @@ from typing import Dict, Union
 
 
 # TODO - looks ok, but it's better to add such feature to utils.converters
+from deprecated.classic import deprecated
+
+
 def extract_timestamp(timestamp_element: Dict) -> str:
     """Extracts timestamp from argument.
 
@@ -14,6 +17,11 @@ def extract_timestamp(timestamp_element: Dict) -> str:
     """
     timestamp = datetime.fromtimestamp(timestamp_element["epochSecond"])
     return f"{timestamp.isoformat()}.{str(timestamp_element['nano']).zfill(9)}"
+
+
+@deprecated("Use `extract_timestamp` instead")
+def extract_time_string(timestamp_element):  # noqa
+    return extract_timestamp(timestamp_element)
 
 
 # TODO - to be honest, the name of the function is difficult
@@ -87,7 +95,6 @@ def timestamp_aggregation_key(
         "seconds": 1,
         "minutes": 60,
         "hours": 3600,
-
         # TODO - should be dynamic part
         "30min": 1800,
         "1min": 60,
@@ -97,36 +104,36 @@ def timestamp_aggregation_key(
     }
 
     if aggregation_level not in aggregation_levels:
-        if aggregation_level.endswith('sec'):
-            num = aggregation_level.split('sec')[0]
+        if aggregation_level.endswith("sec"):
+            num = aggregation_level.split("sec")[0]
             dynamic_aggr_level = int(num)
 
-        elif aggregation_level.endswith('s'):
-            num = aggregation_level.split('s')[0]
+        elif aggregation_level.endswith("s"):
+            num = aggregation_level.split("s")[0]
             dynamic_aggr_level = int(num)
 
-        elif aggregation_level.endswith('min'):
-            num = aggregation_level.split('min')[0]
+        elif aggregation_level.endswith("min"):
+            num = aggregation_level.split("min")[0]
             dynamic_aggr_level = int(num) * 60
 
-        elif aggregation_level.endswith('m'):
-            num = aggregation_level.split('m')[0]
+        elif aggregation_level.endswith("m"):
+            num = aggregation_level.split("m")[0]
             dynamic_aggr_level = int(num) * 60
 
-        elif aggregation_level.endswith('hour'):
-            num = aggregation_level.split('hour')[0]
+        elif aggregation_level.endswith("hour"):
+            num = aggregation_level.split("hour")[0]
             dynamic_aggr_level = int(num) * 3600
 
-        elif aggregation_level.endswith('h'):
-            num = aggregation_level.split('h')[0]
+        elif aggregation_level.endswith("h"):
+            num = aggregation_level.split("h")[0]
             dynamic_aggr_level = int(num) * 3600
 
-        elif aggregation_level.endswith('day'):
-            num = aggregation_level.split('day')[0]
+        elif aggregation_level.endswith("day"):
+            num = aggregation_level.split("day")[0]
             dynamic_aggr_level = int(num) * 3600 * 24
 
-        elif aggregation_level.endswith('d'):
-            num = aggregation_level.split('d')[0]
+        elif aggregation_level.endswith("d"):
+            num = aggregation_level.split("d")[0]
             dynamic_aggr_level = int(num) * 3600 * 24
 
         else:

@@ -20,6 +20,7 @@
 - [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
 - [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
 - [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
+- [`interfaces.utils.resolver`](./interfaces.utils.resolver.md#module-interfacesutilsresolver)
 - [`provider`](./provider.md#module-provider)
 - [`provider.adapters`](./provider.adapters.md#module-provideradapters)
 - [`provider.adapters.adapter_sse`](./provider.adapters.adapter_sse.md#module-provideradaptersadapter_sse)
@@ -71,12 +72,9 @@
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 - [`utils`](./utils.md#module-utils)
 - [`utils.categorizers`](./utils.categorizers.md#module-utilscategorizers)
+- [`utils.category`](./utils.category.md#module-utilscategory)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
-- [`utils.event_utils`](./utils.event_utils.md#module-utilsevent_utils)
 - [`utils.json`](./utils.json.md#module-utilsjson)
-- [`utils.message_utils`](./utils.message_utils.md#module-utilsmessage_utils)
-- [`utils.resolver`](./utils.resolver.md#module-utilsresolver)
-- [`utils.time`](./utils.time.md#module-utilstime)
 - [`utils.viewer_structs`](./utils.viewer_structs.md#module-utilsviewer_structs)
 - [`utils.viewer_structs.verification`](./utils.viewer_structs.verification.md#module-utilsviewer_structsverification)
 
@@ -96,6 +94,8 @@
 - [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
+- [`resolver.EventFieldsResolver`](./interfaces.utils.resolver.md#class-eventfieldsresolver)
+- [`resolver.MessageFieldsResolver`](./interfaces.utils.resolver.md#class-messagefieldsresolver)
 - [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
 - [`adapter_sse.StreamingSSEAdapter`](./provider.adapters.adapter_sse.md#class-streamingsseadapter)
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
@@ -177,10 +177,11 @@
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
 - [`categorizers.EventCategorizer`](./utils.categorizers.md#class-eventcategorizer)
 - [`categorizers.GetFrequences`](./utils.categorizers.md#class-getfrequences)
+- [`category.Category`](./utils.category.md#class-category)
+- [`converters.DatetimeConverter`](./utils.converters.md#class-datetimeconverter): Converts datetime objects to timestamp.
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
+- [`converters.ProtobufTimestampConverter`](./utils.converters.md#class-protobuftimestampconverter): Converts Th2 timestamps.
 - [`json.BufferedJSONProcessor`](./utils.json.md#class-bufferedjsonprocessor)
-- [`resolver.EventFieldsResolver`](./utils.resolver.md#class-eventfieldsresolver)
-- [`resolver.MessageFieldsResolver`](./utils.resolver.md#class-messagefieldsresolver)
 
 ## Functions
 
@@ -191,11 +192,6 @@
 - [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
 - [`command_resolver.resolver_get_event_by_id`](./provider.v5.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
 - [`command_resolver.resolver_get_events_by_id`](./provider.v5.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
-- [`time.extract_timestamp`](./utils.time.md#function-extract_timestamp): Extracts timestamp from argument.
-- [`time.time_interval_filter_seconds_precision`](./utils.time.md#function-time_interval_filter_seconds_precision): TODO: Add Description.
-- [`time.time_slice_object_filter`](./utils.time.md#function-time_slice_object_filter)
-- [`time.timestamp_aggregation_key`](./utils.time.md#function-timestamp_aggregation_key)
-- [`time.timestamp_delta_us`](./utils.time.md#function-timestamp_delta_us): Returns timestamp delta in milliseconds.
 - [`verification.check_if_verification_leaf_failed`](./utils.viewer_structs.verification.md#function-check_if_verification_leaf_failed)
 - [`verification.format_comparison_line`](./utils.viewer_structs.verification.md#function-format_comparison_line)
 - [`verification.simplify_body_verification`](./utils.viewer_structs.verification.md#function-simplify_body_verification)
