@@ -14,7 +14,7 @@
 
 ---
 
-<a href="../../th2/data_services/interfaces/command.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2/data_services/interfaces/command.py#L23"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ICommand`
 High level interface for Command. 
@@ -24,7 +24,7 @@ High level interface for Command.
 
 ---
 
-<a href="../../th2/data_services/interfaces/command.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2/data_services/interfaces/command.py#L26"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `handle`
 

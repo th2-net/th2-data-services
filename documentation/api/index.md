@@ -23,6 +23,7 @@
 - [`th2.data_services.interfaces.stub_builder`](./th2.data_services.interfaces.stub_builder.md#module-th2data_servicesinterfacesstub_builder)
 - [`th2.data_services.interfaces.utils`](./th2.data_services.interfaces.utils.md#module-th2data_servicesinterfacesutils)
 - [`th2.data_services.interfaces.utils.converter`](./th2.data_services.interfaces.utils.converter.md#module-th2data_servicesinterfacesutilsconverter)
+- [`th2.data_services.interfaces.utils.resolver`](./th2.data_services.interfaces.utils.resolver.md#module-th2data_servicesinterfacesutilsresolver)
 
 ## Classes
 
@@ -51,6 +52,8 @@
 - [`stub_builder.IMessageStub`](./th2.data_services.interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
 - [`stub_builder.IStub`](./th2.data_services.interfaces.stub_builder.md#class-istub)
 - [`converter.ITimestampConverter`](./th2.data_services.interfaces.utils.converter.md#class-itimestampconverter)
+- [`resolver.EventFieldsResolver`](./th2.data_services.interfaces.utils.resolver.md#class-eventfieldsresolver)
+- [`resolver.MessageFieldsResolver`](./th2.data_services.interfaces.utils.resolver.md#class-messagefieldsresolver)
 
 ## Functions
 
