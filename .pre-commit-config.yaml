@@ -27,7 +27,7 @@ repos:
     rev: 6.1.1  # pick a git hash / tag to point to
     hooks:
       - id: pydocstyle
-        files: th2_data_services
+        files: th2
         args:
           - --convention=google
           - --add-ignore=D100,D101,D104,D105,D403,  D102,   # http://www.pydocstyle.org/en/stable/error_codes.html
