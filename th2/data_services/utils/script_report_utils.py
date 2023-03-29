@@ -605,7 +605,7 @@ def generate_generic_json_report_limited_batches(
 ):  # noqa
     # TODO: Add docstrings
     filtered = events.filter(parents_filter)
-    parents = event_utils.get_some(filtered, event_type=None, count=10000)
+    parents = event_utils.get_some(filtered, event_type=None, max_count=10000)
     if len(parents) == 0:
         raise SystemError("Reports parents not found")
 

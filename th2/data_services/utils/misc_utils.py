@@ -310,19 +310,21 @@ def process_objects_stream(
 
 # TODO: Is this useful?
 #   similar to totals for events, but evenets also have status field
-def get_category_totals_p(record: Dict, categorizer: Callable, filter_: Callable, result) -> Any:  # noqa
+def get_category_totals_p(obj: Dict, categorizer: Callable, obj_filter: Callable, result) -> Any:  # noqa
     # TODO: Add docstings
-    if record is None:
-        return get_category_totals_p, {"categorizer": categorizer, "obj_filter": filter_, "result": result}
+    if obj is None:
+        return get_category_totals_p, {"categorizer": categorizer, "obj_filter": obj_filter, "result": result}
 
-    if filter_ is not None and not filter_(record):
+    if obj_filter is not None and not obj_filter(obj):
         return None
 
-    category = categorizer(record)
+    category = categorizer(obj)
     if category not in result:
         result[category] = 1
     else:
-        result[category] += 1
+        result[category] = result[category] + 1
+
+    return None
 
 
 # TODO: Is this useful?
