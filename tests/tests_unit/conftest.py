@@ -7,11 +7,11 @@ from typing import List, NamedTuple, Sequence, Optional
 import pytest
 from tests.tests_unit.test_event_trees.demo_etc_data import demo_etc_data_big, demo_etc_data_small
 from tests.tests_unit.utils import LogsChecker
-from th2.data_services.data import Data
-from th2.data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
-from th2.data_services.event_tree.etc_driver import Th2EventType
-from th2.data_services.event_tree.exceptions import FieldIsNotExist
-from th2.data_services.interfaces import IEventStruct, IEventStub
+from th2_data_services.data import Data
+from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2_data_services.event_tree.etc_driver import Th2EventType
+from th2_data_services.event_tree.exceptions import FieldIsNotExist
+from th2_data_services.interfaces import IEventStruct, IEventStub
 
 EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
 
@@ -1806,7 +1806,7 @@ def cache(request):
 @pytest.fixture
 def log_checker(caplog) -> LogsChecker:
     """Activates DS lib logging and returns Log checker class."""
-    caplog.set_level(logging.DEBUG, logger="th2.data_services")
+    caplog.set_level(logging.DEBUG, logger="th2_data_services")
     return LogsChecker(caplog)
 
 
