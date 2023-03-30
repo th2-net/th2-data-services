@@ -27,7 +27,7 @@ repos:
     rev: 6.1.1  # pick a git hash / tag to point to
     hooks:
       - id: pydocstyle
-        files: th2
+        files: th2_data_services
         args:
           - --convention=google
           - --add-ignore=D100,D101,D104,D105,D403,  D102,   # http://www.pydocstyle.org/en/stable/error_codes.html
@@ -68,7 +68,7 @@ repos:
       - id: check_copyright
         name: check_copyright
         stages: [ commit ]
-        entry: python check_copyright.py copyright.txt ./th2
+        entry: python check_copyright.py copyright.txt ./th2_data_services
         language: python
         pass_filenames: false
         always_run: true

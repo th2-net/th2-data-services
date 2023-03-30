@@ -1,7 +1,7 @@
 from typing import List, Iterable
 
-from th2.data_services.data import Data
-from th2.data_services.interfaces import IStreamAdapter
+from th2_data_services.data import Data
+from th2_data_services.interfaces import IStreamAdapter
 
 
 class SimpleAdapter(IStreamAdapter):

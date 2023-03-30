@@ -1,7 +1,7 @@
 from pathlib import Path
 from pickle import UnpicklingError
 from typing import List
-from th2.data_services.data import Data
+from th2_data_services.data import Data
 import pytest
 
 

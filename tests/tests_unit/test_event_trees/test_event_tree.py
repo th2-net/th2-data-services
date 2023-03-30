@@ -2,8 +2,8 @@ from copy import deepcopy
 
 import pytest
 
-from th2.data_services.event_tree import EventTree
-from th2.data_services.event_tree.exceptions import EventIdNotInTree, TreeLoop
+from th2_data_services.event_tree import EventTree
+from th2_data_services.event_tree.exceptions import EventIdNotInTree, TreeLoop
 
 
 def test_getitem(events_tree_for_test: EventTree):

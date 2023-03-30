@@ -2,16 +2,16 @@ from typing import Tuple, List, Optional, Generator
 from datetime import datetime
 
 
-from th2.data_services.data import Data
-from th2.data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
-from th2.data_services.interfaces import IDataSource
-from th2.data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
+from th2_data_services.data import Data
+from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2_data_services.interfaces import IDataSource
+from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
 # If you use the lib in interactive mode (jupyter, ipython) it's recommended to set the special
 # global parameter to True. It'll keep cache files if something went wrong.
-from th2.data_services.config import options
+from th2_data_services.config import options
 
 options.INTERACTIVE_MODE = True
 
