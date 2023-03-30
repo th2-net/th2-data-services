@@ -7,7 +7,7 @@ from tests.tests_unit.utils import (
     iterate_data_and_do_cache_checks,
 )
 
-from th2.data_services.data import Data
+from th2_data_services.data import Data
 
 
 def test_parent_cache_was_created(log_checker, general_data: List[dict]):

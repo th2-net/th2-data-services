@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from th2.data_services.utils.converters import DatetimeStringConverter, DatetimeConverter, ProtobufTimestampConverter
+from th2_data_services.utils.converters import DatetimeStringConverter, DatetimeConverter, ProtobufTimestampConverter
 
 TestCase = namedtuple(
     "TestCase",

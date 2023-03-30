@@ -10,7 +10,7 @@ from tests.tests_unit.utils import (
     is_pending_cache_file_exists,
 )
 
-from th2.data_services.data import Data
+from th2_data_services.data import Data
 import pytest
 
 
@@ -138,7 +138,7 @@ def test_cache_file_will_be_removed_only_if_data_write_it(interactive_mod, expec
         3. We DO NOT have to delete file if we read the file using special method.
 
     Issue related test: https://exactpro.atlassian.net/browse/TH2-3546"""
-    from th2.data_services.config import options
+    from th2_data_services.config import options
 
     options.INTERACTIVE_MODE = interactive_mod
 

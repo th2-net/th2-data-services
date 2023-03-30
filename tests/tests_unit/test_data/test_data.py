@@ -6,7 +6,7 @@ from tests.tests_unit.utils import (
     iterate_data,
     is_pending_cache_file_exists,
 )
-from th2.data_services.data import Data
+from th2_data_services.data import Data
 import pytest
 
 

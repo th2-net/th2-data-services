@@ -1,4 +1,4 @@
-from th2.data_services.utils.converters import ProtobufTimestampConverter
+from th2_data_services.utils.converters import ProtobufTimestampConverter
 
 
 def test_to_datetime(datetime_strings):
