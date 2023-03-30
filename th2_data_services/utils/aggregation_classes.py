@@ -36,7 +36,7 @@ class EventStatTotalValue:
     def __init__(
         self,
         value,
-    ):
+    ):  # noqa
         self.value = value
 
 
@@ -146,14 +146,14 @@ class CategoryFrequencies(list, AggrClassBase):
 
 
 class CategoryTable(ABC, PerfectTable):
-    def __init__(self, header: List[str]):
+    def __init__(self, header: List[str]):  # noqa
         super().__init__(header)
         self._service_columns = {}  # {'col_name': 'idx'}
         self._service_rows = []  # [idx]
 
 
 class FrequencyCategoryTable(CategoryTable):
-    def __init__(self, header: List[str], rows=None):
+    def __init__(self, header: List[str], rows=None):  # noqa
         super().__init__(header)
         self.service_columns = {
             "timestamp": 0,
@@ -211,7 +211,7 @@ class FrequencyCategoryTable(CategoryTable):
 
 class TotalCategoryTable(CategoryTable):
     # This class allows to create tables with multiple categories. e.g  type | status | count
-    def __init__(self, header, rows=None):
+    def __init__(self, header, rows=None):  # noqa
         super().__init__(header)
         self.service_columns = {
             "timestamp": 0,
@@ -226,8 +226,16 @@ class TotalCategoryTable(CategoryTable):
     def _totals_line(self):
         totals = []
         for col_name in self.header:
+            col_tuple = self[col_name]
+
             try:
-                totals.append(sum(self[col_name]))
+                # If all Bool.
+                if all([isinstance(x, bool) for x in col_tuple]):
+                    pos = sum(col_tuple)
+                    neg = len(col_tuple) - pos
+                    totals.append(f"{pos}/{neg}")
+                else:
+                    totals.append(sum(col_tuple))
             except:
                 totals.append("")
 
