@@ -133,7 +133,7 @@ def get_category_totals2(
     # else:
     #     order = [order]
     if isinstance(categories, Category):
-        categories = [Category]
+        categories = [categories]
 
     ctc = TotalCategoryCalculator(categories, [categories])
     ctc.handle_objects(events)
