@@ -1,3 +1,16 @@
+#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -20,7 +33,10 @@ class AggrClassBase(ABC):
 
 # TODO - if categorizer returns non-str but tuple or list or dict, we can provide more opportunities!
 class EventStatTotalValue:
-    def __init__(self, value, ):
+    def __init__(
+        self,
+        value,
+    ):  # noqa
         self.value = value
 
 
@@ -82,6 +98,7 @@ class CategoryTotal(dict[str, int], AggrClassBase):
     # def show_format(self, **kwargs):
     #     return tabulate(self, **kwargs)
 
+
 # TODO - this is deprecated and should be removed. Use  FrequencyCategoryTable
 class CategoryFrequencies(list, AggrClassBase):
     def __repr__(self):
@@ -127,15 +144,16 @@ class CategoryFrequencies(list, AggrClassBase):
 # TODO -- new tables
 #   They will change deprecated above
 
+
 class CategoryTable(ABC, PerfectTable):
-    def __init__(self, header: List[str]):
+    def __init__(self, header: List[str]):  # noqa
         super().__init__(header)
         self._service_columns = {}  # {'col_name': 'idx'}
         self._service_rows = []  # [idx]
 
 
 class FrequencyCategoryTable(CategoryTable):
-    def __init__(self, header: List[str], rows=None):
+    def __init__(self, header: List[str], rows=None):  # noqa
         super().__init__(header)
         self.service_columns = {
             "timestamp": 0,
@@ -160,9 +178,9 @@ class FrequencyCategoryTable(CategoryTable):
             val = row[col_name_idx]
             if exclude_zero_values:
                 if val != 0:
-                    fct.add_row([row[self.service_columns['timestamp']], val])
+                    fct.add_row([row[self.service_columns["timestamp"]], val])
             else:
-                fct.add_row([row[self.service_columns['timestamp']], val])
+                fct.add_row([row[self.service_columns["timestamp"]], val])
 
         return fct
 
@@ -184,16 +202,16 @@ class FrequencyCategoryTable(CategoryTable):
             vals = [row[idx] for idx in col_name_idxs]
             if exclude_zero_values:
                 if any(vals) != 0:
-                    fct.add_row([row[self.service_columns['timestamp']],  *vals])
+                    fct.add_row([row[self.service_columns["timestamp"]], *vals])
             else:
-                fct.add_row([row[self.service_columns['timestamp']], *vals])
+                fct.add_row([row[self.service_columns["timestamp"]], *vals])
 
         return fct
 
 
 class TotalCategoryTable(CategoryTable):
     # This class allows to create tables with multiple categories. e.g  type | status | count
-    def __init__(self, header, rows=None):
+    def __init__(self, header, rows=None):  # noqa
         super().__init__(header)
         self.service_columns = {
             "timestamp": 0,
@@ -203,15 +221,23 @@ class TotalCategoryTable(CategoryTable):
 
     @property
     def total(self):
-        return sum(self['count'])
+        return sum(self["count"])
 
     def _totals_line(self):
         totals = []
         for col_name in self.header:
+            col_tuple = self[col_name]
+
             try:
-                totals.append(sum(self[col_name]))
+                # If all Bool.
+                if all([isinstance(x, bool) for x in col_tuple]):
+                    pos = sum(col_tuple)
+                    neg = len(col_tuple) - pos
+                    totals.append(f"{pos}/{neg}")
+                else:
+                    totals.append(sum(col_tuple))
             except:
-                totals.append('')
+                totals.append("")
 
         return totals
 
@@ -233,7 +259,7 @@ class TotalCategoryTable(CategoryTable):
     def get_list_repr(self):
         additional_rows = [
             # ['' for i in range(len(self.header) - 1)] + [self.total],
-            ['count'] + ['' for _ in range(len(self.header)-1)] + [len(self.rows)] ,
-            ['totals']+self._totals_line(),
+            ["count"] + ["" for _ in range(len(self.header) - 1)] + [len(self.rows)],
+            ["totals"] + self._totals_line(),
         ]
-        return [[' ']+list(self.header), *[[' ']+list(row) for row in self.rows], *additional_rows]
+        return [[" "] + list(self.header), *[[" "] + list(row) for row in self.rows], *additional_rows]

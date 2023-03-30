@@ -1,12 +1,11 @@
-from typing import Callable, Dict, Iterable, List, Union, Sequence
+from typing import Callable, Dict, Iterable, List
 from collections import defaultdict
 
 from deprecated.classic import deprecated
 
 from th2_data_services import EVENT_FIELDS_RESOLVER
 from th2_data_services.utils._types import Th2Event
-from th2_data_services.utils.aggregation_classes import CategoryTotal, CategoryTable, \
-    TotalCategoryTable
+from th2_data_services.utils.aggregation_classes import CategoryTotal, TotalCategoryTable
 from th2_data_services.utils.total_category_calculator import TotalCategoryCalculator
 from th2_data_services.utils.category import Category
 
@@ -53,14 +52,16 @@ These functions return how many events were in some category.
 
 # TODO - we have categorizer and Category now
 #   It's a good idea to unite them
-@deprecated(reason='Use "get_category_totals2" instead. \n'
-                   'It provides more advantages. \n'
-                   'Make sure, it has another interface.\n'
-                   'Example:\n'
-                   '  metrics = [Category("date", lambda m: m["eventType"])] \n '
-                   '  totals.get_category_totals2(events, metrics).sort_by("date")')
+@deprecated(
+    reason='Use "get_category_totals2" instead. \n'
+    "It provides more advantages. \n"
+    "Make sure, it has another interface.\n"
+    "Example:\n"
+    '  metrics = [Category("date", lambda m: m["eventType"])] \n '
+    '  totals.get_category_totals2(events, metrics).sort_by("date")'
+)
 def get_category_totals(
-        events: Iterable[Th2Event], categorizer: Callable[[Dict], str], ignore_status: bool = False
+    events: Iterable[Th2Event], categorizer: Callable[[Dict], str], ignore_status: bool = False
 ) -> CategoryTotal:
     """Returns dictionary quantities of events for different categories.
 
@@ -94,9 +95,9 @@ def get_category_totals(
 
 # TODO - it will be renamed to get_category_totals
 def get_category_totals2(
-        events: Iterable[Th2Event],
-        categories: List[Category],
-        # order=None
+    events: Iterable[Th2Event],
+    categories: List[Category],
+    # order=None
 ) -> TotalCategoryTable:
     """More advanced totals with multiple columns.
 
@@ -110,13 +111,15 @@ def get_category_totals2(
         categories:
 
     Returns:
-
+        TotalCategoryTable
     """
-
     # if order is None:
     #     order = [metrics]
     # else:
     #     order = [order]
+    if isinstance(categories, Category):
+        categories = [categories]
+
     ctc = TotalCategoryCalculator(categories, [categories])
     ctc.handle_objects(events)
     tct = ctc.get_table(categories)
