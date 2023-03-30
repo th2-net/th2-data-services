@@ -126,13 +126,15 @@ def get_category_totals2(
         categories:
 
     Returns:
-
+        TotalCategoryTable
     """
-
     # if order is None:
     #     order = [metrics]
     # else:
     #     order = [order]
+    if isinstance(categories, Category):
+        categories = [Category]
+
     ctc = TotalCategoryCalculator(categories, [categories])
     ctc.handle_objects(events)
     tct = ctc.get_table(categories)
