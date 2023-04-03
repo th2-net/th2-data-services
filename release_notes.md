@@ -419,19 +419,19 @@ This release implements performance bug fixes and provides Data object cache fil
 By installing the package you will no longer get RDP package.
 If you want to use RDP you have to specify dependency in square brackets `[ ]`
 
-1. [I] Adapter interface got required handle_stream method.
+1. [I] Adapter interface got required handle_stream method.\
    [M] Implement new method for your adapters.
 
-2. [I] It's no longer possible to import Data object directly from th2_data_services package.
+2. [I] It's no longer possible to import Data object directly from th2_data_services package.\
    [M] All records should be changed from "from th2_data_services import Data" to "from th2_data_services.data import Data".
    
-3. [I] Provider module is removed.
+3. [I] Provider module is removed.\
    [M] We should move to data source implementations, like th2-ds-source-lwdp.
    
-4. [I] INTERACTIVE_MODE cannot be accessed like th2_data_services.INTERACTIVE_MODE anymore.
+4. [I] INTERACTIVE_MODE cannot be accessed like th2_data_services.INTERACTIVE_MODE anymore.\
    [M] It's now changed to th2_data_services.config.options.INTERACTIVE_MODE
    
-5. [I] EventsTree renamed to EventTree
+5. [I] EventsTree renamed to EventTree\
    [M] All records should be changed to EventTree
 
 ## Features
