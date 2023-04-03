@@ -24,9 +24,10 @@ def expand_message(message: Th2Message) -> Iterable[Th2Message]:
         return [message]
     result = []
     fields = MESSAGE_FIELDS_RESOLVER.get_body(message)["fields"]
-    for msg_type in fields.keys():
+    for k in fields.keys():
         msg_index = len(result)
-        if "-" in msg_type:
+        msg_type = k
+        if "-" in k:
             msg_type = msg_type[: msg_type.index("-")]
             # TODO: Remove or keep this line?
             # m_index = int(k[k.index("-") + 1:])
@@ -43,7 +44,7 @@ def expand_message(message: Th2Message) -> Iterable[Th2Message]:
         new_msg["body"]["metadata"]["id"]["subsequence"] = [
             MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"]["subsequence"][msg_index]
         ]
-        new_msg["body"]["fields"] = fields[msg_type]["messageValue"]["fields"]
+        new_msg["body"]["fields"] = fields[k]["messageValue"]["fields"]
         result.append(new_msg)
 
     return result
