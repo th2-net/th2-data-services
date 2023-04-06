@@ -21,7 +21,7 @@ class EventNotFound(Exception):
         self._error_description = error_description
 
     def __str__(self):
-        return "An error occured while trying to get event with id: {self._id}. Description of error: {self._error_description}"
+        return f"An error occured while trying to get event with id: {self._id}. Description of error: {self._error_description}"
 
 
 class MessageNotFound(Exception):
@@ -35,7 +35,7 @@ class MessageNotFound(Exception):
         self._error_description = error_description
 
     def __str__(self):
-        return "An error occured while trying to get message with id: {self._id}. Description of error: {self._error_description}"
+        return f"An error occured while trying to get message with id: {self._id}. Description of error: {self._error_description}"
 
 
 class CommandError(Exception):
