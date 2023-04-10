@@ -193,6 +193,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         attached_events: bool = False,
         lookup_limit_days: Union[int, float] = None,
         filters: Optional[str] = None,
+        response_formats: Optional[List[str]] = None,
     ) -> str:
         """REST-API `search/sse/messages` call create a sse channel of messages that matches the filter.
 
@@ -209,6 +210,7 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
             "messageId": message_id,
             "attachedEvents": attached_events,
             "lookupLimitDays": lookup_limit_days,
+            "responseFormats": response_formats,
         }
 
         query = ""
@@ -216,8 +218,8 @@ class HTTPProvider5API(IHTTPProviderSourceAPI):
         for k, v in kwargs.items():
             if v is None:
                 continue
-            if k == "stream":
-                for s in stream:
+            if k in ["stream", "responseFormats"]:
+                for s in v:
                     query += f"&{k}={s}"
             else:
                 query += f"&{k}={v}"
