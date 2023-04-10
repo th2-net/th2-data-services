@@ -327,6 +327,28 @@ def get_category_totals_p(obj: Dict, categorizer: Callable, obj_filter: Callable
     return None
 
 
+def get_category_examples_p(obj: Dict, categorizer: Callable, obj_filter: Callable, cat_filter: Callable,
+                            max_qty: int, result) -> Any:
+    if obj is None:
+        return get_category_examples_p, {"categorizer": categorizer,
+                                         "obj_filter": obj_filter,
+                                         "cat_filter": cat_filter,
+                                         "max_qty": max_qty,
+                                         "result": result}
+    if obj_filter is not None and not obj_filter(obj):
+        return None
+
+    category = categorizer(obj)
+    if cat_filter is not None and not cat_filter(category):
+        return None
+
+    if category not in result:
+        result[category] = [obj]
+        return None
+    if len(result[category]) < max_qty:
+        result[category].append(obj)
+
+
 # TODO: Is this useful?
 #   Used by get_category_measurement_p
 def update_int_measurement(metric: int, measurement_data):  # noqa
