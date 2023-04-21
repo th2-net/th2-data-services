@@ -27,6 +27,7 @@ from inspect import isgeneratorfunction
 from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 from th2_data_services.config import options
+from th2_data_services.utils.json import iter_json_file
 
 # LOG import logging
 
@@ -711,6 +712,25 @@ class Data(Generic[DataIterValues]):
         else:
             if self.__is_cache_file_exists():
                 self.__delete_cache()
+
+    @classmethod
+    def from_json(cls, filename) -> "Data":
+        """Creates Data object from json file with provided name.
+
+        Args:
+            filename: Name or path to cache file.
+
+        Returns:
+            Data: Data object.
+
+        Raises:
+            FileNotFoundError if provided file does not exist.
+
+        """
+        if not Path(filename).resolve().exists():
+            raise FileNotFoundError(f"{filename} doesn't exist")
+        
+        return cls(iter_json_file(filename))
 
     def _set_metadata(self, metadata: Dict) -> None:
         """Set metadata of object to metadata argument.
