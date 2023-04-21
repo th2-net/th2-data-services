@@ -477,3 +477,4 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 ## Improvements
 1. Added vulnerabilities scanning
 2. [TH2-4828] EventNotFound and MessageNotFound now return error description as argument instead of pre-written one.
+3. [TH2-4775] Speed up `Data.build_cache` by disabling garbage collection at the time of storing pickle file.

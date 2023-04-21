@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 import copy
+import gc
 import pickle
 import pprint
 from warnings import warn
@@ -26,6 +27,7 @@ from inspect import isgeneratorfunction
 from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 from th2_data_services.config import options
+
 # LOG import logging
 
 # LOG logger = logging.getLogger(__name__)
@@ -49,7 +51,6 @@ class Data(Generic[DataIterValues]):
 
     Such approach to data analysis called streaming transformation.
     """
-    
 
     def __init__(self, data: DataSet, cache: bool = False, workflow: WorkFlow = None):
         """Data constructor.
@@ -666,6 +667,7 @@ class Data(Generic[DataIterValues]):
         if self.__is_cache_file_exists():
             self._copy_cache_file(filename)
         else:
+            gc.disable()  # https://exactpro.atlassian.net/browse/TH2-4775
             if self._cache_status:
                 _ = self.len  # Just to iterate
                 self._copy_cache_file(filename)
@@ -676,6 +678,7 @@ class Data(Generic[DataIterValues]):
                     pickle.dump(record, file)
 
                 file.close()
+            gc.enable()
 
     @classmethod
     def from_cache_file(cls, filename) -> "Data":
