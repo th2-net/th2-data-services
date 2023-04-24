@@ -16,14 +16,15 @@ from typing import Generator
 import orjson as json
 from orjson import JSONDecodeError
 
-def iter_json_file(filename):
-    """This function returns the iter_json_file() function as a callable function with an argument."""
+
+def iter_json_file(filename, buffer_limit=250):
+    """Returns the function that returns generators."""
 
     def iter_json_file_logic():
         """Generator that reads and yields decoded JSON objects from a file."""
-        json_processor = BufferedJSONProcessor(0)
+        json_processor = BufferedJSONProcessor(buffer_limit)
 
-        with open(filename, 'r') as data:
+        with open(filename, "r") as data:
             while True:
                 try:
                     v = data.readline()
@@ -31,9 +32,6 @@ def iter_json_file(filename):
                         break
 
                     yield from json_processor.decode(v)
-                except EOFError:
-                    print(json_processor.buffer)
-                    break
                 except ValueError:
                     print(len(json_processor.buffer))
                     print(f"{v=}")
@@ -45,6 +43,7 @@ def iter_json_file(filename):
         return iter_json_file_logic(*args, **kwargs)
 
     return iter_json_file_wrapper
+
 
 class BufferedJSONProcessor:
     def __init__(self, buffer_limit: int = 250):
@@ -70,9 +69,7 @@ class BufferedJSONProcessor:
             for i in json.loads("[" + ",".join(self.buffer) + "]"):
                 yield i
         except JSONDecodeError as e:
-            raise ValueError(
-                f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{self.buffer}"
-            )
+            raise ValueError(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{self.buffer}")
         finally:
             # Prevents StopIteration issues
             self.buffer = []

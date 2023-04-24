@@ -27,7 +27,7 @@ from inspect import isgeneratorfunction
 from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 from th2_data_services.config import options
-from th2_data_services.utils.json import iter_json_file
+from th2_data_services.utils._json import iter_json_file
 
 # LOG import logging
 
@@ -681,6 +681,17 @@ class Data(Generic[DataIterValues]):
                 file.close()
             gc.enable()
 
+    def clear_cache(self):
+        """Clears related to data object cache file.
+
+        This function won't remove external cache file.
+        """
+        if self._read_from_external_cache_file:
+            raise Exception("It's not possible to remove external cache file via this method")
+        else:
+            if self.__is_cache_file_exists():
+                self.__delete_cache()
+
     @classmethod
     def from_cache_file(cls, filename) -> "Data":
         """Creates Data object from cache file with provided name.
@@ -702,23 +713,13 @@ class Data(Generic[DataIterValues]):
         data_obj._set_custom_cache_destination(filename=filename)
         return data_obj
 
-    def clear_cache(self):
-        """Clears related to data object cache file.
-
-        This function won't remove external cache file.
-        """
-        if self._read_from_external_cache_file:
-            raise Exception("It's not possible to remove external cache file via this method")
-        else:
-            if self.__is_cache_file_exists():
-                self.__delete_cache()
-
     @classmethod
-    def from_json(cls, filename) -> "Data":
+    def from_json(cls, filename, buffer_limit=250) -> "Data":
         """Creates Data object from json file with provided name.
 
         Args:
             filename: Name or path to cache file.
+            buffer_limit: If limit is 0 buffer will not be used. Number of messages in buffer before parsing.
 
         Returns:
             Data: Data object.
@@ -729,8 +730,8 @@ class Data(Generic[DataIterValues]):
         """
         if not Path(filename).resolve().exists():
             raise FileNotFoundError(f"{filename} doesn't exist")
-        
-        return cls(iter_json_file(filename))
+
+        return cls(iter_json_file(filename, buffer_limit))
 
     def _set_metadata(self, metadata: Dict) -> None:
         """Set metadata of object to metadata argument.
