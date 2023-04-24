@@ -63,7 +63,7 @@ repos:
         language: python
         pass_filenames: false
         always_run: true
-        additional_dependencies: [pytest, treelib]
+        additional_dependencies: [pytest, treelib, orjson]
 
       - id: check_copyright
         name: check_copyright
