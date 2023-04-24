@@ -34,7 +34,7 @@ def iter_json_file(filename, buffer_limit=250):
                     yield from json_processor.decode(v)
                 except ValueError:
                     print(len(json_processor.buffer))
-                    print(f"{v=}")
+                    print(f"Error string: {v}")
                     raise
             yield from json_processor.fin()
 
