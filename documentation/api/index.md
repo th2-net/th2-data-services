@@ -20,6 +20,7 @@
 - [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
 - [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
 - [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
+- [`interfaces.utils.resolver`](./interfaces.utils.resolver.md#module-interfacesutilsresolver)
 - [`provider`](./provider.md#module-provider)
 - [`provider.adapters`](./provider.adapters.md#module-provideradapters)
 - [`provider.adapters.adapter_sse`](./provider.adapters.adapter_sse.md#module-provideradaptersadapter_sse)
@@ -59,17 +60,23 @@
 - [`provider.v5.provider_api`](./provider.v5.provider_api.md#module-providerv5provider_api)
 - [`provider.v5.provider_api.grpc`](./provider.v5.provider_api.grpc.md#module-providerv5provider_apigrpc)
 - [`provider.v5.provider_api.http`](./provider.v5.provider_api.http.md#module-providerv5provider_apihttp)
+- [`provider.v5.resolver`](./provider.v5.resolver.md#module-providerv5resolver)
 - [`provider.v5.stub_builder`](./provider.v5.stub_builder.md#module-providerv5stub_builder)
 - [`provider.v6`](./provider.v6.md#module-providerv6)
 - [`provider.v6.commands`](./provider.v6.commands.md#module-providerv6commands)
 - [`provider.v6.filters`](./provider.v6.filters.md#module-providerv6filters)
+- [`provider.v6.resolver`](./provider.v6.resolver.md#module-providerv6resolver)
 - [`provider.v6.struct`](./provider.v6.struct.md#module-providerv6struct)
 - [`provider.v6.stub_builder`](./provider.v6.stub_builder.md#module-providerv6stub_builder)
 - [`sse_client`](./sse_client.md#module-sse_client)
 - [`th2_gui_report`](./th2_gui_report.md#module-th2_gui_report)
 - [`utils`](./utils.md#module-utils)
+- [`utils.categorizers`](./utils.categorizers.md#module-utilscategorizers)
+- [`utils.category`](./utils.category.md#module-utilscategory)
 - [`utils.converters`](./utils.converters.md#module-utilsconverters)
 - [`utils.json`](./utils.json.md#module-utilsjson)
+- [`utils.viewer_structs`](./utils.viewer_structs.md#module-utilsviewer_structs)
+- [`utils.viewer_structs.verification`](./utils.viewer_structs.verification.md#module-utilsviewer_structsverification)
 
 ## Classes
 
@@ -87,6 +94,8 @@
 - [`parent_events_tree_collection.ParentEventsTreeCollection`](./interfaces.events_tree.parent_events_tree_collection.md#class-parenteventstreecollection): ParentEventsTreeCollections is a class like an EventsTreeCollections.
 - [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
+- [`resolver.EventFieldsResolver`](./interfaces.utils.resolver.md#class-eventfieldsresolver)
+- [`resolver.MessageFieldsResolver`](./interfaces.utils.resolver.md#class-messagefieldsresolver)
 - [`adapter_sse.SSEAdapter`](./provider.adapters.adapter_sse.md#class-sseadapter): SSE Adapter handles bytes from sse-stream into Dict object.
 - [`adapter_sse.StreamingSSEAdapter`](./provider.adapters.adapter_sse.md#class-streamingsseadapter)
 - [`command.ProviderAdaptableCommand`](./provider.command.md#class-provideradaptablecommand)
@@ -155,14 +164,23 @@
 - [`grpc.BasicRequest`](./provider.v5.provider_api.grpc.md#class-basicrequest): BasicRequest(start_timestamp, end_timestamp, result_count_limit, keep_open, search_direction, filters)
 - [`grpc.GRPCProvider5API`](./provider.v5.provider_api.grpc.md#class-grpcprovider5api)
 - [`http.HTTPProvider5API`](./provider.v5.provider_api.http.md#class-httpprovider5api)
+- [`resolver.Provider5EventFieldsResolver`](./provider.v5.resolver.md#class-provider5eventfieldsresolver)
+- [`resolver.Provider5MessageFieldsResolver`](./provider.v5.resolver.md#class-provider5messagefieldsresolver)
 - [`stub_builder.Provider5EventStubBuilder`](./provider.v5.stub_builder.md#class-provider5eventstubbuilder)
 - [`stub_builder.Provider5MessageStubBuilder`](./provider.v5.stub_builder.md#class-provider5messagestubbuilder)
+- [`resolver.Provider6EventFieldsResolver`](./provider.v6.resolver.md#class-provider6eventfieldsresolver)
+- [`resolver.Provider6MessageFieldsResolver`](./provider.v6.resolver.md#class-provider6messagefieldsresolver)
 - [`struct.GRPCProvider6EventStruct`](./provider.v6.struct.md#class-grpcprovider6eventstruct): Interface for Event of data-provider v6.
 - [`stub_builder.Provider6EventStubBuilder`](./provider.v6.stub_builder.md#class-provider6eventstubbuilder)
 - [`stub_builder.Provider6MessageStubBuilder`](./provider.v6.stub_builder.md#class-provider6messagestubbuilder)
 - [`sse_client.SSEClient`](./sse_client.md#class-sseclient): Patch for sseclient-py to get availability to configure decode error handler.
 - [`th2_gui_report.Th2GUIReport`](./th2_gui_report.md#class-th2guireport): Class for creating gui link by event ID or message ID.
+- [`categorizers.EventCategorizer`](./utils.categorizers.md#class-eventcategorizer)
+- [`categorizers.GetFrequences`](./utils.categorizers.md#class-getfrequences)
+- [`category.Category`](./utils.category.md#class-category)
+- [`converters.DatetimeConverter`](./utils.converters.md#class-datetimeconverter): Converts datetime objects to timestamp.
 - [`converters.DatetimeStringConverter`](./utils.converters.md#class-datetimestringconverter): Converts datetime strings.
+- [`converters.ProtobufTimestampConverter`](./utils.converters.md#class-protobuftimestampconverter): Converts Th2 timestamps.
 - [`json.BufferedJSONProcessor`](./utils.json.md#class-bufferedjsonprocessor)
 
 ## Functions
@@ -174,6 +192,12 @@
 - [`version_checker.verify_grpc_version`](./provider.utils.version_checker.md#function-verify_grpc_version)
 - [`command_resolver.resolver_get_event_by_id`](./provider.v5.command_resolver.md#function-resolver_get_event_by_id): Resolves what 'GetEventById' command you need to use based Data Source.
 - [`command_resolver.resolver_get_events_by_id`](./provider.v5.command_resolver.md#function-resolver_get_events_by_id): Resolves what 'GetEventsById' command you need to use based Data Source.
+- [`verification.check_if_verification_leaf_failed`](./utils.viewer_structs.verification.md#function-check_if_verification_leaf_failed)
+- [`verification.format_comparison_line`](./utils.viewer_structs.verification.md#function-format_comparison_line)
+- [`verification.simplify_body_verification`](./utils.viewer_structs.verification.md#function-simplify_body_verification)
+- [`verification.simplify_body_verification2`](./utils.viewer_structs.verification.md#function-simplify_body_verification2)
+- [`verification.verification_fields_to_flat_dict`](./utils.viewer_structs.verification.md#function-verification_fields_to_flat_dict): If a field A has a sub-field B, dot notation sting will be returned.
+- [`verification.verification_fields_to_simple_dict`](./utils.viewer_structs.verification.md#function-verification_fields_to_simple_dict): Examples:
 
 
 ---
