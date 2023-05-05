@@ -24,7 +24,7 @@ import csv
 def pars_arg(arg) -> str:  # noqa
     res = re.sub("[^0-9a-zA-Z]+", "_", arg)
     if res[0].isdigit():
-        res = "_" + res
+        res = "n_" + res
 
     return res
 
