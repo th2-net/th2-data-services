@@ -75,8 +75,7 @@ def get_all_metric_combinations(metrics: Union[List[str], List[Category]]):
 
 class TotalCategoryCalculator:
     def __init__(self, categories: List[Category], combinations: Union[List[Sequence[str]], List[Sequence[Category]]]):
-        """
-        Calculates, aggregates to tables and prints categories combinations.
+        """Calculates, aggregates to tables and prints categories combinations.
 
         This class allows you to calculate any metrics and their combinations in stream-like way.
 
@@ -147,7 +146,7 @@ class TotalCategoryCalculator:
             val_for_counter = tuple([metric_values[metric] for metric in v])
             self._counters[v].update([val_for_counter])
 
-    def get_table(self, combination: CategoryCombination, add_total=False) -> TotalCategoryTable:
+    def get_table(self, combination: CategoryCombination) -> TotalCategoryTable:
         """Returns a PrettyTable class for certain combination.
 
         Args:
@@ -161,19 +160,8 @@ class TotalCategoryCalculator:
         t.field_names = [*combination, self.counter_field_name]
         c = self._get_counter(combination)
 
-        if add_total:
-            total_val = 0
-
-            for key, cnt in c.items():
-                t.add_row([*key, cnt])
-                total_val += cnt
-
-            # Add total row.
-            t.add_row([*["" for _ in combination], total_val])
-
-        else:
-            for key, cnt in c.items():
-                t.add_row([*key, cnt])
+        for key, cnt in c.items():
+            t.add_row([*key, cnt])
 
         return TotalCategoryTable(header=t.field_names, rows=t.rows).sort_by([self.counter_field_name], ascending=False)
 
@@ -219,5 +207,5 @@ if __name__ == "__main__":
 
     print(time.time() - t1)
 
-    print(sc.get_table(["direction", "messageType", session_m], add_total=True))
+    print(sc.get_table(["direction", "messageType", session_m]))
     print(time.time() - t1)
