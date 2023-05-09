@@ -182,6 +182,7 @@ if __name__ == "__main__":
     for i in range(1_000):
         dir = choice(["IN", "OUT"])
         session = choice(["s1", "s2", "s3", "s4"])
+        session = choice(["2023-05-04", "2023-04-03", "2023-05-03", "2023-05-12"])
         messageType = choice(["NewOrderSingle", "Cancel", "Amend"])
         messages.append({"direction": dir, "sessionId": session, "messageType": messageType})
 
@@ -206,6 +207,7 @@ if __name__ == "__main__":
     sc.show()
 
     print(time.time() - t1)
-
-    print(sc.get_table(["direction", "messageType", session_m]))
+    tbl = sc.get_table(["direction", "messageType", session_m])
+    print(tbl)
+    print(tbl.transpose_column("session"))
     print(time.time() - t1)

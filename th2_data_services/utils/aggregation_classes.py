@@ -370,7 +370,7 @@ class TotalCategoryTable(CategoryTable):
             new_tbl_dict.setdefault(tuple(new_row), {})[row[column_name]] = row["count"]
             dynamic_col_names.add(row[column_name])
 
-        dynamic_col_names_lst = list(dynamic_col_names)
+        dynamic_col_names_lst = sorted(list(dynamic_col_names))
         new_header = static_col_names + dynamic_col_names_lst
         new_tbl = TotalCategoryTable(header=new_header)
         """
