@@ -219,6 +219,8 @@ class TotalCategoryTable(CategoryTable):
         if rows is not None:
             self.add_rows(rows)
 
+        self._transposed = False
+
     @property
     def total(self):
         return sum(self["count"])
@@ -263,3 +265,128 @@ class TotalCategoryTable(CategoryTable):
             ["totals"] + self._totals_line(),
         ]
         return [[" "] + list(self.header), *[[" "] + list(row) for row in self.rows], *additional_rows]
+
+    def transpose_column(self, column_name) -> "TotalCategoryTable":
+        """Returns a new table with transposed column.
+
+        Look at the example below.
+
+        Example:
+            +--------+-------------+----------------+-----------+---------+
+            |        | direction   | messageType    | session   |   count |
+            +========+=============+================+===========+=========+
+            |        | OUT         | NewOrderSingle | s1        |      54 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | Cancel         | s3        |      54 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | Amend          | s1        |      51 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | NewOrderSingle | s3        |      50 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | NewOrderSingle | s4        |      50 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | Cancel         | s2        |      49 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | Amend          | s2        |      48 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | NewOrderSingle | s1        |      47 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | Cancel         | s4        |      44 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | NewOrderSingle | s2        |      43 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | Cancel         | s1        |      43 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | Amend          | s4        |      42 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | Amend          | s3        |      41 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | Cancel         | s2        |      40 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | Amend          | s2        |      39 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | Amend          | s4        |      38 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | Cancel         | s4        |      37 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | Cancel         | s3        |      36 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | NewOrderSingle | s3        |      34 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | Cancel         | s1        |      34 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | Amend          | s3        |      34 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | NewOrderSingle | s2        |      33 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | IN          | NewOrderSingle | s4        |      30 |
+            +--------+-------------+----------------+-----------+---------+
+            |        | OUT         | Amend          | s1        |      29 |
+            +--------+-------------+----------------+-----------+---------+
+            | count  |             |                |           |      24 |
+            +--------+-------------+----------------+-----------+---------+
+            | totals |             |                |           |    1000 |
+            +--------+-------------+----------------+-----------+---------+
+
+            to
+
+            +--------+-------------+----------------+------+------+------+------+
+            |        | direction   | messageType    | s4   | s2   | s1   |   s3 |
+            +========+=============+================+======+======+======+======+
+            |        | OUT         | NewOrderSingle | 50   | 43   | 54   |   34 |
+            +--------+-------------+----------------+------+------+------+------+
+            |        | OUT         | Cancel         | 44   | 49   | 34   |   54 |
+            +--------+-------------+----------------+------+------+------+------+
+            |        | IN          | Amend          | 42   | 39   | 51   |   34 |
+            +--------+-------------+----------------+------+------+------+------+
+            |        | IN          | NewOrderSingle | 30   | 33   | 47   |   50 |
+            +--------+-------------+----------------+------+------+------+------+
+            |        | OUT         | Amend          | 38   | 48   | 29   |   41 |
+            +--------+-------------+----------------+------+------+------+------+
+            |        | IN          | Cancel         | 37   | 40   | 43   |   36 |
+            +--------+-------------+----------------+------+------+------+------+
+            | count  |             |                |      |      |      |    6 |
+            +--------+-------------+----------------+------+------+------+------+
+            | totals |             |                | 241  | 252  | 258  |  249 |
+            +--------+-------------+----------------+------+------+------+------+
+
+
+        """
+        if not self._transposed:
+            static_col_names = []
+            dynamic_col_names = set()
+            for h in self.header:
+                if h == column_name or h == "count":
+                    pass
+                else:
+                    static_col_names.append(h)
+
+            new_tbl_dict = {}  # {(static_columns): {dynamic_col: val} }
+
+            for row in self.rows:
+                new_row = []
+                for h in static_col_names:
+                    new_row.append(row[h])
+
+                new_tbl_dict.setdefault(tuple(new_row), {})[row[column_name]] = row["count"]
+                dynamic_col_names.add(row[column_name])
+
+            dynamic_col_names_lst = list(dynamic_col_names)
+            new_header = static_col_names + dynamic_col_names_lst
+            new_tbl = TotalCategoryTable(header=new_header)
+            """
+            {('OUT', 'NewOrderSingle'): {'s3': 34},
+             ('OUT', 'Cancel'): {'s1': 34},
+             ('IN', 'Amend'): {'s3': 34},
+             """
+
+            for static_part, dict_with_dynamic_values in new_tbl_dict.items():
+                values_line = []
+                for col_name in dynamic_col_names_lst:
+                    values_line.append(dict_with_dynamic_values.get(col_name, 0))
+                new_tbl._append_row(list(static_part) + values_line)
+
+            self._transposed = True
+            return new_tbl
+        else:
+            raise Exception("The table already has been transposed.")
