@@ -112,7 +112,7 @@ def row_cls_init(name, args):
 # TODO - this table should be placed to another repo in the future.
 class PerfectTable:
     def __init__(self, header: List[str]):  # noqa
-        self._headers = tuple(header)
+        self._headers = tuple(str(h) for h in header)
         self.row_class: RowBase = self._create_row_class(self._headers)
         self._rows = []
         self._columns = defaultdict(tuple)

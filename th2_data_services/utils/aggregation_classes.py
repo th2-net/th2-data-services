@@ -352,41 +352,38 @@ class TotalCategoryTable(CategoryTable):
 
 
         """
-        if not self._transposed:
-            static_col_names = []
-            dynamic_col_names = set()
-            for h in self.header:
-                if h == column_name or h == "count":
-                    pass
-                else:
-                    static_col_names.append(h)
+        static_col_names = []
+        dynamic_col_names = set()
+        for h in self.header:
+            if h == column_name or h == "count":
+                pass
+            else:
+                static_col_names.append(h)
 
-            new_tbl_dict = {}  # {(static_columns): {dynamic_col: val} }
+        new_tbl_dict = {}  # {(static_columns): {dynamic_col: val} }
 
-            for row in self.rows:
-                new_row = []
-                for h in static_col_names:
-                    new_row.append(row[h])
+        for row in self.rows:
+            new_row = []
+            for h in static_col_names:
+                new_row.append(row[h])
 
-                new_tbl_dict.setdefault(tuple(new_row), {})[row[column_name]] = row["count"]
-                dynamic_col_names.add(row[column_name])
+            new_tbl_dict.setdefault(tuple(new_row), {})[row[column_name]] = row["count"]
+            dynamic_col_names.add(row[column_name])
 
-            dynamic_col_names_lst = list(dynamic_col_names)
-            new_header = static_col_names + dynamic_col_names_lst
-            new_tbl = TotalCategoryTable(header=new_header)
-            """
-            {('OUT', 'NewOrderSingle'): {'s3': 34},
-             ('OUT', 'Cancel'): {'s1': 34},
-             ('IN', 'Amend'): {'s3': 34},
-             """
+        dynamic_col_names_lst = list(dynamic_col_names)
+        new_header = static_col_names + dynamic_col_names_lst
+        new_tbl = TotalCategoryTable(header=new_header)
+        """
+        {('OUT', 'NewOrderSingle'): {'s3': 34},
+         ('OUT', 'Cancel'): {'s1': 34},
+         ('IN', 'Amend'): {'s3': 34},
+         """
 
-            for static_part, dict_with_dynamic_values in new_tbl_dict.items():
-                values_line = []
-                for col_name in dynamic_col_names_lst:
-                    values_line.append(dict_with_dynamic_values.get(col_name, 0))
-                new_tbl._append_row(list(static_part) + values_line)
+        for static_part, dict_with_dynamic_values in new_tbl_dict.items():
+            values_line = []
+            for col_name in dynamic_col_names_lst:
+                values_line.append(dict_with_dynamic_values.get(col_name, 0))
+            new_tbl._append_row(list(static_part) + values_line)
 
-            self._transposed = True
-            return new_tbl
-        else:
-            raise Exception("The table already has been transposed.")
+        self._transposed = True
+        return new_tbl
