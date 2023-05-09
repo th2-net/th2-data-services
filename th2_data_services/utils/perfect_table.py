@@ -34,6 +34,10 @@ def namedtuple_with_slice(name, args):  # noqa
     new_args = [pars_arg(arg) for arg in args]
     cls = namedtuple(name, new_args)  # TODO - we can have the same values!!!
 
+    # TODO - I think we don't need getitem for strings. (strings column names.
+    #  We would not do `row.abc` but we often have abc like 'a b 123 c' so it's not a problem.
+    #  It means we don't need named tuples more
+    #   We need to get only via item NOT ATTRIBUTE
     def getitem(self, index):
         # `type(self)` can result in issues in case of multiple inheritance.
         # But shouldn't be an issue here.
@@ -53,17 +57,70 @@ def namedtuple_with_slice(name, args):  # noqa
     return cls
 
 
+class RowBase(tuple):
+    _column_idx = {}  # {COL_NAME: index}
+
+    def __new__(cls, *args: list):
+        if not cls._column_idx:
+            raise Exception("Row class is not initialized.")
+
+        return super().__new__(cls, args)
+
+    def __init__(self, *args: list):  # noqa
+        if len(self._column_idx) != len(args):
+            raise Exception(
+                f"The number of provided values '{len(args)}' != the number of columns '{len(self._column_idx)}'"
+            )
+        super().__init__()
+
+    @property
+    def keys(self):
+        return self._column_idx.keys()
+
+    def _get_idx(self, col_name) -> int:
+        try:
+            return self._column_idx[col_name]
+        except KeyError:
+            raise Exception(f"Row class doesn't have '{col_name}' column")
+
+    def __getitem__(self, index):
+        # `type(self)` can result in issues in case of multiple inheritance.
+        # But shouldn't be an issue here.
+        if isinstance(index, int):
+            value = super().__getitem__(index)
+            # elif isinstance(index, slice):
+        #     new_column_idx =
+        #     value = self.__getitem__(index)
+        #     cls = namedtuple(name, new_args[index])
+        #     cls.__getitem__ = getitem
+        #     value = cls(*value)
+        elif isinstance(index, str):
+            value = self[self._get_idx(index)]
+        else:
+            raise Exception("Some unexpected situation")
+
+        return value
+
+
+def row_cls_init(name, args):
+    """Init RowBase."""
+    cls = type(name, (RowBase,), {})
+    cls._column_idx = {k: idx for idx, k in enumerate(args)}
+    return cls
+
+
 # TODO - this table should be placed to another repo in the future.
 class PerfectTable:
     def __init__(self, header: List[str]):  # noqa
         self._headers = tuple(header)
-        self.row_class = self._create_row_class(self._headers)
+        self.row_class: RowBase = self._create_row_class(self._headers)
         self._rows = []
         self._columns = defaultdict(tuple)
         # self._add_headers_as_attr()
 
-    def _create_row_class(self, headers):
-        return namedtuple_with_slice("Row", headers)
+    def _create_row_class(self, headers) -> RowBase:
+        # return namedtuple_with_slice("Row", headers)
+        return row_cls_init("Row", headers)
 
     def __contains__(self, item):
         return item in self._headers
