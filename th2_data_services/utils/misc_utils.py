@@ -21,7 +21,7 @@ from th2_data_services.utils._types import Th2Event
 
 # TODO - we have special converters for it in ds-2.0 (ProtobufTimestampConverter)
 from th2_data_services.utils.aggregation_classes import CategoryFrequencies, FrequencyCategoryTable
-from th2_data_services.utils.time import timestamp_aggregation_key
+from th2_data_services.utils.time import timestamp_aggregation_key, timestamp_rounded_down_anchor, round_timestamp_string_aggregation
 
 
 # TODO - we have get_objects_frequencies and get_objects_frequencies2 -- we need to unify it
@@ -145,7 +145,7 @@ def get_objects_frequencies2(
                     continue
 
             if anchor == 0:
-                anchor = timestamp_function(expanded_object)
+                anchor = timestamp_rounded_down_anchor(timestamp_function(expanded_object), aggregation_level)
 
             if not categories:
                 epoch = timestamp_aggregation_key(anchor, timestamp_function(expanded_object), aggregation_level)
@@ -176,7 +176,7 @@ def get_objects_frequencies2(
     results = [header]
     timestamps = list(sorted(frequencies.keys()))
     for timestamp in timestamps:
-        line = [datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")]
+        line = [round_timestamp_string_aggregation(timestamp, aggregation_level)]
         if categories:
             line.extend(frequencies[timestamp])
         else:
