@@ -133,6 +133,85 @@ def get_objects_frequencies2(
 
     Returns:
         List[List]
+
+    Example:
+        msgs = [
+            {
+                "timestamp":{"epochSecond":1682296588}, # 2023-04-24T00:36:28
+                "messageType": "ERROR"
+            },
+            {
+                "timestamp":{"epochSecond":1682296587}, # 2023-04-24T00:36:27
+                "messageType": "ERROR"
+            },
+            {
+                "timestamp":{"epochSecond":1682293587}, # 2023-04-23T23:46:27
+                "messageType": "ERROR"
+            },
+            {
+                "timestamp":{"epochSecond":1682296559}, # 2023-04-24T00:35:59
+                "messageType": "ERROR"
+            }
+        ]
+
+        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='5sec')
+
+        +---------------------+---------+
+        | timestamp           |   ERROR |
+        +=====================+=========+
+        | 2023-04-23T23:46:23 |       1 |
+        +---------------------+---------+
+        | 2023-04-24T00:35:58 |       1 |
+        +---------------------+---------+
+        | 2023-04-24T00:36:23 |       1 |
+        +---------------------+---------+
+        | 2023-04-24T00:36:28 |       1 |
+        +---------------------+---------+
+
+        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='30s')
+
+        +---------------------+---------+
+        | timestamp           |   ERROR |
+        +=====================+=========+
+        | 2023-04-23T23:45:58 |       1 |
+        +---------------------+---------+
+        | 2023-04-24T00:35:58 |       2 |
+        +---------------------+---------+
+        | 2023-04-24T00:36:28 |       1 |
+        +---------------------+---------+
+
+        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='2min')
+
+        +------------------+---------+
+        | timestamp        |   ERROR |
+        +==================+=========+
+        | 2023-04-23T23:46 |       1 |
+        +------------------+---------+
+        | 2023-04-24T00:34 |       1 |
+        +------------------+---------+
+        | 2023-04-24T00:36 |       2 |
+        +------------------+---------+
+
+        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='3h')
+
+        +------------------+---------+
+        | timestamp        |   ERROR |
+        +==================+=========+
+        | 2023-04-23T21:00 |       1 |
+        +------------------+---------+
+        | 2023-04-24T00:00 |       3 |
+        +------------------+---------+
+
+        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='4d')
+
+        +-------------+---------+
+        | timestamp   |   ERROR |
+        +=============+=========+
+        | 2023-04-20  |       1 |
+        +-------------+---------+
+        | 2023-04-24  |       3 |
+        +-------------+---------+
+        
     """
     frequencies = {}
     anchor = 0

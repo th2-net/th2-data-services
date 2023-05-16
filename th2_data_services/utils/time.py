@@ -169,45 +169,25 @@ def timestamp_rounded_down_anchor(global_anchor_timestamp: int, aggregation_leve
         "hours": 3600,
         "days": 86400,
         # TODO - should be dynamic part
-        "30min": 1800,
+        "30min": 60,
         "1min": 60,
-        "5min": 300,
-        "10sec": 10,
-        "30sec": 30,
+        "5min": 60,
+        "10sec": 1,
+        "30sec": 1,
     }
 
     if aggregation_level not in aggregation_levels:
-        if aggregation_level.endswith("sec"):
-            num = aggregation_level.split("sec")[0]
-            dynamic_aggr_level = int(num)            
+        if aggregation_level.endswith("sec") or aggregation_level.endswith("s"):
+            dynamic_aggr_level = 1
 
-        elif aggregation_level.endswith("s"):
-            num = aggregation_level.split("s")[0]
-            dynamic_aggr_level = int(num)
+        elif aggregation_level.endswith("min") or aggregation_level.endswith("m"):
+            dynamic_aggr_level = 60
 
-        elif aggregation_level.endswith("min"):
-            num = aggregation_level.split("min")[0]
-            dynamic_aggr_level = int(num) * 60
+        elif aggregation_level.endswith("hour") or aggregation_level.endswith("h"):
+            dynamic_aggr_level = 3600
 
-        elif aggregation_level.endswith("m"):
-            num = aggregation_level.split("m")[0]
-            dynamic_aggr_level = int(num) * 60
-
-        elif aggregation_level.endswith("hour"):
-            num = aggregation_level.split("hour")[0]
-            dynamic_aggr_level = int(num) * 3600
-
-        elif aggregation_level.endswith("h"):
-            num = aggregation_level.split("h")[0]
-            dynamic_aggr_level = int(num) * 3600
-
-        elif aggregation_level.endswith("day"):
-            num = aggregation_level.split("day")[0]
-            dynamic_aggr_level = int(num) * 3600 * 24
-
-        elif aggregation_level.endswith("d"):
-            num = aggregation_level.split("d")[0]
-            dynamic_aggr_level = int(num) * 3600 * 24
+        elif aggregation_level.endswith("day") or aggregation_level.endswith("d"):
+            dynamic_aggr_level = 86400
 
         else:
             raise KeyError(f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}")
