@@ -21,7 +21,7 @@ from th2_data_services.utils._types import Th2Event
 
 # TODO - we have special converters for it in ds-2.0 (ProtobufTimestampConverter)
 from th2_data_services.utils.aggregation_classes import CategoryFrequencies, FrequencyCategoryTable
-from th2_data_services.utils.time import timestamp_aggregation_key, timestamp_rounded_down_anchor, round_timestamp_string_aggregation
+from th2_data_services.utils.time import timestamp_aggregation_key, timestamp_rounded_down_anchor, round_timestamp_string_aggregation, time_str_to_seconds
 
 
 # TODO - we have get_objects_frequencies and get_objects_frequencies2 -- we need to unify it
@@ -116,6 +116,8 @@ def get_objects_frequencies2(
     aggregation_level: str = "seconds",
     object_expander: Callable = None,
     objects_filter: Callable = None,
+    gap_mode: int = 1,
+    zero_anchor: bool = False,
 ) -> FrequencyCategoryTable:
     # TODO - used by both messages and events get_category_frequencies
     """Returns objects frequencies based on categorizer.
@@ -133,120 +135,47 @@ def get_objects_frequencies2(
 
     Returns:
         List[List]
-
-    Example:
-        msgs = [
-            {
-                "timestamp":{"epochSecond":1682296588}, # 2023-04-24T00:36:28
-                "messageType": "ERROR"
-            },
-            {
-                "timestamp":{"epochSecond":1682296587}, # 2023-04-24T00:36:27
-                "messageType": "ERROR"
-            },
-            {
-                "timestamp":{"epochSecond":1682293587}, # 2023-04-23T23:46:27
-                "messageType": "ERROR"
-            },
-            {
-                "timestamp":{"epochSecond":1682296559}, # 2023-04-24T00:35:59
-                "messageType": "ERROR"
-            }
-        ]
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='5sec')
-
-        +---------------------+---------+
-        | timestamp           |   ERROR |
-        +=====================+=========+
-        | 2023-04-23T23:46:23 |       1 |
-        +---------------------+---------+
-        | 2023-04-24T00:35:58 |       1 |
-        +---------------------+---------+
-        | 2023-04-24T00:36:23 |       1 |
-        +---------------------+---------+
-        | 2023-04-24T00:36:28 |       1 |
-        +---------------------+---------+
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='30s')
-
-        +---------------------+---------+
-        | timestamp           |   ERROR |
-        +=====================+=========+
-        | 2023-04-23T23:45:58 |       1 |
-        +---------------------+---------+
-        | 2023-04-24T00:35:58 |       2 |
-        +---------------------+---------+
-        | 2023-04-24T00:36:28 |       1 |
-        +---------------------+---------+
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='2min')
-
-        +------------------+---------+
-        | timestamp        |   ERROR |
-        +==================+=========+
-        | 2023-04-23T23:46 |       1 |
-        +------------------+---------+
-        | 2023-04-24T00:34 |       1 |
-        +------------------+---------+
-        | 2023-04-24T00:36 |       2 |
-        +------------------+---------+
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='3h')
-
-        +------------------+---------+
-        | timestamp        |   ERROR |
-        +==================+=========+
-        | 2023-04-23T21:00 |       1 |
-        +------------------+---------+
-        | 2023-04-24T00:00 |       3 |
-        +------------------+---------+
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='4d')
-
-        +-------------+---------+
-        | timestamp   |   ERROR |
-        +=============+=========+
-        | 2023-04-20  |       1 |
-        +-------------+---------+
-        | 2023-04-24  |       3 |
-        +-------------+---------+
-        
     """
     frequencies = {}
-    anchor = 0
+    anchor = 0  
     categories_set = set()
+    object_list = []
     for obj in objects_stream:
-        expanded_objects = [obj] if object_expander is None else object_expander(obj)
-        for expanded_object in expanded_objects:
-            if objects_filter is not None:
-                if not objects_filter(expanded_object):
-                    continue
+        object_list += [obj] if object_expander is None else object_expander(obj)
+    
+    object_list = sorted(object_list, key=timestamp_function)
 
+    for obj in object_list:
+        if objects_filter is not None:
+            if not objects_filter(obj):
+                continue
+
+        if not zero_anchor:
             if anchor == 0:
-                anchor = timestamp_rounded_down_anchor(timestamp_function(expanded_object), aggregation_level)
-
-            if not categories:
-                epoch = timestamp_aggregation_key(anchor, timestamp_function(expanded_object), aggregation_level)
-                category = categorizer(expanded_object)
-                categories_set.add(category)
-                if epoch not in frequencies:
-                    frequencies[epoch] = {category: 1}
-                elif category not in frequencies[epoch]:
-                    frequencies[epoch][category] = 1
-                else:
-                    frequencies[epoch][category] += 1
+                anchor = timestamp_rounded_down_anchor(timestamp_function(obj),aggregation_level)
+            if gap_mode == 1 and timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level) != anchor:
+                anchor = timestamp_rounded_down_anchor(timestamp_function(obj),aggregation_level)
+        if not categories:
+            epoch = timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
+            category = categorizer(obj)
+            categories_set.add(category)
+            if epoch not in frequencies:
+                frequencies[epoch] = {category: 1}
+            elif category not in frequencies[epoch]:
+                frequencies[epoch][category] = 1
             else:
-                for i in range(len(categories)):
-                    if categorizer(expanded_object) == categories[i]:
-                        epoch = timestamp_aggregation_key(
-                            anchor, timestamp_function(expanded_object), aggregation_level
-                        )
-                        if epoch not in frequencies:
-                            frequencies[epoch] = [0] * len(categories)
-                        frequencies[epoch][i] += 1
+                frequencies[epoch][category] += 1
+        else:
+            for i in range(len(categories)):
+                if categorizer(obj) == categories[i]:
+                    epoch = timestamp_aggregation_key(
+                        anchor, timestamp_function(obj), aggregation_level
+                    )
+                    if epoch not in frequencies:
+                        frequencies[epoch] = [0] * len(categories)
+                    frequencies[epoch][i] += 1
 
-    header = ["timestamp"]
+    header = ["timestamp_start", "timestamp_end"]
     if categories:
         header.extend(categories)
     else:
@@ -254,8 +183,21 @@ def get_objects_frequencies2(
 
     results = [header]
     timestamps = list(sorted(frequencies.keys()))
+    
+    if gap_mode == 3:
+        last_timestamp = timestamps[0]
+        timestamps_with_zeros = [timestamps[0]]
+        for timestamp in timestamps[1:]:
+            for zero_timestamp in range(last_timestamp+time_str_to_seconds(aggregation_level),timestamp,time_str_to_seconds(aggregation_level)):
+                timestamps_with_zeros.append(zero_timestamp)
+                frequencies[zero_timestamp] = []
+            timestamps_with_zeros.append(timestamp)
+            last_timestamp = timestamp
+        timestamps = timestamps_with_zeros
     for timestamp in timestamps:
-        line = [round_timestamp_string_aggregation(timestamp, aggregation_level)]
+        st_string = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        et_string = datetime.fromtimestamp(timestamp+time_str_to_seconds(aggregation_level), tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        line = [st_string, et_string]
         if categories:
             line.extend(frequencies[timestamp])
         else:

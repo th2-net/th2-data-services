@@ -34,7 +34,7 @@ def extract_timestamp(timestamp_element: Dict) -> str:
 
 @deprecated("Use `extract_timestamp` instead")
 def extract_time_string(timestamp_element):
-    return extract_timestamp(timestamp_element)
+    return extract_timestamp(timestamp_element) 
 
 
 # TODO - to be honest, the name of the function is difficult
@@ -226,3 +226,51 @@ def round_timestamp_string_aggregation(timestamp: int, aggregation_level: str = 
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%d")
 
     raise KeyError(f"Invalid aggregation level")
+
+
+def time_str_to_seconds(time_str: str):
+    if time_str == "seconds":
+        return 1
+
+    if time_str == "minutes":
+        return 60
+    
+    if time_str == "hours":
+        return 3600
+
+    if time_str == "days":
+        return 86400
+    
+    if time_str.endswith("sec"):
+        num = time_str.split("sec")[0]
+        return int(num)
+
+    elif time_str.endswith("s"):
+        num = time_str.split("s")[0]
+        return int(num)
+
+    elif time_str.endswith("min"):
+        num = time_str.split("min")[0]
+        return int(num) * 60
+
+    elif time_str.endswith("m"):
+        num = time_str.split("m")[0]
+        return int(num) * 60
+
+    elif time_str.endswith("hour"):
+        num = time_str.split("hour")[0]
+        return int(num) * 3600
+
+    elif time_str.endswith("h"):
+        num = time_str.split("h")[0]
+        return int(num) * 3600
+
+    elif time_str.endswith("day"):
+        num = time_str.split("day")[0]
+        return int(num) * 3600 * 24
+
+    elif time_str.endswith("d"):
+        num = time_str.split("d")[0]
+        return int(num) * 3600 * 24
+
+    raise KeyError(f"Invalid time string")
