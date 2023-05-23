@@ -34,7 +34,7 @@ def extract_timestamp(timestamp_element: Dict) -> str:
 
 @deprecated("Use `extract_timestamp` instead")
 def extract_time_string(timestamp_element):
-    return extract_timestamp(timestamp_element) 
+    return extract_timestamp(timestamp_element)
 
 
 # TODO - to be honest, the name of the function is difficult
@@ -161,7 +161,18 @@ def timestamp_aggregation_key(
 
     return global_anchor_timestamp + interval * ((timestamp - global_anchor_timestamp) // interval)
 
-def timestamp_rounded_down_anchor(global_anchor_timestamp: int, aggregation_level: str = "seconds"): 
+
+def timestamp_rounded_down(timestamp: int, aggregation_level: str = "seconds"):
+    """Extracts timestamp rounded down to aggeegation level type.
+
+    Args:
+        timestamp: Timestamp in epoch seconds
+        aggregation_level: String of aggregation level like: "5s", "2d", "3m", "hours"
+
+    Returns:
+        Rounded down timestamp to aggregation level, for example: If timestamp is equivalent to 2023-04-05T23:12:15 and aggregation level is "5d"
+        function will return timestamp equivalent to 2023-04-05
+    """
     dynamic_aggr_level = 1
     aggregation_levels = {
         "seconds": 1,
@@ -198,27 +209,36 @@ def timestamp_rounded_down_anchor(global_anchor_timestamp: int, aggregation_leve
     except KeyError:
         raise KeyError(f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}")
     print()
-    return (global_anchor_timestamp//dynamic_aggr_level)*dynamic_aggr_level
+    return (timestamp // dynamic_aggr_level) * dynamic_aggr_level
 
 
 def round_timestamp_string_aggregation(timestamp: int, aggregation_level: str = "seconds"):
+    """Returns timestamp string rounded down to aggeegation level type.
+
+    Args:
+        timestamp: Timestamp in epoch seconds
+        aggregation_level: String of aggregation level like: "5s", "2d", "3m", "hours"
+
+    Returns:
+        Rounded down timestamp string to aggregation level, for example: If timestamp is equivalent to 2023-04-05T23:12:15 and aggregation level is "5d"
+        function will return string 2023-04-05
+    """
     # First check full strings to ensure .endswith("s") doesn't catch it.
     if aggregation_level == "seconds":
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
 
     if aggregation_level == "minutes" or aggregation_level == "hours":
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M")
-    
+
     if aggregation_level == "days":
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%d")
-
 
     if aggregation_level.endswith("sec") or aggregation_level.endswith("s"):
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
 
     if aggregation_level.endswith("min") or aggregation_level.endswith("m"):
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M")
-    
+
     if aggregation_level.endswith("hour") or aggregation_level.endswith("h"):
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M")
 
@@ -229,18 +249,26 @@ def round_timestamp_string_aggregation(timestamp: int, aggregation_level: str = 
 
 
 def time_str_to_seconds(time_str: str):
+    """Returns the amount of seconds in aggregation level.
+
+    Args:
+        time_str: Aggregation level string like: "5s", "2d", "3m", "hours"
+
+    Returns:
+        Number of seconds in string, for example: "5s" returns 5, "3m" returns 180 and etc.
+    """
     if time_str == "seconds":
         return 1
 
     if time_str == "minutes":
         return 60
-    
+
     if time_str == "hours":
         return 3600
 
     if time_str == "days":
         return 86400
-    
+
     if time_str.endswith("sec"):
         num = time_str.split("sec")[0]
         return int(num)

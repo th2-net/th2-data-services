@@ -8,85 +8,6 @@ from th2_data_services.config import options
 
 Th2Message = dict
 
-'''
-    Example:
-        msgs = [
-            {
-                "timestamp":{"epochSecond":1682296588}, # 2023-04-24T00:36:28
-                "messageType": "ERROR"
-            },
-            {
-                "timestamp":{"epochSecond":1682296587}, # 2023-04-24T00:36:27
-                "messageType": "ERROR"
-            },
-            {
-                "timestamp":{"epochSecond":1682293587}, # 2023-04-23T23:46:27
-                "messageType": "ERROR"
-            },
-            {
-                "timestamp":{"epochSecond":1682296559}, # 2023-04-24T00:35:59
-                "messageType": "ERROR"
-            }
-        ]
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='5sec')
-
-        +---------------------+---------+
-        | timestamp           |   ERROR |
-        +=====================+=========+
-        | 2023-04-23T23:46:23 |       1 |
-        +---------------------+---------+
-        | 2023-04-24T00:35:58 |       1 |
-        +---------------------+---------+
-        | 2023-04-24T00:36:23 |       1 |
-        +---------------------+---------+
-        | 2023-04-24T00:36:28 |       1 |
-        +---------------------+---------+
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='30s')
-
-        +---------------------+---------+
-        | timestamp           |   ERROR |
-        +=====================+=========+
-        | 2023-04-23T23:45:58 |       1 |
-        +---------------------+---------+
-        | 2023-04-24T00:35:58 |       2 |
-        +---------------------+---------+
-        | 2023-04-24T00:36:28 |       1 |
-        +---------------------+---------+
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='2min')
-
-        +------------------+---------+
-        | timestamp        |   ERROR |
-        +==================+=========+
-        | 2023-04-23T23:46 |       1 |
-        +------------------+---------+
-        | 2023-04-24T00:34 |       1 |
-        +------------------+---------+
-        | 2023-04-24T00:36 |       2 |
-        +------------------+---------+
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='3h')
-
-        +------------------+---------+
-        | timestamp        |   ERROR |
-        +==================+=========+
-        | 2023-04-23T21:00 |       1 |
-        +------------------+---------+
-        | 2023-04-24T00:00 |       3 |
-        +------------------+---------+
-
-        table = message_utils.frequencies.get_category_frequencies(msgs,[],lambda a:a['messageType'],aggregation_level='4d')
-
-        +-------------+---------+
-        | timestamp   |   ERROR |
-        +=============+=========+
-        | 2023-04-20  |       1 |
-        +-------------+---------+
-        | 2023-04-24  |       3 |
-        +-------------+---------+
-'''
 # NOT STREAMABLE
 def get_category_frequencies(
     messages: Iterable[Th2Message],
@@ -97,6 +18,22 @@ def get_category_frequencies(
     gap_mode: int = 1,
     zero_anchor: bool = False,
 ) -> FrequencyCategoryTable:  # noqa
+    """Returns message frequencies based on categorizer.
+
+    Returns timestamps in UTC format.
+
+    Args:
+        messages: Messages stored in any iterable
+        categories: Categories list
+        categorizer: Categorizer function
+        aggregation_level: Aggregation level
+        filter: Message filter function
+        gap_mode: 1 - Every range starts with actual message timestamp, 2 - Ranges are split equally, 3 - Same as 2, but filled with empty ranges in between
+        zero_anchor: If False anchor used is first timestamp from message, if True anchor is 0
+
+    Returns:
+        List[List]
+    """
     return misc_utils.get_objects_frequencies2(
         messages,
         categories,
@@ -106,6 +43,6 @@ def get_category_frequencies(
         aggregation_level=aggregation_level,
         object_expander=expand_message,
         objects_filter=filter_,
-        gap_mode = gap_mode,
-        zero_anchor = zero_anchor,
+        gap_mode=gap_mode,
+        zero_anchor=zero_anchor,
     )

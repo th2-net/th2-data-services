@@ -21,7 +21,12 @@ from th2_data_services.utils._types import Th2Event
 
 # TODO - we have special converters for it in ds-2.0 (ProtobufTimestampConverter)
 from th2_data_services.utils.aggregation_classes import CategoryFrequencies, FrequencyCategoryTable
-from th2_data_services.utils.time import timestamp_aggregation_key, timestamp_rounded_down_anchor, round_timestamp_string_aggregation, time_str_to_seconds
+from th2_data_services.utils.time import (
+    timestamp_aggregation_key,
+    timestamp_rounded_down_anchor,
+    time_str_to_seconds,
+    round_timestamp_string_aggregation,
+)
 
 
 # TODO - we have get_objects_frequencies and get_objects_frequencies2 -- we need to unify it
@@ -132,17 +137,19 @@ def get_objects_frequencies2(
         aggregation_level: Aggregation level
         object_expander: Object expander function
         objects_filter: Object filter function
+        gap_mode: 1 - Every range starts with actual message timestamp, 2 - Ranges are split equally, 3 - Same as 2, but filled with empty ranges in between
+        zero_anchor: If False anchor used is first timestamp from message, if True anchor is 0
 
     Returns:
         List[List]
     """
     frequencies = {}
-    anchor = 0  
+    anchor = 0
     categories_set = set()
     object_list = []
     for obj in objects_stream:
         object_list += [obj] if object_expander is None else object_expander(obj)
-    
+
     object_list = sorted(object_list, key=timestamp_function)
 
     for obj in object_list:
@@ -152,9 +159,12 @@ def get_objects_frequencies2(
 
         if not zero_anchor:
             if anchor == 0:
-                anchor = timestamp_rounded_down_anchor(timestamp_function(obj),aggregation_level)
-            if gap_mode == 1 and timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level) != anchor:
-                anchor = timestamp_rounded_down_anchor(timestamp_function(obj),aggregation_level)
+                anchor = timestamp_rounded_down_anchor(timestamp_function(obj), aggregation_level)
+            if (
+                gap_mode == 1
+                and timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level) != anchor
+            ):
+                anchor = timestamp_rounded_down_anchor(timestamp_function(obj), aggregation_level)
         if not categories:
             epoch = timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
             category = categorizer(obj)
@@ -168,9 +178,7 @@ def get_objects_frequencies2(
         else:
             for i in range(len(categories)):
                 if categorizer(obj) == categories[i]:
-                    epoch = timestamp_aggregation_key(
-                        anchor, timestamp_function(obj), aggregation_level
-                    )
+                    epoch = timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
                     if epoch not in frequencies:
                         frequencies[epoch] = [0] * len(categories)
                     frequencies[epoch][i] += 1
@@ -183,20 +191,26 @@ def get_objects_frequencies2(
 
     results = [header]
     timestamps = list(sorted(frequencies.keys()))
-    
+
     if gap_mode == 3:
         last_timestamp = timestamps[0]
         timestamps_with_zeros = [timestamps[0]]
         for timestamp in timestamps[1:]:
-            for zero_timestamp in range(last_timestamp+time_str_to_seconds(aggregation_level),timestamp,time_str_to_seconds(aggregation_level)):
+            for zero_timestamp in range(
+                last_timestamp + time_str_to_seconds(aggregation_level),
+                timestamp,
+                time_str_to_seconds(aggregation_level),
+            ):
                 timestamps_with_zeros.append(zero_timestamp)
                 frequencies[zero_timestamp] = []
             timestamps_with_zeros.append(timestamp)
             last_timestamp = timestamp
         timestamps = timestamps_with_zeros
     for timestamp in timestamps:
-        st_string = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
-        et_string = datetime.fromtimestamp(timestamp+time_str_to_seconds(aggregation_level), tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        st_string = round_timestamp_string_aggregation(timestamp, aggregation_level)
+        et_string = round_timestamp_string_aggregation(
+            timestamp + time_str_to_seconds(aggregation_level), aggregation_level
+        )
         line = [st_string, et_string]
         if categories:
             line.extend(frequencies[timestamp])
@@ -348,14 +362,17 @@ def get_category_totals_p(obj: Dict, categorizer: Callable, obj_filter: Callable
     return None
 
 
-def get_category_examples_p(obj: Dict, categorizer: Callable, obj_filter: Callable, cat_filter: Callable,
-                            max_qty: int, result) -> Any:
+def get_category_examples_p(
+    obj: Dict, categorizer: Callable, obj_filter: Callable, cat_filter: Callable, max_qty: int, result
+) -> Any:
     if obj is None:
-        return get_category_examples_p, {"categorizer": categorizer,
-                                         "obj_filter": obj_filter,
-                                         "cat_filter": cat_filter,
-                                         "max_qty": max_qty,
-                                         "result": result}
+        return get_category_examples_p, {
+            "categorizer": categorizer,
+            "obj_filter": obj_filter,
+            "cat_filter": cat_filter,
+            "max_qty": max_qty,
+            "result": result,
+        }
     if obj_filter is not None and not obj_filter(obj):
         return None
 
