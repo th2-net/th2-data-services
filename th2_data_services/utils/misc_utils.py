@@ -23,7 +23,7 @@ from th2_data_services.utils._types import Th2Event
 from th2_data_services.utils.aggregation_classes import CategoryFrequencies, FrequencyCategoryTable
 from th2_data_services.utils.time import (
     timestamp_aggregation_key,
-    timestamp_rounded_down_anchor,
+    timestamp_rounded_down,
     time_str_to_seconds,
     round_timestamp_string_aggregation,
 )
@@ -159,12 +159,12 @@ def get_objects_frequencies2(
 
         if not zero_anchor:
             if anchor == 0:
-                anchor = timestamp_rounded_down_anchor(timestamp_function(obj), aggregation_level)
+                anchor = timestamp_rounded_down(timestamp_function(obj), aggregation_level)
             if (
                 gap_mode == 1
                 and timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level) != anchor
             ):
-                anchor = timestamp_rounded_down_anchor(timestamp_function(obj), aggregation_level)
+                anchor = timestamp_rounded_down(timestamp_function(obj), aggregation_level)
         if not categories:
             epoch = timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
             category = categorizer(obj)
@@ -364,7 +364,8 @@ def get_category_totals_p(obj: Dict, categorizer: Callable, obj_filter: Callable
 
 def get_category_examples_p(
     obj: Dict, categorizer: Callable, obj_filter: Callable, cat_filter: Callable, max_qty: int, result
-) -> Any:
+) -> Any:  # noqa
+    # TODO - add docstring
     if obj is None:
         return get_category_examples_p, {
             "categorizer": categorizer,
@@ -468,7 +469,8 @@ def create_qty_distribution(categories: Dict, category_filter: Callable) -> Dict
     return result
 
 
-def calc_percentile_in_measurement_dict(d):
+def calc_percentile_in_measurement_dict(d):  # noqa
+    # TODO - add docstring
     for item in d.values():
         distr = item["distr"]
         total = item["count"]

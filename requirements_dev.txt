@@ -7,3 +7,4 @@ lazydocs
 pydocstyle
 autoflake
 importlib_metadata
+th2-data-services-lwdp==2.0.2.0  # To test utils. Utils imports resolvers

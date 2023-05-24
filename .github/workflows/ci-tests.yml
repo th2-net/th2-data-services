@@ -29,6 +29,7 @@ jobs:
           pip install --pre -e . -q
           pip install pytest
           pip install pytest-xdist
+          pip install th2-data-services-lwdp==2.0.2.0  # To test utils. Utils imports resolvers
 
       - name: unit tests
         run: |
