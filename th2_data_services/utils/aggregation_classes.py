@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Dict
 
 from tabulate import tabulate
 
@@ -45,13 +45,13 @@ class EventStatTotalValue:
 #   So not only value = Cnt
 #   But also status, and everything else
 #   If we can such values, we can sort, and analyse them!
-class CategoryTotal(dict[str, int], AggrClassBase):
+class CategoryTotal(Dict[str, int], AggrClassBase):
     # service fields
     # TODO - configure fields order?
 
     # TODO
     #   1. now it sorts by count. What about status or category name?
-    def __init__(self, val: dict[str, int]):
+    def __init__(self, val: Dict[str, int]):
         """TODO - add.
 
         Args:

@@ -250,10 +250,14 @@ class PerfectTable:
         """Returns new table. Not update current.
 
         Args:
-            condition:
+            condition: any function with one argument Row. So you apply some filter to every Row.
+                Row is the Row class.
 
         Returns:
             new Table
+
+        Example:
+            tbl.filter(lambda row: row['column_ABC'] == 'my string')
 
         """
         new = self.__class__(header=self.header)
