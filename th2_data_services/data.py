@@ -711,6 +711,7 @@ class Data(Generic[DataIterValues]):
 
         data_obj = cls([], cache=True)
         data_obj._set_custom_cache_destination(filename=filename)
+        data_obj.update_metadata({"source_file": filename})
         return data_obj
 
     @classmethod
@@ -731,7 +732,33 @@ class Data(Generic[DataIterValues]):
         if not Path(filename).resolve().exists():
             raise FileNotFoundError(f"{filename} doesn't exist")
 
-        return cls(iter_json_file(filename, buffer_limit))
+        data = cls(iter_json_file(filename, buffer_limit))
+        data.update_metadata({"source_file": filename})
+        return data
+
+    @classmethod
+    def from_any_file(cls, filename, mode="r") -> "Data":
+        """Creates Data object from any file with provided name.
+
+        It will just iterate file and return data line be line.
+
+        Args:
+            filename: Name or path to the file.
+            mode: Read mode of open function.
+
+        Returns:
+            Data: Data object.
+
+        Raises:
+            FileNotFoundError if provided file does not exist.
+
+        """
+        if not Path(filename).resolve().exists():
+            raise FileNotFoundError(f"{filename} doesn't exist")
+
+        data = cls(_iter_any_file(filename, mode))
+        data.update_metadata({"source_file": filename})
+        return data
 
     def _set_metadata(self, metadata: Dict) -> None:
         """Set metadata of object to metadata argument.
@@ -793,3 +820,26 @@ class Data(Generic[DataIterValues]):
                 self.__metadata[k] = v
 
         return self
+
+
+def _iter_any_file(filename, mode="r"):
+    """Returns the function that returns generators."""
+
+    def iter_any_file_logic():
+        with open(filename, mode) as data:
+            while True:
+                try:
+                    v = data.readline()
+                    if not v:
+                        break
+
+                    yield v
+                except Exception:
+                    print(f"Error string: {v}")
+                    raise
+
+    def iter_any_file_wrapper(*args, **kwargs):
+        """Wrapper function that allows passing arguments to the generator."""
+        return iter_any_file_logic(*args, **kwargs)
+
+    return iter_any_file_wrapper
