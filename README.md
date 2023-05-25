@@ -402,10 +402,11 @@ tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 
 tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
 
 ```
+<!-- end get_started_example.py -->
 
 ## 2.3. Short theory
 
-The library provides tools for handling stream data. Whats a stream? It's a sequence of elements from a source that
+The library provides tools for handling stream data. What's a stream? It's a sequence of elements from a source that
 supports aggregate operations.
 
 ### Terms
