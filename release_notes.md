@@ -475,6 +475,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
+2. [TH2-4917] Readme duplicates removed.
 
 ## Improvements
 1. Added vulnerabilities scanning
