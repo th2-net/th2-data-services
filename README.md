@@ -114,7 +114,6 @@ This example shows basic usage of library's features.
 from typing import Tuple, List, Optional, Generator
 from datetime import datetime
 
-
 from th2_data_services.data import Data
 from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
 from th2_data_services.interfaces import IDataSource
@@ -393,14 +392,6 @@ etc = ParentEventTreeCollection(driver)
 etc.build(events)
 
 etc.show()
-
-# [3.7] Build a custom EventTree
-# To create an EventTree object you will need name and id, data is optional.
-tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
-
-# To add new node use append_event. parent_id is necessary, data is optional.
-tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
-
 ```
 <!-- end get_started_example.py -->
 
