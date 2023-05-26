@@ -1,7 +1,6 @@
 from typing import Tuple, List, Optional, Generator
 from datetime import datetime
 
-
 from th2_data_services.data import Data
 from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
 from th2_data_services.interfaces import IDataSource
