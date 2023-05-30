@@ -14,7 +14,7 @@ repos:
         name: black
         entry: black
         types: [ python ]
-        args: [ --line-length=120 ]
+        args: [ --line-length=100 ]
 
   - repo: https://github.com/PyCQA/autoflake
     rev: v1.7.7
