@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 import copy
+import csv
 import gc
 import pickle
 import pprint
@@ -760,6 +761,35 @@ class Data(Generic[DataIterValues]):
         data.update_metadata({"source_file": filename})
         return data
 
+    @classmethod
+    def from_csv(cls, filename, header=None, header_first_line=False, mode="r", delimiter=",") -> "Data":
+        """Creates Data object from any file with provided name.
+
+        It will iterate the CSV file as if you were doing it with CSV module.
+
+        Args:
+            filename: Name or path to the file.
+            header: If provided header for csv, Data object will yield Dict[str].
+            header_first_line: If the first line of the csv file is header, it'll take header from
+                                the first line. Data object will yield Dict[str].
+                                `header` argument is not required in this case.
+            mode: Read mode of open function.
+            delimiter: CSV file delimiter.
+
+        Returns:
+            Data: Data object.
+
+        Raises:
+            FileNotFoundError if provided file does not exist.
+
+        """
+        if not Path(filename).resolve().exists():
+            raise FileNotFoundError(f"{filename} doesn't exist")
+
+        data = cls(_iter_csv(filename, header, header_first_line, mode, delimiter))
+        data.update_metadata({"source_file": filename})
+        return data
+
     def _set_metadata(self, metadata: Dict) -> None:
         """Set metadata of object to metadata argument.
 
@@ -843,3 +873,25 @@ def _iter_any_file(filename, mode="r"):
         return iter_any_file_logic(*args, **kwargs)
 
     return iter_any_file_wrapper
+
+
+def _iter_csv(filename, header=None, header_first_line=False, mode="r", delimiter=","):
+    """Returns the function that returns generators."""
+
+    def iter_logic():
+        with open(filename, mode) as data:
+            if header is not None:
+                reader = csv.DictReader(data, fieldnames=header)
+            elif header_first_line:
+                reader = csv.DictReader(data)
+            else:
+                reader = csv.reader(data, delimiter=delimiter)
+
+            for row in reader:
+                yield (row,)  # Because if provide just a list it will iterate it.
+
+    def iter_wrapper(*args, **kwargs):
+        """Wrapper function that allows passing arguments to the generator."""
+        return iter_logic(*args, **kwargs)
+
+    return iter_wrapper
