@@ -472,6 +472,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    - pip install th2-data-services[utils-rpt-viewer5]
 15. [TH2-4881] Data.from_json method was added.
 16. [TH2-4919] Data.from_any_file method was added.
+17. [TH2-4928] Data.from_csv method was added.
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
