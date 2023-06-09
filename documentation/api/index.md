@@ -4,56 +4,56 @@
 
 ## Modules
 
-- [`th2_data_services.config`](./th2_data_services.config.md#module-th2data_servicesconfig)
-- [`th2_data_services.config.config`](./th2_data_services.config.config.md#module-th2data_servicesconfigconfig)
-- [`th2_data_services.data`](./th2_data_services.data.md#module-th2data_servicesdata)
-- [`th2_data_services.event_tree`](./th2_data_services.event_tree.md#module-th2data_servicesevent_tree)
-- [`th2_data_services.event_tree.etc_driver`](./th2_data_services.event_tree.etc_driver.md#module-th2data_servicesevent_treeetc_driver)
-- [`th2_data_services.event_tree.event_tree`](./th2_data_services.event_tree.event_tree.md#module-th2data_servicesevent_treeevent_tree)
-- [`th2_data_services.event_tree.event_tree_collection`](./th2_data_services.event_tree.event_tree_collection.md#module-th2data_servicesevent_treeevent_tree_collection)
-- [`th2_data_services.event_tree.exceptions`](./th2_data_services.event_tree.exceptions.md#module-th2data_servicesevent_treeexceptions)
-- [`th2_data_services.event_tree.parent_event_tree_collection`](./th2_data_services.event_tree.parent_event_tree_collection.md#module-th2data_servicesevent_treeparent_event_tree_collection)
-- [`th2_data_services.exceptions`](./th2_data_services.exceptions.md#module-th2data_servicesexceptions)
-- [`th2_data_services.interfaces`](./th2_data_services.interfaces.md#module-th2data_servicesinterfaces)
-- [`th2_data_services.interfaces.adapter`](./th2_data_services.interfaces.adapter.md#module-th2data_servicesinterfacesadapter)
-- [`th2_data_services.interfaces.command`](./th2_data_services.interfaces.command.md#module-th2data_servicesinterfacescommand)
-- [`th2_data_services.interfaces.data_source`](./th2_data_services.interfaces.data_source.md#module-th2data_servicesinterfacesdata_source)
-- [`th2_data_services.interfaces.source_api`](./th2_data_services.interfaces.source_api.md#module-th2data_servicesinterfacessource_api)
-- [`th2_data_services.interfaces.struct`](./th2_data_services.interfaces.struct.md#module-th2data_servicesinterfacesstruct)
-- [`th2_data_services.interfaces.stub_builder`](./th2_data_services.interfaces.stub_builder.md#module-th2data_servicesinterfacesstub_builder)
-- [`th2_data_services.interfaces.utils`](./th2_data_services.interfaces.utils.md#module-th2data_servicesinterfacesutils)
-- [`th2_data_services.interfaces.utils.converter`](./th2_data_services.interfaces.utils.converter.md#module-th2data_servicesinterfacesutilsconverter)
-- [`th2_data_services.interfaces.utils.resolver`](./th2_data_services.interfaces.utils.resolver.md#module-th2data_servicesinterfacesutilsresolver)
+- [`config`](./config.md#module-config)
+- [`config.config`](./config.config.md#module-configconfig)
+- [`data`](./data.md#module-data)
+- [`event_tree`](./event_tree.md#module-event_tree)
+- [`event_tree.etc_driver`](./event_tree.etc_driver.md#module-event_treeetc_driver)
+- [`event_tree.event_tree`](./event_tree.event_tree.md#module-event_treeevent_tree)
+- [`event_tree.event_tree_collection`](./event_tree.event_tree_collection.md#module-event_treeevent_tree_collection)
+- [`event_tree.exceptions`](./event_tree.exceptions.md#module-event_treeexceptions)
+- [`event_tree.parent_event_tree_collection`](./event_tree.parent_event_tree_collection.md#module-event_treeparent_event_tree_collection)
+- [`exceptions`](./exceptions.md#module-exceptions)
+- [`interfaces`](./interfaces.md#module-interfaces)
+- [`interfaces.adapter`](./interfaces.adapter.md#module-interfacesadapter)
+- [`interfaces.command`](./interfaces.command.md#module-interfacescommand)
+- [`interfaces.data_source`](./interfaces.data_source.md#module-interfacesdata_source)
+- [`interfaces.source_api`](./interfaces.source_api.md#module-interfacessource_api)
+- [`interfaces.struct`](./interfaces.struct.md#module-interfacesstruct)
+- [`interfaces.stub_builder`](./interfaces.stub_builder.md#module-interfacesstub_builder)
+- [`interfaces.utils`](./interfaces.utils.md#module-interfacesutils)
+- [`interfaces.utils.converter`](./interfaces.utils.converter.md#module-interfacesutilsconverter)
+- [`interfaces.utils.resolver`](./interfaces.utils.resolver.md#module-interfacesutilsresolver)
 
 ## Classes
 
-- [`config.TH2Config`](./th2_data_services.config.config.md#class-th2config)
-- [`data.Data`](./th2_data_services.data.md#class-data): A wrapper for data/data_stream.
-- [`etc_driver.IETCDriver`](./th2_data_services.event_tree.etc_driver.md#class-ietcdriver)
-- [`event_tree.EventTree`](./th2_data_services.event_tree.event_tree.md#class-eventtree): EventTree is a tree-based data structure of events.
-- [`event_tree_collection.EventTreeCollection`](./th2_data_services.event_tree.event_tree_collection.md#class-eventtreecollection): EventTreeCollection objective is building 'EventsTree's and storing them.
-- [`exceptions.EventAlreadyExist`](./th2_data_services.event_tree.exceptions.md#class-eventalreadyexist)
-- [`exceptions.EventIdNotInTree`](./th2_data_services.event_tree.exceptions.md#class-eventidnotintree)
-- [`exceptions.EventRootExist`](./th2_data_services.event_tree.exceptions.md#class-eventrootexist)
-- [`exceptions.FieldIsNotExist`](./th2_data_services.event_tree.exceptions.md#class-fieldisnotexist)
-- [`exceptions.TreeLoop`](./th2_data_services.event_tree.exceptions.md#class-treeloop)
-- [`parent_event_tree_collection.ParentEventTreeCollection`](./th2_data_services.event_tree.parent_event_tree_collection.md#class-parenteventtreecollection): ParentEventTreeCollections is a class like an EventsTreeCollections.
-- [`exceptions.CommandError`](./th2_data_services.exceptions.md#class-commanderror): Exception raised for errors in the command.
-- [`exceptions.EventNotFound`](./th2_data_services.exceptions.md#class-eventnotfound)
-- [`exceptions.MessageNotFound`](./th2_data_services.exceptions.md#class-messagenotfound)
-- [`adapter.IRecordAdapter`](./th2_data_services.interfaces.adapter.md#class-irecordadapter): Interface of Adapter for record.
-- [`adapter.IStreamAdapter`](./th2_data_services.interfaces.adapter.md#class-istreamadapter): Interface of Adapter for streams.
-- [`command.ICommand`](./th2_data_services.interfaces.command.md#class-icommand): High level interface for Command.
-- [`data_source.IDataSource`](./th2_data_services.interfaces.data_source.md#class-idatasource)
-- [`source_api.ISourceAPI`](./th2_data_services.interfaces.source_api.md#class-isourceapi): High level interface for Source API.
-- [`struct.IEventStruct`](./th2_data_services.interfaces.struct.md#class-ieventstruct): Just to mark Event Struct class.
-- [`struct.IMessageStruct`](./th2_data_services.interfaces.struct.md#class-imessagestruct): Just to mark Message Struct class.
-- [`stub_builder.IEventStub`](./th2_data_services.interfaces.stub_builder.md#class-ieventstub): Just to mark Event Stub class.
-- [`stub_builder.IMessageStub`](./th2_data_services.interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
-- [`stub_builder.IStub`](./th2_data_services.interfaces.stub_builder.md#class-istub)
-- [`converter.ITimestampConverter`](./th2_data_services.interfaces.utils.converter.md#class-itimestampconverter)
-- [`resolver.EventFieldsResolver`](./th2_data_services.interfaces.utils.resolver.md#class-eventfieldsresolver)
-- [`resolver.MessageFieldsResolver`](./th2_data_services.interfaces.utils.resolver.md#class-messagefieldsresolver)
+- [`config.TH2Config`](./config.config.md#class-th2config)
+- [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
+- [`etc_driver.IETCDriver`](./event_tree.etc_driver.md#class-ietcdriver)
+- [`event_tree.EventTree`](./event_tree.event_tree.md#class-eventtree): EventTree is a tree-based data structure of events.
+- [`event_tree_collection.EventTreeCollection`](./event_tree.event_tree_collection.md#class-eventtreecollection): EventTreeCollection objective is building 'EventsTree's and storing them.
+- [`exceptions.EventAlreadyExist`](./event_tree.exceptions.md#class-eventalreadyexist)
+- [`exceptions.EventIdNotInTree`](./event_tree.exceptions.md#class-eventidnotintree)
+- [`exceptions.EventRootExist`](./event_tree.exceptions.md#class-eventrootexist)
+- [`exceptions.FieldIsNotExist`](./event_tree.exceptions.md#class-fieldisnotexist)
+- [`exceptions.TreeLoop`](./event_tree.exceptions.md#class-treeloop)
+- [`parent_event_tree_collection.ParentEventTreeCollection`](./event_tree.parent_event_tree_collection.md#class-parenteventtreecollection): ParentEventTreeCollections is a class like an EventsTreeCollections.
+- [`exceptions.CommandError`](./exceptions.md#class-commanderror): Exception raised for errors in the command.
+- [`exceptions.EventNotFound`](./exceptions.md#class-eventnotfound)
+- [`exceptions.MessageNotFound`](./exceptions.md#class-messagenotfound)
+- [`adapter.IRecordAdapter`](./interfaces.adapter.md#class-irecordadapter): Interface of Adapter for record.
+- [`adapter.IStreamAdapter`](./interfaces.adapter.md#class-istreamadapter): Interface of Adapter for streams.
+- [`command.ICommand`](./interfaces.command.md#class-icommand): High level interface for Command.
+- [`data_source.IDataSource`](./interfaces.data_source.md#class-idatasource)
+- [`source_api.ISourceAPI`](./interfaces.source_api.md#class-isourceapi): High level interface for Source API.
+- [`struct.IEventStruct`](./interfaces.struct.md#class-ieventstruct): Just to mark Event Struct class.
+- [`struct.IMessageStruct`](./interfaces.struct.md#class-imessagestruct): Just to mark Message Struct class.
+- [`stub_builder.IEventStub`](./interfaces.stub_builder.md#class-ieventstub): Just to mark Event Stub class.
+- [`stub_builder.IMessageStub`](./interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
+- [`stub_builder.IStub`](./interfaces.stub_builder.md#class-istub)
+- [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
+- [`resolver.EventFieldsResolver`](./interfaces.utils.resolver.md#class-eventfieldsresolver)
+- [`resolver.MessageFieldsResolver`](./interfaces.utils.resolver.md#class-messagefieldsresolver)
 
 ## Functions
 
