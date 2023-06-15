@@ -56,7 +56,7 @@ def iter_json_gzip_file(filename, buffer_limit=250):
         with gzip.open(filename, "r") as data:
             while True:
                 try:
-                    v = data.readline()
+                    v = data.readline().decode('ascii')
                     if not v:
                         break
 
