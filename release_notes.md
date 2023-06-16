@@ -475,7 +475,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 17. [TH2-4928] Data.from_csv method was added.
 18. [TH2-4932] Data.to_json method was added.
 19. [TH2-4957] Added gzip option for Data.to_json method. 
-20. Added decompress_gzip_file method to utils.converters.
+20. [TH2-4957] Added decompress_gzip_file method to utils.converters.
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
