@@ -768,12 +768,13 @@ class Data(Generic[DataIterValues]):
         return data_obj
 
     @classmethod
-    def from_json(cls, filename, buffer_limit=250) -> "Data[dict]":
+    def from_json(cls, filename, buffer_limit=250, gzip=False) -> "Data[dict]":
         """Creates Data object from json file with provided name.
 
         Args:
             filename: Name or path to cache file.
             buffer_limit: If limit is 0 buffer will not be used. Number of messages in buffer before parsing.
+            gzip: Set to true if file is json file compressed using gzip.
 
         Returns:
             Data: Data object.
@@ -785,29 +786,10 @@ class Data(Generic[DataIterValues]):
         if not Path(filename).resolve().exists():
             raise FileNotFoundError(f"{filename} doesn't exist")
 
-        data = cls(iter_json_file(filename, buffer_limit))
-        data.update_metadata({"source_file": filename})
-        return data
-    
-    @classmethod
-    def from_json_gzip(cls, filename, buffer_limit=250) -> "Data[dict]":
-        """Creates Data object from json file with provided name.
-
-        Args:
-            filename: Name or path to cache file.
-            buffer_limit: If limit is 0 buffer will not be used. Number of messages in buffer before parsing.
-
-        Returns:
-            Data: Data object.
-
-        Raises:
-            FileNotFoundError if provided file does not exist.
-
-        """
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
-
-        data = cls(iter_json_gzip_file(filename, buffer_limit))
+        if gzip:
+            data = cls(iter_json_gzip_file(filename, buffer_limit))
+        else:
+            data = cls(iter_json_file(filename, buffer_limit))
         data.update_metadata({"source_file": filename})
         return data
 
