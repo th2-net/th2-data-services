@@ -13,6 +13,8 @@
 #  limitations under the License.
 from collections import namedtuple
 from datetime import datetime, timezone
+import shutil
+import gzip
 
 from th2_data_services.interfaces.utils.converter import ITimestampConverter
 
@@ -80,3 +82,9 @@ class ProtobufTimestampConverter(ITimestampConverter[dict]):
 
 
 Th2TimestampConverter = ProtobufTimestampConverter
+
+
+def decompress_gzip_file(input_filename, output_filename):
+    with gzip.open(input_filename, 'rb') as f_in:
+        with open(output_filename, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
