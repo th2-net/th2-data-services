@@ -42,7 +42,9 @@ def namedtuple_with_slice(name, args):  # noqa
         # `type(self)` can result in issues in case of multiple inheritance.
         # But shouldn't be an issue here.
         if isinstance(index, int):
-            value = super(type(self), self).__getitem__(index)  # Superclass for namedtuple is sequence
+            value = super(type(self), self).__getitem__(
+                index
+            )  # Superclass for namedtuple is sequence
         elif isinstance(index, slice):
             value = super(type(self), self).__getitem__(index)
             cls = namedtuple(name, new_args[index])
@@ -168,18 +170,22 @@ class PerfectTable:
         with open(path, "r") as f_obj:
             reader = csv.reader(f_obj, delimiter=",")
 
-            rows = tuple(row for row in reader)  # 'generator' object is not subscriptable  если генератор
+            rows = tuple(
+                row for row in reader
+            )  # 'generator' object is not subscriptable  если генератор
 
         self._headers = tuple(rows[0])
         self.row_class = self._create_row_class(self.header)
         x: list
         if strip:
-            self._rows = [self.row_class(*[v.strip() for v in x if isinstance(v, str)]) for x in rows[1:]]
+            self._rows = [
+                self.row_class(*[v.strip() for v in x if isinstance(v, str)]) for x in rows[1:]
+            ]
         else:
             self._rows = [self.row_class(*x) for x in rows[1:]]
 
-        # # TODO - Думаю стоит инициализировать это лениво, по требованию.
-        # #   запросили колонку, добавляем
+        # # TODO - I think it's worth initializing it lazily, on demand.
+        # #   It someone requested the column, we should add it at this time
         # self._columns = defaultdict(tuple)
         # for idx, name in enumerate(self._headers):
         #     self._columns[name] = tuple(row[idx] for row in self._rows[1:])
@@ -248,7 +254,8 @@ class PerfectTable:
         """
         if self.header and len(row) != len(self.header):
             raise ValueError(
-                "Row has incorrect number of values, " f"(actual) {len(row)}!={len(self.header)} (expected)"
+                "Row has incorrect number of values, "
+                f"(actual) {len(row)}!={len(self.header)} (expected)"
             )
         self._append_row(row)
 
