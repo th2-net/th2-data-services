@@ -188,6 +188,12 @@ class PerfectTable:
         for h in self._headers:
             setattr(self, h, self._columns[h])
 
+    def to_csv(self, path):
+        with open(path, "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(self._headers)
+            writer.writerows(self._rows)
+
     # @property
     # def path(self):
     #     """Returns the path to csv file."""
