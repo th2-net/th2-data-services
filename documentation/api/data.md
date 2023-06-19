@@ -165,7 +165,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L792"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L796"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_any_file`
 
@@ -226,7 +226,7 @@ Creates Data object from cache file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L816"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L820"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_csv`
 
@@ -272,7 +272,7 @@ It will iterate the CSV file as if you were doing it with CSV module.
 ### <kbd>classmethod</kbd> `from_json`
 
 ```python
-from_json(filename, buffer_limit=250) → Data[dict]
+from_json(filename, buffer_limit=250, gzip=False) → Data[dict]
 ```
 
 Creates Data object from json file with provided name. 
@@ -283,6 +283,7 @@ Creates Data object from json file with provided name.
  
  - <b>`filename`</b>:  Name or path to cache file. 
  - <b>`buffer_limit`</b>:  If limit is 0 buffer will not be used. Number of messages in buffer before parsing. 
+ - <b>`gzip`</b>:  Set to true if file is json file compressed using gzip. 
 
 
 
@@ -423,7 +424,7 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L925"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L929"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
@@ -449,7 +450,7 @@ Converts data to json format.
 
 ---
 
-<a href="../../th2_data_services/data.py#L875"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L879"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `update_metadata`
 
