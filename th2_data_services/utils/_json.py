@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 from typing import Generator
+import gzip
 
 import orjson as json
 from orjson import JSONDecodeError
@@ -44,6 +45,33 @@ def iter_json_file(filename, buffer_limit=250):
 
     return iter_json_file_wrapper
 
+
+def iter_json_gzip_file(filename, buffer_limit=250):
+    """Returns the function that returns generators."""
+
+    def iter_json_gzip_file_logic():
+        """Generator that reads and yields decoded JSON objects from a file."""
+        json_processor = BufferedJSONProcessor(buffer_limit)
+
+        with gzip.open(filename, "r") as data:
+            while True:
+                try:
+                    v = data.readline().decode('ascii')
+                    if not v:
+                        break
+
+                    yield from json_processor.decode(v)
+                except ValueError:
+                    print(len(json_processor.buffer))
+                    print(f"Error string: {v}")
+                    raise
+            yield from json_processor.fin()
+
+    def iter_json_gzip_file_wrapper(*args, **kwargs):
+        """Wrapper function that allows passing arguments to the generator."""
+        return iter_json_gzip_file_logic(*args, **kwargs)
+
+    return iter_json_gzip_file_wrapper
 
 class BufferedJSONProcessor:
     def __init__(self, buffer_limit: int = 250):
