@@ -191,8 +191,8 @@ def get_type_totals(events: Iterable[Th2Event]) -> CategoryTotal:
     """
     event_types = defaultdict(int)
     for event in events:
-        status = " [ok]" if event["successful"] else " [fail] "
-        event_type = event["eventType"] + status
+        status = " [ok]" if options.EVENT_FIELDS_RESOLVER.get_status(event) else " [fail] "
+        event_type = options.EVENT_FIELDS_RESOLVER.get_type(event) + status
         event_types[event_type] += 1
 
     return CategoryTotal(event_types)

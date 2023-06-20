@@ -74,7 +74,11 @@ def get_all_metric_combinations(metrics: Union[List[str], List[Category]]):
 
 
 class TotalCategoryCalculator:
-    def __init__(self, categories: List[Category], combinations: Union[List[Sequence[str]], List[Sequence[Category]]]):
+    def __init__(
+        self,
+        categories: List[Category],
+        combinations: Union[List[Sequence[str]], List[Sequence[Category]]],
+    ):
         """Calculates, aggregates to tables and prints categories combinations.
 
         This class allows you to calculate any metrics and their combinations in stream-like way.
@@ -86,6 +90,7 @@ class TotalCategoryCalculator:
         combinations: e.g. [(a,),(a,b)].  You can put metric objects or metrics names.
 
         """
+        assert isinstance(categories, list)
         self.metrics = categories
         self.combinations: List[Tuple[str]] = []
 
@@ -147,23 +152,34 @@ class TotalCategoryCalculator:
             self._counters[v].update([val_for_counter])
 
     def get_table(self, combination: CategoryCombination) -> TotalCategoryTable:
-        """Returns a PrettyTable class for certain combination.
+        """Returns a TotalCategoryTable class for certain combination.
 
         Args:
             combination: Union[Tuple[str], List[str]]
-            add_total: If True, adds total value in the last line.
+
+        Returns:
+            TotalCategoryTable
 
         """
+        orig_comb = combination
+        comb: Category
+        orig_columns_order = [comb.name for comb in orig_comb]
+        orig_columns_order.append(self.counter_field_name)
+
         combination = self._prepare_combination(combination)
 
         t = PrettyTable()
         t.field_names = [*combination, self.counter_field_name]
-        c = self._get_counter(combination)
+        counter = self._get_counter(combination)  # The object with calculated combinations.
 
-        for key, cnt in c.items():
+        for key, cnt in counter.items():
             t.add_row([*key, cnt])
 
-        return TotalCategoryTable(header=t.field_names, rows=t.rows).sort_by([self.counter_field_name], ascending=False)
+        return (
+            TotalCategoryTable(header=t.field_names, rows=t.rows)
+            .change_columns_order(orig_columns_order)
+            .sort_by([self.counter_field_name], ascending=False)
+        )
 
     def show(self):
         """Prints all tables.
