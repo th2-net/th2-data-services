@@ -8,3 +8,4 @@ tabulate
 prettytable  # Temporary required for summary
 deprecated
 orjson
+matplotlib
