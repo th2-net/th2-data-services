@@ -17,6 +17,7 @@ import shutil
 import gzip
 
 from th2_data_services.interfaces.utils.converter import ITimestampConverter
+from collections.abc import MutableMapping
 
 _DatetimeTuple = namedtuple("DatetimeTuple", "datetime mantissa")
 
@@ -36,10 +37,14 @@ class DatetimeStringConverter(ITimestampConverter[str]):
         try:
             # Handles "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ"
             dt_tuple = _DatetimeTuple(*datetime_string.rsplit("."))
-            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc)
+            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%dT%H:%M:%S").replace(
+                tzinfo=timezone.utc
+            )
         except TypeError:
             # Handles "yyyy-MM-ddTHH:mm:ssZ"
-            timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+            timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%SZ").replace(
+                tzinfo=timezone.utc
+            )
             dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0Z')
 
         mantissa_wo_z = dt_tuple.mantissa[:-1]
@@ -84,7 +89,41 @@ class ProtobufTimestampConverter(ITimestampConverter[dict]):
 Th2TimestampConverter = ProtobufTimestampConverter
 
 
-def decompress_gzip_file(input_filename, output_filename):
-    with gzip.open(input_filename, 'rb') as f_in:
-        with open(output_filename, 'wb') as f_out:
+def decompress_gzip_file(input_filename: str, output_filename: str) -> None:
+    """Unzip gzip file.
+
+    The original file won't be removed.
+
+    Args:
+        input_filename: gzip file path.
+        output_filename: out file path.
+    """
+    with gzip.open(input_filename, "rb") as f_in:
+        with open(output_filename, "wb") as f_out:
             shutil.copyfileobj(f_in, f_out)
+
+
+def flatten_dict(dictionary: dict, parent_key: str = "", separator: str = ".") -> dict:
+    """Returns flatten dict.
+
+    Examples:
+        >>> flatten_dict({'a': 1, 'c': {'a': 2, 'b': {'x': 5, 'y': 10}}, 'd': [1, 2, 3]})
+        # {'a': 1, 'c.a': 2, 'c.b.x': 5, 'd': [1, 2, 3], 'c.b.y': 10}
+
+    Args:
+        dictionary: dict object.
+        parent_key: used for internal function purposes.
+        separator: the separator between words.
+
+    Returns:
+        Flatten dict.
+
+    """
+    items = []
+    for key, value in dictionary.items():
+        new_key = parent_key + separator + key if parent_key else key
+        if isinstance(value, MutableMapping):
+            items.extend(flatten_dict(value, new_key, separator=separator).items())
+        else:
+            items.append((new_key, value))
+    return dict(items)
