@@ -1,11 +1,15 @@
-from matplotlib.axis import Axis
-from matplotlib.figure import Figure
 from th2_data_services.data import Data
 from th2_data_services.utils.message_utils.frequencies import get_category_frequencies
 from th2_data_services.config import options
-import matplotlib.pyplot as plt
+from matplotlib.axis import Axis
+from matplotlib.figure import Figure
+from matplotlib.pyplot import subplots
 from datetime import datetime
 from typing import Iterable, List, Tuple
+
+
+DEFAULT_CHART_WIDTH = 15.0
+DEFAULT_CHART_HEIGHT = 5.5
 
 
 def _fill_gaps(arr: Iterable, start: int, end: int, timestamp_gap: datetime = None) -> List:
@@ -40,17 +44,26 @@ def _fill_gaps(arr: Iterable, start: int, end: int, timestamp_gap: datetime = No
     return arr
 
 
-def message_rate(data: Data, categories: List[str] = None, aggregation_level: str = "1hour", output_file: str = None) -> Tuple[Figure, Axis]:
+def message_rate(
+    data: Data,
+    categories: List[str] = None,
+    aggregation_level: str = "1hour",
+    fig_width: float = DEFAULT_CHART_WIDTH,
+    fig_height: float = DEFAULT_CHART_HEIGHT,
+    output_file: str = None
+) -> Tuple[Figure, Axis]:
     """Generates message rates chart.
 
     Args:
         data (Data): TH2-Messages
         categories (List[str], optional): Categories to draw. Defaults to None (All).
         aggregation_level (str, optional): Aggregation level. Defaults to "1hour".
+        fig_width (float, optional): Chart width. Defaults to DEFAULT_CHART_WIDTH.
+        fig_height (float, optional): Chart height. Defaults to DEFAULT_CHART_HEIGHT.
         output_file (str, optional): Chart output file. Defaults to None.
 
     Returns:
-        Tuple[Figure, Axis]: plt.subplots
+        Tuple[Figure, Axis]: matplotlib.pyplot.subplots
     """
     category_frequencies = get_category_frequencies(
         data,
@@ -60,9 +73,12 @@ def message_rate(data: Data, categories: List[str] = None, aggregation_level: st
     )
     categories = category_frequencies.get_categories()
 
-    fig, ax = plt.subplots()
-    timestamps = [datetime.fromisoformat(
-        timestamp) for timestamp in category_frequencies.get_column("timestamp")]
+    fig, ax = subplots()
+
+    timestamps = [
+        datetime.fromisoformat(timestamp)
+        for timestamp in category_frequencies.get_column("timestamp")
+    ]
     timestamp_gaps = []
     timestamp_gap_index = 0
     timestamp_gap = timestamps[1] - timestamps[0]
@@ -95,8 +111,9 @@ def message_rate(data: Data, categories: List[str] = None, aggregation_level: st
     ax.set_xticks(X)
     ax.set_xticklabels(X, rotation=35)
 
+    fig.set_size_inches(fig_width, fig_height)
     fig.autofmt_xdate()
     if output_file:
         fig.savefig(output_file)
 
-    return fig, ax 
+    return fig, ax
