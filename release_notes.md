@@ -477,6 +477,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 19. [TH2-4957] Added gzip option for Data.to_json method. 
 20. [TH2-4957] Added decompress_gzip_file method to utils.converters.
 21. Added to_csv method to PerfectTable class.
+22. [TH2-4960] Added message_rate method to tranform Data (messages) into rates chart
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
