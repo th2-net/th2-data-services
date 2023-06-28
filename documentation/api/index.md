@@ -52,8 +52,11 @@
 - [`stub_builder.IMessageStub`](./interfaces.stub_builder.md#class-imessagestub): Just to mark Message Stub class.
 - [`stub_builder.IStub`](./interfaces.stub_builder.md#class-istub)
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
-- [`resolver.EventFieldsResolver`](./interfaces.utils.resolver.md#class-eventfieldsresolver)
-- [`resolver.MessageFieldsResolver`](./interfaces.utils.resolver.md#class-messagefieldsresolver)
+- [`resolver.EventFieldResolver`](./interfaces.utils.resolver.md#class-eventfieldresolver)
+- [`resolver.EventFieldResolver`](./interfaces.utils.resolver.md#class-eventfieldresolver)
+- [`resolver.MessageFieldResolver`](./interfaces.utils.resolver.md#class-messagefieldresolver)
+- [`resolver.MessageFieldResolver`](./interfaces.utils.resolver.md#class-messagefieldresolver)
+- [`resolver.SubMessageFieldResolver`](./interfaces.utils.resolver.md#class-submessagefieldresolver)
 
 ## Functions
 

@@ -13,7 +13,7 @@
 
 <a href="../../th2/data_services/interfaces/utils/resolver.py#L17"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `EventFieldsResolver`
+## <kbd>class</kbd> `EventFieldResolver`
 
 
 
@@ -180,7 +180,7 @@ get_type(event)
 
 <a href="../../th2/data_services/interfaces/utils/resolver.py#L74"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `MessageFieldsResolver`
+## <kbd>class</kbd> `MessageFieldResolver`
 
 
 

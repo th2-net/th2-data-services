@@ -50,7 +50,7 @@ Performance impact:
 """
 
 
-class EventFieldsResolver(ABC):
+class EventFieldResolver(ABC):
     @staticmethod
     @abstractmethod
     def get_id(event):
@@ -107,7 +107,11 @@ class EventFieldsResolver(ABC):
         pass
 
 
-class MessageFieldsResolver(ABC):
+# TODO - should be remove during release.
+EventFieldsResolver = EventFieldResolver  # For backward compatibility.
+
+
+class MessageFieldResolver(ABC):
     @staticmethod
     @abstractmethod
     def get_direction(message):
@@ -121,21 +125,6 @@ class MessageFieldsResolver(ABC):
     @staticmethod
     @abstractmethod
     def get_type(message):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def get_connection_id(message):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def get_session_alias(message):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def get_subsequence(message):
         pass
 
     @staticmethod
@@ -168,7 +157,33 @@ class MessageFieldsResolver(ABC):
     def get_attached_event_ids(message):
         pass
 
+
+# TODO - should be remove during release.
+MessageFieldsResolver = MessageFieldResolver  # For backward compatibility.
+
+
+class SubMessageFieldResolver(ABC):
+    @staticmethod
+    @abstractmethod
+    def get_subsequence(message):
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_type(message):
+        pass
+
     @staticmethod
     @abstractmethod
     def get_fields(message):
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_metadata(message):
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_protocol(message):
         pass
