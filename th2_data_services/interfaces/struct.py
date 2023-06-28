@@ -17,12 +17,16 @@ from abc import ABC
 class IEventStruct(ABC):
     """Just to mark Event Struct class.
 
+    Actually, this class doesn't describe the structure, it describes filed names.
+
     It should look like a class with constants.
     """
 
 
 class IMessageStruct(ABC):
     """Just to mark Message Struct class.
+
+    Actually, this class doesn't describe the structure, it describes filed names.
 
     It should look like a class with constants.
     """

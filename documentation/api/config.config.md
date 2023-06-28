@@ -29,9 +29,7 @@
 __init__() → None
 ```
 
-
-
-
+Global configuration for the DS library. 
 
 
 
