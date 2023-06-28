@@ -424,7 +424,7 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L929"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L928"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
@@ -447,6 +447,20 @@ Converts data to json format.
 **Raises:**
  
  - <b>`FileExistsError`</b>:  If file exists and overwrite=False 
+
+---
+
+<a href="../../th2_data_services/data.py#L952"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `to_jsons`
+
+```python
+to_jsons(filename: str, indent: int = None, overwrite: bool = False)
+```
+
+
+
+
 
 ---
 
