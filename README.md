@@ -544,6 +544,29 @@ can have another names (it resolves in the driver).
 * If you want to know that specified event exists, use the python `in` keyword (e.g. `'event-id' in events_tree`).
 * Use the python `len` keyword to get events number in the tree.
 
+### FieldsResolver
+The idea of using resolvers:  
+It solves the problem of having a few DataSources with the same data, 
+but with different ways to get it.
+
+These classes provide you getter methods. 
+Using these classes allows you to freely switch between different data 
+formats and don't change your code. 
+
+Resolvers solve the problem of data-format migration.  
+- fields place can be changed
+- fields names can be changed
+
+Resolvers can work only with one event/message. 
+It means, if your message has sub-messages it won't work, because resolver will not 
+know with which sub-message should it work. 
+
+Implementation advice:
+1. raise NotImplementedError -- if your Implementation doesn't support this getter.
+
+Performance impact:
+- It a bit slower than using naked field access `dict['key']`. 
+
 ## 2.4. Links
 
 - [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)

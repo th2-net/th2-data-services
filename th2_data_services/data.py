@@ -925,7 +925,6 @@ class Data(Generic[DataIterValues]):
 
         return self
 
-
     def to_json(self, filename: str, indent: int = None, overwrite: bool = False):
         """Converts data to json format.
 
@@ -938,15 +937,29 @@ class Data(Generic[DataIterValues]):
             FileExistsError: If file exists and overwrite=False
         """
         if Path(filename).absolute().exists() and not overwrite:
-            raise FileExistsError(f"{filename} already exists. If you want to overwrite current file set `overwrite=True`")
+            raise FileExistsError(
+                f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
+            )
 
-        with open(filename, 'w', encoding='UTF-8') as file:
-            file.write('[') # Start list
+        with open(filename, "w", encoding="UTF-8") as file:
+            file.write("[")  # Start list
             for record in self:
                 json.dump(record, file, indent=indent)
-                file.write(',\n')
-            file.seek(file.tell() - 3) # Delete last comma for valid JSON
-            file.write(']') # Close list
+                file.write(",\n")
+            file.seek(file.tell() - 3)  # Delete last comma for valid JSON
+            file.write("]")  # Close list
+
+    def to_jsons(self, filename: str, indent: int = None, overwrite: bool = False):
+        if Path(filename).absolute().exists() and not overwrite:
+            raise FileExistsError(
+                f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
+            )
+
+        with open(filename, "w", encoding="UTF-8") as file:
+            for record in self:
+                json.dump(record, file, indent=indent)
+                file.write("\n")
+
 
 def _iter_any_file(filename, mode="r"):
     """Returns the function that returns generators."""

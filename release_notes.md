@@ -470,14 +470,17 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    - pip install th2-data-services[utils-advanced]
    - pip install th2-data-services[utils-rpt-viewer]
    - pip install th2-data-services[utils-rpt-viewer5]
-15. [TH2-4881] Data.from_json method was added.
-16. [TH2-4919] Data.from_any_file method was added.
-17. [TH2-4928] Data.from_csv method was added.
-18. [TH2-4932] Data.to_json method was added.
+15. [TH2-4881] `Data.from_json` method was added.
+16. [TH2-4919] `Data.from_any_file` method was added.
+17. [TH2-4928] `Data.from_csv` method was added.
+18. [TH2-4932] `Data.to_json` method was added. Puts your data to valid json object.
 19. [TH2-4957] Added gzip option for Data.to_json method. 
 20. [TH2-4957] Added decompress_gzip_file method to utils.converters.
 21. Added to_csv method to PerfectTable class.
 22. `utils.converters.flatten_dict` converter added.
+23. Added `Data.to_jsons` method that put your data object to jsons file
+   (file where every line is separate json-format line. That's not valid json format.)
+
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.

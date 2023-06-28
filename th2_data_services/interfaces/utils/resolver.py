@@ -13,6 +13,42 @@
 #  limitations under the License.
 from abc import ABC, abstractmethod
 
+"""
+The idea of using resolvers:
+    It solves the problem of having a few DataSources with the same data, 
+    but with different ways to get it.
+    
+    These classes provide you getter methods. 
+    Using these classes allows you to freely switch between different data 
+    formats and don't change your code. 
+    
+    Resolvers solve the problem of data-format migration.
+        - fields place can be changed
+        - fields names can be changed
+    
+    Resolvers can work only with one event/message. 
+    It means, if your message has sub-messages it won't work, because resolver will not 
+    know with which sub-message should it work. 
+
+Implementation advice:
+    1. raise NotImplementedError -- if your Implementation doesn't support this getter.
+
+Performance impact:
+    It a bit slower than using naked field access `dict['key']`. 
+
+    Data len: 2521467
+    Every test has 10 takes of field. It means that the total number of them: 25214670
+    
+    get_and_return_10_fields_directly
+    Total time taken in :  test_iterate 14.274808883666992  ~ 1766970
+    get_and_return_10_fields_by_resolvers
+    Total time taken in :  test_iterate 16.307125568389893  ~ 1546912
+    DIRECT LwdpEventFieldsResolver get_and_return_10_fields_by_direct_resolvers
+    Total time taken in :  test_iterate 16.423101902008057  ~ 1546912
+    Via http_event_struct get_and_return_10_fields_via_http_event_struct
+    Total time taken in :  test_iterate 14.83995270729065   ~ 1700247
+"""
+
 
 class EventFieldsResolver(ABC):
     @staticmethod
