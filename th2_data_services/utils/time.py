@@ -13,9 +13,6 @@
 #  limitations under the License.
 from datetime import datetime
 from typing import Dict, Union
-
-
-# TODO - looks ok, but it's better to add such feature to utils.converters
 from deprecated.classic import deprecated
 
 
@@ -33,7 +30,15 @@ def extract_timestamp(timestamp_element: Dict) -> str:
 
 
 @deprecated("Use `extract_timestamp` instead")
-def extract_time_string(timestamp_element):
+def extract_time_string(timestamp_element) -> str:
+    """Extracts timestamp from argument.
+
+    Args:
+        timestamp_element:
+
+    Returns:
+        str representation of th2-timestamp(protobuf) e.g. 2023-03-09T05:37:53.263895000
+    """
     return extract_timestamp(timestamp_element)
 
 
@@ -70,7 +75,9 @@ def timestamp_delta_us(start_timestamp: Dict, end_timestamp: Dict) -> float:
 
 
 # TODO - looks ok, but we need to think about unified timestamps
-def time_slice_object_filter(timestamp_field: Dict, timestamp_iso: str, duration_seconds: int):  # noqa
+def time_slice_object_filter(
+    timestamp_field: Dict, timestamp_iso: str, duration_seconds: int
+):  # noqa
     """Filter elements that from time moment  A to  A+duration_seconds.
 
     Args:
@@ -150,12 +157,16 @@ def timestamp_aggregation_key(
             dynamic_aggr_level = int(num) * 3600 * 24
 
         else:
-            raise KeyError(f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}")
+            raise KeyError(
+                f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}"
+            )
         aggregation_levels[aggregation_level] = dynamic_aggr_level
 
     try:
         interval = aggregation_levels[aggregation_level]
     except KeyError:
-        raise KeyError(f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}")
+        raise KeyError(
+            f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}"
+        )
 
     return global_anchor_timestamp + interval * ((timestamp - global_anchor_timestamp) // interval)
