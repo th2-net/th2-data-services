@@ -82,6 +82,7 @@ class TotalCategoryCalculator:
         """Calculates, aggregates to tables and prints categories combinations.
 
         This class allows you to calculate any metrics and their combinations in stream-like way.
+        It calculates how many times do we met some combination of tags.
 
         It does not accumulate all data in memory.
         Keeps calculated metrics only.

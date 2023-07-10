@@ -16,6 +16,9 @@ from collections import defaultdict
 
 # from th2_data_services import MESSAGE_FIELDS_RESOLVER
 from typing import Callable, Dict, Iterable, List, Set
+
+from deprecated.classic import deprecated
+
 import th2_data_services.utils.display
 import th2_data_services.utils.time
 from th2_data_services.utils._types import Th2Message
@@ -244,9 +247,13 @@ def print_some(
 
 # STREAMABLE
 # TODO - We will not use this in the future, I think, because LwDP can provide JSON_PARSED immediately.
+@deprecated(
+    "This function only make sense if you have data in Protobuf style format.\n"
+    "Use DS-LwDP>=2.0.2.* to get messages in JSON-PARSED format.\n"
+    "Use `th2_data_services.utils.converters.flatten_dict` instead of this function."
+)
 def message_fields_to_flat_dict(message: dict, result: Dict, prefix: str):  # noqa
     # Actual if provider returns data in Protobuf style
-    # TODO: Add Docstings
     for field, content in message["fields"].items():
         if "simpleValue" in content:
             result[prefix + field] = content["simpleValue"]
