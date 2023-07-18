@@ -33,6 +33,7 @@ def get_category_frequencies(
     categories: List[str],
     categorizer: Callable,
     aggregation_level: str = "seconds",
+    object_expander=None,
 ) -> FrequencyCategoryTable:
     """Returns event frequencies based on event category.
 
@@ -67,6 +68,7 @@ def get_category_frequencies(
         # TODO -- we shouldn't know internal structure!!! - epochSeconds
         lambda e: options.EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
         aggregation_level=aggregation_level,
+        object_expander=object_expander,
     )
 
 

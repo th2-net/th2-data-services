@@ -16,14 +16,17 @@ def get_category_frequencies(
     categorizer: Callable,
     aggregation_level: str = "seconds",
     filter_: Callable = None,
+    object_expander=expand_message,
 ) -> FrequencyCategoryTable:  # noqa
     return misc_utils.get_objects_frequencies2(
         messages,
         categories,
         categorizer,
         # TODO -- we shouldn't know internal structure!!! - epochSeconds
-        lambda message: options.MESSAGE_FIELDS_RESOLVER.get_timestamp(message)["epochSecond"],
+        timestamp_function=lambda message: options.MESSAGE_FIELDS_RESOLVER.get_timestamp(message)[
+            "epochSecond"
+        ],
         aggregation_level=aggregation_level,
-        object_expander=expand_message,
+        object_expander=object_expander,
         objects_filter=filter_,
     )
