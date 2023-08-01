@@ -26,10 +26,12 @@ Table of Contents
          * [EventTree](#eventtree)
          * [Collections](#collections)
          * [Hints](#hints)
+      * [FieldsResolver](#fieldsresolver)
    * [2.4. Links](#24-links)
-* [3. Official DataSource implementations](#3-official-datasource-implementations)
-* [4. API](#4-api)
-* [5. Examples](#5-examples)
+* [3. Best practices](#3-best-practices)
+* [4. Official DataSource implementations](#4-official-datasource-implementations)
+* [5. API](#5-api)
+* [6. Examples](#6-examples)
 <!--te-->
 
 # 1. Introduction
