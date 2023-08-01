@@ -156,26 +156,26 @@ def get_objects_frequencies2(
                     anchor = timestamp_function(expanded_object)
 
                 if not categories:
-                    epoch = timestamp_aggregation_key(
+                    seconds_int = timestamp_aggregation_key(
                         anchor, timestamp_function(expanded_object), aggregation_level
                     )
                     category = categorizer(expanded_object)
                     categories_set.add(category)
-                    if epoch not in frequencies:
-                        frequencies[epoch] = {category: 1}
-                    elif category not in frequencies[epoch]:
-                        frequencies[epoch][category] = 1
+                    if seconds_int not in frequencies:
+                        frequencies[seconds_int] = {category: 1}
+                    elif category not in frequencies[seconds_int]:
+                        frequencies[seconds_int][category] = 1
                     else:
-                        frequencies[epoch][category] += 1
+                        frequencies[seconds_int][category] += 1
                 else:
                     for i in range(len(categories)):
                         if categorizer(expanded_object) == categories[i]:
-                            epoch = timestamp_aggregation_key(
+                            seconds_int = timestamp_aggregation_key(
                                 anchor, timestamp_function(expanded_object), aggregation_level
                             )
-                            if epoch not in frequencies:
-                                frequencies[epoch] = [0] * len(categories)
-                            frequencies[epoch][i] += 1
+                            if seconds_int not in frequencies:
+                                frequencies[seconds_int] = [0] * len(categories)
+                            frequencies[seconds_int][i] += 1
     except KeyError:
         # Print the object if a user provided wrong categorizer.
         if obj is not None:
@@ -190,6 +190,7 @@ def get_objects_frequencies2(
 
     results = [header]
     timestamps = list(sorted(frequencies.keys()))
+    # Expected that timestamp is seconds.
     for timestamp in timestamps:
         line = [datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")]
         if categories:

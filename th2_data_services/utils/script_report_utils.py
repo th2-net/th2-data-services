@@ -16,7 +16,7 @@ from typing import List, Dict
 from th2_data_services.utils.message_utils import message_utils
 from th2_data_services.utils.event_utils import event_utils
 from datetime import datetime
-import th2_data_services.utils.az_tree
+import th2_data_services.utils.json_tree
 
 # TODO
 #   1. Takes flat_list to put result in this dict.
@@ -260,7 +260,9 @@ def find_corresponding_missing_filter(expectation_string, verifications_list):  
     return None
 
 
-def find_corresponding_verification(expectation_string, verifications_list, already_used_verifications_set):  # noqa
+def find_corresponding_verification(
+    expectation_string, verifications_list, already_used_verifications_set
+):  # noqa
     # TODO: Add docstrings
     for item in verifications_list:
         found = True
@@ -320,7 +322,9 @@ def get_val_from_verification(formatted_val):  # noqa
     return value
 
 
-def extract_ids_from_dict(fields, is_this_request, is_this_verification, custom_id_tags, r_result, i_result):  # noqa
+def extract_ids_from_dict(
+    fields, is_this_request, is_this_verification, custom_id_tags, r_result, i_result
+):  # noqa
     # TODO: Add docstrings
     for id_field in custom_id_tags:
         if id_field in fields:
@@ -347,20 +351,28 @@ def matrix_model_test_case_analyze_ids(report_leaf, custom_id_tags):  # noqa
         if "multiSendMessage" in step_name:
             messages = find_child_by_type(step_leaf, "Outgoing message")
             for sub_step_name, sub_step in messages:
-                extract_ids_from_dict(sub_step["body"], True, False, custom_id_tags, r_result, i_result)
+                extract_ids_from_dict(
+                    sub_step["body"], True, False, custom_id_tags, r_result, i_result
+                )
         if "place" in step_name:
             outgoing = find_child_by_type(step_leaf, "Outgoing message")
             if len(outgoing) != 0:
-                extract_ids_from_dict(outgoing[0][1]["body"], True, False, custom_id_tags, r_result, i_result)
+                extract_ids_from_dict(
+                    outgoing[0][1]["body"], True, False, custom_id_tags, r_result, i_result
+                )
             for sub_leaf_name, sub_leaf in step_leaf.items():
                 if "response" in sub_leaf_name and "Received" in sub_leaf_name:
-                    extract_ids_from_dict(sub_leaf["body"], False, False, custom_id_tags, r_result, i_result)
+                    extract_ids_from_dict(
+                        sub_leaf["body"], False, False, custom_id_tags, r_result, i_result
+                    )
         if "Check sequence rule" in step_name:
             actual_messages_leaf = find_child_by_type(step_leaf, "preFiltering")[0][1]
             for v, v_leaf in actual_messages_leaf.items():
                 if v in ["info", "body"]:
                     continue
-                extract_ids_from_dict(v_leaf["body"], False, True, custom_id_tags, r_result, i_result)
+                extract_ids_from_dict(
+                    v_leaf["body"], False, True, custom_id_tags, r_result, i_result
+                )
 
     result = {}
     result.update(r_result)
@@ -421,7 +433,9 @@ def matrix_model_test_case_processor(report_leaf):  # noqa
             for sub_step_name, sub_step in messages:
                 request_data = {
                     "REQ_orig_name": sub_step_name,
-                    "REQ_id": process_step_request_id(sub_step["body"], alias_by_id, custom_id_tags),
+                    "REQ_id": process_step_request_id(
+                        sub_step["body"], alias_by_id, custom_id_tags
+                    ),
                     "TH2_event": sub_step["info"]["id"],
                 }
                 request_data.update(sub_step["body"])
@@ -435,7 +449,9 @@ def matrix_model_test_case_processor(report_leaf):  # noqa
 
                 check_rule_actual = {"TH2_event": v_leaf["info"]["id"]}
                 if "attachedMessageIds" in v_leaf["info"]:
-                    check_rule_actual["EVN_attached_msg_id"] = v_leaf["info"]["attachedMessageIds"][0]
+                    check_rule_actual["EVN_attached_msg_id"] = v_leaf["info"]["attachedMessageIds"][
+                        0
+                    ]
                 for tag, val in v_leaf["body"].items():
                     check_rule_actual[tag] = get_val_from_verification(val)
                 check_rule_actual_messages.append(check_rule_actual)
@@ -481,9 +497,13 @@ def matrix_model_test_case_processor(report_leaf):  # noqa
                         summary[summary_key]["TH2_event"] = ver[1]["info"]["id"]
                 elif r["expectedMessage"] != "" and r["actualMessage"] == "":
                     missing_key = (
-                        str(i_summary) + " [fail] Missing " + format_expected_event(r["expectedMessage"], alias_by_id)
+                        str(i_summary)
+                        + " [fail] Missing "
+                        + format_expected_event(r["expectedMessage"], alias_by_id)
                     )
-                    missing_filter = find_corresponding_missing_filter(r["expectedMessage"], verifications)
+                    missing_filter = find_corresponding_missing_filter(
+                        r["expectedMessage"], verifications
+                    )
                     if missing_filter is None:
                         summary[missing_key] = {
                             "#Error": "Cant find corresponding filter",
@@ -505,7 +525,9 @@ def matrix_model_test_case_processor(report_leaf):  # noqa
                         extra_key = (
                             str(i_summary)
                             + " [fail] Extra "
-                            + format_actual_event(check_rule_actual_messages[i_extra], r["actualMessage"], alias_by_id)
+                            + format_actual_event(
+                                check_rule_actual_messages[i_extra], r["actualMessage"], alias_by_id
+                            )
                         )
                         summary[extra_key] = check_rule_actual_messages[i_extra]
                         i_extra = i_extra + 1
@@ -554,7 +576,7 @@ def generate_generic_tree_and_index(events, parents_filter):  # noqa
 #   1. Hardcoded values -- it's better to move them to function parameters with that values
 def generate_generic_tree_and_index_from_parents_list(events, parents):  # noqa
     # TODO: Add docstrings
-    tree, index = th2_data_services.utils.az_tree.get_event_tree_from_parent_events(
+    tree, index = th2_data_services.utils.json_tree.get_event_tree_from_parent_events(
         events,
         parents,
         depth=10,
@@ -573,7 +595,7 @@ def generate_generic_tree_and_index_from_parents_list(events, parents):  # noqa
 def generate_model_matrix_tree_and_index(events, parents_filter, extra=None):  # noqa
     # TODO: Add docstrings
     tree, index = generate_generic_tree_and_index(events, parents_filter)
-    th2_data_services.utils.az_tree.transform_tree(
+    th2_data_services.utils.json_tree.transform_tree(
         index,
         {
             "ModelCase": matrix_model_test_case_processor
@@ -584,7 +606,9 @@ def generate_model_matrix_tree_and_index(events, parents_filter, extra=None):  #
     return tree, index
 
 
-def generate_matrix_json_report_limited_batches(events, reports_path, parents_filter, par_btch_len, extra=None):  # noqa
+def generate_matrix_json_report_limited_batches(
+    events, reports_path, parents_filter, par_btch_len, extra=None
+):  # noqa
     # TODO: Add docstrings
     post_processors = {
         "ModelCase": matrix_model_test_case_processor
@@ -592,7 +616,9 @@ def generate_matrix_json_report_limited_batches(events, reports_path, parents_fi
         else extra_post_processor(matrix_model_test_case_processor, extra)
     }
 
-    generate_generic_json_report_limited_batches(events, reports_path, parents_filter, par_btch_len, post_processors)
+    generate_generic_json_report_limited_batches(
+        events, reports_path, parents_filter, par_btch_len, post_processors
+    )
 
 
 def extra_post_processor(main_processor, extra_processor):  # noqa
@@ -614,12 +640,14 @@ def generate_generic_json_report_limited_batches(
     for i in range(n_steps):
         print("Step", i + 1)
         number_base = i * par_btch_len
-        batch_end = (i + 1) * par_btch_len if (i + 1) * par_btch_len < len(parents) else len(parents)
+        batch_end = (
+            (i + 1) * par_btch_len if (i + 1) * par_btch_len < len(parents) else len(parents)
+        )
         sublist = parents[number_base:batch_end]
         tree, index = generate_generic_tree_and_index_from_parents_list(events, sublist)
         if post_processors_dict is not None:
             print("Post processing ", datetime.now())
-            th2_data_services.utils.az_tree.transform_tree(index, post_processors_dict)
+            th2_data_services.utils.json_tree.transform_tree(index, post_processors_dict)
         tree_shtrikh = {}
         for k, v in tree.items():
             if k == "info":
@@ -632,20 +660,26 @@ def generate_generic_json_report_limited_batches(
             tree_shtrikh[k_shtrikh] = v
 
         print("Saving json ", datetime.now())
-        th2_data_services.utils.az_tree.save_tree_as_json(tree_shtrikh, reports_path, lambda n, l: n)
+        th2_data_services.utils.json_tree.save_tree_as_json(
+            tree_shtrikh, reports_path, lambda n, l: n
+        )
 
 
 def generate_generic_json_report(events, reports_path, parents_filter, one_file=False):  # noqa
     # TODO: Add docstrings
     tree, index = generate_generic_tree_and_index(events, parents_filter)
-    th2_data_services.utils.az_tree.save_tree_as_json(tree, reports_path, lambda n, l: "all" if one_file else n)
+    th2_data_services.utils.json_tree.save_tree_as_json(
+        tree, reports_path, lambda n, l: "all" if one_file else n
+    )
 
 
 def generate_model_matrix_json_report(events, reports_path, parents_filter, one_file=False):  # noqa
     # TODO: Add docstrings
     tree, index = generate_model_matrix_tree_and_index(events, parents_filter)
 
-    th2_data_services.utils.az_tree.save_tree_as_json(tree, reports_path, lambda n, l: "all" if one_file else n)
+    th2_data_services.utils.json_tree.save_tree_as_json(
+        tree, reports_path, lambda n, l: "all" if one_file else n
+    )
 
 
 ############################
@@ -696,7 +730,11 @@ def create_parallel_tables(story_item, collected_data):  # noqa
         row = []
         for j in range(len(sub_table_names)):
             key = keys_lists[j][i] if i < len(keys_lists[j]) else ""
-            val = collected_data[story_item[sub_table_names[j]]][1][key] if i < len(keys_lists[j]) else ""
+            val = (
+                collected_data[story_item[sub_table_names[j]]][1][key]
+                if i < len(keys_lists[j])
+                else ""
+            )
             row.extend([key, val, " "])
         result.append(row)
     return result
@@ -729,19 +767,25 @@ def collect_ids_for_story(story_items_list, smart, events, messages):  # noqa
                     messages.add(v)
 
 
-def prepare_story(story_items_list, json_path=None, events=None, event_body_processors=None, messages=None):  # noqa
+def prepare_story(
+    story_items_list, json_path=None, events=None, event_body_processors=None, messages=None
+):  # noqa
     # TODO: Add docstrings
     smart_report_elements_to_collect = set()
     events_to_collect = set()
     messages_to_collect = set()
 
-    collect_ids_for_story(story_items_list, smart_report_elements_to_collect, events_to_collect, messages_to_collect)
+    collect_ids_for_story(
+        story_items_list, smart_report_elements_to_collect, events_to_collect, messages_to_collect
+    )
 
     collected_data = {}
     # print(smart_report_elements_to_collect)
     if json_path is not None:
-        th2_data_services.utils.az_tree.tree_walk_from_jsons(
-            json_path, lambda p, n, l: collect_element(p, l, smart_report_elements_to_collect, collected_data), None
+        th2_data_services.utils.json_tree.tree_walk_from_jsons(
+            json_path,
+            lambda p, n, l: collect_element(p, l, smart_report_elements_to_collect, collected_data),
+            None,
         )
     if events is not None:
         # print("Collecting ", events_to_collect)
@@ -779,7 +823,11 @@ def prepare_story(story_items_list, json_path=None, events=None, event_body_proc
     result = []
     for item in story_items_list:
         if type(item) == str:
-            if item.startswith("smart:") or item.startswith("event:") or item.startswith("message:"):
+            if (
+                item.startswith("smart:")
+                or item.startswith("event:")
+                or item.startswith("message:")
+            ):
                 table = [["field", "value"]]
                 l = collected_data[item]
                 for k, v in l[1].items():
@@ -878,7 +926,9 @@ tree_table = {
 
 def test_verification_fields_to_flat_dict():  # noqa
     flat_list = {}
-    verification_fields_to_flat_dict(collection=ver_dict, flat_list=flat_list, prefix="hz", failed_collection=True)
+    verification_fields_to_flat_dict(
+        collection=ver_dict, flat_list=flat_list, prefix="hz", failed_collection=True
+    )
     print(flat_list)
     """
     failed_collection=False
@@ -895,7 +945,9 @@ def test_verification_fields_to_flat_dict():  # noqa
 
 def test_verification_fields_to_simple_dict():  # noqa
     flat_list = {}
-    verification_fields_to_simple_dict(collection=ver_dict, parent=flat_list, failed_collection=True)
+    verification_fields_to_simple_dict(
+        collection=ver_dict, parent=flat_list, failed_collection=True
+    )
     print(flat_list)
     """
     failed_collection=False
