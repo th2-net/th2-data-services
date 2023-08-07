@@ -32,6 +32,7 @@ from th2_data_services.config import options
 # result: list of individual message objects
 def expand_message(message: Th2Message) -> Iterable[Th2Message]:
     # TODO - should be updated for version with Th2Transport
+    # TODO - all this code knows the structure of the message. It's a problem.
     """Extract compounded message into list of individual messages.
 
     Args:
