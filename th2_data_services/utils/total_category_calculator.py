@@ -118,6 +118,19 @@ class TotalCategoryCalculator:
                 f"Unknown combination. The following combination '{combination}' is not provided to constructor."
             )
 
+    def _prep_combination_keep_order(self, combination: CategoryCombination) -> List[str]:
+        """Returns combination in the required view."""
+        new_comb = []
+        for cv in combination:
+            if isinstance(cv, str):
+                new_comb.append(cv)
+            elif isinstance(cv, Category):
+                new_comb.append(cv.name)
+            else:
+                raise ValueError(f"Unexpected combination value, {combination}")
+
+        return new_comb
+
     def _prepare_combination(self, combination: CategoryCombination) -> Tuple[str]:
         """Returns combination in the required view."""
         new_comb = []
@@ -164,7 +177,7 @@ class TotalCategoryCalculator:
         """
         orig_comb = combination
         comb: Category
-        orig_columns_order = [comb.name for comb in orig_comb]
+        orig_columns_order = self._prep_combination_keep_order(orig_comb)
         orig_columns_order.append(self.counter_field_name)
 
         combination = self._prepare_combination(combination)

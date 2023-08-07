@@ -38,7 +38,11 @@ from th2_data_services.utils.event_utils.select import (
 #
 # Will return list! Perhaps it's better to return Data?
 def get_some(
-    events: Iterable[Th2Event], event_type: Optional[str], max_count: int, start: int = 0, failed: bool = False  # ??
+    events: Iterable[Th2Event],
+    event_type: Optional[str],
+    max_count: int,  # TODO -- Slava - I think we need to add Optional = None, for unlimited.
+    start: int = 0,
+    failed: bool = False,  # ??
 ) -> Iterable[Th2Event]:
     """Returns limited list of events of specific eventType.
 
@@ -130,7 +134,9 @@ def build_roots_cache(events: Iterable[Th2Event], depth: int, max_level: int) ->
             parent_id = options.EVENT_FIELDS_RESOLVER.get_parent_id(next_level)
             result[event_id] = {
                 "eventName": options.EVENT_FIELDS_RESOLVER.get_name(next_level),
-                "eventPath": result[parent_id]["eventPath"] + "/" + options.EVENT_FIELDS_RESOLVER.get_name(next_level),
+                "eventPath": result[parent_id]["eventPath"]
+                + "/"
+                + options.EVENT_FIELDS_RESOLVER.get_name(next_level),
             }
         prev_levels = next_levels
 
@@ -148,7 +154,9 @@ def extract_start_timestamp(event: Dict) -> str:
     Returns:
         str
     """
-    return th2_data_services.utils.time.extract_timestamp(options.EVENT_FIELDS_RESOLVER.get_start_timestamp(event))
+    return th2_data_services.utils.time.extract_timestamp(
+        options.EVENT_FIELDS_RESOLVER.get_start_timestamp(event)
+    )
 
 
 # NOT STREAMING
@@ -198,12 +206,18 @@ def extract_parent_as_json(
     """
     from th2_data_services.utils.az_tree import get_event_tree_from_parent_id
 
-    sub_events = sublist(events, datetime.fromisoformat(interval_start), datetime.fromisoformat(interval_end))
+    sub_events = sublist(
+        events, datetime.fromisoformat(interval_start), datetime.fromisoformat(interval_end)
+    )
     print(f"Sublist length = {len(sub_events)}")
-    tree = get_event_tree_from_parent_id(sub_events, parent_id, 10, 10000, body_to_simple_processors)
+    tree = get_event_tree_from_parent_id(
+        sub_events, parent_id, 10, 10000, body_to_simple_processors
+    )
     if not tree:
         return
-    types_set = set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL"))
+    types_set = set(
+        (type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL")
+    )
     tree["info"]["types_list"] = list(types_set)
 
     with open(json_file_path, "w") as file:
