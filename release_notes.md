@@ -434,6 +434,9 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 5. [I] EventsTree renamed to EventTree\
    [M] All records should be changed to EventTree
 
+6. [I] Message utils method `expand_message` moved into MessageFieldResolver.\
+   [M] Implement new method in your resolver.
+
 ## Features
 
 1. [TH2-4128] pip no longer installs RDP by default
