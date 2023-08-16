@@ -627,8 +627,9 @@ def extra_post_processor(main_processor, extra_processor):  # noqa
 
 
 def generate_generic_json_report_limited_batches(
-    events, reports_path, parents_filter, par_btch_len, post_processors_dict=None
+    events, reports_path: str, parents_filter, par_btch_len, post_processors_dict=None
 ):  # noqa
+    # TODO: Add return value -- paths
     # TODO: Add docstrings
     filtered = events.filter(parents_filter)
     parents = event_utils.get_some(filtered, event_type=None, max_count=10000)
@@ -665,7 +666,7 @@ def generate_generic_json_report_limited_batches(
         )
 
 
-def generate_generic_json_report(events, reports_path, parents_filter, one_file=False):  # noqa
+def generate_generic_json_report(events, reports_path: str, parents_filter, one_file=False):  # noqa
     # TODO: Add docstrings
     tree, index = generate_generic_tree_and_index(events, parents_filter)
     th2_data_services.utils.json_tree.save_tree_as_json(
@@ -673,7 +674,9 @@ def generate_generic_json_report(events, reports_path, parents_filter, one_file=
     )
 
 
-def generate_model_matrix_json_report(events, reports_path, parents_filter, one_file=False):  # noqa
+def generate_model_matrix_json_report(
+    events, reports_path: str, parents_filter, one_file=False
+):  # noqa
     # TODO: Add docstrings
     tree, index = generate_model_matrix_tree_and_index(events, parents_filter)
 

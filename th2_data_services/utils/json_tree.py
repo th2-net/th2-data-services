@@ -16,8 +16,10 @@ from collections import defaultdict
 from datetime import datetime
 from functools import partial
 from os import listdir, path
+from pathlib import Path
 from typing import List, Dict, Tuple, Callable
 
+from th2_data_services.utils._path_utils import transform_filename_to_valid
 from th2_data_services.utils.event_utils.event_utils import extract_start_timestamp
 from th2_data_services.utils.event_utils.select import (
     get_children_from_parents_as_list,
@@ -201,8 +203,12 @@ def get_event_tree_from_parent_id(
 
 
 # NOT STREAMING
-def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callable = None) -> None:
+def save_tree_as_json(
+    tree: Dict, json_file_path: str, file_categorizer: Callable = None
+) -> List[str]:
     """Saves Tree As JSON Format.
+
+    Will create a few json files in the path json_file_path.
 
     Args:
         tree (Dict): TH2-Events transformed into tree (with util methods)
@@ -210,7 +216,7 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
         file_categorizer (Callable, optional): File categorizer function. Defaults to None.
 
     Returns:
-        None (Saves File)
+        List of created filenames.
 
     Example:
         >>> save_tree_as_json(tree=az_tree,
@@ -218,13 +224,22 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
                               # file_categorizer=lambda key, leaf: key
             )
     """
-    path = json_file_path.replace(".json", "_summary.json")
+    created_filenames = []
+    path = Path(json_file_path).resolve().absolute().with_suffix(".json")
+
+    path = path.parent / transform_filename_to_valid(path.name.replace(".json", "_summary.json"))
+
+    # path = json_file_path.replace(".json", "_summary.json")
+    # path_filename = json_file_path.replace(".json", "_summary.json")
+    # path = path.parent / transform_filename_to_valid(path)
     arranged_tree = {}
     summary = {"stats": tree["info"]["stats"]}
     types_set = list(
         set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL"))
     )
     summary["types_list"] = types_set
+
+    created_filenames.append(str(path))
 
     with open(path, "w") as summary_file:
         json.dump(summary, summary_file, indent=3)
@@ -241,10 +256,14 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
         arranged_tree["tree"] = tree
 
     for key, leaf in arranged_tree.items():
-        # TODO: [WINDOWS] Fix file name. key may contain `:` which is invalid symbol in filename.
-        path = json_file_path.replace(".json", f"_{key}.json")
+        path = path.parent / transform_filename_to_valid(path.name.replace(".json", f"_{key}.json"))
+        # path = json_file_path.replace(".json", f"_{key}.json")
+        # path = transform_filename_to_valid(path)
         with open(path, "w") as out_file:
+            created_filenames.append(str(path))
             json.dump(leaf, out_file, indent=3)
+
+    return created_filenames
 
 
 # STREAMING
