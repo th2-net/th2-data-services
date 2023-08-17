@@ -30,6 +30,8 @@ def transform_filename_to_valid(filename: str) -> str:
     for sym in filename:
         if sym in chars:
             res_sym = options.FORBIDDEN_CHARACTERS_IN_FILENAME_CHANGE_TO
+        else:
+            res_sym = sym
 
         res_name += res_sym
 
