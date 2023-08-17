@@ -23,7 +23,9 @@ import th2_data_services.utils.time
 from th2_data_services.utils._types import Th2Message
 from th2_data_services.config import options
 
-expand_message = options.MESSAGE_FIELDS_RESOLVER.expand_message
+# DON'T USE options like this. By default MESSAGE_FIELDS_RESOLVER.expand_message == None
+# It will bring to errors
+# expand_message = options.MESSAGE_FIELDS_RESOLVER.expand_message
 
 # # STREAMABLE
 # Gets Dictionary quantities of events for different message categories
@@ -48,7 +50,7 @@ def get_totals(
     """
     result = defaultdict(int)
     for message in messages:
-        expanded_messages = expand_message(message)
+        expanded_messages = options.MESSAGE_FIELDS_RESOLVER.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue
@@ -103,7 +105,7 @@ def get_some(
     limit = start + max_count
 
     for message in messages:
-        expanded_messages = expand_message(message)
+        expanded_messages = options.MESSAGE_FIELDS_RESOLVER.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue
@@ -377,7 +379,7 @@ def get_messages_examples(
     result = {}
     categories = set(categories)
     for message in messages:
-        expanded_messages = expand_message(message)
+        expanded_messages = options.MESSAGE_FIELDS_RESOLVER.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue

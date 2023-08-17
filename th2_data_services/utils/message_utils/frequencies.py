@@ -1,7 +1,6 @@
 # from th2_data_services import MESSAGE_FIELDS_RESOLVER
 from typing import Callable, Iterable, List
 from th2_data_services.utils import misc_utils
-from th2_data_services.utils.message_utils.message_utils import expand_message
 from th2_data_services.utils.aggregation_classes import FrequencyCategoryTable
 
 from th2_data_services.config import options
@@ -16,7 +15,7 @@ def get_category_frequencies(
     categorizer: Callable,
     aggregation_level: str = "seconds",
     filter_: Callable = None,
-    object_expander=expand_message,
+    object_expander=options.MESSAGE_FIELDS_RESOLVER.expand_message,
 ) -> FrequencyCategoryTable:  # noqa
     return misc_utils.get_objects_frequencies2(
         messages,
