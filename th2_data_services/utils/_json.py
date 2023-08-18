@@ -56,7 +56,7 @@ def iter_json_gzip_file(filename, buffer_limit=250):
         with gzip.open(filename, "r") as data:
             while True:
                 try:
-                    v = data.readline().decode('ascii')
+                    v = data.readline().decode("ascii")
                     if not v:
                         break
 
@@ -72,6 +72,7 @@ def iter_json_gzip_file(filename, buffer_limit=250):
         return iter_json_gzip_file_logic(*args, **kwargs)
 
     return iter_json_gzip_file_wrapper
+
 
 class BufferedJSONProcessor:
     def __init__(self, buffer_limit: int = 250):
@@ -97,7 +98,9 @@ class BufferedJSONProcessor:
             for i in json.loads("[" + ",".join(self.buffer) + "]"):
                 yield i
         except JSONDecodeError as e:
-            raise ValueError(f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{self.buffer}")
+            raise ValueError(
+                f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{self.buffer}"
+            )
         finally:
             # Prevents StopIteration issues
             self.buffer = []
