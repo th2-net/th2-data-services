@@ -21,12 +21,18 @@ class TH2Config:
         self.INTERACTIVE_MODE = False
         self.EVENT_FIELDS_RESOLVER: EventFieldResolver = None
         self.MESSAGE_FIELDS_RESOLVER: MessageFieldResolver = None
+        self.MAX_PATH: int = 255  # OS limitation. Both Windows and Linux
+        self.FORBIDDEN_CHARACTERS_IN_FILENAME: str = '<>:"|?*/\\'
+        self.FORBIDDEN_CHARACTERS_IN_FILENAME_CHANGE_TO: str = "_"
 
     def __str__(self):
         s = (
             f"INTERACTIVE_MODE={self.INTERACTIVE_MODE}\n"
             f"EVENT_FIELDS_RESOLVER={self.EVENT_FIELDS_RESOLVER}\n"
             f"MESSAGE_FIELDS_RESOLVER={self.MESSAGE_FIELDS_RESOLVER}"
+            f"MAX_PATH={self.MAX_PATH}"
+            f"FORBIDDEN_CHARACTERS_IN_FILENAME={self.FORBIDDEN_CHARACTERS_IN_FILENAME}"
+            f"FORBIDDEN_CHARACTERS_IN_FILENAME_CHANGE_TO={self.FORBIDDEN_CHARACTERS_IN_FILENAME_CHANGE_TO}"
         )
         return s
 
