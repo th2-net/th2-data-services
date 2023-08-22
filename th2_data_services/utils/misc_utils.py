@@ -163,6 +163,8 @@ def get_objects_frequencies2(
                         anchor, timestamp_function(expanded_object), aggregation_level
                     )
                     if include_total:
+                        if seconds_int not in frequencies:
+                            frequencies[seconds_int] = {"_total_": 0}
                         if "_total_" not in frequencies[seconds_int]:
                             frequencies[seconds_int]["_total_"] = 1
                         else:
@@ -170,7 +172,7 @@ def get_objects_frequencies2(
                     category = categorizer(expanded_object)
                     categories_set.add(category)
                     if seconds_int not in frequencies:
-                        frequencies[seconds_int] = {category: 1}
+                        frequencies[seconds_int] = {category: 0}
                     elif category not in frequencies[seconds_int]:
                         frequencies[seconds_int][category] = 1
                     else:
