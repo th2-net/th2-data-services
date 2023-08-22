@@ -165,7 +165,7 @@ def get_objects_frequencies2(
                     if include_total:
                         if seconds_int not in frequencies:
                             frequencies[seconds_int] = {"Total": 0}
-                        if "_total_" not in frequencies[seconds_int]:
+                        if "Total" not in frequencies[seconds_int]:
                             frequencies[seconds_int]["Total"] = 1
                         else:
                             frequencies[seconds_int]["Total"] += 1
