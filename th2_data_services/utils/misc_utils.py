@@ -203,7 +203,7 @@ def get_objects_frequencies2(
     if categories:
         header.extend(categories)
         if include_total:
-            header.extend("_total_")
+            header.append("_total_")
     else:
         header.extend(categories_set)
 
