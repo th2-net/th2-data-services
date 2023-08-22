@@ -144,7 +144,7 @@ def get_objects_frequencies2(
     anchor = 0
     categories_set = set()
     if include_total:
-        categories_set.add("_total_")
+        categories_set.add("Total")
     obj = None
 
     try:
@@ -164,11 +164,11 @@ def get_objects_frequencies2(
                     )
                     if include_total:
                         if seconds_int not in frequencies:
-                            frequencies[seconds_int] = {"_total_": 0}
+                            frequencies[seconds_int] = {"Total": 0}
                         if "_total_" not in frequencies[seconds_int]:
-                            frequencies[seconds_int]["_total_"] = 1
+                            frequencies[seconds_int]["Total"] = 1
                         else:
-                            frequencies[seconds_int]["_total_"] += 1
+                            frequencies[seconds_int]["Total"] += 1
                     category = categorizer(expanded_object)
                     categories_set.add(category)
                     if seconds_int not in frequencies:
@@ -203,7 +203,7 @@ def get_objects_frequencies2(
     if categories:
         header.extend(categories)
         if include_total:
-            header.append("_total_")
+            header.append("Total")
     else:
         header.extend(categories_set)
 
