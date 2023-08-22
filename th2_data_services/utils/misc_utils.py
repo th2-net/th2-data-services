@@ -168,7 +168,7 @@ def get_objects_frequencies2(
                         if "_total_" not in frequencies[seconds_int]:
                             frequencies[seconds_int]["_total_"] = 1
                         else:
-                            frequencies[seconds_int]["_total_"] = +1
+                            frequencies[seconds_int]["_total_"] += 1
                     category = categorizer(expanded_object)
                     categories_set.add(category)
                     if seconds_int not in frequencies:
