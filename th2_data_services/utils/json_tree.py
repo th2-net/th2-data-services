@@ -16,20 +16,29 @@ from collections import defaultdict
 from datetime import datetime
 from functools import partial
 from os import listdir, path
+from pathlib import Path
 from typing import List, Dict, Tuple, Callable
 
+from th2_data_services.utils._path_utils import transform_filename_to_valid
 from th2_data_services.utils.event_utils.event_utils import extract_start_timestamp
-from th2_data_services.utils.event_utils.select import get_children_from_parents_as_list, get_children_from_parent_id
+from th2_data_services.utils.event_utils.select import (
+    get_children_from_parents_as_list,
+    get_children_from_parent_id,
+)
 
 
 # TODO
 #   1. What index is?
-#   2.
+#   2. JsonTREE should become a class, from my point of view
 
 
 # NOT STREAMING
 def get_event_tree_from_parent_events(
-    events: List[Dict], parents: List[Dict], depth: int, max_children: int, body_to_simple_processors: Dict = None
+    events: List[Dict],
+    parents: List[Dict],
+    depth: int,
+    max_children: int,
+    body_to_simple_processors: Dict = None,
 ) -> Tuple[Dict, Dict]:
     """Generate tree object based on parents events list.
 
@@ -126,7 +135,9 @@ def get_event_tree_from_parent_events(
                     leaf["body"] = body_to_simple_processors[event_type](child["body"])
 
         current_children = get_children_from_parents_as_list(events, current_children, max_children)
-        print(f"get_event_tree_from_parent - {iteration} len_children={len(current_children)} {datetime.now()}")
+        print(
+            f"get_event_tree_from_parent - {iteration} len_children={len(current_children)} {datetime.now()}"
+        )
         iteration += 1
 
     return tree, index
@@ -134,7 +145,11 @@ def get_event_tree_from_parent_events(
 
 # NOT STREAMING
 def get_event_tree_from_parent_id(
-    events: List[Dict], parent_id: str, depth: int, max_children: int, body_to_simple_processors: Dict = None
+    events: List[Dict],
+    parent_id: str,
+    depth: int,
+    max_children: int,
+    body_to_simple_processors: Dict = None,
 ) -> Dict:
     """Generate tree object based on parent event id.
 
@@ -175,7 +190,11 @@ def get_event_tree_from_parent_id(
         events, current_children, depth, max_children, body_to_simple_processors
     )
     tree["info"].update(
-        {"name": parent["eventName"], "type": parent["eventType"], "time": extract_start_timestamp(parent)}
+        {
+            "name": parent["eventName"],
+            "type": parent["eventType"],
+            "time": extract_start_timestamp(parent),
+        }
     )
     if len(parent["body"]) != 0:
         tree["body"] = parent["body"]
@@ -184,8 +203,12 @@ def get_event_tree_from_parent_id(
 
 
 # NOT STREAMING
-def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callable = None) -> None:
+def save_tree_as_json(
+    tree: Dict, json_file_path: str, file_categorizer: Callable = None
+) -> List[str]:
     """Saves Tree As JSON Format.
+
+    Will create a few json files in the path json_file_path.
 
     Args:
         tree (Dict): TH2-Events transformed into tree (with util methods)
@@ -193,7 +216,7 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
         file_categorizer (Callable, optional): File categorizer function. Defaults to None.
 
     Returns:
-        None (Saves File)
+        List of created filenames.
 
     Example:
         >>> save_tree_as_json(tree=az_tree,
@@ -201,11 +224,22 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
                               # file_categorizer=lambda key, leaf: key
             )
     """
-    path = json_file_path.replace(".json", "_summary.json")
+    created_filenames = []
+    path = Path(json_file_path).resolve().absolute().with_suffix(".json")
+
+    path = path.parent / transform_filename_to_valid(path.name.replace(".json", "_summary.json"))
+
+    # path = json_file_path.replace(".json", "_summary.json")
+    # path_filename = json_file_path.replace(".json", "_summary.json")
+    # path = path.parent / transform_filename_to_valid(path)
     arranged_tree = {}
     summary = {"stats": tree["info"]["stats"]}
-    types_set = list(set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL")))
+    types_set = list(
+        set((type_[: type_.index(" [")] for type_ in tree["info"]["stats"] if type_ != "TOTAL"))
+    )
     summary["types_list"] = types_set
+
+    created_filenames.append(str(path))
 
     with open(path, "w") as summary_file:
         json.dump(summary, summary_file, indent=3)
@@ -222,10 +256,14 @@ def save_tree_as_json(tree: Dict, json_file_path: str, file_categorizer: Callabl
         arranged_tree["tree"] = tree
 
     for key, leaf in arranged_tree.items():
-        # TODO: [WINDOWS] Fix file name. key may contain `:` which is invalid symbol in filename.
-        path = json_file_path.replace(".json", f"_{key}.json")
+        path = path.parent / transform_filename_to_valid(path.name.replace(".json", f"_{key}.json"))
+        # path = json_file_path.replace(".json", f"_{key}.json")
+        # path = transform_filename_to_valid(path)
         with open(path, "w") as out_file:
+            created_filenames.append(str(path))
             json.dump(leaf, out_file, indent=3)
+
+    return created_filenames
 
 
 # STREAMING
@@ -277,7 +315,9 @@ def process_trees_from_jsons(path_pattern: str, processor: Callable) -> None:
 
 
 # STREAMING
-def tree_walk(tree: Dict, processor: Callable, tree_filter: Callable = None, root_path: List = []) -> None:
+def tree_walk(
+    tree: Dict, processor: Callable, tree_filter: Callable = None, root_path: List = []
+) -> None:
     """Process tree by processor [Recursive method].
 
     Args:
@@ -322,11 +362,15 @@ def tree_walk_from_jsons(path_pattern: str, processor: Callable, tree_filter: Ca
                 tree_filter=lambda path, name, leaf: "[fail]" in name
             )
     """
-    process_trees_from_jsons(path_pattern, lambda tree: tree_walk(tree, processor, tree_filter=tree_filter))
+    process_trees_from_jsons(
+        path_pattern, lambda tree: tree_walk(tree, processor, tree_filter=tree_filter)
+    )
 
 
 # STREAMING
-def tree_update_totals(categorizer: Callable, tree: Dict, path: List[str], name: str, leaf: Dict) -> None:
+def tree_update_totals(
+    categorizer: Callable, tree: Dict, path: List[str], name: str, leaf: Dict
+) -> None:
     """Updates tree by categorizer function as keys.
 
     Args:
@@ -370,12 +414,16 @@ def tree_get_category_totals(tree: Dict, categorizer: Callable, tree_filter: Cal
             }
     """
     result = {}
-    tree_walk(tree, processor=partial(tree_update_totals, categorizer, result), tree_filter=tree_filter)
+    tree_walk(
+        tree, processor=partial(tree_update_totals, categorizer, result), tree_filter=tree_filter
+    )
     return result
 
 
 # STREAMING
-def tree_get_category_totals_from_jsons(path_pattern, categorizer: Callable, tree_filter: Callable) -> Dict:
+def tree_get_category_totals_from_jsons(
+    path_pattern, categorizer: Callable, tree_filter: Callable
+) -> Dict:
     """Returns category totals from JSON file(s).
 
     Args:
@@ -392,7 +440,9 @@ def tree_get_category_totals_from_jsons(path_pattern, categorizer: Callable, tre
     result = {}
     process_trees_from_jsons(
         path_pattern,
-        lambda tree: tree_walk(tree, partial(tree_update_totals, categorizer, result), tree_filter=tree_filter),
+        lambda tree: tree_walk(
+            tree, partial(tree_update_totals, categorizer, result), tree_filter=tree_filter
+        ),
     )
     return result
 
@@ -422,7 +472,9 @@ def search_tree(tree: Dict, tree_filter: Callable[[List, str, Dict], Dict]) -> L
 
 
 # NOT STREAMING
-def search_tree_from_jsons(path_to_json_files, tree_filter: Callable[[List, str, Dict], Dict]) -> List:
+def search_tree_from_jsons(
+    path_to_json_files, tree_filter: Callable[[List, str, Dict], Dict]
+) -> List:
     """Searches tree by filter function from JSON file(s).
 
     Args:
@@ -441,6 +493,8 @@ def search_tree_from_jsons(path_to_json_files, tree_filter: Callable[[List, str,
     result = []
     process_trees_from_jsons(
         path_to_json_files,
-        lambda tree: tree_walk(tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter),
+        lambda tree: tree_walk(
+            tree, lambda path, name, leaf: result.append((path, leaf)), tree_filter=tree_filter
+        ),
     )
     return result

@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+import pprint
 from collections import defaultdict
 from typing import Any, Callable, Dict, Iterable, List, Tuple
 from datetime import datetime, timezone
@@ -72,7 +73,9 @@ def get_objects_frequencies(
                 anchor = timestamp_function(expanded_object)
 
             if not categories:
-                epoch = timestamp_aggregation_key(anchor, timestamp_function(expanded_object), aggregation_level)
+                epoch = timestamp_aggregation_key(
+                    anchor, timestamp_function(expanded_object), aggregation_level
+                )
                 category = categorizer(expanded_object)
                 categories_set.add(category)
                 if epoch not in frequencies:
@@ -105,7 +108,9 @@ def get_objects_frequencies(
             line.extend(frequencies[timestamp])
         else:
             for category in categories_set:
-                line.append(frequencies[timestamp][category]) if category in frequencies[timestamp] else line.append(0)
+                line.append(frequencies[timestamp][category]) if category in frequencies[
+                    timestamp
+                ] else line.append(0)
 
         results.append(line)
 
@@ -123,6 +128,7 @@ def get_objects_frequencies2(
     objects_filter: Callable = None,
     gap_mode: int = 1,
     zero_anchor: bool = False,
+    include_total: bool = False,
 ) -> FrequencyCategoryTable:
     # TODO - used by both messages and events get_category_frequencies
     """Returns objects frequencies based on categorizer.
@@ -139,10 +145,46 @@ def get_objects_frequencies2(
         objects_filter: Object filter function
         gap_mode: 1 - Every range starts with actual message timestamp, 2 - Ranges are split equally, 3 - Same as 2, but filled with empty ranges in between
         zero_anchor: If False anchor used is first timestamp from message, if True anchor is 0
+        include_total: Will add Total column if True.
 
     Returns:
         List[List]
+
+    Examples:
+        It'll return the table like this.
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | timestamp           | ExecutionReport   | NewOrder   | OrderCancel   |   Total |
+        +========+=====================+===================+============+===============+=========+
+        |        | 2023-08-13T08:53:05 | 1                 | 1          | 2             |       4 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-14T08:53:05 | 1                 | 1          | 2             |       4 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-15T08:53:05 | 0                 | 1          | 2             |       3 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-16T08:53:05 | 0                 | 1          | 1             |       2 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-17T08:53:05 | 1                 | 0          | 1             |       2 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-18T08:53:05 | 0                 | 1          | 0             |       1 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-19T08:53:05 | 1                 | 0          | 1             |       2 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-20T08:53:05 | 0                 | 1          | 1             |       2 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-21T08:53:05 | 1                 | 2          | 0             |       3 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-22T08:53:05 | 1                 | 0          | 0             |       1 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-23T08:53:05 | 0                 | 4          | 1             |       5 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-24T08:53:05 | 0                 | 1          | 0             |       1 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        | count  |                     |                   |            |               |      12 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        | totals |                     | 6                 | 13         | 11            |      30 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
     """
+    TOTAL_FIELD = "Total"
     frequencies = {}
     anchor = 0
     categories_set = set()
@@ -167,31 +209,47 @@ def get_objects_frequencies2(
                 anchor = timestamp_rounded_down(timestamp_function(obj), aggregation_level)
         if not categories:
             epoch = timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
+            if include_total:
+                if epoch not in frequencies:
+                    frequencies[epoch] = {TOTAL_FIELD: 0}
+                if TOTAL_FIELD not in frequencies[epoch]:
+                    frequencies[epoch][TOTAL_FIELD] = 1
+                else:
+                    frequencies[epoch][TOTAL_FIELD] += 1
             category = categorizer(obj)
             categories_set.add(category)
             if epoch not in frequencies:
-                frequencies[epoch] = {category: 1}
-            elif category not in frequencies[epoch]:
+                frequencies[epoch] = {category: 0}
+            if category not in frequencies[epoch]:
                 frequencies[epoch][category] = 1
             else:
                 frequencies[epoch][category] += 1
         else:
-            for i in range(len(categories)):
-                if categorizer(obj) == categories[i]:
+            for category in categories:
+                if categorizer(obj) == category:
                     epoch = timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
                     if epoch not in frequencies:
-                        frequencies[epoch] = [0] * len(categories)
-                    frequencies[epoch][i] += 1
+                        frequencies[epoch] = {category: 0}
+                    if category not in frequencies[epoch]:
+                        frequencies[epoch][category] = 0
+                    frequencies[epoch][category] += 1
+                    if include_total:
+                        if TOTAL_FIELD not in frequencies[epoch]:
+                            frequencies[epoch][TOTAL_FIELD] = 0
+                        frequencies[epoch][TOTAL_FIELD] += 1
 
     header = ["timestamp_start", "timestamp_end"]
     if categories:
         header.extend(categories)
     else:
         header.extend(categories_set)
+    
+    if include_total:
+            header.append(TOTAL_FIELD)
 
     results = [header]
     timestamps = list(sorted(frequencies.keys()))
-
+    # Expected that timestamp is seconds.
     if gap_mode == 3:
         last_timestamp = timestamps[0]
         timestamps_with_zeros = [timestamps[0]]
@@ -206,6 +264,7 @@ def get_objects_frequencies2(
             timestamps_with_zeros.append(timestamp)
             last_timestamp = timestamp
         timestamps = timestamps_with_zeros
+
     for timestamp in timestamps:
         st_string = round_timestamp_string_aggregation(timestamp, aggregation_level)
         et_string = round_timestamp_string_aggregation(
@@ -213,14 +272,24 @@ def get_objects_frequencies2(
         )
         line = [st_string, et_string]
         if categories:
-            line.extend(frequencies[timestamp])
+            line.extend(frequencies[timestamp].values())
         else:
             for category in categories_set:
-                line.append(frequencies[timestamp][category]) if category in frequencies[timestamp] else line.append(0)
+                line.append(frequencies[timestamp][category]) if category in frequencies[
+                    timestamp
+                ] else line.append(0)
+            if include_total:
+                line.append(sum(line[2:]))
 
         results.append(line)
 
     r = FrequencyCategoryTable(header=header, rows=results[1:])
+    if not categories and include_total:
+        # Put TOTAL_FIELD in the end of the header.
+        categories_names = categories_set.copy()
+        sorted_categories_names = ["timestamp_start", "timestamp_end"] + sorted(categories_names)
+        sorted_categories_names.append(TOTAL_FIELD)
+        r = r.change_columns_order(sorted_categories_names)
 
     return r
 
@@ -312,7 +381,12 @@ def analyze_stream_sequence(
                     )
                 if curr_seq == prev_seq:
                     result.append(
-                        {"type": "duplicate", "seq": prev_seq, "timestamp_1": prev_time, "timestamp_2": curr_time}
+                        {
+                            "type": "duplicate",
+                            "seq": prev_seq,
+                            "timestamp_1": prev_time,
+                            "timestamp_2": curr_time,
+                        }
                     )
             prev_seq = curr_seq
             prev_time = curr_time
@@ -345,10 +419,16 @@ def process_objects_stream(
 
 # TODO: Is this useful?
 #   similar to totals for events, but evenets also have status field
-def get_category_totals_p(obj: Dict, categorizer: Callable, obj_filter: Callable, result) -> Any:  # noqa
+def get_category_totals_p(
+    obj: Dict, categorizer: Callable, obj_filter: Callable, result
+) -> Any:  # noqa
     # TODO: Add docstings
     if obj is None:
-        return get_category_totals_p, {"categorizer": categorizer, "obj_filter": obj_filter, "result": result}
+        return get_category_totals_p, {
+            "categorizer": categorizer,
+            "obj_filter": obj_filter,
+            "result": result,
+        }
 
     if obj_filter is not None and not obj_filter(obj):
         return None
@@ -363,9 +443,13 @@ def get_category_totals_p(obj: Dict, categorizer: Callable, obj_filter: Callable
 
 
 def get_category_examples_p(
-    obj: Dict, categorizer: Callable, obj_filter: Callable, cat_filter: Callable, max_qty: int, result
+    obj: Dict,
+    categorizer: Callable,
+    obj_filter: Callable,
+    cat_filter: Callable,
+    max_qty: int,
+    result,
 ) -> Any:  # noqa
-    # TODO - add docstring
     if obj is None:
         return get_category_examples_p, {
             "categorizer": categorizer,
@@ -470,7 +554,9 @@ def create_qty_distribution(categories: Dict, category_filter: Callable) -> Dict
 
 
 def calc_percentile_in_measurement_dict(d):  # noqa
-    # TODO - add docstring
+    # TODO - something strange ..
+    #   nothing uses it.
+    #   it doesn't return anything
     for item in d.values():
         distr = item["distr"]
         total = item["count"]

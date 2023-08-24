@@ -82,6 +82,7 @@ class TotalCategoryCalculator:
         """Calculates, aggregates to tables and prints categories combinations.
 
         This class allows you to calculate any metrics and their combinations in stream-like way.
+        It calculates how many times do we met some combination of tags.
 
         It does not accumulate all data in memory.
         Keeps calculated metrics only.
@@ -116,6 +117,19 @@ class TotalCategoryCalculator:
             raise Exception(
                 f"Unknown combination. The following combination '{combination}' is not provided to constructor."
             )
+
+    def _prep_combination_keep_order(self, combination: CategoryCombination) -> List[str]:
+        """Returns combination in the required view."""
+        new_comb = []
+        for cv in combination:
+            if isinstance(cv, str):
+                new_comb.append(cv)
+            elif isinstance(cv, Category):
+                new_comb.append(cv.name)
+            else:
+                raise ValueError(f"Unexpected combination value, {combination}")
+
+        return new_comb
 
     def _prepare_combination(self, combination: CategoryCombination) -> Tuple[str]:
         """Returns combination in the required view."""
@@ -163,7 +177,7 @@ class TotalCategoryCalculator:
         """
         orig_comb = combination
         comb: Category
-        orig_columns_order = [comb.name for comb in orig_comb]
+        orig_columns_order = self._prep_combination_keep_order(orig_comb)
         orig_columns_order.append(self.counter_field_name)
 
         combination = self._prepare_combination(combination)

@@ -1,7 +1,6 @@
 # from th2_data_services import MESSAGE_FIELDS_RESOLVER
 from typing import Callable, Iterable, List
 from th2_data_services.utils import misc_utils
-from th2_data_services.utils.message_utils.message_utils import expand_message
 from th2_data_services.utils.aggregation_classes import FrequencyCategoryTable
 
 from th2_data_services.config import options
@@ -17,6 +16,8 @@ def get_category_frequencies(
     filter_: Callable = None,
     gap_mode: int = 1,
     zero_anchor: bool = False,
+    object_expander=options.MESSAGE_FIELDS_RESOLVER.expand_message,
+    include_total: bool = False
 ) -> FrequencyCategoryTable:  # noqa
     """Returns message frequencies based on categorizer.
 
@@ -39,10 +40,13 @@ def get_category_frequencies(
         categories,
         categorizer,
         # TODO -- we shouldn't know internal structure!!! - epochSeconds
-        lambda message: options.MESSAGE_FIELDS_RESOLVER.get_timestamp(message)["epochSecond"],
+        timestamp_function=lambda message: options.MESSAGE_FIELDS_RESOLVER.get_timestamp(message)[
+            "epochSecond"
+        ],
         aggregation_level=aggregation_level,
-        object_expander=expand_message,
+        object_expander=object_expander,
         objects_filter=filter_,
         gap_mode=gap_mode,
         zero_anchor=zero_anchor,
+        include_total=include_total
     )
