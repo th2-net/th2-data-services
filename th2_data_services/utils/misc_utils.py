@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+import pprint
 from collections import defaultdict
 from typing import Any, Callable, Dict, Iterable, List, Tuple
 from datetime import datetime, timezone
@@ -67,7 +68,9 @@ def get_objects_frequencies(
                 anchor = timestamp_function(expanded_object)
 
             if not categories:
-                epoch = timestamp_aggregation_key(anchor, timestamp_function(expanded_object), aggregation_level)
+                epoch = timestamp_aggregation_key(
+                    anchor, timestamp_function(expanded_object), aggregation_level
+                )
                 category = categorizer(expanded_object)
                 categories_set.add(category)
                 if epoch not in frequencies:
@@ -100,7 +103,9 @@ def get_objects_frequencies(
             line.extend(frequencies[timestamp])
         else:
             for category in categories_set:
-                line.append(frequencies[timestamp][category]) if category in frequencies[timestamp] else line.append(0)
+                line.append(frequencies[timestamp][category]) if category in frequencies[
+                    timestamp
+                ] else line.append(0)
 
         results.append(line)
 
@@ -137,35 +142,45 @@ def get_objects_frequencies2(
     frequencies = {}
     anchor = 0
     categories_set = set()
-    for obj in objects_stream:
-        expanded_objects = [obj] if object_expander is None else object_expander(obj)
-        for expanded_object in expanded_objects:
-            if objects_filter is not None:
-                if not objects_filter(expanded_object):
-                    continue
+    obj = None
 
-            if anchor == 0:
-                anchor = timestamp_function(expanded_object)
+    try:
+        for obj in objects_stream:
+            expanded_objects = [obj] if object_expander is None else object_expander(obj)
+            for expanded_object in expanded_objects:
+                if objects_filter is not None:
+                    if not objects_filter(expanded_object):
+                        continue
 
-            if not categories:
-                epoch = timestamp_aggregation_key(anchor, timestamp_function(expanded_object), aggregation_level)
-                category = categorizer(expanded_object)
-                categories_set.add(category)
-                if epoch not in frequencies:
-                    frequencies[epoch] = {category: 1}
-                elif category not in frequencies[epoch]:
-                    frequencies[epoch][category] = 1
+                if anchor == 0:
+                    anchor = timestamp_function(expanded_object)
+
+                if not categories:
+                    seconds_int = timestamp_aggregation_key(
+                        anchor, timestamp_function(expanded_object), aggregation_level
+                    )
+                    category = categorizer(expanded_object)
+                    categories_set.add(category)
+                    if seconds_int not in frequencies:
+                        frequencies[seconds_int] = {category: 1}
+                    elif category not in frequencies[seconds_int]:
+                        frequencies[seconds_int][category] = 1
+                    else:
+                        frequencies[seconds_int][category] += 1
                 else:
-                    frequencies[epoch][category] += 1
-            else:
-                for i in range(len(categories)):
-                    if categorizer(expanded_object) == categories[i]:
-                        epoch = timestamp_aggregation_key(
-                            anchor, timestamp_function(expanded_object), aggregation_level
-                        )
-                        if epoch not in frequencies:
-                            frequencies[epoch] = [0] * len(categories)
-                        frequencies[epoch][i] += 1
+                    for i in range(len(categories)):
+                        if categorizer(expanded_object) == categories[i]:
+                            seconds_int = timestamp_aggregation_key(
+                                anchor, timestamp_function(expanded_object), aggregation_level
+                            )
+                            if seconds_int not in frequencies:
+                                frequencies[seconds_int] = [0] * len(categories)
+                            frequencies[seconds_int][i] += 1
+    except KeyError:
+        # Print the object if a user provided wrong categorizer.
+        if obj is not None:
+            print(f"Problem object: \n" f"{pprint.pformat(obj)}")
+        raise
 
     header = ["timestamp"]
     if categories:
@@ -175,13 +190,16 @@ def get_objects_frequencies2(
 
     results = [header]
     timestamps = list(sorted(frequencies.keys()))
+    # Expected that timestamp is seconds.
     for timestamp in timestamps:
         line = [datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")]
         if categories:
             line.extend(frequencies[timestamp])
         else:
             for category in categories_set:
-                line.append(frequencies[timestamp][category]) if category in frequencies[timestamp] else line.append(0)
+                line.append(frequencies[timestamp][category]) if category in frequencies[
+                    timestamp
+                ] else line.append(0)
 
         results.append(line)
 
@@ -277,7 +295,12 @@ def analyze_stream_sequence(
                     )
                 if curr_seq == prev_seq:
                     result.append(
-                        {"type": "duplicate", "seq": prev_seq, "timestamp_1": prev_time, "timestamp_2": curr_time}
+                        {
+                            "type": "duplicate",
+                            "seq": prev_seq,
+                            "timestamp_1": prev_time,
+                            "timestamp_2": curr_time,
+                        }
                     )
             prev_seq = curr_seq
             prev_time = curr_time
@@ -310,10 +333,16 @@ def process_objects_stream(
 
 # TODO: Is this useful?
 #   similar to totals for events, but evenets also have status field
-def get_category_totals_p(obj: Dict, categorizer: Callable, obj_filter: Callable, result) -> Any:  # noqa
+def get_category_totals_p(
+    obj: Dict, categorizer: Callable, obj_filter: Callable, result
+) -> Any:  # noqa
     # TODO: Add docstings
     if obj is None:
-        return get_category_totals_p, {"categorizer": categorizer, "obj_filter": obj_filter, "result": result}
+        return get_category_totals_p, {
+            "categorizer": categorizer,
+            "obj_filter": obj_filter,
+            "result": result,
+        }
 
     if obj_filter is not None and not obj_filter(obj):
         return None
@@ -327,14 +356,22 @@ def get_category_totals_p(obj: Dict, categorizer: Callable, obj_filter: Callable
     return None
 
 
-def get_category_examples_p(obj: Dict, categorizer: Callable, obj_filter: Callable, cat_filter: Callable,
-                            max_qty: int, result) -> Any:
+def get_category_examples_p(
+    obj: Dict,
+    categorizer: Callable,
+    obj_filter: Callable,
+    cat_filter: Callable,
+    max_qty: int,
+    result,
+) -> Any:  # noqa
     if obj is None:
-        return get_category_examples_p, {"categorizer": categorizer,
-                                         "obj_filter": obj_filter,
-                                         "cat_filter": cat_filter,
-                                         "max_qty": max_qty,
-                                         "result": result}
+        return get_category_examples_p, {
+            "categorizer": categorizer,
+            "obj_filter": obj_filter,
+            "cat_filter": cat_filter,
+            "max_qty": max_qty,
+            "result": result,
+        }
     if obj_filter is not None and not obj_filter(obj):
         return None
 
@@ -430,7 +467,10 @@ def create_qty_distribution(categories: Dict, category_filter: Callable) -> Dict
     return result
 
 
-def calc_percentile_in_measurement_dict(d):
+def calc_percentile_in_measurement_dict(d):  # noqa
+    # TODO - something strange ..
+    #   nothing uses it.
+    #   it doesn't return anything
     for item in d.values():
         distr = item["distr"]
         total = item["count"]

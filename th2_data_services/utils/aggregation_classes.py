@@ -165,7 +165,7 @@ class FrequencyCategoryTable(CategoryTable):
         """Returns categories."""
         return self.header[1:]  # Skip timestamp.
 
-    def by_category(self, name, exclude_zero_values=True):
+    def by_category(self, name, exclude_zero_values=True) -> "FrequencyCategoryTable":
         """Returns CategoryFrequencies for requested column."""
         header_lst = self.header
         if name not in self.get_categories():
@@ -184,7 +184,7 @@ class FrequencyCategoryTable(CategoryTable):
 
         return fct
 
-    def by_categories(self, names: List[str], exclude_zero_values=True):
+    def by_categories(self, names: List[str], exclude_zero_values=True) -> "FrequencyCategoryTable":
         """Returns CategoryFrequencies for requested column."""
         header_lst = self.header
         for name in names:
@@ -220,10 +220,11 @@ class TotalCategoryTable(CategoryTable):
             self.add_rows(rows)
 
         self._transposed = False
+        self.count_field_name = "count"
 
     @property
     def total(self):
-        return sum(self["count"])
+        return sum(self[self.count_field_name])
 
     def _totals_line(self):
         totals = []
@@ -264,7 +265,11 @@ class TotalCategoryTable(CategoryTable):
             ["count"] + ["" for _ in range(len(self.header) - 1)] + [len(self.rows)],
             ["totals"] + self._totals_line(),
         ]
-        return [[" "] + list(self.header), *[[" "] + list(row) for row in self.rows], *additional_rows]
+        return [
+            [" "] + list(self.header),
+            *[[" "] + list(row) for row in self.rows],
+            *additional_rows,
+        ]
 
     def transpose_column(self, column_name) -> "TotalCategoryTable":
         """Returns a new table with transposed column.
@@ -355,7 +360,7 @@ class TotalCategoryTable(CategoryTable):
         static_col_names = []
         dynamic_col_names = set()
         for h in self.header:
-            if h == column_name or h == "count":
+            if h == column_name or h == self.count_field_name:
                 pass
             else:
                 static_col_names.append(h)
@@ -367,7 +372,9 @@ class TotalCategoryTable(CategoryTable):
             for h in static_col_names:
                 new_row.append(row[h])
 
-            new_tbl_dict.setdefault(tuple(new_row), {})[row[column_name]] = row["count"]
+            new_tbl_dict.setdefault(tuple(new_row), {})[row[column_name]] = row[
+                self.count_field_name
+            ]
             dynamic_col_names.add(row[column_name])
 
         dynamic_col_names_lst = sorted(list(dynamic_col_names))

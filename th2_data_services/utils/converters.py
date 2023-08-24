@@ -19,7 +19,7 @@ import gzip
 from th2_data_services.interfaces.utils.converter import ITimestampConverter
 from collections.abc import MutableMapping
 
-_DatetimeTuple = namedtuple("DatetimeTuple", "datetime mantissa")
+_DatetimeTuple = namedtuple("DatetimeTuple", ["datetime", "mantissa"])
 
 
 class DatetimeStringConverter(ITimestampConverter[str]):

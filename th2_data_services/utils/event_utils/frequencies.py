@@ -29,7 +29,11 @@ from th2_data_services.utils.category import Category
     "Tell DS team if you dont agree or have some ideas."
 )
 def get_category_frequencies(
-    events: Iterable[Th2Event], categories: List[str], categorizer: Callable, aggregation_level: str = "seconds"
+    events: Iterable[Th2Event],
+    categories: List[str],
+    categorizer: Callable,
+    aggregation_level: str = "seconds",
+    object_expander=None,
 ) -> FrequencyCategoryTable:
     """Returns event frequencies based on event category.
 
@@ -64,6 +68,7 @@ def get_category_frequencies(
         # TODO -- we shouldn't know internal structure!!! - epochSeconds
         lambda e: options.EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
         aggregation_level=aggregation_level,
+        object_expander=object_expander,
     )
 
 
@@ -75,8 +80,8 @@ def get_category_frequencies2(
 
     Args:
         events (Iterable[Th2Event]): TH2-Events
-        categories (List[str]): Event Categories
-        categorizer (Callable): Categorizer Method
+        category: The name of the category doesn't make sence.
+            Used just for unification to use general Category class.
         aggregation_level (Optional, str): Aggregation Level
 
     Returns:
@@ -102,7 +107,9 @@ def get_category_frequencies2(
         categories=[],
         categorizer=category.get_func,
         # TODO -- we shouldn't know internal structure!!! - epochSeconds
-        timestamp_function=lambda e: options.EVENT_FIELDS_RESOLVER.get_start_timestamp(e)["epochSecond"],
+        timestamp_function=lambda e: options.EVENT_FIELDS_RESOLVER.get_start_timestamp(e)[
+            "epochSecond"
+        ],
         aggregation_level=aggregation_level,
     )
 

@@ -26,10 +26,12 @@ Table of Contents
          * [EventTree](#eventtree)
          * [Collections](#collections)
          * [Hints](#hints)
+      * [FieldsResolver](#fieldsresolver)
    * [2.4. Links](#24-links)
-* [3. Official DataSource implementations](#3-official-datasource-implementations)
-* [4. API](#4-api)
-* [5. Examples](#5-examples)
+* [3. Best practices](#3-best-practices)
+* [4. Official DataSource implementations](#4-official-datasource-implementations)
+* [5. API](#5-api)
+* [6. Examples](#6-examples)
 <!--te-->
 
 # 1. Introduction
@@ -572,15 +574,26 @@ Performance impact:
 - [Report Data Provider](https://github.com/th2-net/th2-rpt-data-provider)
 - [Th2 Data Services Utils](https://github.com/th2-net/th2-data-services-utils)
 
-# 3. Official DataSource implementations
+# 3. Best practices
+Depending on how you work with `Data object`, it can be slow of fast.  
+As with a relational database, you can write a query that will return data slowly or quickly, 
+the same when working with a `Data object`.
+
+Follow the rules to make your work with Data object fast:
+1. Use `Data.use_cache()` if you iterate data more than one time.
+2. Try to don't iterate one `Data object` inside the other one.  
+   If you should to do it, use short `Data object` first and long `Data object` inside the loop.  
+   It'll allow you open the cache file or create a request to `Data source` less number of times.
+
+# 4. Official DataSource implementations
 
 - [Lightweight Data Provider Data Source](https://github.com/th2-net/th2-ds-source-lwdp)
 
 
-# 4. API
+# 5. API
 
 If you are looking for classes description see the [API Documentation](documentation/api/index.md).
 
-# 5. Examples
+# 6. Examples
 
 - [get_started_example.py](examples/get_started_example.py)
