@@ -13,8 +13,7 @@
 #  limitations under the License.
 import base64
 from collections import defaultdict
-
-# from th2_data_services import MESSAGE_FIELDS_RESOLVER
+from th2_data_services.config import options
 from typing import Callable, Dict, Iterable, List, Set
 
 from deprecated.classic import deprecated
@@ -22,59 +21,11 @@ from deprecated.classic import deprecated
 import th2_data_services.utils.display
 import th2_data_services.utils.time
 from th2_data_services.utils._types import Th2Message
-
 from th2_data_services.config import options
 
-
-# # NOT STREAMABLE
-# Extract compounded message into list of individual messages
-# m: compounded message (retrieved from Data object)
-# result: list of individual message objects
-def expand_message(message: Th2Message) -> Iterable[Th2Message]:
-    # TODO - should be updated for version with Th2Transport
-    """Extract compounded message into list of individual messages.
-
-    Args:
-        message: TH2-Message
-
-    Returns:
-        Iterable[Th2Message]
-    """
-    if "/" not in options.MESSAGE_FIELDS_RESOLVER.get_type(message):
-        return [message]
-    result = []
-    fields = options.MESSAGE_FIELDS_RESOLVER.get_body(message)["fields"]
-    for k in fields.keys():
-        msg_index = len(result)
-        msg_type = k
-        if "-" in k:
-            msg_type = msg_type[: msg_type.index("-")]
-            # TODO: Remove or keep this line?
-            # m_index = int(k[k.index("-") + 1:])
-
-        new_msg = {}
-        new_msg.update(message)
-        new_msg["messageType"] = msg_type
-        new_msg["body"] = {}
-        new_msg["body"]["metadata"] = {}
-        new_msg["body"]["metadata"].update(
-            options.MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]
-        )
-        new_msg["body"]["metadata"]["id"] = {}
-        new_msg["body"]["metadata"]["id"].update(
-            options.MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"]
-        )
-        new_msg["body"]["metadata"]["messageType"] = msg_type
-        new_msg["body"]["metadata"]["id"]["subsequence"] = [
-            options.MESSAGE_FIELDS_RESOLVER.get_body(message)["metadata"]["id"]["subsequence"][
-                msg_index
-            ]
-        ]
-        new_msg["body"]["fields"] = fields[k]["messageValue"]["fields"]
-        result.append(new_msg)
-
-    return result
-
+# DON'T USE options like this. By default MESSAGE_FIELDS_RESOLVER.expand_message == None
+# It will bring to errors
+# expand_message = options.MESSAGE_FIELDS_RESOLVER.expand_message
 
 # # STREAMABLE
 # Gets Dictionary quantities of events for different message categories
@@ -99,7 +50,7 @@ def get_totals(
     """
     result = defaultdict(int)
     for message in messages:
-        expanded_messages = expand_message(message)
+        expanded_messages = options.MESSAGE_FIELDS_RESOLVER.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue
@@ -154,7 +105,7 @@ def get_some(
     limit = start + max_count
 
     for message in messages:
-        expanded_messages = expand_message(message)
+        expanded_messages = options.MESSAGE_FIELDS_RESOLVER.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue
@@ -428,7 +379,7 @@ def get_messages_examples(
     result = {}
     categories = set(categories)
     for message in messages:
-        expanded_messages = expand_message(message)
+        expanded_messages = options.MESSAGE_FIELDS_RESOLVER.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue

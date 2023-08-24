@@ -156,7 +156,11 @@ class MessageFieldResolver(ABC):
     @abstractmethod
     def get_attached_event_ids(message):
         pass
-
+    
+    @staticmethod
+    @abstractmethod
+    def expand_message(message):
+        pass 
 
 # TODO - should be remove during release.
 MessageFieldsResolver = MessageFieldResolver  # For backward compatibility.

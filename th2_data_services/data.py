@@ -403,6 +403,9 @@ class Data(Generic[DataIterValues]):
                     yield decoded_data
                 except EOFError:
                     break
+                except pickle.UnpicklingError:
+                    print(f"Cannot read {filepath} cache file")
+                    raise
 
     def _process_step(self, step: dict, record):
         res = step["callback"](record)

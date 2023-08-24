@@ -357,6 +357,20 @@ get_type(event)
 
 ---
 
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L160"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `expand_message`
+
+```python
+expand_message(message)
+```
+
+
+
+
+
+---
+
 <a href="../../th2_data_services/interfaces/utils/resolver.py#L155"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_attached_event_ids`
@@ -496,6 +510,20 @@ get_type(message)
 
 ---
 
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L160"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `expand_message`
+
+```python
+expand_message(message)
+```
+
+
+
+
+
+---
+
 <a href="../../th2_data_services/interfaces/utils/resolver.py#L155"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_attached_event_ids`
@@ -623,7 +651,7 @@ get_type(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L165"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L169"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `SubMessageFieldResolver`
 
@@ -635,7 +663,7 @@ get_type(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L176"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L180"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_fields`
 
@@ -649,7 +677,7 @@ get_fields(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L181"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L185"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_metadata`
 
@@ -663,7 +691,7 @@ get_metadata(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L186"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L190"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_protocol`
 
@@ -677,7 +705,7 @@ get_protocol(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L166"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L170"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subsequence`
 
@@ -691,7 +719,7 @@ get_subsequence(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L171"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L175"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_type`
 
