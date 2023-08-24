@@ -107,10 +107,6 @@ class EventFieldResolver(ABC):
         pass
 
 
-# TODO - should be remove during release.
-EventFieldsResolver = EventFieldResolver  # For backward compatibility.
-
-
 class MessageFieldResolver(ABC):
     @staticmethod
     @abstractmethod
@@ -156,14 +152,24 @@ class MessageFieldResolver(ABC):
     @abstractmethod
     def get_attached_event_ids(message):
         pass
-    
+
     @staticmethod
     @abstractmethod
     def expand_message(message):
-        pass 
+        """Extract compounded message into list of individual messages.
 
-# TODO - should be remove during release.
-MessageFieldsResolver = MessageFieldResolver  # For backward compatibility.
+        Warnings:
+            expand_message function is not backward-compatible.
+            If you use it in your scripts, there is no guarantee that everything will
+            work if you change data-source because different data-sources has different
+            messages structure.
+
+        Args:
+            message: Th2Message
+
+        Returns:
+            Iterable[Th2Message]
+        """
 
 
 class SubMessageFieldResolver(ABC):
@@ -191,3 +197,9 @@ class SubMessageFieldResolver(ABC):
     @abstractmethod
     def get_protocol(message):
         pass
+
+
+# TODO - should be remove during release.
+MessageFieldsResolver = MessageFieldResolver  # For backward compatibility.
+# TODO - should be remove during release.
+EventFieldsResolver = EventFieldResolver  # For backward compatibility.
