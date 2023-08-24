@@ -12,18 +12,30 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from th2_data_services.interfaces.utils.resolver import EventFieldResolver, MessageFieldResolver
+from th2_data_services.interfaces.utils.resolver import (
+    EventFieldResolver,
+    MessageFieldResolver,
+    SubMessageFieldResolver,
+)
 
 
 class TH2Config:
     def __init__(self) -> None:
         """Global configuration for the DS library."""
+        # TODO - try to import here data_source in available.
+
         self.INTERACTIVE_MODE = False
         self.EVENT_FIELDS_RESOLVER: EventFieldResolver = None
         self.MESSAGE_FIELDS_RESOLVER: MessageFieldResolver = None
+        self.SUBMESSAGE_FIELDS_RESOLVER: SubMessageFieldResolver = None
         self.MAX_PATH: int = 255  # OS limitation. Both Windows and Linux
         self.FORBIDDEN_CHARACTERS_IN_FILENAME: str = '<>:"|?*/\\'
         self.FORBIDDEN_CHARACTERS_IN_FILENAME_CHANGE_TO: str = "_"
+
+        # Aliases
+        self.efr = self.EVENT_FIELDS_RESOLVER
+        self.mfr = self.MESSAGE_FIELDS_RESOLVER
+        self.smfr = self.SUBMESSAGE_FIELDS_RESOLVER
 
     def __str__(self):
         s = (
