@@ -8,12 +8,19 @@ import pytest
 from tests.tests_unit.test_event_trees.demo_etc_data import demo_etc_data_big, demo_etc_data_small
 from tests.tests_unit.utils import LogsChecker
 from th2_data_services.data import Data
-from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2_data_services.event_tree import (
+    EventTree,
+    EventTreeCollection,
+    ParentEventTreeCollection,
+    IETCDriver,
+)
 from th2_data_services.event_tree.etc_driver import Th2EventType
 from th2_data_services.event_tree.exceptions import FieldIsNotExist
 from th2_data_services.interfaces import IEventStruct, IEventStub
 
-EXTERNAL_CACHE_FILE = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
+EXTERNAL_CACHE_FILE = (
+    Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
+)
 
 
 @pytest.fixture
@@ -23,7 +30,8 @@ def general_data() -> List[dict]:
         {
             "batchId": None,
             "eventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
-            "eventName": "[TS_1]Aggressive IOC vs two orders: second order's price is " "lower than first",
+            "eventName": "[TS_1]Aggressive IOC vs two orders: second order's price is "
+            "lower than first",
             "eventType": "",
             "isBatched": False,
             "parentEventId": None,
@@ -31,7 +39,8 @@ def general_data() -> List[dict]:
         {
             "batchId": None,
             "eventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
-            "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for " "instrument INSTR1",
+            "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for "
+            "instrument INSTR1",
             "eventType": "",
             "isBatched": False,
             "parentEventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
@@ -73,7 +82,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a6-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'SECOND' " "sequence '1624005475721015014'",
+            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'SECOND' "
+            "sequence '1624005475721015014'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -81,7 +91,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a7-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'FIRST' " "sequence '1624005475720919499'",
+            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'FIRST' "
+            "sequence '1624005475720919499'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -107,7 +118,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114aa-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'SECOND' " "sequence '1624005466840347015'",
+            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'SECOND' "
+            "sequence '1624005466840347015'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -115,7 +127,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ab-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'FIRST' " "sequence '1624005466840263372'",
+            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'FIRST' "
+            "sequence '1624005466840263372'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -132,7 +145,8 @@ def general_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ad-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-log' direction 'FIRST' " "sequence '1624029363623063053'",
+            "eventName": "Checkpoint for session alias 'demo-log' direction 'FIRST' "
+            "sequence '1624029363623063053'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -208,7 +222,8 @@ def detached_data() -> List[dict]:
         {
             "batchId": None,
             "eventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
-            "eventName": "[TS_1]Aggressive IOC vs two orders: second order's price is " "lower than first",
+            "eventName": "[TS_1]Aggressive IOC vs two orders: second order's price is "
+            "lower than first",
             "eventType": "",
             "isBatched": False,
             "parentEventId": None,
@@ -216,7 +231,8 @@ def detached_data() -> List[dict]:
         {
             "batchId": None,
             "eventId": "88a3ee80-d1b4-11eb-b0fb-199708acc7bc",
-            "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for " "instrument INSTR1",
+            "eventName": "Case[TC_1.1]: Trader DEMO-CONN1 vs trader DEMO-CONN2 for "
+            "instrument INSTR1",
             "eventType": "",
             "isBatched": False,
             "parentEventId": "84db48fc-d1b4-11eb-b0fb-199708acc7bc",
@@ -258,7 +274,8 @@ def detached_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a6-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'SECOND' " "sequence '1624005475721015014'",
+            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'SECOND' "
+            "sequence '1624005475721015014'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -266,7 +283,8 @@ def detached_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114a7-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'FIRST' " "sequence '1624005475720919499'",
+            "eventName": "Checkpoint for session alias 'demo-dc1' direction 'FIRST' "
+            "sequence '1624005475720919499'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -292,7 +310,8 @@ def detached_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114aa-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'SECOND' " "sequence '1624005466840347015'",
+            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'SECOND' "
+            "sequence '1624005466840347015'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -300,7 +319,8 @@ def detached_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ab-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'FIRST' " "sequence '1624005466840263372'",
+            "eventName": "Checkpoint for session alias 'demo-dc2' direction 'FIRST' "
+            "sequence '1624005466840263372'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c035903-d1b4-11eb-9278-591e568ad66e",
@@ -317,7 +337,8 @@ def detached_data() -> List[dict]:
         {
             "batchId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4",
             "eventId": "6e3be13f-cab7-4653-8cb9-6e74fd95ade4:8c1114ad-d1b4-11eb-9278-591e568ad66e",
-            "eventName": "Checkpoint for session alias 'demo-log' direction 'FIRST' " "sequence '1624029363623063053'",
+            "eventName": "Checkpoint for session alias 'demo-log' direction 'FIRST' "
+            "sequence '1624029363623063053'",
             "eventType": "Checkpoint for session",
             "isBatched": True,
             "parentEventId": None,
@@ -1117,7 +1138,9 @@ def messages_before_pipeline_adapter():
             ],
             "body": {
                 "fields": {
-                    "TestMessageHeader": {"messageValue": {"fields": {"Length": {"simpleValue": "4"}}}},
+                    "TestMessageHeader": {
+                        "messageValue": {"fields": {"Length": {"simpleValue": "4"}}}
+                    },
                     "PacketHeader": {
                         "messageValue": {
                             "fields": {
@@ -1185,8 +1208,12 @@ def messages_before_pipeline_adapter():
                             }
                         }
                     },
-                    "TestMessageHeader-2": {"messageValue": {"fields": {"Length": {"simpleValue": "5"}}}},
-                    "TestMessageHeader-4": {"messageValue": {"fields": {"Length": {"simpleValue": "37"}}}},
+                    "TestMessageHeader-2": {
+                        "messageValue": {"fields": {"Length": {"simpleValue": "5"}}}
+                    },
+                    "TestMessageHeader-4": {
+                        "messageValue": {"fields": {"Length": {"simpleValue": "37"}}}
+                    },
                     "PacketHeader-1": {
                         "messageValue": {
                             "fields": {
@@ -1662,8 +1689,12 @@ def message_from_pipeline():
                         }
                     }
                 },
-                "TestMessageHeader-2": {"messageValue": {"fields": {"Length": {"simpleValue": "5"}}}},
-                "TestMessageHeader-4": {"messageValue": {"fields": {"Length": {"simpleValue": "37"}}}},
+                "TestMessageHeader-2": {
+                    "messageValue": {"fields": {"Length": {"simpleValue": "5"}}}
+                },
+                "TestMessageHeader-4": {
+                    "messageValue": {"fields": {"Length": {"simpleValue": "37"}}}
+                },
                 "PacketHeader-1": {
                     "messageValue": {
                         "fields": {
@@ -1842,7 +1873,11 @@ case1_values = ["a", "b", "c", "d", "e", "f", "g"]
     params=[
         DataCase(Data(case1_values, cache=True), "list", case1_values),
         DataCase(Data.from_cache_file(EXTERNAL_CACHE_FILE), "external_cache_file", general_data),
-        DataCase(Data([1, 2, 3]) + Data([4, 5, 6, "end", {"a": 123}]), "join", [1, 2, 3, 4, 5, 6, "end", {"a": 123}]),
+        DataCase(
+            Data([1, 2, 3]) + Data([4, 5, 6, "end", {"a": 123}]),
+            "join",
+            [1, 2, 3, 4, 5, 6, "end", {"a": 123}],
+        ),
     ]
 )
 def data_case(request) -> DataCase:
@@ -1883,7 +1918,12 @@ def events_tree_for_test() -> EventTree:
     tree.append_event(event_name="B", event_id="B_id", data=None, parent_id="root_id")
     tree.append_event(event_name="C", event_id="C_id", data={"data": "test data"}, parent_id="B_id")
     tree.append_event(event_name="D", event_id="D_id", data=None, parent_id="B_id")
-    tree.append_event(event_name="D1", event_id="D1_id", data={"key1": "value1", "key2": "value2"}, parent_id="D_id")
+    tree.append_event(
+        event_name="D1",
+        event_id="D1_id",
+        data={"key1": "value1", "key2": "value2"},
+        parent_id="D_id",
+    )
     return tree
 
 
@@ -2005,37 +2045,187 @@ def demo_etc_big(demo_etc_driver) -> EventTreeCollection:
 
 
 @pytest.fixture
-def frequency_table_data():
+def frequency_table_data() -> List[dict]:
     data = [
-        ['2023-08-14T08:53:05.688049Z', 'OrderCancel', 'OUT', 'stream2'],
-        ['2023-08-21T07:51:27.942076Z', 'NewOrder', 'IN', 'stream4'],
-        ['2023-08-24T11:51:12.616085Z', 'NewOrder', 'IN', 'stream1'],
-        ['2023-08-16T05:41:54.963540Z', 'OrderCancel', 'OUT', 'stream2'],
-        ['2023-08-16T15:29:01.422646Z', 'NewOrder', 'IN', 'stream4'],
-        ['2023-08-19T02:49:16.551326Z', 'NewOrder', 'OUT', 'stream1'],
-        ['2023-08-22T23:06:20.612952Z', 'ExecutionReport', 'OUT', 'stream3'],
-        ['2023-08-23T20:12:40.152099Z', 'NewOrder', 'OUT', 'stream1'],
-        ['2023-08-16T02:15:49.844689Z', 'OrderCancel', 'OUT', 'stream2'],
-        ['2023-08-23T11:16:11.021005Z', 'NewOrder', 'OUT', 'stream1'],
-        ['2023-08-21T09:15:39.315806Z', 'ExecutionReport', 'OUT', 'stream3'],
-        ['2023-08-21T23:27:37.341876Z', 'NewOrder', 'OUT', 'stream1'],
-        ['2023-08-14T13:49:10.534961Z', 'OrderCancel', 'IN', 'stream2'],
-        ['2023-08-16T23:07:22.431359Z', 'OrderCancel', 'IN', 'stream3'],
-        ['2023-08-24T04:35:55.852704Z', 'NewOrder', 'OUT', 'stream4'],
-        ['2023-08-20T10:31:42.493202Z', 'OrderCancel', 'OUT', 'stream2'],
-        ['2023-08-13T18:45:42.299591Z', 'OrderCancel', 'OUT', 'stream2'],
-        ['2023-08-20T07:51:16.455842Z', 'OrderCancel', 'OUT', 'stream4'],
-        ['2023-08-14T22:23:47.334876Z', 'NewOrder', 'IN', 'stream4'],
-        ['2023-08-23T11:13:21.811535Z', 'NewOrder', 'IN', 'stream2'],
-        ['2023-08-13T21:34:04.089095Z', 'NewOrder', 'OUT', 'stream4'],
-        ['2023-08-14T19:53:49.159667Z', 'ExecutionReport', 'IN', 'stream1'],
-        ['2023-08-13T17:23:15.927140Z', 'ExecutionReport', 'OUT', 'stream1'],
-        ['2023-08-19T21:06:32.548659Z', 'ExecutionReport', 'IN', 'stream3'],
-        ['2023-08-16T06:26:01.182164Z', 'NewOrder', 'OUT', 'stream2'],
-        ['2023-08-21T23:19:27.914964Z', 'NewOrder', 'IN', 'stream3'],
-        ['2023-08-17T12:13:45.597220Z', 'ExecutionReport', 'OUT', 'stream2'],
-        ['2023-08-24T04:10:05.793870Z', 'OrderCancel', 'IN', 'stream1'],
-        ['2023-08-17T10:25:05.916986Z', 'OrderCancel', 'IN', 'stream2'],
-        ['2023-08-13T19:38:00.721701Z', 'OrderCancel', 'IN', 'stream3'],
+        {
+            "timestamp": "2023-08-14T08:53:05.688049Z",
+            "MessageType": "OrderCancel",
+            "Direction": "OUT",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-21T07:51:27.942076Z",
+            "MessageType": "NewOrder",
+            "Direction": "IN",
+            "Stream": "stream4",
+        },
+        {
+            "timestamp": "2023-08-24T11:51:12.616085Z",
+            "MessageType": "NewOrder",
+            "Direction": "IN",
+            "Stream": "stream1",
+        },
+        {
+            "timestamp": "2023-08-16T05:41:54.963540Z",
+            "MessageType": "OrderCancel",
+            "Direction": "OUT",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-16T15:29:01.422646Z",
+            "MessageType": "NewOrder",
+            "Direction": "IN",
+            "Stream": "stream4",
+        },
+        {
+            "timestamp": "2023-08-19T02:49:16.551326Z",
+            "MessageType": "NewOrder",
+            "Direction": "OUT",
+            "Stream": "stream1",
+        },
+        {
+            "timestamp": "2023-08-22T23:06:20.612952Z",
+            "MessageType": "ExecutionReport",
+            "Direction": "OUT",
+            "Stream": "stream3",
+        },
+        {
+            "timestamp": "2023-08-23T20:12:40.152099Z",
+            "MessageType": "NewOrder",
+            "Direction": "OUT",
+            "Stream": "stream1",
+        },
+        {
+            "timestamp": "2023-08-16T02:15:49.844689Z",
+            "MessageType": "OrderCancel",
+            "Direction": "OUT",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-23T11:16:11.021005Z",
+            "MessageType": "NewOrder",
+            "Direction": "OUT",
+            "Stream": "stream1",
+        },
+        {
+            "timestamp": "2023-08-21T09:15:39.315806Z",
+            "MessageType": "ExecutionReport",
+            "Direction": "OUT",
+            "Stream": "stream3",
+        },
+        {
+            "timestamp": "2023-08-21T23:27:37.341876Z",
+            "MessageType": "NewOrder",
+            "Direction": "OUT",
+            "Stream": "stream1",
+        },
+        {
+            "timestamp": "2023-08-14T13:49:10.534961Z",
+            "MessageType": "OrderCancel",
+            "Direction": "IN",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-16T23:07:22.431359Z",
+            "MessageType": "OrderCancel",
+            "Direction": "IN",
+            "Stream": "stream3",
+        },
+        {
+            "timestamp": "2023-08-24T04:35:55.852704Z",
+            "MessageType": "NewOrder",
+            "Direction": "OUT",
+            "Stream": "stream4",
+        },
+        {
+            "timestamp": "2023-08-20T10:31:42.493202Z",
+            "MessageType": "OrderCancel",
+            "Direction": "OUT",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-13T18:45:42.299591Z",
+            "MessageType": "OrderCancel",
+            "Direction": "OUT",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-20T07:51:16.455842Z",
+            "MessageType": "OrderCancel",
+            "Direction": "OUT",
+            "Stream": "stream4",
+        },
+        {
+            "timestamp": "2023-08-14T22:23:47.334876Z",
+            "MessageType": "NewOrder",
+            "Direction": "IN",
+            "Stream": "stream4",
+        },
+        {
+            "timestamp": "2023-08-23T11:13:21.811535Z",
+            "MessageType": "NewOrder",
+            "Direction": "IN",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-13T21:34:04.089095Z",
+            "MessageType": "NewOrder",
+            "Direction": "OUT",
+            "Stream": "stream4",
+        },
+        {
+            "timestamp": "2023-08-14T19:53:49.159667Z",
+            "MessageType": "ExecutionReport",
+            "Direction": "IN",
+            "Stream": "stream1",
+        },
+        {
+            "timestamp": "2023-08-13T17:23:15.927140Z",
+            "MessageType": "ExecutionReport",
+            "Direction": "OUT",
+            "Stream": "stream1",
+        },
+        {
+            "timestamp": "2023-08-19T21:06:32.548659Z",
+            "MessageType": "ExecutionReport",
+            "Direction": "IN",
+            "Stream": "stream3",
+        },
+        {
+            "timestamp": "2023-08-16T06:26:01.182164Z",
+            "MessageType": "NewOrder",
+            "Direction": "OUT",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-21T23:19:27.914964Z",
+            "MessageType": "NewOrder",
+            "Direction": "IN",
+            "Stream": "stream3",
+        },
+        {
+            "timestamp": "2023-08-17T12:13:45.597220Z",
+            "MessageType": "ExecutionReport",
+            "Direction": "OUT",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-24T04:10:05.793870Z",
+            "MessageType": "OrderCancel",
+            "Direction": "IN",
+            "Stream": "stream1",
+        },
+        {
+            "timestamp": "2023-08-17T10:25:05.916986Z",
+            "MessageType": "OrderCancel",
+            "Direction": "IN",
+            "Stream": "stream2",
+        },
+        {
+            "timestamp": "2023-08-13T19:38:00.721701Z",
+            "MessageType": "OrderCancel",
+            "Direction": "IN",
+            "Stream": "stream3",
+        },
     ]
     return data
