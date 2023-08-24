@@ -151,6 +151,24 @@ class CategoryTable(ABC, PerfectTable):
         self._service_columns = {}  # {'col_name': 'idx'}
         self._service_rows = []  # [idx]
 
+    def _totals_line(self):
+        totals = []
+        for col_name in self.header:
+            col_tuple = self[col_name]
+
+            try:
+                # If all Bool.
+                if all([isinstance(x, bool) for x in col_tuple]):
+                    pos = sum(col_tuple)
+                    neg = len(col_tuple) - pos
+                    totals.append(f"{pos}/{neg}")
+                else:
+                    totals.append(sum(col_tuple))
+            except:
+                totals.append("")
+
+        return totals
+
 
 class FrequencyCategoryTable(CategoryTable):
     def __init__(self, header: List[str], rows=None):  # noqa
@@ -208,6 +226,17 @@ class FrequencyCategoryTable(CategoryTable):
 
         return fct
 
+    def get_list_repr(self):
+        additional_rows = [
+            ["count"] + ["" for _ in range(len(self.header) - 1)] + [len(self.rows)],
+            ["totals"] + self._totals_line(),
+        ]
+        return [
+            [" "] + list(self.header),
+            *[[" "] + list(row) for row in self.rows],
+            *additional_rows,
+        ]
+
 
 class TotalCategoryTable(CategoryTable):
     # This class allows to create tables with multiple categories. e.g  type | status | count
@@ -225,24 +254,6 @@ class TotalCategoryTable(CategoryTable):
     @property
     def total(self):
         return sum(self[self.count_field_name])
-
-    def _totals_line(self):
-        totals = []
-        for col_name in self.header:
-            col_tuple = self[col_name]
-
-            try:
-                # If all Bool.
-                if all([isinstance(x, bool) for x in col_tuple]):
-                    pos = sum(col_tuple)
-                    neg = len(col_tuple) - pos
-                    totals.append(f"{pos}/{neg}")
-                else:
-                    totals.append(sum(col_tuple))
-            except:
-                totals.append("")
-
-        return totals
 
     def add_rows_from_dict(self, d: dict):
         result = []
