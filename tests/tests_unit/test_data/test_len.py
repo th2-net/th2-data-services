@@ -1,3 +1,4 @@
+import pathlib
 from typing import List
 
 from tests.tests_unit.utils import (
@@ -38,7 +39,9 @@ def test_len_with_stream_cache(general_data: List[dict], cache=True):
         assert is_cache_file_exists(data), f"The cache was dumped after using len: {cache}"
     else:
         assert not is_cache_file_exists(data), f"The cache was dumped after using len: {cache}"
-        assert not is_pending_cache_file_exists(data), f"The cache was dumped after using len: {cache}"
+        assert not is_pending_cache_file_exists(
+            data
+        ), f"The cache was dumped after using len: {cache}"
 
     # TODO - Check that we do not calc len, after already calculated len or after iter
 
@@ -85,3 +88,15 @@ def test_len_will_be_saved_if_limit_used(cache, limit2, limit3, exp_data3, exp_d
     assert data3._len == exp_data3
     assert data2._len == exp_data2
     assert data._len == exp_data
+
+
+@pytest.mark.xfail(
+    reason="TH2-4930 - known issue. Should be fixed in 2.0.0. "
+    "The new feature Data.from_csv was really needed, so we OK with the issue."
+)
+def test_len_after_reading_file():
+    # Any file: cache, json, csv
+    path = pathlib.Path("tests/test_files/file_to_read_by_data.csv")
+    data = Data.from_csv(path)
+
+    assert list(data.limit(1)) == ["A", "B", "Two Words"]

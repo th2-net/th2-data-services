@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 import copy
+import csv
+import json
 import gc
 import pickle
 import pprint
@@ -20,14 +22,25 @@ from functools import partial
 from os import rename
 from pathlib import Path
 from time import time
-from typing import Callable, Dict, Generator, List, Optional, Union, Iterable, Iterator, Any, Generic
+from typing import (
+    Callable,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Union,
+    Iterable,
+    Iterator,
+    Any,
+    Generic,
+)
 from weakref import finalize
 import types
 from inspect import isgeneratorfunction
 from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 from th2_data_services.config import options
-from th2_data_services.utils._json import iter_json_file
+from th2_data_services.utils._json import iter_json_file, iter_json_gzip_file
 
 # LOG import logging
 
@@ -80,10 +93,14 @@ class Data(Generic[DataIterValues]):
         self._id = id(self)
         self._cache_filename = f"{self._id}_{time()}.pickle"
         self._cache_path = Path("temp", self._cache_filename).resolve().absolute()
-        self._pending_cache_path = self._cache_path.with_name("[PENDING]" + self._cache_filename).resolve().absolute()
+        self._pending_cache_path = (
+            self._cache_path.with_name("[PENDING]" + self._cache_filename).resolve().absolute()
+        )
         self._cache_file_obj = None
         self._len = None
-        self._workflow = [] if workflow is None else workflow  # Normally it has empty list or one Step.
+        self._workflow = (
+            [] if workflow is None else workflow
+        )  # Normally it has empty list or one Step.
         self._length_hint = None  # The value is populated when we use limit method.
         self._cache_status = cache
         # We use finalize instead of __del__ because __del__ won't be executed sometimes.
@@ -130,7 +147,9 @@ class Data(Generic[DataIterValues]):
         """Creates a generator from the list of iterables."""
         return partial(self._create_generator_data_source_from_iterables, iterables_list)
 
-    def _create_generator_data_source_from_iterables(self, iterables_list: List[Iterable]) -> Generator:
+    def _create_generator_data_source_from_iterables(
+        self, iterables_list: List[Iterable]
+    ) -> Generator:
         """Creates a generator from the list of iterables."""
         for data in iterables_list:
             yield from data
@@ -291,7 +310,9 @@ class Data(Generic[DataIterValues]):
         """Returns filepath for a cache file."""
         return self._cache_path
 
-    def _iterate_modified_data_stream(self, data_stream: DataGenerator, workflow: WorkFlow) -> DataGenerator:
+    def _iterate_modified_data_stream(
+        self, data_stream: DataGenerator, workflow: WorkFlow
+    ) -> DataGenerator:
         """Returns generator that iterates data stream with applied workflow.
 
         StopIteration from limit function will be handled here.
@@ -324,7 +345,9 @@ class Data(Generic[DataIterValues]):
             else:  # Just one record.
                 yield modified_records
 
-    def __change_data(self, data_stream: DataGenerator, workflow: WorkFlow, cache: bool) -> DataGenerator:
+    def __change_data(
+        self, data_stream: DataGenerator, workflow: WorkFlow, cache: bool
+    ) -> DataGenerator:
         """Applies workflow for data.
 
         Args:
@@ -386,7 +409,9 @@ class Data(Generic[DataIterValues]):
         # LOG         self._logger.debug("    - step '%s' -> %s", step["type"], res)
         return res
 
-    def __apply_workflow(self, record: Any, workflow: WorkFlow) -> Optional[Union[dict, List[dict]]]:
+    def __apply_workflow(
+        self, record: Any, workflow: WorkFlow
+    ) -> Optional[Union[dict, List[dict]]]:
         """Creates generator records with apply workflow.
 
         Returns:
@@ -471,7 +496,9 @@ class Data(Generic[DataIterValues]):
         data._set_metadata(self.metadata)
         return data
 
-    def map_stream(self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]) -> "Data":
+    def map_stream(
+        self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]
+    ) -> "Data":
         """Append `stream-transform` function to workflow.
 
         If StreamAdapter is passed StreamAdapter.handle method will be used as a map function.
@@ -492,7 +519,9 @@ class Data(Generic[DataIterValues]):
         def get_source(handler):
             yield from handler(self)
 
-        if isinstance(adapter_or_generator, IStreamAdapter) and isgeneratorfunction(adapter_or_generator.handle):
+        if isinstance(adapter_or_generator, IStreamAdapter) and isgeneratorfunction(
+            adapter_or_generator.handle
+        ):
             source = partial(get_source, adapter_or_generator.handle)
         elif isgeneratorfunction(adapter_or_generator):
             source = partial(get_source, adapter_or_generator)
@@ -530,6 +559,30 @@ class Data(Generic[DataIterValues]):
             Data: Data object.
         """
         # LOG         self._logger.info("Apply limit = %s", num)
+        # def get_source(handler):
+        #     try:
+        #         yield from handler(self)
+        #     except StopIteration as e:
+        #
+        #         # There is some magic.
+        #         # It'll stop data stream and will be handled in the finally statements.
+        #         # If you put return not under except block it will NOT work.
+        #         #
+        #         # It happens because python returns control to data_stream here due to `yield`.
+        #         return
+        #
+        # def filter_yield(stream):
+        #     callback = self._build_limit_callback(num)
+        #     for record in stream:
+        #         if callback(record):
+        #             yield record
+        #
+        # source = partial(get_source, filter_yield)
+        # data = Data(source)
+        # data._length_hint = num
+        # data._set_metadata(self.metadata)
+        # return data
+
         new_workflow = [{"type": "limit", "callback": self._build_limit_callback(num)}]
         data_obj = Data(data=self, workflow=new_workflow)
         data_obj._length_hint = num
@@ -711,15 +764,17 @@ class Data(Generic[DataIterValues]):
 
         data_obj = cls([], cache=True)
         data_obj._set_custom_cache_destination(filename=filename)
+        data_obj.update_metadata({"source_file": filename})
         return data_obj
 
     @classmethod
-    def from_json(cls, filename, buffer_limit=250) -> "Data":
+    def from_json(cls, filename, buffer_limit=250, gzip=False) -> "Data[dict]":
         """Creates Data object from json file with provided name.
 
         Args:
             filename: Name or path to cache file.
             buffer_limit: If limit is 0 buffer will not be used. Number of messages in buffer before parsing.
+            gzip: Set to true if file is json file compressed using gzip.
 
         Returns:
             Data: Data object.
@@ -731,7 +786,81 @@ class Data(Generic[DataIterValues]):
         if not Path(filename).resolve().exists():
             raise FileNotFoundError(f"{filename} doesn't exist")
 
-        return cls(iter_json_file(filename, buffer_limit))
+        if gzip:
+            data = cls(iter_json_gzip_file(filename, buffer_limit))
+        else:
+            data = cls(iter_json_file(filename, buffer_limit))
+        data.update_metadata({"source_file": filename})
+        return data
+
+    @classmethod
+    def from_any_file(cls, filename, mode="r") -> "Data[str]":
+        """Creates Data object from any file with provided name.
+
+        It will just iterate file and return data line be line.
+
+        Args:
+            filename: Name or path to the file.
+            mode: Read mode of open function.
+
+        Returns:
+            Data: Data object.
+
+        Raises:
+            FileNotFoundError if provided file does not exist.
+
+        """
+        if not Path(filename).resolve().exists():
+            raise FileNotFoundError(f"{filename} doesn't exist")
+
+        data = cls(_iter_any_file(filename, mode))
+        data.update_metadata({"source_file": filename})
+        return data
+
+    @classmethod
+    def from_csv(
+        cls, filename, header=None, header_first_line=False, mode="r", delimiter=","
+    ) -> "Data":
+        """Creates Data object from any file with provided name.
+
+        It will iterate the CSV file as if you were doing it with CSV module.
+
+        Args:
+            filename: Name or path to the file.
+            header: If provided header for csv, Data object will yield Dict[str].
+            header_first_line: If the first line of the csv file is header, it'll take header from
+                                the first line. Data object will yield Dict[str].
+                                `header` argument is not required in this case.
+            mode: Read mode of open function.
+            delimiter: CSV file delimiter.
+
+        Returns:
+            Data: Data object.
+
+        Raises:
+            FileNotFoundError if provided file does not exist.
+
+        """
+        # TODO - bug here TH2-4930 - new data object doesn't work with limit method
+        if not Path(filename).resolve().exists():
+            raise FileNotFoundError(f"{filename} doesn't exist")
+
+        data = cls(_iter_csv(filename, header, header_first_line, mode, delimiter))
+        data.update_metadata({"source_file": filename})
+
+        # TH2-4930
+        # TODO - should be deleted after bugfix
+        if header is None and not header_first_line:
+
+            def limit(*args, **kwargs):
+                raise RuntimeError(
+                    "The data object that was get by using 'from_csv' "
+                    "cannot work with 'limit' method. Known issue TH2-4930."
+                )
+
+            data.limit = limit
+
+        return data
 
     def _set_metadata(self, metadata: Dict) -> None:
         """Set metadata of object to metadata argument.
@@ -778,7 +907,9 @@ class Data(Generic[DataIterValues]):
                 # Check For Iterable Types
                 if isinstance(v, dict):
                     self.__metadata[k].update({**current, **v})
-                elif isinstance(v, Iterable) and not (isinstance(v, str) or isinstance(current, str)):
+                elif isinstance(v, Iterable) and not (
+                    isinstance(v, str) or isinstance(current, str)
+                ):
                     if isinstance(current, Iterable):
                         self.__metadata[k] = [*current, *v]
                     else:
@@ -793,3 +924,83 @@ class Data(Generic[DataIterValues]):
                 self.__metadata[k] = v
 
         return self
+
+    def to_json(self, filename: str, indent: int = None, overwrite: bool = False):
+        """Converts data to json format.
+
+        Args:
+            filename (str): Output JSON filename
+            indent (int, optional): JSON format indent. Defaults to None.
+            overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
+
+        Raises:
+            FileExistsError: If file exists and overwrite=False
+        """
+        if Path(filename).absolute().exists() and not overwrite:
+            raise FileExistsError(
+                f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
+            )
+
+        with open(filename, "w", encoding="UTF-8") as file:
+            file.write("[")  # Start list
+            for record in self:
+                json.dump(record, file, indent=indent)
+                file.write(",\n")
+            file.seek(file.tell() - 3)  # Delete last comma for valid JSON
+            file.write("]")  # Close list
+
+    def to_jsons(self, filename: str, indent: int = None, overwrite: bool = False):
+        if Path(filename).absolute().exists() and not overwrite:
+            raise FileExistsError(
+                f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
+            )
+
+        with open(filename, "w", encoding="UTF-8") as file:
+            for record in self:
+                json.dump(record, file, indent=indent)
+                file.write("\n")
+
+
+def _iter_any_file(filename, mode="r"):
+    """Returns the function that returns generators."""
+
+    def iter_any_file_logic():
+        with open(filename, mode) as data:
+            while True:
+                try:
+                    v = data.readline()
+                    if not v:
+                        break
+
+                    yield v
+                except Exception:
+                    print(f"Error string: {v}")
+                    raise
+
+    def iter_any_file_wrapper(*args, **kwargs):
+        """Wrapper function that allows passing arguments to the generator."""
+        return iter_any_file_logic(*args, **kwargs)
+
+    return iter_any_file_wrapper
+
+
+def _iter_csv(filename, header=None, header_first_line=False, mode="r", delimiter=","):
+    """Returns the function that returns generators."""
+
+    def iter_logic():
+        with open(filename, mode) as data:
+            if header is not None:
+                reader = csv.DictReader(data, fieldnames=header)
+            elif header_first_line:
+                reader = csv.DictReader(data)
+            else:
+                reader = csv.reader(data, delimiter=delimiter)
+
+            for row in reader:
+                yield (row,)  # Because if provide just a list it will iterate it.
+
+    def iter_wrapper(*args, **kwargs):
+        """Wrapper function that allows passing arguments to the generator."""
+        return iter_logic(*args, **kwargs)
+
+    return iter_wrapper
