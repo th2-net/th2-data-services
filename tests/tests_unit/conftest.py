@@ -2002,3 +2002,40 @@ def demo_etc_big(demo_etc_driver) -> EventTreeCollection:
     etc = EventTreeCollection(demo_etc_driver)
     etc.build(data)
     return etc
+
+
+@pytest.fixture
+def frequency_table_data():
+    data = [
+        ['2023-08-14T08:53:05.688049Z', 'OrderCancel', 'OUT', 'stream2'],
+        ['2023-08-21T07:51:27.942076Z', 'NewOrder', 'IN', 'stream4'],
+        ['2023-08-24T11:51:12.616085Z', 'NewOrder', 'IN', 'stream1'],
+        ['2023-08-16T05:41:54.963540Z', 'OrderCancel', 'OUT', 'stream2'],
+        ['2023-08-16T15:29:01.422646Z', 'NewOrder', 'IN', 'stream4'],
+        ['2023-08-19T02:49:16.551326Z', 'NewOrder', 'OUT', 'stream1'],
+        ['2023-08-22T23:06:20.612952Z', 'ExecutionReport', 'OUT', 'stream3'],
+        ['2023-08-23T20:12:40.152099Z', 'NewOrder', 'OUT', 'stream1'],
+        ['2023-08-16T02:15:49.844689Z', 'OrderCancel', 'OUT', 'stream2'],
+        ['2023-08-23T11:16:11.021005Z', 'NewOrder', 'OUT', 'stream1'],
+        ['2023-08-21T09:15:39.315806Z', 'ExecutionReport', 'OUT', 'stream3'],
+        ['2023-08-21T23:27:37.341876Z', 'NewOrder', 'OUT', 'stream1'],
+        ['2023-08-14T13:49:10.534961Z', 'OrderCancel', 'IN', 'stream2'],
+        ['2023-08-16T23:07:22.431359Z', 'OrderCancel', 'IN', 'stream3'],
+        ['2023-08-24T04:35:55.852704Z', 'NewOrder', 'OUT', 'stream4'],
+        ['2023-08-20T10:31:42.493202Z', 'OrderCancel', 'OUT', 'stream2'],
+        ['2023-08-13T18:45:42.299591Z', 'OrderCancel', 'OUT', 'stream2'],
+        ['2023-08-20T07:51:16.455842Z', 'OrderCancel', 'OUT', 'stream4'],
+        ['2023-08-14T22:23:47.334876Z', 'NewOrder', 'IN', 'stream4'],
+        ['2023-08-23T11:13:21.811535Z', 'NewOrder', 'IN', 'stream2'],
+        ['2023-08-13T21:34:04.089095Z', 'NewOrder', 'OUT', 'stream4'],
+        ['2023-08-14T19:53:49.159667Z', 'ExecutionReport', 'IN', 'stream1'],
+        ['2023-08-13T17:23:15.927140Z', 'ExecutionReport', 'OUT', 'stream1'],
+        ['2023-08-19T21:06:32.548659Z', 'ExecutionReport', 'IN', 'stream3'],
+        ['2023-08-16T06:26:01.182164Z', 'NewOrder', 'OUT', 'stream2'],
+        ['2023-08-21T23:19:27.914964Z', 'NewOrder', 'IN', 'stream3'],
+        ['2023-08-17T12:13:45.597220Z', 'ExecutionReport', 'OUT', 'stream2'],
+        ['2023-08-24T04:10:05.793870Z', 'OrderCancel', 'IN', 'stream1'],
+        ['2023-08-17T10:25:05.916986Z', 'OrderCancel', 'IN', 'stream2'],
+        ['2023-08-13T19:38:00.721701Z', 'OrderCancel', 'IN', 'stream3'],
+    ]
+    return data
