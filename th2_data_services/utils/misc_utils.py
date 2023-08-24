@@ -121,6 +121,7 @@ def get_objects_frequencies2(
     aggregation_level: str = "seconds",
     object_expander: Callable = None,
     objects_filter: Callable = None,
+    include_total: bool = False
 ) -> FrequencyCategoryTable:
     # TODO - used by both messages and events get_category_frequencies
     """Returns objects frequencies based on categorizer.
@@ -142,6 +143,8 @@ def get_objects_frequencies2(
     frequencies = {}
     anchor = 0
     categories_set = set()
+    if include_total:
+        categories_set.add("Total")
     obj = None
 
     try:
@@ -159,22 +162,36 @@ def get_objects_frequencies2(
                     seconds_int = timestamp_aggregation_key(
                         anchor, timestamp_function(expanded_object), aggregation_level
                     )
+                    if include_total:
+                        if seconds_int not in frequencies:
+                            frequencies[seconds_int] = {"Total": 0}
+                        if "Total" not in frequencies[seconds_int]:
+                            frequencies[seconds_int]["Total"] = 1
+                        else:
+                            frequencies[seconds_int]["Total"] += 1
                     category = categorizer(expanded_object)
                     categories_set.add(category)
                     if seconds_int not in frequencies:
-                        frequencies[seconds_int] = {category: 1}
+                        frequencies[seconds_int] = {category: 0}
                     elif category not in frequencies[seconds_int]:
                         frequencies[seconds_int][category] = 1
                     else:
                         frequencies[seconds_int][category] += 1
                 else:
+                    if include_total:
+                        seconds_int = timestamp_aggregation_key(
+                            anchor, timestamp_function(expanded_object), aggregation_level
+                        )
+                        if seconds_int not in frequencies:
+                            frequencies[seconds_int] = [0] * (len(categories)+1)
+                        frequencies[seconds_int][len(categories)] += 1
                     for i in range(len(categories)):
                         if categorizer(expanded_object) == categories[i]:
                             seconds_int = timestamp_aggregation_key(
                                 anchor, timestamp_function(expanded_object), aggregation_level
                             )
                             if seconds_int not in frequencies:
-                                frequencies[seconds_int] = [0] * len(categories)
+                                frequencies[seconds_int] = [0]*(len(categories)+1) if include_total else [0]*len(categories) 
                             frequencies[seconds_int][i] += 1
     except KeyError:
         # Print the object if a user provided wrong categorizer.
@@ -185,6 +202,8 @@ def get_objects_frequencies2(
     header = ["timestamp"]
     if categories:
         header.extend(categories)
+        if include_total:
+            header.append("Total")
     else:
         header.extend(categories_set)
 
