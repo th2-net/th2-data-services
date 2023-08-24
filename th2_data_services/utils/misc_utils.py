@@ -121,7 +121,7 @@ def get_objects_frequencies2(
     aggregation_level: str = "seconds",
     object_expander: Callable = None,
     objects_filter: Callable = None,
-    include_total: bool = False
+    include_total: bool = False,
 ) -> FrequencyCategoryTable:
     # TODO - used by both messages and events get_category_frequencies
     """Returns objects frequencies based on categorizer.
@@ -136,15 +136,51 @@ def get_objects_frequencies2(
         aggregation_level: Aggregation level
         object_expander: Object expander function
         objects_filter: Object filter function
+        include_total: Will add Total column if True.
 
     Returns:
         List[List]
+
+    Examples:
+        It'll return the table like this.
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | timestamp           | ExecutionReport   | NewOrder   | OrderCancel   |   Total |
+        +========+=====================+===================+============+===============+=========+
+        |        | 2023-08-13T08:53:05 | 1                 | 1          | 2             |       4 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-14T08:53:05 | 1                 | 1          | 2             |       4 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-15T08:53:05 | 0                 | 1          | 2             |       3 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-16T08:53:05 | 0                 | 1          | 1             |       2 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-17T08:53:05 | 1                 | 0          | 1             |       2 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-18T08:53:05 | 0                 | 1          | 0             |       1 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-19T08:53:05 | 1                 | 0          | 1             |       2 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-20T08:53:05 | 0                 | 1          | 1             |       2 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-21T08:53:05 | 1                 | 2          | 0             |       3 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-22T08:53:05 | 1                 | 0          | 0             |       1 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-23T08:53:05 | 0                 | 4          | 1             |       5 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-24T08:53:05 | 0                 | 1          | 0             |       1 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        | count  |                     |                   |            |               |      12 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
+        | totals |                     | 6                 | 13         | 11            |      30 |
+        +--------+---------------------+-------------------+------------+---------------+---------+
     """
+    TOTAL_FIELD = "Total"
     frequencies = {}
     anchor = 0
     categories_set = set()
     if include_total:
-        categories_set.add("Total")
+        categories_set.add(TOTAL_FIELD)
     obj = None
 
     try:
@@ -164,11 +200,11 @@ def get_objects_frequencies2(
                     )
                     if include_total:
                         if seconds_int not in frequencies:
-                            frequencies[seconds_int] = {"Total": 0}
-                        if "Total" not in frequencies[seconds_int]:
-                            frequencies[seconds_int]["Total"] = 1
+                            frequencies[seconds_int] = {TOTAL_FIELD: 0}
+                        if TOTAL_FIELD not in frequencies[seconds_int]:
+                            frequencies[seconds_int][TOTAL_FIELD] = 1
                         else:
-                            frequencies[seconds_int]["Total"] += 1
+                            frequencies[seconds_int][TOTAL_FIELD] += 1
                     category = categorizer(expanded_object)
                     categories_set.add(category)
                     if seconds_int not in frequencies:
@@ -183,7 +219,7 @@ def get_objects_frequencies2(
                             anchor, timestamp_function(expanded_object), aggregation_level
                         )
                         if seconds_int not in frequencies:
-                            frequencies[seconds_int] = [0] * (len(categories)+1)
+                            frequencies[seconds_int] = [0] * (len(categories) + 1)
                         frequencies[seconds_int][len(categories)] += 1
                     for i in range(len(categories)):
                         if categorizer(expanded_object) == categories[i]:
@@ -191,7 +227,11 @@ def get_objects_frequencies2(
                                 anchor, timestamp_function(expanded_object), aggregation_level
                             )
                             if seconds_int not in frequencies:
-                                frequencies[seconds_int] = [0]*(len(categories)+1) if include_total else [0]*len(categories) 
+                                frequencies[seconds_int] = (
+                                    [0] * (len(categories) + 1)
+                                    if include_total
+                                    else [0] * len(categories)
+                                )
                             frequencies[seconds_int][i] += 1
     except KeyError:
         # Print the object if a user provided wrong categorizer.
@@ -203,7 +243,7 @@ def get_objects_frequencies2(
     if categories:
         header.extend(categories)
         if include_total:
-            header.append("Total")
+            header.append(TOTAL_FIELD)
     else:
         header.extend(categories_set)
 
@@ -223,6 +263,13 @@ def get_objects_frequencies2(
         results.append(line)
 
     r = FrequencyCategoryTable(header=header, rows=results[1:])
+    if not categories and include_total:
+        # Put TOTAL_FIELD in the end of the header.
+        categories_names = categories_set.copy()
+        categories_names.remove(TOTAL_FIELD)
+        sorted_categories_names = ["timestamp"] + sorted(categories_names)
+        sorted_categories_names.append(TOTAL_FIELD)
+        r = r.change_columns_order(sorted_categories_names)
 
     return r
 
