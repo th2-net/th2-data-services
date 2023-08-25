@@ -23,6 +23,8 @@ def get_category_frequencies(
 
     Returns timestamps in UTC format.
 
+    For more info please see: https://github.com/th2-net/th2-data-services/blob/dev_2.0.0/documentation/frequencies.md
+
     Args:
         messages: Messages stored in any iterable
         categories: Categories list
