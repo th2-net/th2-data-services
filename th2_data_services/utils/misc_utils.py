@@ -183,6 +183,8 @@ def get_objects_frequencies2(
         | totals |                     | 6                 | 13         | 11            |      30 |
         +--------+---------------------+-------------------+------------+---------------+---------+
     """
+    if gap_mode == 1 and zero_anchor:
+        raise Exception("gap_mode=1 and zero_anchor=True are not supported together")
     TOTAL_FIELD = "Total"
     frequencies = {}
     anchor = 0
