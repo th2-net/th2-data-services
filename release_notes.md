@@ -493,4 +493,4 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 1. Added vulnerabilities scanning
 2. [TH2-4828] EventNotFound and MessageNotFound now return error description as argument instead of pre-written one.
 3. [TH2-4775] Speed up `Data.build_cache` by disabling garbage collection at the time of storing pickle file.
-4. [TH2-4901] Added gap_mode and zero_anchor parameters for message_utils.frequencies.get_category_frequencies. [See doc](documentation/frequencies.md)
+4. [TH2-4901] Added gap_mode and zero_anchor parameters for message and event utils get_category_frequencies methods. [See doc](documentation/frequencies.md)
