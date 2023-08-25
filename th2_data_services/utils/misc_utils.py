@@ -24,9 +24,9 @@ from th2_data_services.utils._types import Th2Event
 from th2_data_services.utils.aggregation_classes import CategoryFrequencies, FrequencyCategoryTable
 from th2_data_services.utils.time import (
     timestamp_aggregation_key,
-    timestamp_rounded_down,
-    time_str_to_seconds,
-    round_timestamp_string_aggregation,
+    _timestamp_rounded_down,
+    _time_str_to_seconds,
+    _round_timestamp_string_aggregation,
 )
 
 
@@ -201,12 +201,12 @@ def get_objects_frequencies2(
 
         if not zero_anchor:
             if anchor == 0:
-                anchor = timestamp_rounded_down(timestamp_function(obj), aggregation_level)
+                anchor = _timestamp_rounded_down(timestamp_function(obj), aggregation_level)
             if (
                 gap_mode == 1
                 and timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level) != anchor
             ):
-                anchor = timestamp_rounded_down(timestamp_function(obj), aggregation_level)
+                anchor = _timestamp_rounded_down(timestamp_function(obj), aggregation_level)
         if not categories:
             epoch = timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
             if include_total:
@@ -255,9 +255,9 @@ def get_objects_frequencies2(
         timestamps_with_zeros = [timestamps[0]]
         for timestamp in timestamps[1:]:
             for zero_timestamp in range(
-                last_timestamp + time_str_to_seconds(aggregation_level),
+                last_timestamp + _time_str_to_seconds(aggregation_level),
                 timestamp,
-                time_str_to_seconds(aggregation_level),
+                _time_str_to_seconds(aggregation_level),
             ):
                 timestamps_with_zeros.append(zero_timestamp)
                 frequencies[zero_timestamp] = []
@@ -266,9 +266,9 @@ def get_objects_frequencies2(
         timestamps = timestamps_with_zeros
 
     for timestamp in timestamps:
-        st_string = round_timestamp_string_aggregation(timestamp, aggregation_level)
-        et_string = round_timestamp_string_aggregation(
-            timestamp + time_str_to_seconds(aggregation_level), aggregation_level
+        st_string = _round_timestamp_string_aggregation(timestamp, aggregation_level)
+        et_string = _round_timestamp_string_aggregation(
+            timestamp + _time_str_to_seconds(aggregation_level), aggregation_level
         )
         line = [st_string, et_string]
         if categories:
