@@ -173,7 +173,7 @@ def timestamp_aggregation_key(
     return global_anchor_timestamp + interval * ((timestamp - global_anchor_timestamp) // interval)
 
 
-def timestamp_rounded_down(timestamp: int, aggregation_level: str = "seconds"):
+def _timestamp_rounded_down(timestamp: int, aggregation_level: str = "seconds"):
     """Extracts timestamp rounded down to aggeegation level type.
 
     Args:
@@ -223,7 +223,7 @@ def timestamp_rounded_down(timestamp: int, aggregation_level: str = "seconds"):
     return (timestamp // dynamic_aggr_level) * dynamic_aggr_level
 
 
-def round_timestamp_string_aggregation(timestamp: int, aggregation_level: str = "seconds"):
+def _round_timestamp_string_aggregation(timestamp: int, aggregation_level: str = "seconds"):
     """Returns timestamp string rounded down to aggeegation level type.
 
     Args:
@@ -259,7 +259,7 @@ def round_timestamp_string_aggregation(timestamp: int, aggregation_level: str = 
     raise KeyError(f"Invalid aggregation level")
 
 
-def time_str_to_seconds(time_str: str):
+def _time_str_to_seconds(time_str: str):
     """Returns the amount of seconds in aggregation level.
 
     Args:
