@@ -48,5 +48,25 @@ class TH2Config:
         )
         return s
 
+    def setup_resolvers(self, for_event, for_message, for_submessage) -> "TH2Config":
+        """Use this to set up your custom resolvers.
+
+        Args:
+            for_event:
+            for_message:
+            for_submessage:
+
+        Returns:
+            self
+        """
+        self.EVENT_FIELDS_RESOLVER: EventFieldResolver = for_event
+        self.MESSAGE_FIELDS_RESOLVER: MessageFieldResolver = for_message
+        self.SUBMESSAGE_FIELDS_RESOLVER: SubMessageFieldResolver = for_submessage
+        self.efr = self.EVENT_FIELDS_RESOLVER
+        self.mfr = self.MESSAGE_FIELDS_RESOLVER
+        self.smfr = self.SUBMESSAGE_FIELDS_RESOLVER
+
+        return self
+
 
 options = TH2Config()
