@@ -11,7 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Union
 from deprecated.classic import deprecated
 
@@ -115,6 +115,7 @@ def timestamp_aggregation_key(
         "seconds": 1,
         "minutes": 60,
         "hours": 3600,
+        "days": 86400,
         # TODO - should be dynamic part
         "30min": 1800,
         "1min": 60,
@@ -170,3 +171,149 @@ def timestamp_aggregation_key(
         )
 
     return global_anchor_timestamp + interval * ((timestamp - global_anchor_timestamp) // interval)
+
+
+def _timestamp_rounded_down(timestamp: int, aggregation_level: str = "seconds"):
+    """Extracts timestamp rounded down to aggeegation level type.
+
+    Args:
+        timestamp: Timestamp in epoch seconds
+        aggregation_level: String of aggregation level like: "5s", "2d", "3m", "hours"
+
+    Returns:
+        Rounded down timestamp to aggregation level, for example: If timestamp is equivalent to 2023-04-05T23:12:15 and aggregation level is "5d"
+        function will return timestamp equivalent to 2023-04-05
+    """
+    dynamic_aggr_level = 1
+    aggregation_levels = {
+        "seconds": 1,
+        "minutes": 60,
+        "hours": 3600,
+        "days": 86400,
+        # TODO - should be dynamic part
+        "30min": 60,
+        "1min": 60,
+        "5min": 60,
+        "10sec": 1,
+        "30sec": 1,
+    }
+
+    if aggregation_level not in aggregation_levels:
+        if aggregation_level.endswith("sec") or aggregation_level.endswith("s"):
+            dynamic_aggr_level = 1
+
+        elif aggregation_level.endswith("min") or aggregation_level.endswith("m"):
+            dynamic_aggr_level = 60
+
+        elif aggregation_level.endswith("hour") or aggregation_level.endswith("h"):
+            dynamic_aggr_level = 3600
+
+        elif aggregation_level.endswith("day") or aggregation_level.endswith("d"):
+            dynamic_aggr_level = 86400
+
+        else:
+            raise KeyError(
+                f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}"
+            )
+        aggregation_levels[aggregation_level] = dynamic_aggr_level
+
+    try:
+        dynamic_aggr_level = aggregation_levels[aggregation_level]
+    except KeyError:
+        raise KeyError(
+            f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}"
+        )
+    print()
+    return (timestamp // dynamic_aggr_level) * dynamic_aggr_level
+
+
+def _round_timestamp_string_aggregation(timestamp: int, aggregation_level: str = "seconds"):
+    """Returns timestamp string rounded down to aggeegation level type.
+
+    Args:
+        timestamp: Timestamp in epoch seconds
+        aggregation_level: String of aggregation level like: "5s", "2d", "3m", "hours"
+
+    Returns:
+        Rounded down timestamp string to aggregation level, for example: If timestamp is equivalent to 2023-04-05T23:12:15 and aggregation level is "5d"
+        function will return string 2023-04-05
+    """
+    # First check full strings to ensure .endswith("s") doesn't catch it.
+    if aggregation_level == "seconds":
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+
+    if aggregation_level == "minutes" or aggregation_level == "hours":
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M")
+
+    if aggregation_level == "days":
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%d")
+
+    if aggregation_level.endswith("sec") or aggregation_level.endswith("s"):
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+
+    if aggregation_level.endswith("min") or aggregation_level.endswith("m"):
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M")
+
+    if aggregation_level.endswith("hour") or aggregation_level.endswith("h"):
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M")
+
+    if aggregation_level.endswith("day") or aggregation_level.endswith("d"):
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%d")
+
+    raise KeyError(f"Invalid aggregation level")
+
+
+def _time_str_to_seconds(time_str: str):
+    """Returns the amount of seconds in aggregation level.
+
+    Args:
+        time_str: Aggregation level string like: "5s", "2d", "3m", "hours"
+
+    Returns:
+        Number of seconds in string, for example: "5s" returns 5, "3m" returns 180 and etc.
+    """
+    if time_str == "seconds":
+        return 1
+
+    if time_str == "minutes":
+        return 60
+
+    if time_str == "hours":
+        return 3600
+
+    if time_str == "days":
+        return 86400
+
+    if time_str.endswith("sec"):
+        num = time_str.split("sec")[0]
+        return int(num)
+
+    elif time_str.endswith("s"):
+        num = time_str.split("s")[0]
+        return int(num)
+
+    elif time_str.endswith("min"):
+        num = time_str.split("min")[0]
+        return int(num) * 60
+
+    elif time_str.endswith("m"):
+        num = time_str.split("m")[0]
+        return int(num) * 60
+
+    elif time_str.endswith("hour"):
+        num = time_str.split("hour")[0]
+        return int(num) * 3600
+
+    elif time_str.endswith("h"):
+        num = time_str.split("h")[0]
+        return int(num) * 3600
+
+    elif time_str.endswith("day"):
+        num = time_str.split("day")[0]
+        return int(num) * 3600 * 24
+
+    elif time_str.endswith("d"):
+        num = time_str.split("d")[0]
+        return int(num) * 3600 * 24
+
+    raise KeyError(f"Invalid time string")

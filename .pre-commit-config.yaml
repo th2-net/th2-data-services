@@ -63,7 +63,7 @@ repos:
         language: python
         pass_filenames: false
         always_run: true
-        additional_dependencies: [pytest, treelib, orjson]
+        additional_dependencies: [pytest, treelib, orjson, th2-data-services-lwdp==2.0.3.0]
 
       - id: check_copyright
         name: check_copyright
