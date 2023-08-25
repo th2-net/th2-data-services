@@ -11,7 +11,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-import pprint
 from collections import defaultdict
 from typing import Any, Callable, Dict, Iterable, List, Tuple
 from datetime import datetime, timezone
@@ -22,7 +21,12 @@ from th2_data_services.utils._types import Th2Event
 
 # TODO - we have special converters for it in ds-2.0 (ProtobufTimestampConverter)
 from th2_data_services.utils.aggregation_classes import CategoryFrequencies, FrequencyCategoryTable
-from th2_data_services.utils.time import timestamp_aggregation_key
+from th2_data_services.utils.time import (
+    timestamp_aggregation_key,
+    _timestamp_rounded_down,
+    _time_str_to_seconds,
+    _round_timestamp_string_aggregation,
+)
 
 
 # TODO - we have get_objects_frequencies and get_objects_frequencies2 -- we need to unify it
@@ -121,6 +125,8 @@ def get_objects_frequencies2(
     aggregation_level: str = "seconds",
     object_expander: Callable = None,
     objects_filter: Callable = None,
+    gap_mode: int = 1,
+    zero_anchor: bool = False,
     include_total: bool = False,
 ) -> FrequencyCategoryTable:
     # TODO - used by both messages and events get_category_frequencies
@@ -136,6 +142,8 @@ def get_objects_frequencies2(
         aggregation_level: Aggregation level
         object_expander: Object expander function
         objects_filter: Object filter function
+        gap_mode: 1 - Every range starts with actual message timestamp, 2 - Ranges are split equally, 3 - Same as 2, but filled with empty ranges in between
+        zero_anchor: If False anchor used is first timestamp from message, if True anchor is 0
         include_total: Will add Total column if True.
 
     Returns:
@@ -175,90 +183,107 @@ def get_objects_frequencies2(
         | totals |                     | 6                 | 13         | 11            |      30 |
         +--------+---------------------+-------------------+------------+---------------+---------+
     """
+    if gap_mode == 1 and zero_anchor:
+        raise Exception("gap_mode=1 and zero_anchor=True are not supported together")
     TOTAL_FIELD = "Total"
     frequencies = {}
     anchor = 0
     categories_set = set()
-    if include_total:
-        categories_set.add(TOTAL_FIELD)
-    obj = None
+    object_list = []
+    for obj in objects_stream:
+        object_list += [obj] if object_expander is None else object_expander(obj)
 
-    try:
-        for obj in objects_stream:
-            expanded_objects = [obj] if object_expander is None else object_expander(obj)
-            for expanded_object in expanded_objects:
-                if objects_filter is not None:
-                    if not objects_filter(expanded_object):
-                        continue
+    object_list = sorted(object_list, key=timestamp_function)
 
-                if anchor == 0:
-                    anchor = timestamp_function(expanded_object)
+    for obj in object_list:
+        if objects_filter is not None:
+            if not objects_filter(obj):
+                continue
 
-                if not categories:
-                    seconds_int = timestamp_aggregation_key(
-                        anchor, timestamp_function(expanded_object), aggregation_level
-                    )
-                    if include_total:
-                        if seconds_int not in frequencies:
-                            frequencies[seconds_int] = {TOTAL_FIELD: 0}
-                        if TOTAL_FIELD not in frequencies[seconds_int]:
-                            frequencies[seconds_int][TOTAL_FIELD] = 1
-                        else:
-                            frequencies[seconds_int][TOTAL_FIELD] += 1
-                    category = categorizer(expanded_object)
-                    categories_set.add(category)
-                    if seconds_int not in frequencies:
-                        frequencies[seconds_int] = {category: 0}
-                    elif category not in frequencies[seconds_int]:
-                        frequencies[seconds_int][category] = 1
-                    else:
-                        frequencies[seconds_int][category] += 1
+        if not zero_anchor:
+            if anchor == 0:
+                anchor = _timestamp_rounded_down(timestamp_function(obj), aggregation_level)
+            if (
+                gap_mode == 1
+                and timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
+                != anchor
+            ):
+                anchor = _timestamp_rounded_down(timestamp_function(obj), aggregation_level)
+        if not categories:
+            epoch = timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
+            if include_total:
+                if epoch not in frequencies:
+                    frequencies[epoch] = {TOTAL_FIELD: 0}
+                if TOTAL_FIELD not in frequencies[epoch]:
+                    frequencies[epoch][TOTAL_FIELD] = 1
                 else:
+                    frequencies[epoch][TOTAL_FIELD] += 1
+            category = categorizer(obj)
+            categories_set.add(category)
+            if epoch not in frequencies:
+                frequencies[epoch] = {category: 0}
+            if category not in frequencies[epoch]:
+                frequencies[epoch][category] = 1
+            else:
+                frequencies[epoch][category] += 1
+        else:
+            for category in categories:
+                if categorizer(obj) == category:
+                    epoch = timestamp_aggregation_key(
+                        anchor, timestamp_function(obj), aggregation_level
+                    )
+                    if epoch not in frequencies:
+                        frequencies[epoch] = {category: 0}
+                    if category not in frequencies[epoch]:
+                        frequencies[epoch][category] = 0
+                    frequencies[epoch][category] += 1
                     if include_total:
-                        seconds_int = timestamp_aggregation_key(
-                            anchor, timestamp_function(expanded_object), aggregation_level
-                        )
-                        if seconds_int not in frequencies:
-                            frequencies[seconds_int] = [0] * (len(categories) + 1)
-                        frequencies[seconds_int][len(categories)] += 1
-                    for i in range(len(categories)):
-                        if categorizer(expanded_object) == categories[i]:
-                            seconds_int = timestamp_aggregation_key(
-                                anchor, timestamp_function(expanded_object), aggregation_level
-                            )
-                            if seconds_int not in frequencies:
-                                frequencies[seconds_int] = (
-                                    [0] * (len(categories) + 1)
-                                    if include_total
-                                    else [0] * len(categories)
-                                )
-                            frequencies[seconds_int][i] += 1
-    except KeyError:
-        # Print the object if a user provided wrong categorizer.
-        if obj is not None:
-            print(f"Problem object: \n" f"{pprint.pformat(obj)}")
-        raise
+                        if TOTAL_FIELD not in frequencies[epoch]:
+                            frequencies[epoch][TOTAL_FIELD] = 0
+                        frequencies[epoch][TOTAL_FIELD] += 1
 
-    header = ["timestamp"]
+    header = ["timestamp_start", "timestamp_end"]
     if categories:
         header.extend(categories)
-        if include_total:
-            header.append(TOTAL_FIELD)
     else:
         header.extend(categories_set)
+
+    if include_total:
+        header.append(TOTAL_FIELD)
 
     results = [header]
     timestamps = list(sorted(frequencies.keys()))
     # Expected that timestamp is seconds.
+    if gap_mode == 3:
+        last_timestamp = timestamps[0]
+        timestamps_with_zeros = [timestamps[0]]
+        for timestamp in timestamps[1:]:
+            for zero_timestamp in range(
+                last_timestamp + _time_str_to_seconds(aggregation_level),
+                timestamp,
+                _time_str_to_seconds(aggregation_level),
+            ):
+                timestamps_with_zeros.append(zero_timestamp)
+                frequencies[zero_timestamp] = []
+            timestamps_with_zeros.append(timestamp)
+            last_timestamp = timestamp
+        timestamps = timestamps_with_zeros
+
     for timestamp in timestamps:
-        line = [datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")]
+        st_string = _round_timestamp_string_aggregation(timestamp, aggregation_level)
+        et_string = _round_timestamp_string_aggregation(
+            timestamp + _time_str_to_seconds(aggregation_level), aggregation_level
+        )
+        line = [st_string, et_string]
         if categories:
-            line.extend(frequencies[timestamp])
+            line.extend(frequencies[timestamp].values())
         else:
             for category in categories_set:
                 line.append(frequencies[timestamp][category]) if category in frequencies[
                     timestamp
                 ] else line.append(0)
+            if include_total:
+                line.append(sum(line[2:]))
 
         results.append(line)
 
@@ -266,8 +291,7 @@ def get_objects_frequencies2(
     if not categories and include_total:
         # Put TOTAL_FIELD in the end of the header.
         categories_names = categories_set.copy()
-        categories_names.remove(TOTAL_FIELD)
-        sorted_categories_names = ["timestamp"] + sorted(categories_names)
+        sorted_categories_names = ["timestamp_start", "timestamp_end"] + sorted(categories_names)
         sorted_categories_names.append(TOTAL_FIELD)
         r = r.change_columns_order(sorted_categories_names)
 
