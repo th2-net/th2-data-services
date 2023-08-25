@@ -84,6 +84,8 @@ def get_category_frequencies2(
 ) -> FrequencyCategoryTable:
     """Returns event frequencies based on event category.
 
+    For more info please see: https://github.com/th2-net/th2-data-services/blob/dev_2.0.0/documentation/frequencies.md
+
     Args:
         events (Iterable[Th2Event]): TH2-Events
         category: The name of the category doesn't make sence.
