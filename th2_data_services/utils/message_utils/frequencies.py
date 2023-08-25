@@ -17,7 +17,7 @@ def get_category_frequencies(
     gap_mode: int = 1,
     zero_anchor: bool = False,
     object_expander=options.MESSAGE_FIELDS_RESOLVER.expand_message,
-    include_total: bool = False
+    include_total: bool = False,
 ) -> FrequencyCategoryTable:  # noqa
     """Returns message frequencies based on categorizer.
 
@@ -48,5 +48,5 @@ def get_category_frequencies(
         objects_filter=filter_,
         gap_mode=gap_mode,
         zero_anchor=zero_anchor,
-        include_total=include_total
+        include_total=include_total,
     )

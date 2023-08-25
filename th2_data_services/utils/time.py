@@ -212,13 +212,17 @@ def _timestamp_rounded_down(timestamp: int, aggregation_level: str = "seconds"):
             dynamic_aggr_level = 86400
 
         else:
-            raise KeyError(f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}")
+            raise KeyError(
+                f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}"
+            )
         aggregation_levels[aggregation_level] = dynamic_aggr_level
 
     try:
         dynamic_aggr_level = aggregation_levels[aggregation_level]
     except KeyError:
-        raise KeyError(f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}")
+        raise KeyError(
+            f"Invalid aggregation level. Available levels: {', '.join(aggregation_levels)}"
+        )
     print()
     return (timestamp // dynamic_aggr_level) * dynamic_aggr_level
 

@@ -11,7 +11,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-import pprint
 from collections import defaultdict
 from typing import Any, Callable, Dict, Iterable, List, Tuple
 from datetime import datetime, timezone
@@ -204,7 +203,8 @@ def get_objects_frequencies2(
                 anchor = _timestamp_rounded_down(timestamp_function(obj), aggregation_level)
             if (
                 gap_mode == 1
-                and timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level) != anchor
+                and timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
+                != anchor
             ):
                 anchor = _timestamp_rounded_down(timestamp_function(obj), aggregation_level)
         if not categories:
@@ -227,7 +227,9 @@ def get_objects_frequencies2(
         else:
             for category in categories:
                 if categorizer(obj) == category:
-                    epoch = timestamp_aggregation_key(anchor, timestamp_function(obj), aggregation_level)
+                    epoch = timestamp_aggregation_key(
+                        anchor, timestamp_function(obj), aggregation_level
+                    )
                     if epoch not in frequencies:
                         frequencies[epoch] = {category: 0}
                     if category not in frequencies[epoch]:
@@ -243,9 +245,9 @@ def get_objects_frequencies2(
         header.extend(categories)
     else:
         header.extend(categories_set)
-    
+
     if include_total:
-            header.append(TOTAL_FIELD)
+        header.append(TOTAL_FIELD)
 
     results = [header]
     timestamps = list(sorted(frequencies.keys()))
