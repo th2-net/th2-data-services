@@ -74,15 +74,27 @@ def get_category_frequencies(
 
 # Doesn't use category name now. Category values are table header.
 def get_category_frequencies2(
-    events: Iterable[Th2Event], category: Category, aggregation_level: str = "seconds"
+    events: Iterable[Th2Event],
+    category: Category,
+    aggregation_level: str = "seconds",
+    filter_: Callable = None,
+    gap_mode: int = 1,
+    zero_anchor: bool = False,
+    include_total: bool = False,
 ) -> FrequencyCategoryTable:
     """Returns event frequencies based on event category.
+
+    For more info please see: https://github.com/th2-net/th2-data-services/blob/dev_2.0.0/documentation/frequencies.md
 
     Args:
         events (Iterable[Th2Event]): TH2-Events
         category: The name of the category doesn't make sence.
             Used just for unification to use general Category class.
         aggregation_level (Optional, str): Aggregation Level
+        filter: Event filter function
+        gap_mode: 1 - Every range starts with actual event timestamp, 2 - Ranges are split equally, 3 - Same as 2, but filled with empty ranges in between
+        zero_anchor: If False anchor used is first timestamp from event, if True anchor is 0
+        include_total: Will add Total column if True.
 
     Returns:
         List[List[str]]
@@ -111,6 +123,10 @@ def get_category_frequencies2(
             "epochSecond"
         ],
         aggregation_level=aggregation_level,
+        objects_filter=filter_,
+        gap_mode=gap_mode,
+        zero_anchor=zero_anchor,
+        include_total=include_total,
     )
 
 
