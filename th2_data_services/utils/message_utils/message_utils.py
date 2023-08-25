@@ -21,18 +21,14 @@ from deprecated.classic import deprecated
 import th2_data_services.utils.display
 import th2_data_services.utils.time
 from th2_data_services.utils._types import Th2Message
-from th2_data_services.config import options
+from th2_data_services.utils.converters import flatten_dict
 
-# DON'T USE options like this. By default MESSAGE_FIELDS_RESOLVER.expand_message == None
-# It will bring to errors
+
+# DON'T USE `options` like this. By default MESSAGE_FIELDS_RESOLVER.expand_message == None
+# It will bring to errors.
 # expand_message = options.MESSAGE_FIELDS_RESOLVER.expand_message
 
-# # STREAMABLE
-# Gets Dictionary quantities of events for different message categories
-# parameters are: iterable messages object
-# category_list: list categorizer functions
-# result contains calculation for keys: "category1 category2 ... categoryN"
-# result: dictionary {string: int}
+# STREAMABLE
 def get_totals(
     messages: Iterable[Th2Message],
     categorizers: List[Callable[[Dict], str]],
@@ -40,8 +36,16 @@ def get_totals(
 ) -> Dict[str, int]:
     """Returns dictionary quantities of events for different message categories.
 
+    The result contains calculation for keys: "category1 category2 ... categoryN".
+
+    Warnings:
+        expand_message function is not backward-compatible.
+        If you use it in your scripts, there is no guarantee that everything will
+        work if you change data-source because different data-sources has different
+        messages structure.
+
     Args:
-        messages: TH2-Messages
+        messages: TH2-Messages - iterable messages object.
         categorizers: List of categorizer functions
         filter_: Filter functon, defaults to None
 
@@ -50,7 +54,7 @@ def get_totals(
     """
     result = defaultdict(int)
     for message in messages:
-        expanded_messages = options.MESSAGE_FIELDS_RESOLVER.expand_message(message)
+        expanded_messages = options.mfr.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue
@@ -88,8 +92,14 @@ def print_totals(
 # TODO - Can we have single function for events and messages?
 def get_some(
     messages: Iterable[Th2Message], max_count: int, start: int = 0, filter_: Callable = None
-) -> Iterable[Th2Message]:
+) -> List[Th2Message]:
     """Returns limited list of messages from the stream.
+
+    Warnings:
+        expand_message function is not backward-compatible.
+        If you use it in your scripts, there is no guarantee that everything will
+        work if you change data-source because different data-sources has different
+        messages structure.
 
     Args:
         messages: TH2-Messages
@@ -105,7 +115,7 @@ def get_some(
     limit = start + max_count
 
     for message in messages:
-        expanded_messages = options.MESSAGE_FIELDS_RESOLVER.expand_message(message)
+        expanded_messages = options.mfr.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue
@@ -231,18 +241,42 @@ def message_fields_to_flat_dict(message: dict, result: Dict, prefix: str):  # no
 def message_to_dict(message: Th2Message):
     """Converts message body to dict.
 
+    This function expects the message will be without list in the body.
+    So expected message format is:
+        {
+        ..
+        body: {fields: {}, metadata: {}}
+        }
+
     Args:
         message: TH2-Message
 
     Returns:
         Dict
     """
+    # simpleBody -- approximately related with traffic files.
+    # TODO -- business logic -- should be moved to another place.
     if "simpleBody" in message:
         return message["simpleBody"]
 
-    result = {}
-    message_fields_to_flat_dict(options.MESSAGE_FIELDS_RESOLVER.get_body(message), result, "")
-    return result
+    # TODO - Will work for old-msgs format, but not for Lwdp-3
+    #   because LwDP3 messages have another structure of the body.
+    #   Body is a list of dicts.
+    try:
+        result = flatten_dict(options.MESSAGE_FIELDS_RESOLVER.get_body(message)["fields"])
+        return result
+    except Exception:
+        print(
+            """message_to_dict function expects the message will be without list in the body.
+                So expected message format is:
+                    {
+                    ..
+                    body: {fields: {}, metadata: {}}
+                    }
+                    """
+        )
+        print(f"Got the message: {message}")
+        raise
 
 
 # STREAMABLE
@@ -345,27 +379,6 @@ def resolve_message_ids(messages: Iterable[Th2Message], ids: Set) -> Dict[str, T
     return result
 
 
-# TODO
-#   COMMENTED - because we don't need it more. We will return classes that have good representation!
-#   THIS PEACE OF CODE WILL BE REMOVED SOON
-# def print_category_frequencies(
-#     messages: Iterable[Th2Message],
-#     categories: List[str],
-#     categorizer: Callable,
-#     aggregation_level: str = "seconds",
-#     filter_: Callable = None,
-#     return_html=False,
-# ) -> Union[None, str]:  # noqa
-#     # TODO: Add Descriptive Docstrings
-#     result = get_category_frequencies(messages, categories, categorizer, aggregation_level, filter_)
-#
-#     if return_html:
-#         return tabulate(result, headers="firstrow", tablefmt="html")
-#     else:
-#         print(tabulate(result, headers="firstrow", tablefmt="grid"))
-#         return None
-
-
 # NOT STREAMABLE
 # TODO: Is This Useful?
 def get_messages_examples(
@@ -374,12 +387,28 @@ def get_messages_examples(
     categorizer: Callable,
     filter_: Callable = None,
 ) -> Dict:  # noqa
-    # TODO: Add Docstrings
-    # It returns {category_name: message}
+    """TODO: Add Docstrings
+
+    Warnings:
+        expand_message function is not backward-compatible.
+        If you use it in your scripts, there is no guarantee that everything will
+        work if you change data-source because different data-sources has different
+        messages structure.
+
+    Args:
+        messages:
+        categories:
+        categorizer:
+        filter_:
+
+    Returns:
+        {category_name: message}
+    """
+
     result = {}
     categories = set(categories)
     for message in messages:
-        expanded_messages = options.MESSAGE_FIELDS_RESOLVER.expand_message(message)
+        expanded_messages = options.mfr.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue
