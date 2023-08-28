@@ -51,6 +51,7 @@ def get_totals(
 
     Returns:
         Dict[str, int]
+        like - {str_value_that_was_by_categorizer_func: cnt}
     """
     result = defaultdict(int)
     for message in messages:

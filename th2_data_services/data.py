@@ -50,7 +50,7 @@ from th2_data_services.utils._json import iter_json_file, iter_json_gzip_file
 # LOG class _DataLogger(logging.LoggerAdapter):
 # LOG     def process(self, msg, kwargs):
 # LOG         return "Data[%s] %s" % (self.extra["id"], msg), kwargs
-
+from th2_data_services.utils.path_utils import check_if_filename_valid
 
 DataIterValues = TypeVar("DataIterValues")
 DataGenerator = Generator[DataIterValues, None, None]
@@ -717,10 +717,24 @@ class Data(Generic[DataIterValues]):
     def build_cache(self, filename):
         """Creates cache file with provided name.
 
+        Important:
+            If the Data object cache status is True, it'll iterate itself. As a result the cache file
+             will be created and copied.
+            When you will iterate the Data object next time, it'll iterate created cache file.
+
+            NOTE! If you build cache file, Data.cache_status was False and after that you'll set
+             Data.cache_status == TRUE -- the Data object WON'T iterate build file because it doesn't
+             keep the path to built cache file..
+
         Args:
             filename: Name or path to cache file.
 
         """
+        path_name = Path(filename).name
+        status, reason = check_if_filename_valid(path_name)
+        if not status:
+            raise Exception(f"Cannot build cache file. {reason}")
+
         if self.__is_cache_file_exists():
             self._copy_cache_file(filename)
         else:

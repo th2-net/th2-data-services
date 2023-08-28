@@ -36,3 +36,29 @@ def transform_filename_to_valid(filename: str) -> str:
         res_name += res_sym
 
     return res_name[: options.MAX_PATH]
+
+
+def check_if_filename_valid(filename: str):
+    """Returns status and reason string.
+
+    Args:
+        filename: string.
+
+    Returns:
+        Status and reason.
+    """
+    # Length check.
+    if len(filename) > options.MAX_PATH:
+        return (
+            False,
+            f"Filename length is more than MAX possible one. "
+            f"{len(filename)} > {options.MAX_PATH}, filename: '{filename}'",
+        )
+
+    # Forbidden chars check.
+    chars = set(options.FORBIDDEN_CHARACTERS_IN_FILENAME)
+    for sym in filename:
+        if sym in chars:
+            return False, f"Forbidden char: '{sym}', filename: '{filename}'"
+
+    return True, ""

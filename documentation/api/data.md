@@ -92,6 +92,10 @@ build_cache(filename)
 
 Creates cache file with provided name. 
 
+Important:  If the Data object cache status is True, it'll iterate itself. As a result the cache file  will be created and copied.  When you will iterate the Data object next time, it'll iterate created cache file. 
+
+ NOTE! If you build cache file, Data.cache_status was False and after that you'll set  Data.cache_status == TRUE -- the Data object WON'T iterate build file because it doesn't  keep the path to built cache file.. 
+
 
 
 **Args:**
@@ -100,7 +104,7 @@ Creates cache file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L740"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L754"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `clear_cache`
 
@@ -165,7 +169,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L799"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L813"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_any_file`
 
@@ -197,7 +201,7 @@ It will just iterate file and return data line be line.
 
 ---
 
-<a href="../../th2_data_services/data.py#L751"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L765"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_cache_file`
 
@@ -226,7 +230,7 @@ Creates Data object from cache file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L823"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L837"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_csv`
 
@@ -267,7 +271,7 @@ It will iterate the CSV file as if you were doing it with CSV module.
 
 ---
 
-<a href="../../th2_data_services/data.py#L773"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L787"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_json`
 
@@ -424,7 +428,7 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L931"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L945"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
@@ -450,7 +454,7 @@ Converts data to json format.
 
 ---
 
-<a href="../../th2_data_services/data.py#L955"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L969"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_jsons`
 
@@ -464,7 +468,7 @@ to_jsons(filename: str, indent: int = None, overwrite: bool = False)
 
 ---
 
-<a href="../../th2_data_services/data.py#L882"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L896"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `update_metadata`
 
