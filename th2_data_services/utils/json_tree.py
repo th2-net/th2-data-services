@@ -19,7 +19,7 @@ from os import listdir, path
 from pathlib import Path
 from typing import List, Dict, Tuple, Callable
 
-from th2_data_services.utils._path_utils import transform_filename_to_valid
+from th2_data_services.utils.path_utils import transform_filename_to_valid
 from th2_data_services.utils.event_utils.event_utils import extract_start_timestamp
 from th2_data_services.utils.event_utils.select import (
     get_children_from_parents_as_list,
