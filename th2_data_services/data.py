@@ -471,9 +471,17 @@ class Data(Generic[DataIterValues]):
             yield from handler(self)
 
         def filter_yield(stream):
-            for record in stream:
-                if callback(record):
-                    yield record
+            try:
+                for record in stream:
+                    if callback(record):
+                        yield record
+            except Exception:
+                try:
+                    print("Exception during filtering the message: \n" f"{pprint.pformat(record)}")
+                except UnboundLocalError:
+                    pass
+
+                raise
 
         source = partial(get_source, filter_yield)
         data = Data(source)
