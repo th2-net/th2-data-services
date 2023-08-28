@@ -232,51 +232,19 @@ def message_fields_to_flat_dict(message: dict, result: Dict, prefix: str):  # no
                 )
 
 
-# STREAMABLE
-# Converts message body tree structure
-# parameters are: message object
-# max: maximum messages to retrieve # TODO: Add Argument?
-# result: dictionary representing body in flat format
-# TODO - We will not use this in the future, I think, because LwDP can provide JSON_PARSED immediately.
 def message_to_dict(message: Th2Message):
-    """Converts message body to dict.
-
-    This function expects the message will be without list in the body.
-    So expected message format is:
-        {
-        ..
-        body: {fields: {}, metadata: {}}
-        }
+    """The function was moved to recon-lw repository.
 
     Args:
-        message: TH2-Message
+        message: 123
 
     Returns:
-        Dict
+        None
     """
-    # simpleBody -- approximately related with traffic files.
-    # TODO -- business logic -- should be moved to another place.
-    if "simpleBody" in message:
-        return message["simpleBody"]
-
-    # TODO - Will work for old-msgs format, but not for Lwdp-3
-    #   because LwDP3 messages have another structure of the body.
-    #   Body is a list of dicts.
-    try:
-        result = flatten_dict(options.MESSAGE_FIELDS_RESOLVER.get_body(message)["fields"])
-        return result
-    except Exception:
-        print(
-            """message_to_dict function expects the message will be without list in the body.
-                So expected message format is:
-                    {
-                    ..
-                    body: {fields: {}, metadata: {}}
-                    }
-                    """
-        )
-        print(f"Got the message: {message}")
-        raise
+    raise Exception(
+        "'message_to_dict' function was moved to recon-lw repository. \n"
+        "Please notify th2 DEV team if you don't not agree."
+    )
 
 
 # STREAMABLE
@@ -306,7 +274,7 @@ def print_message(message: Th2Message) -> None:
         f"{extract_time(message)} > {options.MESSAGE_FIELDS_RESOLVER.get_session_id(message)} "
         f"{options.MESSAGE_FIELDS_RESOLVER.get_direction(message)} "
         f"{options.MESSAGE_FIELDS_RESOLVER.get_type(message)} "
-        f"{message_to_dict(message)}"
+        f"{flatten_dict(options.MESSAGE_FIELDS_RESOLVER.get_body(message))}"
     )
 
 
