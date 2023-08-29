@@ -55,7 +55,7 @@ def get_totals(
     """
     result = defaultdict(int)
     for message in messages:
-        expanded_messages = options.mfr.expand_message(message)
+        expanded_messages: List[Dict[str, str]] = options.mfr.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue
@@ -116,7 +116,7 @@ def get_some(
     limit = start + max_count
 
     for message in messages:
-        expanded_messages = options.mfr.expand_message(message)
+        expanded_messages: List[Dict[str, str]] = options.mfr.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue
@@ -409,7 +409,7 @@ def get_messages_examples(
     result = {}
     categories = set(categories)
     for message in messages:
-        expanded_messages = options.mfr.expand_message(message)
+        expanded_messages: List[Dict[str, str]] = options.mfr.expand_message(message)
         for expanded_message in expanded_messages:
             if filter_ is not None and not filter_(expanded_message):
                 continue

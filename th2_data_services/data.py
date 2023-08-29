@@ -13,6 +13,7 @@
 #  limitations under the License.
 import copy
 import csv
+import io
 import json
 import gc
 import pickle
@@ -41,6 +42,7 @@ from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 from th2_data_services.config import options
 from th2_data_services.utils._json import iter_json_file, iter_json_gzip_file
+import gzip as gzip_
 
 # LOG import logging
 
@@ -974,16 +976,23 @@ class Data(Generic[DataIterValues]):
             file.seek(file.tell() - 3)  # Delete last comma for valid JSON
             file.write("]")  # Close list
 
-    def to_jsons(self, filename: str, indent: int = None, overwrite: bool = False):
+    def to_jsons(self, filename: str, indent: int = None, overwrite: bool = False, gzip=False):
         if Path(filename).absolute().exists() and not overwrite:
             raise FileExistsError(
                 f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
             )
 
-        with open(filename, "w", encoding="UTF-8") as file:
-            for record in self:
-                json.dump(record, file, indent=indent)
-                file.write("\n")
+        if gzip:
+            with gzip_.open(filename, "wb") as f:
+                with io.TextIOWrapper(f, encoding="utf-8") as encode:
+                    for record in self:
+                        json_str = json.dumps(record, indent=indent)
+                        encode.write(json_str + "\n")
+        else:
+            with open(filename, "w", encoding="UTF-8") as file:
+                for record in self:
+                    json.dump(record, file, indent=indent)
+                    file.write("\n")
 
 
 def _iter_any_file(filename, mode="r"):
