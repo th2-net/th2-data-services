@@ -483,7 +483,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 22. `utils.converters.flatten_dict` converter added.
 23. Added `Data.to_jsons` method that put your data object to jsons file
    (file where every line is separate json-format line. That's not valid json format.)
-
+24. [TH2-5049] Added ExpandedMessageFieldResolver
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
@@ -494,3 +494,4 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 2. [TH2-4828] EventNotFound and MessageNotFound now return error description as argument instead of pre-written one.
 3. [TH2-4775] Speed up `Data.build_cache` by disabling garbage collection at the time of storing pickle file.
 4. [TH2-4901] Added gap_mode and zero_anchor parameters for message and event utils get_category_frequencies methods. [See doc](documentation/frequencies.md)
+5. [TH2-5048] - Added typing hints for resolver methods
