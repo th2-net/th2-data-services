@@ -16,7 +16,12 @@ from typing import List, Tuple, Generator, Callable, Optional, Union
 from treelib import Tree, Node
 from treelib.exceptions import NodeIDAbsentError, LoopError
 
-from th2_data_services.event_tree.exceptions import EventIdNotInTree, EventAlreadyExist, EventRootExist, TreeLoop
+from th2_data_services.event_tree.exceptions import (
+    EventIdNotInTree,
+    EventAlreadyExist,
+    EventRootExist,
+    TreeLoop,
+)
 
 Th2Event = dict  # TODO - move to types. Also this class knows that th2-event is a dict, but it cannot to know.
 
@@ -69,7 +74,9 @@ class EventTree:
 
         self._tree.create_node(tag=event_name, identifier=event_id, parent=None, data=data)
 
-    def append_event(self, event_name: str, event_id: str, parent_id: str, data: dict = None) -> None:
+    def append_event(
+        self, event_name: str, event_id: str, parent_id: str, data: dict = None
+    ) -> None:
         """Appends the event to the tree.
 
         Args:
@@ -436,7 +443,9 @@ class EventTree:
 
         return et
 
-    def merge_tree(self, parent_id: str, other_tree: "EventTree", use_deepcopy: bool = False) -> None:
+    def merge_tree(
+        self, parent_id: str, other_tree: "EventTree", use_deepcopy: bool = False
+    ) -> None:
         """Merges a EventTree to specified identifier.
 
         Args:

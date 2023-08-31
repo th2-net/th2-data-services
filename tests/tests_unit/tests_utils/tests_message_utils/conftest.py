@@ -4,13 +4,34 @@ import pytest
 @pytest.fixture
 def messages_frequencies_test_data():
     messages = [
-        {"timestamp": {"epochSecond": 1682308224 - 4 * 60 * 60}, "messageType": "ERROR"},  # 2023-04-23 23:50:24
-        {"timestamp": {"epochSecond": 1682308827 - 4 * 60 * 60}, "messageType": "ERROR"},  # 2023-04-24 00:00:27
-        {"timestamp": {"epochSecond": 1682308828 - 4 * 60 * 60}, "messageType": "ERROR"},  # 2023-04-24 00:00:28
-        {"timestamp": {"epochSecond": 1682308829 - 4 * 60 * 60}, "messageType": "ERROR"},  # 2023-04-24 00:00:29
-        {"timestamp": {"epochSecond": 1682316031 - 4 * 60 * 60}, "messageType": "ERROR"},  # 2023-04-24 02:00:31
-        {"timestamp": {"epochSecond": 1682323233 + 4 * 60 * 60}, "messageType": "ERROR"},  # 2023-04-24 12:00:33
-        {"timestamp": {"epochSecond": 1682679854 + 4 * 60 * 60}, "messageType": "ERROR"},  # 2023-04-28 15:04:14
+        {
+            "timestamp": {"epochSecond": 1682308224 - 4 * 60 * 60},
+            "messageType": "ERROR",
+        },  # 2023-04-23 23:50:24
+        {
+            "timestamp": {"epochSecond": 1682308827 - 4 * 60 * 60},
+            "messageType": "ERROR",
+        },  # 2023-04-24 00:00:27
+        {
+            "timestamp": {"epochSecond": 1682308828 - 4 * 60 * 60},
+            "messageType": "ERROR",
+        },  # 2023-04-24 00:00:28
+        {
+            "timestamp": {"epochSecond": 1682308829 - 4 * 60 * 60},
+            "messageType": "ERROR",
+        },  # 2023-04-24 00:00:29
+        {
+            "timestamp": {"epochSecond": 1682316031 - 4 * 60 * 60},
+            "messageType": "ERROR",
+        },  # 2023-04-24 02:00:31
+        {
+            "timestamp": {"epochSecond": 1682323233 + 4 * 60 * 60},
+            "messageType": "ERROR",
+        },  # 2023-04-24 12:00:33
+        {
+            "timestamp": {"epochSecond": 1682679854 + 4 * 60 * 60},
+            "messageType": "ERROR",
+        },  # 2023-04-28 15:04:14
     ]
     return messages
 

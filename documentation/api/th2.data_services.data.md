@@ -14,11 +14,11 @@
 <a href="../../th2/data_services/data.py#L45"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Data`
-A wrapper for data/data_stream. 
+A wrapper for data/data_stream.
 
-The class provides methods for working with data as a stream. 
+The class provides methods for working with data as a stream.
 
-Such approach to data analysis called streaming transformation. 
+Such approach to data analysis called streaming transformation.
 
 <a href="../../th2/data_services/data.py#L54"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
@@ -32,15 +32,15 @@ __init__(
 )
 ```
 
-Data constructor. 
+Data constructor.
 
 
 
 **Args:**
- 
- - <b>`data`</b>:  Data source. Any iterable, Data object or a function that creates generator. 
- - <b>`cache`</b>:  Set True if you want to write and read from cache. 
- - <b>`workflow`</b>:  Workflow. 
+
+ - <b>`data`</b>:  Data source. Any iterable, Data object or a function that creates generator.
+ - <b>`cache`</b>:  Set True if you want to write and read from cache.
+ - <b>`workflow`</b>:  Workflow.
 
 
 ---
@@ -55,20 +55,20 @@ Data constructor.
 
 #### <kbd>property</kbd> is_empty
 
-bool: Indicates that the Data object doesn't contain data. 
+bool: Indicates that the Data object doesn't contain data.
 
 ---
 
 #### <kbd>property</kbd> len
 
-int: How many records in the Data stream. 
+int: How many records in the Data stream.
 
 
 
 **Notes:**
 
-> 1. It is a wasteful operation if you are performing it on the Data object that has never been iterated before. 
->2. If you want just to check emptiness, use is_empty property instead. 
+> 1. It is a wasteful operation if you are performing it on the Data object that has never been iterated before.
+>2. If you want just to check emptiness, use is_empty property instead.
 
 ---
 
@@ -90,13 +90,13 @@ int: How many records in the Data stream.
 build_cache(filename)
 ```
 
-Creates cache file with provided name. 
+Creates cache file with provided name.
 
 
 
 **Args:**
- 
- - <b>`filename`</b>:  Name or path to cache file. 
+
+ - <b>`filename`</b>:  Name or path to cache file.
 
 ---
 
@@ -108,9 +108,9 @@ Creates cache file with provided name.
 clear_cache()
 ```
 
-Clears related to data object cache file. 
+Clears related to data object cache file.
 
-This function won't remove external cache file. 
+This function won't remove external cache file.
 
 ---
 
@@ -122,19 +122,19 @@ This function won't remove external cache file.
 filter(callback: Callable) → Data
 ```
 
-Append `filter` to workflow. 
+Append `filter` to workflow.
 
 
 
 **Args:**
- 
- - <b>`callback`</b>:  Filter function.  This function should return True or False.  If function returns False, the record will be removed from the dataflow. 
+
+ - <b>`callback`</b>:  Filter function.  This function should return True or False.  If function returns False, the record will be removed from the dataflow.
 
 
 
 **Returns:**
- 
- - <b>`Data`</b>:  Data object. 
+
+ - <b>`Data`</b>:  Data object.
 
 ---
 
@@ -146,22 +146,22 @@ Append `filter` to workflow.
 find_by(record_field, field_values) → Generator
 ```
 
-Get the records whose field value is written in the field_values list. 
+Get the records whose field value is written in the field_values list.
 
-When to use:  You have IDs of some messages and you want get them in the stream and stop searching  when you find all elements. 
+When to use:  You have IDs of some messages and you want get them in the stream and stop searching  when you find all elements.
 
 
 
 **Args:**
- 
- - <b>`record_field`</b>:  The record field to be searched for in the field_values list. 
- - <b>`field_values`</b>:  List of elements among which will be searched record[record_field]. 
+
+ - <b>`record_field`</b>:  The record field to be searched for in the field_values list.
+ - <b>`field_values`</b>:  List of elements among which will be searched record[record_field].
 
 
 
 **Yields:**
- 
- - <b>`dict`</b>:  Generator records. 
+
+ - <b>`dict`</b>:  Generator records.
 
 ---
 
@@ -173,24 +173,24 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 from_cache_file(filename) → Data
 ```
 
-Creates Data object from cache file with provided name. 
+Creates Data object from cache file with provided name.
 
 
 
 **Args:**
- 
- - <b>`filename`</b>:  Name or path to cache file. 
+
+ - <b>`filename`</b>:  Name or path to cache file.
 
 
 
 **Returns:**
- 
- - <b>`Data`</b>:  Data object. 
+
+ - <b>`Data`</b>:  Data object.
 
 
 
 **Raises:**
- FileNotFoundError if provided file does not exist. 
+ FileNotFoundError if provided file does not exist.
 
 ---
 
@@ -202,7 +202,7 @@ Creates Data object from cache file with provided name.
 get_cache_filepath() → Path
 ```
 
-Returns filepath for a cache file. 
+Returns filepath for a cache file.
 
 ---
 
@@ -214,7 +214,7 @@ Returns filepath for a cache file.
 get_pending_cache_filepath() → Path
 ```
 
-Returns filepath for a pending cache file. 
+Returns filepath for a pending cache file.
 
 ---
 
@@ -226,19 +226,19 @@ Returns filepath for a pending cache file.
 limit(num: int) → Data
 ```
 
-Limits the stream to `num` entries. 
+Limits the stream to `num` entries.
 
 
 
 **Args:**
- 
- - <b>`num`</b>:  How many records will be provided. 
+
+ - <b>`num`</b>:  How many records will be provided.
 
 
 
 **Returns:**
- 
- - <b>`Data`</b>:  Data object. 
+
+ - <b>`Data`</b>:  Data object.
 
 ---
 
@@ -250,19 +250,19 @@ Limits the stream to `num` entries.
 map(callback_or_adapter: Union[Callable, IRecordAdapter]) → Data
 ```
 
-Append `transform` function to workflow. 
+Append `transform` function to workflow.
 
 
 
 **Args:**
- 
- - <b>`callback_or_adapter`</b>:  Transform function or an Adapter with IRecordAdapter interface implementation. 
+
+ - <b>`callback_or_adapter`</b>:  Transform function or an Adapter with IRecordAdapter interface implementation.
 
 
 
 **Returns:**
- 
- - <b>`Data`</b>:  Data object. 
+
+ - <b>`Data`</b>:  Data object.
 
 ---
 
@@ -276,23 +276,23 @@ map_stream(
 ) → Data
 ```
 
-Append `stream-transform` function to workflow. 
+Append `stream-transform` function to workflow.
 
-If StreamAdapter is passed StreamAdapter.handle method will be used as a map function. 
+If StreamAdapter is passed StreamAdapter.handle method will be used as a map function.
 
-Difference between map and map_stream: 1. map_stream allows you return None values. 2. map_stream allows you work with the whole stream but not with only 1 element, so you can implement some buffers inside handler. 3. map_stream works slightly efficent (faster on 5-10%). 
+Difference between map and map_stream: 1. map_stream allows you return None values. 2. map_stream allows you work with the whole stream but not with only 1 element, so you can implement some buffers inside handler. 3. map_stream works slightly efficent (faster on 5-10%).
 
 
 
 **Args:**
- 
- - <b>`adapter_or_generator`</b>:  StreamAdapter object or generator function. 
+
+ - <b>`adapter_or_generator`</b>:  StreamAdapter object or generator function.
 
 
 
 **Returns:**
- 
- - <b>`Data`</b>:  Data object. 
+
+ - <b>`Data`</b>:  Data object.
 
 ---
 
@@ -304,19 +304,19 @@ Difference between map and map_stream: 1. map_stream allows you return None valu
 sift(limit: int = None, skip: int = None) → Generator[dict, NoneType, NoneType]
 ```
 
-Skips and limits records. 
+Skips and limits records.
 
 
 
 **Args:**
- 
- - <b>`limit`</b>:  Limited records. 
- - <b>`skip`</b>:  Skipped records. 
+
+ - <b>`limit`</b>:  Limited records.
+ - <b>`skip`</b>:  Skipped records.
 
 
 
 **Yields:**
- Generator records. 
+ Generator records.
 
 ---
 
@@ -328,29 +328,29 @@ Skips and limits records.
 update_metadata(metadata: Dict) → Data
 ```
 
-Update metadata of object with metadata argument. 
+Update metadata of object with metadata argument.
 
-Metadata is updated with new values, meaning previous values are kept and added with new values. 
+Metadata is updated with new values, meaning previous values are kept and added with new values.
 
-| Example: | data = Data(...) | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}} | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'} | data.update_metadata(new_metadata) | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'} 
+| Example: | data = Data(...) | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}} | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'} | data.update_metadata(new_metadata) | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'}
 
 
 
 **Args:**
- 
- - <b>`metadata`</b> (dict):  New Metadata 
+
+ - <b>`metadata`</b> (dict):  New Metadata
 
 
 
 **Returns:**
- Data objects (itself) 
+ Data objects (itself)
 
 
 
 **Raises:**
- 
- - <b>`Exception`</b>:  If metadata isn't dict, error will be raised. 
- - <b>`AttributeError`</b>:  If you're trying to update key value with dict which isn't a dict. 
+
+ - <b>`Exception`</b>:  If metadata isn't dict, error will be raised.
+ - <b>`AttributeError`</b>:  If you're trying to update key value with dict which isn't a dict.
 
 ---
 
@@ -362,19 +362,19 @@ Metadata is updated with new values, meaning previous values are kept and added 
 use_cache(status: bool = True) → Data
 ```
 
-Changes cache flag and returns self. 
+Changes cache flag and returns self.
 
 
 
 **Args:**
- 
- - <b>`status`</b> (bool):  If True the whole data stream will be saved to cache file. Further actions with the Data object will consume data from the cache file. True by default. 
+
+ - <b>`status`</b> (bool):  If True the whole data stream will be saved to cache file. Further actions with the Data object will consume data from the cache file. True by default.
 
 
 
 **Returns:**
- 
- - <b>`Data`</b>:  Data object. 
+
+ - <b>`Data`</b>:  Data object.
 
 ---
 
@@ -386,13 +386,13 @@ Changes cache flag and returns self.
 write_to_file(file: str) → None
 ```
 
-Writes the stream data to txt file. 
+Writes the stream data to txt file.
 
 
 
 **Args:**
- 
- - <b>`file`</b>:  Path to file. 
+
+ - <b>`file`</b>:  Path to file.
 
 
 

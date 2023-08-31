@@ -30,7 +30,9 @@ class ParentEventTreeCollection(EventTreeCollection):
         """
         roots = []
         for event in events_nodes[None]:  # None - is parent_event_id for root events.
-            event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(event)
+            event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(
+                event
+            )
             if events_nodes[event_id]:
                 tree = EventTree(event_name=event_name, event_id=event_id, data=event)
                 roots.append(tree)
@@ -51,8 +53,12 @@ class ParentEventTreeCollection(EventTreeCollection):
             parent_id: Parent even id.
         """
         for event in events_store[parent_id]:
-            event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(event)
+            event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(
+                event
+            )
             if events_store.get(event_id):
-                current_tree.append_event(event_name=event_name, event_id=event_id, parent_id=parent_id, data=event)
+                current_tree.append_event(
+                    event_name=event_name, event_id=event_id, parent_id=parent_id, data=event
+                )
                 self._fill_tree(events_store, current_tree, event_id)  # recursive fill
         events_store.pop(parent_id)

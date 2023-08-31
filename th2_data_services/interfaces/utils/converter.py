@@ -41,7 +41,9 @@ class ITimestampConverter(ABC, Generic[TimestampType]):
         """
         seconds, nanoseconds = cls.parse_timestamp(timestamp)
         microseconds = nanoseconds[:-3]
-        return datetime.utcfromtimestamp(int(seconds)).replace(tzinfo=timezone.utc, microsecond=int(microseconds))
+        return datetime.utcfromtimestamp(int(seconds)).replace(
+            tzinfo=timezone.utc, microsecond=int(microseconds)
+        )
 
     @classmethod
     def to_microseconds(cls, timestamp: TimestampType) -> int:

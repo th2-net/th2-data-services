@@ -935,13 +935,13 @@ def test_verification_fields_to_flat_dict():  # noqa
     print(flat_list)
     """
     failed_collection=False
-    {'hzField A': '   value [*]', 
-     'hzField B': '!  2531410 [2531410]', 
+    {'hzField A': '   value [*]',
+     'hzField B': '!  2531410 [2531410]',
      'hzSub message A.Field C': ' # 9 [9]'}
-     
+
      failed_collection=True
-     {'hzField A': ' # value [*]', 
-     'hzField B': '!# 2531410 [2531410]', 
+     {'hzField A': ' # value [*]',
+     'hzField B': '!# 2531410 [2531410]',
      'hzSub message A.Field C': ' # 9 [9]'}
     """
 
@@ -954,13 +954,13 @@ def test_verification_fields_to_simple_dict():  # noqa
     print(flat_list)
     """
     failed_collection=False
-    {'Field A': '   value [*]', 
-     'Field B': '!  2531410 [2531410]', 
+    {'Field A': '   value [*]',
+     'Field B': '!  2531410 [2531410]',
      '# Sub message A': {'Field C': ' # 9 [9]'}}
-     
+
     failed_collection=True
-    {'Field A': ' # value [*]', 
-     'Field B': '!# 2531410 [2531410]', 
+    {'Field A': ' # value [*]',
+     'Field B': '!# 2531410 [2531410]',
      '# Sub message A': {'Field C': ' # 9 [9]'}}
     """
 
@@ -970,8 +970,8 @@ def test_simplify_body_tree_table_list():  # noqa
     r = simplify_body_tree_table_list([tree_table])
     print(r)
     """
-    {'Row A with some custom name': 'some text (A1),some text (A2)', 
-     'Row B with some other name.Row BA': 'some text (BA1),some text (BA2)', 
+    {'Row A with some custom name': 'some text (A1),some text (A2)',
+     'Row B with some other name.Row BA': 'some text (BA1),some text (BA2)',
      'Row B with some other name.Row BB': 'some text (BB1),some text (BB2)'}
     """
 

@@ -14,7 +14,7 @@
 <a href="../../th2/data_services/interfaces/source_api.py#L17"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ISourceAPI`
-High level interface for Source API. 
+High level interface for Source API.
 
 
 

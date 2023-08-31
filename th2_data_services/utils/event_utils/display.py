@@ -101,7 +101,9 @@ def print_events_raw(
 
 
 # NOT STREAMING
-def print_some(events: Iterable[Th2Event], event_type: str, count: int, start: int = 0, failed: bool = False) -> None:
+def print_some(
+    events: Iterable[Th2Event], event_type: str, count: int, start: int = 0, failed: bool = False
+) -> None:
     """Prints limited list of events of specific eventType in human-readable format.
 
     Args:
@@ -119,7 +121,12 @@ def print_some(events: Iterable[Th2Event], event_type: str, count: int, start: i
 
 # NOT STREAMING
 def print_some_by_category(
-    events: Iterable[Th2Event], category: str, count: int, categorizer: Callable, start: int = 0, failed: bool = False
+    events: Iterable[Th2Event],
+    category: str,
+    count: int,
+    categorizer: Callable,
+    start: int = 0,
+    failed: bool = False,
 ) -> None:
     """Print limited events by category.
 
@@ -193,7 +200,10 @@ def print_children_from_parents(
 
 # NOT STREAMING
 def print_children_stats_from_parents(
-    events: Iterable[Th2Event], parents: Iterable[Th2Event], max_events: int = 10_000, return_html: bool = False
+    events: Iterable[Th2Event],
+    parents: Iterable[Th2Event],
+    max_events: int = 10_000,
+    return_html: bool = False,
 ) -> Union[None, str]:
     """Prints statistics with number of children and their duration for each event in parents_list.
 
@@ -205,12 +215,16 @@ def print_children_stats_from_parents(
 
     """
     tree, _ = get_children_from_parents(events, parents, max_events)
-    table = [["eventName", "status", "eventId", "child_pass", "child_fail", "start", "end"]]  # Header
+    table = [
+        ["eventName", "status", "eventId", "child_pass", "child_fail", "start", "end"]
+    ]  # Header
     for parent in parents:
         start_timestamp, end_timestamp = 0, 0
         events_passed, events_failed = 0, 0
         for child in tree[options.EVENT_FIELDS_RESOLVER.get_id(parent)]:
-            child_start_time_epoch = options.EVENT_FIELDS_RESOLVER.get_start_timestamp(child)["epochSecond"]
+            child_start_time_epoch = options.EVENT_FIELDS_RESOLVER.get_start_timestamp(child)[
+                "epochSecond"
+            ]
             if child_start_time_epoch > end_timestamp:
                 end_timestamp = child_start_time_epoch
             if start_timestamp == 0 or child_start_time_epoch < start_timestamp:

@@ -13,7 +13,9 @@ from th2_data_services.config import options
 #   1. what about iter functions or return Data obj?  The second one sounds better
 
 
-def get_related_events(events: Iterable[Th2Event], messages: Iterable[Th2Event], count: int) -> Iterable[Th2Event]:
+def get_related_events(
+    events: Iterable[Th2Event], messages: Iterable[Th2Event], count: int
+) -> Iterable[Th2Event]:
     """Returns limited list of events of linked to any message within specified messages objects collection.
 
     Args:
@@ -48,7 +50,12 @@ def get_related_events(events: Iterable[Th2Event], messages: Iterable[Th2Event],
 
 # TODO - duplicates get_some (get_events)
 def get_events_by_category(
-    events: Iterable[Th2Event], category: str, count: int, categorizer: Callable, start=0, failed=False
+    events: Iterable[Th2Event],
+    category: str,
+    count: int,
+    categorizer: Callable,
+    start=0,
+    failed=False,
 ) -> Iterable[Th2Event]:
     """Returns limited list of events of specific category produced by custom categorizer.
 
@@ -208,7 +215,7 @@ def get_children_from_parents(
 
 
 @deprecated("Use `get_children_from_parents` instead")
-def get_children_for_events_list(evnts, parents_list, max_events):
+def get_children_for_events_list(evnts, parents_list, max_events):  # noqa
     return get_children_from_parents(evnts, parents_list, max_events)
 
 
@@ -250,7 +257,9 @@ def get_children_from_parents_as_list(
     return result
 
 
-def sublist(events: Iterable[Th2Event], start_time: datetime, end_time: datetime) -> Iterable[Th2Event]:
+def sublist(
+    events: Iterable[Th2Event], start_time: datetime, end_time: datetime
+) -> Iterable[Th2Event]:
     """Filter Events Based On Timeframe.
 
     Args:
@@ -302,7 +311,9 @@ def get_attached_message_ids(events: Iterable[Th2Event]) -> Set[str]:
             }
     """
     return set(
-        message_id for event in events for message_id in options.EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event)
+        message_id
+        for event in events
+        for message_id in options.EVENT_FIELDS_RESOLVER.get_attached_messages_ids(event)
     )
 
 

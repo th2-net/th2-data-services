@@ -49,7 +49,11 @@ def test_map_data_increase(general_data: List[dict]):
 
 
 def test_map_for_list_record(general_data: List[dict]):
-    data = Data(general_data).map(lambda record: [record, record]).map(lambda record: record.get("eventType"))
+    data = (
+        Data(general_data)
+        .map(lambda record: [record, record])
+        .map(lambda record: record.get("eventType"))
+    )
 
     event_types = [
         "",
@@ -118,7 +122,11 @@ def test_filter_for_list_record(general_data: List[dict]):
 
 def test_increase_records_after_similar_map(cache):
     source = [1, 2, 3]
-    data = Data(source, cache=cache).map(lambda record: [record, record]).map(lambda record: [record, record, record])
+    data = (
+        Data(source, cache=cache)
+        .map(lambda record: [record, record])
+        .map(lambda record: [record, record, record])
+    )
 
     assert list(data) == [
         1,
@@ -160,7 +168,9 @@ def test_limit(general_data: List[dict], cache):
 
     assert list(data10) == general_data[:10]
     if cache:
-        assert not is_cache_file_exists(data), "data shouldn't have cache because was iterated via child data object."
+        assert not is_cache_file_exists(
+            data
+        ), "data shouldn't have cache because was iterated via child data object."
         assert not is_pending_cache_file_exists(
             data
         ), "data shouldn't have cache because was iterated via child data object."
@@ -179,7 +189,9 @@ def test_limit_for_list_record(cache):
 
     assert list(data10) == [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]
     if cache:
-        assert not is_cache_file_exists(data), "data shouldn't have cache because was iterated via child data object."
+        assert not is_cache_file_exists(
+            data
+        ), "data shouldn't have cache because was iterated via child data object."
         assert not is_pending_cache_file_exists(
             data
         ), "data shouldn't have cache because was iterated via child data object."
@@ -396,7 +408,10 @@ def test_inner_cycle_with_cache_and_workflow(general_data: List[dict]):
         for _ in data_filter:
             internal_counter += 1
 
-    assert external_counter == len(general_data) and internal_counter == len(general_data) * data_filter.len
+    assert (
+        external_counter == len(general_data)
+        and internal_counter == len(general_data) * data_filter.len
+    )
 
 
 def test_break_cycle(general_data: List[dict]):

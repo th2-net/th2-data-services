@@ -3,7 +3,11 @@ from datetime import datetime, timezone
 
 import pytest
 
-from th2_data_services.utils.converters import DatetimeStringConverter, DatetimeConverter, ProtobufTimestampConverter
+from th2_data_services.utils.converters import (
+    DatetimeStringConverter,
+    DatetimeConverter,
+    ProtobufTimestampConverter,
+)
 
 TestCase = namedtuple(
     "TestCase",
@@ -31,7 +35,9 @@ seconds = 1646524604
             datetime_string="2022-03-05T23:56:44.0Z",
             datetime_obj=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44),
             th2_timestamp={"epochSecond": seconds, "nano": 0},
-            expected_datetime=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, tzinfo=timezone.utc),
+            expected_datetime=datetime(
+                year=2022, month=3, day=5, hour=23, minute=56, second=44, tzinfo=timezone.utc
+            ),
             expected_ns=nanoseconds,
             expected_us=microseconds,
             expected_ms=milliseconds,
@@ -40,17 +46,28 @@ seconds = 1646524604
             datetime_string="2022-03-05T23:56:44Z",
             datetime_obj=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44),
             th2_timestamp={"epochSecond": seconds, "nano": 0},
-            expected_datetime=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, tzinfo=timezone.utc),
+            expected_datetime=datetime(
+                year=2022, month=3, day=5, hour=23, minute=56, second=44, tzinfo=timezone.utc
+            ),
             expected_ns=nanoseconds,
             expected_us=microseconds,
             expected_ms=milliseconds,
         ),
         TestCase(
             datetime_string="2022-03-05T23:56:44.123456Z",
-            datetime_obj=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456),
+            datetime_obj=datetime(
+                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456
+            ),
             th2_timestamp={"epochSecond": seconds, "nano": 123_456_000},
             expected_datetime=datetime(
-                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456, tzinfo=timezone.utc
+                year=2022,
+                month=3,
+                day=5,
+                hour=23,
+                minute=56,
+                second=44,
+                microsecond=123456,
+                tzinfo=timezone.utc,
             ),
             expected_ns=nanoseconds + 123_456_000,
             expected_us=microseconds + 123_456,
@@ -58,10 +75,19 @@ seconds = 1646524604
         ),
         TestCase(
             datetime_string="2022-03-05T23:56:44.123456789Z",
-            datetime_obj=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456),
+            datetime_obj=datetime(
+                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456
+            ),
             th2_timestamp={"epochSecond": seconds, "nano": 123_456_789},
             expected_datetime=datetime(
-                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123456, tzinfo=timezone.utc
+                year=2022,
+                month=3,
+                day=5,
+                hour=23,
+                minute=56,
+                second=44,
+                microsecond=123456,
+                tzinfo=timezone.utc,
             ),
             expected_ns=nanoseconds + 123_456_789,
             expected_us=microseconds + 123_456,
@@ -69,10 +95,19 @@ seconds = 1646524604
         ),
         TestCase(
             datetime_string="2022-03-05T23:56:44.123Z",
-            datetime_obj=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123000),
+            datetime_obj=datetime(
+                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123000
+            ),
             th2_timestamp={"epochSecond": seconds, "nano": 123_000_000},
             expected_datetime=datetime(
-                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=123000, tzinfo=timezone.utc
+                year=2022,
+                month=3,
+                day=5,
+                hour=23,
+                minute=56,
+                second=44,
+                microsecond=123000,
+                tzinfo=timezone.utc,
             ),
             expected_ns=nanoseconds + 123_000_000,
             expected_us=microseconds + 123_000,
@@ -80,10 +115,19 @@ seconds = 1646524604
         ),
         TestCase(
             datetime_string="2022-03-05T23:56:44.00123Z",
-            datetime_obj=datetime(year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=1230),
+            datetime_obj=datetime(
+                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=1230
+            ),
             th2_timestamp={"epochSecond": seconds, "nano": 1_230_000},
             expected_datetime=datetime(
-                year=2022, month=3, day=5, hour=23, minute=56, second=44, microsecond=1230, tzinfo=timezone.utc
+                year=2022,
+                month=3,
+                day=5,
+                hour=23,
+                minute=56,
+                second=44,
+                microsecond=1230,
+                tzinfo=timezone.utc,
             ),
             expected_ns=nanoseconds + 1_230_000,
             expected_us=microseconds + 1_230,
