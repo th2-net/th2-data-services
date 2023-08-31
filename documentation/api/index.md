@@ -54,6 +54,7 @@
 - [`converter.ITimestampConverter`](./interfaces.utils.converter.md#class-itimestampconverter)
 - [`resolver.EventFieldResolver`](./interfaces.utils.resolver.md#class-eventfieldresolver)
 - [`resolver.EventFieldResolver`](./interfaces.utils.resolver.md#class-eventfieldresolver)
+- [`resolver.ExpandedMessageFieldResolver`](./interfaces.utils.resolver.md#class-expandedmessagefieldresolver)
 - [`resolver.MessageFieldResolver`](./interfaces.utils.resolver.md#class-messagefieldresolver)
 - [`resolver.MessageFieldResolver`](./interfaces.utils.resolver.md#class-messagefieldresolver)
 - [`resolver.SubMessageFieldResolver`](./interfaces.utils.resolver.md#class-submessagefieldresolver)
