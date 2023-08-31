@@ -195,7 +195,7 @@ class PerfectTable:
             setattr(self, h, self._columns[h])
 
     def to_csv(self, path):
-        with open(path, "w", newline='') as f:
+        with open(path, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(self._headers)
             writer.writerows(self._rows)

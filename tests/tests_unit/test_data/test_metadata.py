@@ -7,7 +7,9 @@ def test_metadata_is_carried(general_data: List[dict]):
     data = Data(general_data)
     metadata = {"some": "default value", "test": "case"}
     data.update_metadata(metadata)
-    data2 = data.filter(lambda event: event["isBatched"]).map(lambda event: {"id": event["eventId"]})
+    data2 = data.filter(lambda event: event["isBatched"]).map(
+        lambda event: {"id": event["eventId"]}
+    )
     assert data2.metadata == metadata
 
 
@@ -15,7 +17,9 @@ def test_updating_one_data_object_metadata_dont_affect_parent_data(general_data:
     data = Data(general_data)
     metadata = {"some": "default value", "test": "case"}
     data.update_metadata(metadata)
-    data2 = data.filter(lambda event: event["isBatched"]).map(lambda event: {"id": event["eventId"]})
+    data2 = data.filter(lambda event: event["isBatched"]).map(
+        lambda event: {"id": event["eventId"]}
+    )
     data2.update_metadata({"a": 123})
     assert data.metadata != data2.metadata
 

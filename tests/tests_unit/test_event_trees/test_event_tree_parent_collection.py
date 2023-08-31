@@ -63,7 +63,9 @@ def test_petc_find_events(demo_petc_with_general_data, general_data):
 
 def test_petc_find_ancestor(demo_petc_with_general_data):
     petc = demo_petc_with_general_data
-    ancestor = petc.find_ancestor(DEMO_CHILD_ID, filter=lambda event: not event.get("parentEventId"))
+    ancestor = petc.find_ancestor(
+        DEMO_CHILD_ID, filter=lambda event: not event.get("parentEventId")
+    )
     assert ancestor["eventId"] == DEMO_PARENT_ID
 
 
@@ -72,7 +74,9 @@ def test_petc_get_children(demo_petc_with_general_data, general_data):
     id_ = DEMO_CHILD_ID
     children = petc.get_children(id_)
     data = Data(general_data).filter(lambda event: event["parentEventId"] == id_)
-    data = [event for event in data if petc.find(lambda ev: ev["parentEventId"] == event["eventId"])]
+    data = [
+        event for event in data if petc.find(lambda ev: ev["parentEventId"] == event["eventId"])
+    ]
     assert list(children) == data
 
 
@@ -98,7 +102,9 @@ def test_petc_append_stub_event(demo_petc_with_general_data):
         "eventName": "CustomStubEvent",
     }
     petc.append_event(event=stub_event)
-    filter_for_stub_event = [event for event in petc.get_all_events_iter() if event["eventName"] == "CustomStubEvent"]
+    filter_for_stub_event = [
+        event for event in petc.get_all_events_iter() if event["eventName"] == "CustomStubEvent"
+    ]
     assert len(filter_for_stub_event) == 1
     assert filter_for_stub_event[0] == stub_event
 
@@ -124,7 +130,11 @@ def test_petc_get_trees(demo_petc):
 def test_petc_get_root_by_id(demo_petc):
     petc = demo_petc
     root = petc.get_root_by_id("root_id2")
-    expected_root = {"eventName": "Root Event 2", "eventId": "root_id2", "data": {"data": [6, 7, 8, 9, 10]}}
+    expected_root = {
+        "eventName": "Root Event 2",
+        "eventId": "root_id2",
+        "data": {"data": [6, 7, 8, 9, 10]},
+    }
     assert root == expected_root
 
 

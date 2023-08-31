@@ -30,7 +30,9 @@ def test_from_cache_file_non_pickle_file(general_data: List[dict]):
 
     Actually it will raise the Exception only during iteration.
     """
-    cache_file = Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_non_pickle_file"
+    cache_file = (
+        Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_non_pickle_file"
+    )
     with pytest.raises(UnpicklingError) as ex:
         d = Data.from_cache_file(cache_file)
         print(d)

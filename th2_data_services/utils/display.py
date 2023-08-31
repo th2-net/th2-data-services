@@ -16,7 +16,7 @@ from typing import Dict, Union
 from tabulate import tabulate
 
 
-def calculate_stats_dict(data: Dict, sort_values: bool = False):
+def calculate_stats_dict(data: Dict, sort_values: bool = False):  # noqa
     table = [["category", "count"]]  # Header
     total = 0
     result = []

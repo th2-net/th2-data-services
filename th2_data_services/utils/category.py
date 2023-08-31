@@ -13,12 +13,11 @@
 #  limitations under the License.
 class Category:
     def __init__(self, name: str, get_func):
-        """
-        Category is category name + categorizer function.
+        """Category is category name + categorizer function.
 
         Args:
-            name:
-            get_func:
+            name: Name that you will see as category name. Often it's a column name.
+            get_func: A function to get a value for this category from every data value.
         """
         self.name: str = name
         self.get_func = get_func

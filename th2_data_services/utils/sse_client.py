@@ -47,7 +47,7 @@ class SSEClient(sseclient.SSEClient):
 
                 # Ignore unknown fields.
                 if field not in event.__dict__:
-#LOG                     self._logger.debug("Saw invalid field %s while parsing " "Server Side Event", field)
+                    # LOG                     self._logger.debug("Saw invalid field %s while parsing " "Server Side Event", field)
                     continue
 
                 if len(data) > 1:
@@ -82,5 +82,5 @@ class SSEClient(sseclient.SSEClient):
             event.event = event.event or "message"
 
             # Dispatch the event
-#LOG             self._logger.debug("Dispatching %s...", event)
+            # LOG             self._logger.debug("Dispatching %s...", event)
             yield event

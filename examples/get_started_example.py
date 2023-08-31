@@ -2,9 +2,18 @@ from typing import Tuple, List, Optional, Generator
 from datetime import datetime
 
 from th2_data_services.data import Data
-from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2_data_services.event_tree import (
+    EventTree,
+    EventTreeCollection,
+    ParentEventTreeCollection,
+    IETCDriver,
+)
 from th2_data_services.interfaces import IDataSource
-from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
+from th2_data_services.utils.converters import (
+    DatetimeConverter,
+    DatetimeStringConverter,
+    ProtobufTimestampConverter,
+)
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
@@ -79,7 +88,9 @@ filtered_and_mapped_events = filtered_events.map(transform_function)
 
 # [1.3] Data pipeline.
 #       Instead of doing data transformations step by step you can do it in one line.
-filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []).map(transform_function)
+filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []).map(
+    transform_function
+)
 # Content of these two Data objects should be equal.
 assert list(filtered_and_mapped_events) == list(filtered_and_mapped_events_by_pipeline)
 
@@ -123,7 +134,9 @@ list(events_filtered)  # Just to iterate Data object (cache file will be created
 
 filtered_events_types = events_filtered.map(lambda record: {"eventType": record.get("eventType")})
 
-events_without_types_with_batch = filtered_events_types.filter(lambda record: not record.get("eventType"))
+events_without_types_with_batch = filtered_events_types.filter(
+    lambda record: not record.get("eventType")
+)
 events_without_types_with_batch.use_cache()
 
 # [1.11] Data objects joining.

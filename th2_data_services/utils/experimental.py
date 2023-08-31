@@ -18,7 +18,9 @@ from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
 from th2_data_services.utils import script_report_utils
 
 
-def prepare_story_from_storage(provider_url: str, story_items: List, event_body_processors=None):  # noqa
+def prepare_story_from_storage(
+    provider_url: str, story_items: List, event_body_processors=None
+):  # noqa
     # TODO: Add docstrings.
     smart = set()
     messages_ids = set()
@@ -39,6 +41,10 @@ def prepare_story_from_storage(provider_url: str, story_items: List, event_body_
         events = data_source.command(http.GetEventsById(e_list, True))
 
     result = script_report_utils.prepare_story(
-        story_items, json_path=None, events=events, event_body_processors=event_body_processors, messages=messages
+        story_items,
+        json_path=None,
+        events=events,
+        event_body_processors=event_body_processors,
+        messages=messages,
     )
     return result

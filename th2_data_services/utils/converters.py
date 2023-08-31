@@ -16,8 +16,9 @@ from datetime import datetime, timezone
 import shutil
 import gzip
 
+import flatdict as _flatdict
+
 from th2_data_services.interfaces.utils.converter import ITimestampConverter
-from collections.abc import MutableMapping
 
 _DatetimeTuple = namedtuple("DatetimeTuple", ["datetime", "mantissa"])
 
@@ -103,12 +104,32 @@ def decompress_gzip_file(input_filename: str, output_filename: str) -> None:
             shutil.copyfileobj(f_in, f_out)
 
 
-def flatten_dict(dictionary: dict, parent_key: str = "", separator: str = ".") -> dict:
+def flatten_dict(dictionary: dict, separator: str = ".") -> dict:
     """Returns flatten dict.
 
     Examples:
-        >>> flatten_dict({'a': 1, 'c': {'a': 2, 'b': {'x': 5, 'y': 10}}, 'd': [1, 2, 3]})
-        # {'a': 1, 'c.a': 2, 'c.b.x': 5, 'd': [1, 2, 3], 'c.b.y': 10}
+        >>> rv = flatten_dict({
+            'd': [
+                {'a': 1,
+                 'c': {'z': 2,
+                       'b': [{'x': 5, 'y': 10}, 'str-in-lst']
+                       }
+                 },
+                'str',
+                3
+            ]
+        }
+        )
+
+        assert rv == {
+            'd.0.a': 1,
+            'd.0.c.z': 2,
+            'd.0.c.b.0.x': 5,
+            'd.0.c.b.0.y': 10,
+            'd.0.c.b.1': 'str-in-lst',
+            'd.1': 'str',
+            'd.2': 3
+        }
 
     Args:
         dictionary: dict object.
@@ -119,11 +140,5 @@ def flatten_dict(dictionary: dict, parent_key: str = "", separator: str = ".") -
         Flatten dict.
 
     """
-    items = []
-    for key, value in dictionary.items():
-        new_key = parent_key + separator + key if parent_key else key
-        if isinstance(value, MutableMapping):
-            items.extend(flatten_dict(value, new_key, separator=separator).items())
-        else:
-            items.append((new_key, value))
-    return dict(items)
+    rv = _flatdict.FlatterDict(dictionary, delimiter=separator)
+    return dict(rv)

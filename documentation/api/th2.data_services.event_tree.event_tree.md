@@ -14,16 +14,16 @@
 <a href="../../th2/data_services/event_tree/event_tree.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `EventTree`
-EventTree is a tree-based data structure of events. 
+EventTree is a tree-based data structure of events.
 
 
-- get_x methods raise Exceptions if no result is found. 
-- find_x methods return None if no result is found. 
-- EventTree stores events as Nodes and interacts with them using an internal tree. 
-- Note that EventTree stores only one tree.  If you want to store all trees, use EventTreeCollections. 
-- EventTree contains all events in memory. 
+- get_x methods raise Exceptions if no result is found.
+- find_x methods return None if no result is found.
+- EventTree stores events as Nodes and interacts with them using an internal tree.
+- Note that EventTree stores only one tree.  If you want to store all trees, use EventTreeCollections.
+- EventTree contains all events in memory.
 
-Take a look at the following HTML tree to understand some important terms. 
+Take a look at the following HTML tree to understand some important terms.
 
 ```
 <body> <!-- ancestor (grandparent), but not parent -->
@@ -32,7 +32,7 @@ Take a look at the following HTML tree to understand some important terms.
          <p>Goodbye!</p> <!-- sibling -->
      </div>
 </body>
-``` 
+```
 
 <a href="../../th2/data_services/event_tree/event_tree.py#L46"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
@@ -42,15 +42,15 @@ Take a look at the following HTML tree to understand some important terms.
 __init__(event_name: str, event_id: str, data: dict = None)
 ```
 
-EventTree constructor. 
+EventTree constructor.
 
 
 
 **Args:**
- 
- - <b>`event_name`</b>:  Event Name. 
- - <b>`event_id`</b>:  Event Id. 
- - <b>`data`</b>:  Data of event. 
+
+ - <b>`event_name`</b>:  Event Name.
+ - <b>`event_id`</b>:  Event Id.
+ - <b>`data`</b>:  Data of event.
 
 
 
@@ -70,16 +70,16 @@ append_event(
 ) → None
 ```
 
-Appends the event to the tree. 
+Appends the event to the tree.
 
 
 
 **Args:**
- 
- - <b>`event_name`</b>:  Event Name. 
- - <b>`event_id`</b>:  Event Id. 
- - <b>`parent_id`</b>:  Parent Id. 
- - <b>`data`</b>:  Data of event. 
+
+ - <b>`event_name`</b>:  Event Name.
+ - <b>`event_id`</b>:  Event Id.
+ - <b>`parent_id`</b>:  Parent Id.
+ - <b>`data`</b>:  Data of event.
 
 ---
 
@@ -91,23 +91,23 @@ Appends the event to the tree.
 find(filter: Callable, stop: Callable = None) → Union[dict, NoneType]
 ```
 
-Searches the first event match. 
+Searches the first event match.
 
 
-- The search uses 'filter' which is a filtering function. 
-- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete. 
+- The search uses 'filter' which is a filtering function.
+- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete.
 
 
 
 **Args:**
- 
- - <b>`filter`</b>:  Filter function. 
- - <b>`stop`</b>:  Stop function. If None searches for all nodes in the tree. 
+
+ - <b>`filter`</b>:  Filter function.
+ - <b>`stop`</b>:  Stop function. If None searches for all nodes in the tree.
 
 
 
 **Returns:**
- One matching event. 
+ One matching event.
 
 ---
 
@@ -119,19 +119,19 @@ Searches the first event match.
 find_ancestor(id: str, filter: Callable) → Union[dict, NoneType]
 ```
 
-Finds the ancestor of an event. 
+Finds the ancestor of an event.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
- - <b>`filter`</b>:  Filter function 
+
+ - <b>`id`</b>:  Event id.
+ - <b>`filter`</b>:  Filter function
 
 
 
 **Returns:**
- Ancestor of Event. 
+ Ancestor of Event.
 
 ---
 
@@ -147,25 +147,25 @@ findall(
 ) → List[dict]
 ```
 
-Searches events matches. 
+Searches events matches.
 
 
-- The search uses 'filter' which is a filtering function. 
-- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete. 
-- 'max_count' is a parameter that limits the search to a specified count. 
+- The search uses 'filter' which is a filtering function.
+- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete.
+- 'max_count' is a parameter that limits the search to a specified count.
 
 
 
 **Args:**
- 
- - <b>`filter`</b>:  Filter function. 
- - <b>`stop`</b>:  Stop function. If None searches for all nodes in the tree. 
- - <b>`max_count`</b>:  Max count of matched events. Stops searching when `max_count` will be reached. 
+
+ - <b>`filter`</b>:  Filter function.
+ - <b>`stop`</b>:  Stop function. If None searches for all nodes in the tree.
+ - <b>`max_count`</b>:  Max count of matched events. Stops searching when `max_count` will be reached.
 
 
 
 **Returns:**
- Matching events. 
+ Matching events.
 
 ---
 
@@ -181,25 +181,25 @@ findall_iter(
 ) → Generator[dict, NoneType, NoneType]
 ```
 
-Searches events matches as iterator. 
+Searches events matches as iterator.
 
 
-- The search uses 'filter' which is a filtering function. 
-- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete. 
-- 'max_count' is a parameter that limits the search to a specified count. 
+- The search uses 'filter' which is a filtering function.
+- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete.
+- 'max_count' is a parameter that limits the search to a specified count.
 
 
 
 **Args:**
- 
- - <b>`filter`</b>:  Filter function. 
- - <b>`stop`</b>:  Stop function. If None searches for all nodes in the tree. 
- - <b>`max_count`</b>:  Max count of matched events. Stops searching when `max_count` will be reached. 
+
+ - <b>`filter`</b>:  Filter function.
+ - <b>`stop`</b>:  Stop function. If None searches for all nodes in the tree.
+ - <b>`max_count`</b>:  Max count of matched events. Stops searching when `max_count` will be reached.
 
 
 
 **Yields:**
- Matching events. 
+ Matching events.
 
 ---
 
@@ -211,7 +211,7 @@ Searches events matches as iterator.
 get_all_events() → List[dict]
 ```
 
-Returns all events from the tree. 
+Returns all events from the tree.
 
 ---
 
@@ -223,7 +223,7 @@ Returns all events from the tree.
 get_all_events_iter() → Generator[dict, NoneType, NoneType]
 ```
 
-Returns all events from the tree as iterator. 
+Returns all events from the tree as iterator.
 
 ---
 
@@ -235,24 +235,24 @@ Returns all events from the tree as iterator.
 get_ancestors(id: str) → List[dict]
 ```
 
-Returns all event's ancestors in right order. 
+Returns all event's ancestors in right order.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Returns:**
- All event's ancestors. 
+ All event's ancestors.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
 
 ---
 
@@ -264,19 +264,19 @@ Returns all event's ancestors in right order.
 get_children(id: str) → Tuple[dict]
 ```
 
-Returns children for the event by its id. 
+Returns children for the event by its id.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
 
 ---
 
@@ -288,19 +288,19 @@ Returns children for the event by its id.
 get_children_iter(id: str) → Generator[dict, NoneType, NoneType]
 ```
 
-Returns children as iterator for the event by its id. 
+Returns children as iterator for the event by its id.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
 
 ---
 
@@ -312,19 +312,19 @@ Returns children as iterator for the event by its id.
 get_event(id: str) → dict
 ```
 
-Returns an event by id. 
+Returns an event by id.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
 
 ---
 
@@ -336,14 +336,14 @@ Returns an event by id.
 get_full_path(id: str, field: str = None) → List[Union[str, dict]]
 ```
 
-Returns the full path for the event by its id in right order. 
+Returns the full path for the event by its id in right order.
 
 
 
 **Examples:**
- 
 
-Imagine we have the following tree. 
+
+Imagine we have the following tree.
 
 ```
 Harry
@@ -352,7 +352,7 @@ Harry
      ├── Diane
      │   └── Mary
      └── Mark
-``` 
+```
 
 ```
 tree.get_full_path('Jane', id)
@@ -363,25 +363,25 @@ tree.get_full_path('Jane', name)
 
 tree.get_full_path('Jane')
 ['Harry-event', 'Jane-event']
-``` 
+```
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
- - <b>`field`</b>:  Field of event. 
+
+ - <b>`id`</b>:  Event id.
+ - <b>`field`</b>:  Field of event.
 
 
 
 **Returns:**
- Full path of event. 
+ Full path of event.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
 
 ---
 
@@ -393,7 +393,7 @@ tree.get_full_path('Jane')
 get_leaves() → Tuple[dict]
 ```
 
-Returns all tree leaves. 
+Returns all tree leaves.
 
 ---
 
@@ -405,7 +405,7 @@ Returns all tree leaves.
 get_leaves_iter() → Generator[dict, NoneType, NoneType]
 ```
 
-Returns all tree leaves as iterator. 
+Returns all tree leaves as iterator.
 
 ---
 
@@ -417,19 +417,19 @@ Returns all tree leaves as iterator.
 get_parent(id: str) → dict
 ```
 
-Returns a parent for the event by its id. 
+Returns a parent for the event by its id.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
 
 ---
 
@@ -441,7 +441,7 @@ Returns a parent for the event by its id.
 get_root() → dict
 ```
 
-Returns the root event. 
+Returns the root event.
 
 ---
 
@@ -453,7 +453,7 @@ Returns the root event.
 get_root_id() → str
 ```
 
-Returns the root id. 
+Returns the root id.
 
 ---
 
@@ -465,7 +465,7 @@ Returns the root id.
 get_root_name() → str
 ```
 
-Returns the root name. 
+Returns the root name.
 
 ---
 
@@ -477,24 +477,24 @@ Returns the root name.
 get_subtree(id: str) → EventTree
 ```
 
-Returns subtree of the event by its id. 
+Returns subtree of the event by its id.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Returns:**
- Subtree. 
+ Subtree.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
 
 ---
 
@@ -510,21 +510,21 @@ merge_tree(
 ) → None
 ```
 
-Merges a EventTree to specified identifier. 
+Merges a EventTree to specified identifier.
 
 
 
 **Args:**
- 
- - <b>`parent_id`</b>:  Event id to which merge. 
- - <b>`other_tree`</b>:  EventTree. 
- - <b>`use_deepcopy`</b>:  True if you need deepcopy for your objects in event. 
+
+ - <b>`parent_id`</b>:  Event id to which merge.
+ - <b>`other_tree`</b>:  EventTree.
+ - <b>`use_deepcopy`</b>:  True if you need deepcopy for your objects in event.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
 
 ---
 
@@ -536,9 +536,9 @@ Merges a EventTree to specified identifier.
 show() → None
 ```
 
-Prints the EventTree as tree view. 
+Prints the EventTree as tree view.
 
-For example: 
+For example:
 
 ```
 Root
@@ -549,7 +549,7 @@ Root
      |___ C02
      |___ C03
      |    |___ C31
-``` 
+```
 
 ---
 
@@ -561,7 +561,7 @@ Root
 summary() → str
 ```
 
-Returns the tree summary. 
+Returns the tree summary.
 
 ---
 
@@ -573,20 +573,20 @@ Returns the tree summary.
 update_event_name(event_id: str, event_name: str) → None
 ```
 
-Updates Event name in the tree. Note that it doesn't change internal data. 
+Updates Event name in the tree. Note that it doesn't change internal data.
 
 
 
 **Args:**
- 
- - <b>`event_id`</b>:  Event id. 
- - <b>`event_name`</b>:  Event name. 
+
+ - <b>`event_id`</b>:  Event id.
+ - <b>`event_name`</b>:  Event name.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
 
 ---
 
@@ -598,21 +598,21 @@ Updates Event name in the tree. Note that it doesn't change internal data.
 update_parent_link(event_id: str, parent_id: str) → None
 ```
 
-Updates the link to parent. 
+Updates the link to parent.
 
 
 
 **Args:**
- 
- - <b>`event_id`</b>:  Event id. 
- - <b>`parent_id`</b>:  New parent id. 
+
+ - <b>`event_id`</b>:  Event id.
+ - <b>`parent_id`</b>:  New parent id.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the tree. 
- - <b>`TreeLoop`</b>:  If parent id will point to the descendant event. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the tree.
+ - <b>`TreeLoop`</b>:  If parent id will point to the descendant event.
 
 
 

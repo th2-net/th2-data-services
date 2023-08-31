@@ -19,7 +19,8 @@ from th2_data_services.utils.json_tree import *
 json
 
 warn(
-    "'az_tree' module was deprecated and will be removed since 2.0.0 release.\n" "Use 'json_tree' module instead",
+    "'az_tree' module was deprecated and will be removed since 2.0.0 release.\n"
+    "Use 'json_tree' module instead",
     RuntimeWarning,
     stacklevel=2,
 )

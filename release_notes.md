@@ -52,15 +52,15 @@
 
 ## User impact and migration instructions
 
-1. [I] You no longer need to enter UTC time corrected for local time. DataSource methods now expect UTC time.  
+1. [I] You no longer need to enter UTC time corrected for local time. DataSource methods now expect UTC time.
    [M] Change the time to UTC in all your scripts.
-2. [I] The last "messageIds" message in the messages stream will be ignored.  
+2. [I] The last "messageIds" message in the messages stream will be ignored.
    [M] If you do checks for the last message, you can delete them.
-3. [I] _DataSource.write_to_txt_ was moved to Data. The name has been changed to _write_to_file_.  
+3. [I] _DataSource.write_to_txt_ was moved to Data. The name has been changed to _write_to_file_.
    [M] If you use _write_to_file_ function, change the corresponding class and method.
-4. [I] _len(Data)_ functionality was removed. The _Data.len_ property is now used.  
+4. [I] _len(Data)_ functionality was removed. The _Data.len_ property is now used.
    [M] Change _len(Data)_ to _Data.len_ for your functions.
-5. [I] The codec-pipeline wrapper-messages are now split into sub-messages.  
+5. [I] The codec-pipeline wrapper-messages are now split into sub-messages.
    [M] If you use wrapper-messages for your statistics then adapt functions for sub-messages (now they look like a usual
    message)
 
@@ -119,7 +119,7 @@
 ## User impact and migration instructions
 
 1. [I] The "metadataOnly" query parameter will now always be set to False in the get_X_from_data_provider methods. It's
-   the option for Report Viewer front-end only.  
+   the option for Report Viewer front-end only.
    [M] (Optional) Remove "metadataOnly" parameter in your requests to get more logical and clean code.
 
 ## Improvements
@@ -129,7 +129,7 @@
 
 ## Features
 
-1. You can import classes directly from th2_data_services now.  
+1. You can import classes directly from th2_data_services now.
    E.g. `from th2_data_services import Data, DataSource, Filter`
 2. [TH2-2755] Added new parameters to DataSource methods.
     1. get_X_from_data_provider:
@@ -181,26 +181,26 @@ use `CodecPipelinesAdapter` manually.
 
 ## User impact and migration instructions
 
-1. [I] There is no more old-style DataSource class.  
+1. [I] There is no more old-style DataSource class.
    [M] Use a specific class for your purposes (HTTPDataSource or GRPCDataSource).
 2. [I] There are no more `get_x` methods in the DataSource classes. Instead, it has the command method. This method
-   takes an object of the Command class.  
-   [M] So if you used `data_source.get_events_from_data_provider` use `data_source.command(GetEvents(ARGS))` instead.  
+   takes an object of the Command class.
+   [M] So if you used `data_source.get_events_from_data_provider` use `data_source.command(GetEvents(ARGS))` instead.
    from `data_source.get_messages_from_data_provider` to `data_source.command(GetMessages(ARGS).apply_adapter(
-   codec_pipeline_adapter))`  
-   from `find_messages_by_id_from_data_provider` to `GetMessagesById` or `GetMessageById`  
-   from `find_events_by_id_from_data_provider` to `GetEventsById` or `GetEventById`  
+   codec_pipeline_adapter))`
+   from `find_messages_by_id_from_data_provider` to `GetMessagesById` or `GetMessageById`
+   from `find_events_by_id_from_data_provider` to `GetEventsById` or `GetEventById`
    if you used broken_events parameter initialize the command with use_stub=True parameter.
-3. [I] Modules structure was changed.  
+3. [I] Modules structure was changed.
    [M] You need to change some import paths.
-4. [I] All class constructors/methods have got explicit arguments.  
+4. [I] All class constructors/methods have got explicit arguments.
    [M] Change old args names to new if required.
 5. [I] Set of classes to create `EventsTree` representation was significantly changed.
    [M] Use `EventsTreesCollection` instead of `EventsTree`. `EventsTree` is a real tree structure now.
    Note, `EventsTreesCollection` has other methods, see the example to understand how to work with it.
-6. [I] `EventsTree2` was removed.  
+6. [I] `EventsTree2` was removed.
    [M] Use `EventsTreesCollection` instead.
-7. [I] Exceptions were updated.  
+7. [I] Exceptions were updated.
    [M] Update your try-except statements
 
 ## Improvements
@@ -315,7 +315,7 @@ This release implements rdp v6 support that requres new grpc version. It means y
 rdp6.grpc via the same environment. This DS lib version will have grpc version for rdp v6 == th2-grpc-data-provider
 v1.1.0.
 
-1. [I] The new version of grpc has been added.  
+1. [I] The new version of grpc has been added.
    [M] If you require the rdp v6 version of the interface, you do not need to do anything.
    Otherwise, you need to reinstall th2-grpc-data-provider lib to the required one for your rdp.
 
@@ -424,13 +424,13 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 
 2. [I] It's no longer possible to import Data object directly from th2_data_services package.\
    [M] All records should be changed from "from th2_data_services import Data" to "from th2_data_services.data import Data".
-   
+
 3. [I] Provider module is removed.\
    [M] We should move to data source implementations, like th2-ds-source-lwdp.
-   
+
 4. [I] INTERACTIVE_MODE cannot be accessed like th2_data_services.INTERACTIVE_MODE anymore.\
    [M] It's now changed to th2_data_services.config.options.INTERACTIVE_MODE
-   
+
 5. [I] EventsTree renamed to EventTree\
    [M] All records should be changed to EventTree
 
@@ -451,19 +451,19 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    | lwdp1    | latest version of lwdp (version 1) |
    | lwdp2    | latest version of lwdp (version 2) |
 
-3. [TH2-4493] Adapter interface got handle_stream method. 
+3. [TH2-4493] Adapter interface got handle_stream method.
 4. [TH2-4490] Added `map_stream` method to Data.
    - Almost same as `map`, except it's designed to handle a stream of data rather than a single record.
    - Method accepts a generator function or a class which implements IStreamAdapter with generator function.
 5. [TH2-4582] IAdapter interface removed.
    - IStreamAdapter interface added to handle streams.
-   - IRecordAdapter interface added to handle single record. 
+   - IRecordAdapter interface added to handle single record.
    - Method accepts Generator function or IStreamAdapter interface class with Generator function.
-6. [TH2-4609] Data.filter implementation changed to use `yield`. 
+6. [TH2-4609] Data.filter implementation changed to use `yield`.
 7. [TH2-4491] metadata attribute added to Data. It will contain request urls.
 8. [TH2-4577] map method now can take either Callable function or Adapter which implements IRecordAdapter.
 9. [TH2-4611] DatetimeConverter, ProtobufTimestampConverter converters added.
-10. [TH2-4646] 
+10. [TH2-4646]
     - metadata gets carried when using Data methods.
     - update_metadata method added to update metadata.
 11. [TH2-4684] Tree names changed from plural to singular. (e.g Event**s**Tree -> EventTree)
@@ -477,7 +477,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 16. [TH2-4919] `Data.from_any_file` method was added.
 17. [TH2-4928] `Data.from_csv` method was added.
 18. [TH2-4932] `Data.to_json` method was added. Puts your data to valid json object.
-19. [TH2-4957] Added gzip option for Data.to_json method. 
+19. [TH2-4957] Added gzip option for Data.to_json method.
 20. [TH2-4957] Added decompress_gzip_file method to utils.converters.
 21. Added to_csv method to PerfectTable class.
 22. `utils.converters.flatten_dict` converter added.

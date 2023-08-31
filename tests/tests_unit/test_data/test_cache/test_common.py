@@ -42,7 +42,9 @@ def new_data_with_map_keyboard_interrupt(data: Data) -> Data:
 
 def test_data_iterates_own_cache_file(log_checker, general_data: List[dict]):
     data = Data(general_data, cache=True)
-    output1: List = iterate_data_and_do_cache_checks(data, log_checker)  # It'll create a cache file.
+    output1: List = iterate_data_and_do_cache_checks(
+        data, log_checker
+    )  # It'll create a cache file.
 
     # Deactivate cache and set empty data source.
     data.use_cache(False)
@@ -91,7 +93,9 @@ def test_cache_file_isnt_created_after_using_magic_function(general_data: List[d
     assert output == general_data
 
 
-def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_case: DataCase, tmp_test_folder: Path):
+def test_data_doesnt_left_their_cache_file_if_you_change_dir(
+    log_checker, data_case: DataCase, tmp_test_folder: Path
+):
     """Issue related test: https://exactpro.atlassian.net/browse/TH2-3545"""
     data = data_case.data
     create_type = data_case.create_type
@@ -107,12 +111,16 @@ def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_c
     os.chdir(tmp_test_folder)
     data._data_stream = ["You lost your cache file it's a bug"]
     assert list(data) == dl, (
-        f"old dir: {old_cwd}, " f"new dir: {tmp_test_folder}, " f"cache file: {data.get_cache_filepath()}"
+        f"old dir: {old_cwd}, "
+        f"new dir: {tmp_test_folder}, "
+        f"cache file: {data.get_cache_filepath()}"
     )  # Data obj should read from cache
     # log_checker.used_own_cache_file(data)
 
 
-def test_data_doesnt_left_their_cache_file_if_you_change_dir_external_cache(log_checker, tmp_test_folder: Path):
+def test_data_doesnt_left_their_cache_file_if_you_change_dir_external_cache(
+    log_checker, tmp_test_folder: Path
+):
     """Issue related test: https://exactpro.atlassian.net/browse/TH2-3545"""
     data = Data.from_cache_file(EXTERNAL_CACHE_FILE)
     dl: List = list(data)
@@ -131,7 +139,9 @@ def test_data_doesnt_left_their_cache_file_if_you_change_dir_external_cache(log_
         (KeyboardInterrupt, map_keyboard_interrupt),
     ],
 )
-def test_cache_file_will_be_removed_only_if_data_write_it(interactive_mod, expected_exception, map_func):
+def test_cache_file_will_be_removed_only_if_data_write_it(
+    interactive_mod, expected_exception, map_func
+):
     """If Data obj reads the cache file and something went wrong
         1. We have to delete it in the script mode
         2. We DO NOT have to delete it in the interactive mode
