@@ -122,7 +122,10 @@ class MessageFieldResolver(ABC):
     @staticmethod
     @abstractmethod
     def get_type(message) -> str:
-        pass
+        """This field was removed since LwDP3.
+
+        Don't use it in new scripts.
+        """
 
     @staticmethod
     @abstractmethod
@@ -228,7 +231,7 @@ class ExpandedMessageFieldResolver(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_body(message) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+    def get_body(message) -> Union[Dict[str, Any]]:
         pass
 
     @staticmethod
@@ -239,11 +242,6 @@ class ExpandedMessageFieldResolver(ABC):
     @staticmethod
     @abstractmethod
     def get_id(message) -> str:
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def get_attached_event_ids(message) -> List[str]:
         pass
 
     @staticmethod
