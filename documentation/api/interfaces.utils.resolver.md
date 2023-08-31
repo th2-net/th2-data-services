@@ -768,31 +768,6 @@ get_type(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L249"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `expand_message`
-
-```python
-expand_message(message) → List[Dict[str, Any]]
-```
-
-Extract compounded message into list of individual messages. 
-
-Warnings:  expand_message function is not backward-compatible.  If you use it in your scripts, there is no guarantee that everything will  work if you change data-source because different data-sources has different  messages structure. 
-
-
-
-**Args:**
- 
- - <b>`message`</b>:  Th2Message 
-
-
-
-**Returns:**
- Iterable[Th2Message] 
-
----
-
 <a href="../../th2_data_services/interfaces/utils/resolver.py#L244"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_attached_event_ids`
@@ -849,7 +824,7 @@ get_direction(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L272"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L254"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_fields`
 
@@ -877,7 +852,7 @@ get_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L277"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L259"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_metadata`
 
@@ -891,7 +866,7 @@ get_metadata(message) → Dict[str, Any]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L282"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L264"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_protocol`
 
@@ -933,7 +908,7 @@ get_session_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L267"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L249"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subsequence`
 

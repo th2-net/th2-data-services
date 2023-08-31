@@ -248,24 +248,6 @@ class ExpandedMessageFieldResolver(ABC):
 
     @staticmethod
     @abstractmethod
-    def expand_message(message) -> List[Dict[str, Any]]:
-        """Extract compounded message into list of individual messages.
-
-        Warnings:
-            expand_message function is not backward-compatible.
-            If you use it in your scripts, there is no guarantee that everything will
-            work if you change data-source because different data-sources has different
-            messages structure.
-
-        Args:
-            message: Th2Message
-
-        Returns:
-            Iterable[Th2Message]
-        """
-
-    @staticmethod
-    @abstractmethod
     def get_subsequence(message) -> List[int]:
         pass
 
