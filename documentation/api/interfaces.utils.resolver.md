@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L53"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L54"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `EventFieldResolver`
 
@@ -23,12 +23,12 @@
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L99"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L100"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_attached_messages_ids`
 
 ```python
-get_attached_messages_ids(event)
+get_attached_messages_ids(event) → List[str]
 ```
 
 
@@ -37,12 +37,12 @@ get_attached_messages_ids(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L74"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L75"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_batch_id`
 
 ```python
-get_batch_id(event)
+get_batch_id(event) → str
 ```
 
 
@@ -51,12 +51,12 @@ get_batch_id(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L104"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L105"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body`
 
 ```python
-get_body(event)
+get_body(event) → Any
 ```
 
 
@@ -65,13 +65,112 @@ get_body(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L94"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L95"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_end_timestamp`
 
 ```python
-get_end_timestamp(event)
+get_end_timestamp(event) → Dict[str, int]
 ```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_id`
+
+```python
+get_id(event) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L80"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_is_batched`
+
+```python
+get_is_batched(event) → bool
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L70"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_name`
+
+```python
+get_name(event) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L60"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_parent_id`
+
+```python
+get_parent_id(event) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L90"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_start_timestamp`
+
+```python
+get_start_timestamp(event) → Dict[str, int]
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L65"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_status`
+
+```python
+get_status(event) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L85"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_type`
+
+```python
+get_type(event) → str
+```
+
 
 
 
@@ -80,105 +179,6 @@ get_end_timestamp(event)
 ---
 
 <a href="../../th2_data_services/interfaces/utils/resolver.py#L54"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_id`
-
-```python
-get_id(event)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L79"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_is_batched`
-
-```python
-get_is_batched(event)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L69"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_name`
-
-```python
-get_name(event)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L59"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_parent_id`
-
-```python
-get_parent_id(event)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L89"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_start_timestamp`
-
-```python
-get_start_timestamp(event)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L64"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_status`
-
-```python
-get_status(event)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L84"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_type`
-
-```python
-get_type(event)
-```
-
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L53"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `EventFieldResolver`
 
@@ -190,12 +190,12 @@ get_type(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L99"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L100"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_attached_messages_ids`
 
 ```python
-get_attached_messages_ids(event)
+get_attached_messages_ids(event) → List[str]
 ```
 
 
@@ -204,12 +204,12 @@ get_attached_messages_ids(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L74"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L75"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_batch_id`
 
 ```python
-get_batch_id(event)
+get_batch_id(event) → str
 ```
 
 
@@ -218,12 +218,12 @@ get_batch_id(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L104"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L105"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body`
 
 ```python
-get_body(event)
+get_body(event) → Any
 ```
 
 
@@ -232,12 +232,12 @@ get_body(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L94"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L95"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_end_timestamp`
 
 ```python
-get_end_timestamp(event)
+get_end_timestamp(event) → Dict[str, int]
 ```
 
 
@@ -246,12 +246,12 @@ get_end_timestamp(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L54"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_id`
 
 ```python
-get_id(event)
+get_id(event) → str
 ```
 
 
@@ -260,12 +260,12 @@ get_id(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L79"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L80"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_is_batched`
 
 ```python
-get_is_batched(event)
+get_is_batched(event) → bool
 ```
 
 
@@ -274,12 +274,12 @@ get_is_batched(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L69"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L70"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_name`
 
 ```python
-get_name(event)
+get_name(event) → str
 ```
 
 
@@ -288,12 +288,12 @@ get_name(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L59"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L60"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_parent_id`
 
 ```python
-get_parent_id(event)
+get_parent_id(event) → str
 ```
 
 
@@ -302,12 +302,12 @@ get_parent_id(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L89"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L90"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_start_timestamp`
 
 ```python
-get_start_timestamp(event)
+get_start_timestamp(event) → Dict[str, int]
 ```
 
 
@@ -316,12 +316,12 @@ get_start_timestamp(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L64"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L65"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_status`
 
 ```python
-get_status(event)
+get_status(event) → str
 ```
 
 
@@ -330,12 +330,12 @@ get_status(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L84"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L85"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_type`
 
 ```python
-get_type(event)
+get_type(event) → str
 ```
 
 
@@ -345,7 +345,7 @@ get_type(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L110"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L111"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `MessageFieldResolver`
 
@@ -357,12 +357,12 @@ get_type(event)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L156"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L157"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expand_message`
 
 ```python
-expand_message(message)
+expand_message(message) → List[Dict[str, Any]]
 ```
 
 Extract compounded message into list of individual messages. 
@@ -382,12 +382,12 @@ Warnings:  expand_message function is not backward-compatible.  If you use it in
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L151"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L152"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_attached_event_ids`
 
 ```python
-get_attached_event_ids(message)
+get_attached_event_ids(message) → List[str]
 ```
 
 
@@ -396,12 +396,12 @@ get_attached_event_ids(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L136"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L137"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body`
 
 ```python
-get_body(message)
+get_body(message) → Union[Dict[str, Any], List[Dict[str, Any]]]
 ```
 
 
@@ -410,13 +410,98 @@ get_body(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L141"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L142"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body_base64`
 
 ```python
-get_body_base64(message)
+get_body_base64(message) → str
 ```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L112"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_direction`
+
+```python
+get_direction(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L147"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_id`
+
+```python
+get_id(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L127"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_sequence`
+
+```python
+get_sequence(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L117"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_session_id`
+
+```python
+get_session_id(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L132"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_timestamp`
+
+```python
+get_timestamp(message) → Dict[str, int]
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L122"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_type`
+
+```python
+get_type(message) → str
+```
+
 
 
 
@@ -425,91 +510,6 @@ get_body_base64(message)
 ---
 
 <a href="../../th2_data_services/interfaces/utils/resolver.py#L111"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_direction`
-
-```python
-get_direction(message)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L146"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_id`
-
-```python
-get_id(message)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L126"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_sequence`
-
-```python
-get_sequence(message)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L116"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_session_id`
-
-```python
-get_session_id(message)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L131"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_timestamp`
-
-```python
-get_timestamp(message)
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L121"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_type`
-
-```python
-get_type(message)
-```
-
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L110"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `MessageFieldResolver`
 
@@ -521,12 +521,12 @@ get_type(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L156"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L157"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expand_message`
 
 ```python
-expand_message(message)
+expand_message(message) → List[Dict[str, Any]]
 ```
 
 Extract compounded message into list of individual messages. 
@@ -546,12 +546,12 @@ Warnings:  expand_message function is not backward-compatible.  If you use it in
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L151"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L152"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_attached_event_ids`
 
 ```python
-get_attached_event_ids(message)
+get_attached_event_ids(message) → List[str]
 ```
 
 
@@ -560,12 +560,12 @@ get_attached_event_ids(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L136"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L137"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body`
 
 ```python
-get_body(message)
+get_body(message) → Union[Dict[str, Any], List[Dict[str, Any]]]
 ```
 
 
@@ -574,12 +574,12 @@ get_body(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L141"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L142"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body_base64`
 
 ```python
-get_body_base64(message)
+get_body_base64(message) → str
 ```
 
 
@@ -588,12 +588,12 @@ get_body_base64(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L111"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L112"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_direction`
 
 ```python
-get_direction(message)
+get_direction(message) → str
 ```
 
 
@@ -602,12 +602,12 @@ get_direction(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L146"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L147"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_id`
 
 ```python
-get_id(message)
+get_id(message) → str
 ```
 
 
@@ -616,12 +616,12 @@ get_id(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L126"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L127"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_sequence`
 
 ```python
-get_sequence(message)
+get_sequence(message) → str
 ```
 
 
@@ -630,12 +630,12 @@ get_sequence(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L116"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L117"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_session_id`
 
 ```python
-get_session_id(message)
+get_session_id(message) → str
 ```
 
 
@@ -644,12 +644,12 @@ get_session_id(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L131"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L132"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_timestamp`
 
 ```python
-get_timestamp(message)
+get_timestamp(message) → Dict[str, int]
 ```
 
 
@@ -658,12 +658,12 @@ get_timestamp(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L121"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L122"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_type`
 
 ```python
-get_type(message)
+get_type(message) → str
 ```
 
 
@@ -673,7 +673,7 @@ get_type(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L175"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L176"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `SubMessageFieldResolver`
 
@@ -685,12 +685,12 @@ get_type(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L186"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L187"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_fields`
 
 ```python
-get_fields(message)
+get_fields(message) → Dict[str, Any]
 ```
 
 
@@ -699,12 +699,12 @@ get_fields(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L191"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L192"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_metadata`
 
 ```python
-get_metadata(message)
+get_metadata(message) → Dict[str, Any]
 ```
 
 
@@ -713,12 +713,12 @@ get_metadata(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L196"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L197"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_protocol`
 
 ```python
-get_protocol(message)
+get_protocol(message) → str
 ```
 
 
@@ -727,12 +727,12 @@ get_protocol(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L176"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L177"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subsequence`
 
 ```python
-get_subsequence(message)
+get_subsequence(message) → List[int]
 ```
 
 
@@ -741,12 +741,207 @@ get_subsequence(message)
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L181"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L182"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_type`
 
 ```python
-get_type(message)
+get_type(message) → str
+```
+
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L203"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+## <kbd>class</kbd> `ExpandedMessageFieldResolver`
+
+
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L244"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_attached_event_ids`
+
+```python
+get_attached_event_ids(message) → List[str]
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L229"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_body`
+
+```python
+get_body(message) → Union[Dict[str, Any], List[Dict[str, Any]]]
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L234"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_body_base64`
+
+```python
+get_body_base64(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L204"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_direction`
+
+```python
+get_direction(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L254"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_fields`
+
+```python
+get_fields(message) → Dict[str, Any]
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L239"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_id`
+
+```python
+get_id(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L259"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_metadata`
+
+```python
+get_metadata(message) → Dict[str, Any]
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L264"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_protocol`
+
+```python
+get_protocol(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L219"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_sequence`
+
+```python
+get_sequence(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L209"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_session_id`
+
+```python
+get_session_id(message) → str
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L249"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_subsequence`
+
+```python
+get_subsequence(message) → List[int]
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L224"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_timestamp`
+
+```python
+get_timestamp(message) → Dict[str, int]
+```
+
+
+
+
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L214"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_type`
+
+```python
+get_type(message) → str
 ```
 
 
