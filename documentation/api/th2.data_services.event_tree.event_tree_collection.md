@@ -14,11 +14,11 @@
 <a href="../../th2/data_services/event_tree/event_tree_collection.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `EventTreeCollection`
-EventTreeCollection objective is building 'EventsTree's and storing them. 
+EventTreeCollection objective is building 'EventsTree's and storing them.
 
 
-- EventTreeCollection stores all EventsTree. You can to refer to each of them. 
-- Recovery of missing events occurs when you have passed DataSource class to constructor. Otherwise you should execute the method 'recover_unknown_events' manually. Note that there is no point in the method if the list of detached events is empty. 
+- EventTreeCollection stores all EventsTree. You can to refer to each of them.
+- Recovery of missing events occurs when you have passed DataSource class to constructor. Otherwise you should execute the method 'recover_unknown_events' manually. Note that there is no point in the method if the list of detached events is empty.
 
 <a href="../../th2/data_services/event_tree/event_tree_collection.py#L36"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
@@ -28,32 +28,32 @@ EventTreeCollection objective is building 'EventsTree's and storing them.
 __init__(driver: IETCDriver)
 ```
 
-EventTreeCollection constructor. 
+EventTreeCollection constructor.
 
 
 
 **Args:**
- 
- - <b>`driver`</b>:  initialized driver object. 
+
+ - <b>`driver`</b>:  initialized driver object.
 
 
 ---
 
 #### <kbd>property</kbd> len_detached_events
 
-Returns number of detached events in the collection. 
+Returns number of detached events in the collection.
 
 ---
 
 #### <kbd>property</kbd> len_parentless
 
-Returns number of events in the parentless trees inside the collection. 
+Returns number of events in the parentless trees inside the collection.
 
 ---
 
 #### <kbd>property</kbd> len_trees
 
-Returns number of events in the trees inside the collection, including parentless trees. 
+Returns number of events in the trees inside the collection, including parentless trees.
 
 
 
@@ -67,13 +67,13 @@ Returns number of events in the trees inside the collection, including parentles
 append_event(event: dict) → None
 ```
 
-Appends event into a tree. 
+Appends event into a tree.
 
 
 
 **Args:**
- 
- - <b>`event`</b>:  Event. 
+
+ - <b>`event`</b>:  Event.
 
 ---
 
@@ -99,25 +99,25 @@ build(data: Iterable)
 find(filter: Callable, stop: Callable = None) → Union[dict, NoneType]
 ```
 
-Searches the first event match. 
+Searches the first event match.
 
 
-- The search uses 'filter' which is a filtering function. 
-- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete. 
+- The search uses 'filter' which is a filtering function.
+- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete.
 
-This method applicable only for trees (regular or parentless), not for detached events. 
+This method applicable only for trees (regular or parentless), not for detached events.
 
 
 
 **Args:**
- 
- - <b>`filter`</b>:  Filter function. 
- - <b>`stop`</b>:  Stop function. If None searches for all nodes in the trees. 
+
+ - <b>`filter`</b>:  Filter function.
+ - <b>`stop`</b>:  Stop function. If None searches for all nodes in the trees.
 
 
 
 **Returns:**
- One matching event. 
+ One matching event.
 
 ---
 
@@ -129,21 +129,21 @@ This method applicable only for trees (regular or parentless), not for detached 
 find_ancestor(id: str, filter: Callable) → Union[dict, NoneType]
 ```
 
-Finds the ancestor of an event. 
+Finds the ancestor of an event.
 
-This method applicable only for trees (regular or parentless), not for detached events. 
+This method applicable only for trees (regular or parentless), not for detached events.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
- - <b>`filter`</b>:  Filter function 
+
+ - <b>`id`</b>:  Event id.
+ - <b>`filter`</b>:  Filter function
 
 
 
 **Returns:**
- Ancestor of Event. 
+ Ancestor of Event.
 
 ---
 
@@ -159,27 +159,27 @@ findall(
 ) → List[dict]
 ```
 
-Searches events matches. 
+Searches events matches.
 
 
-- The search uses 'filter' which is a filtering function. 
-- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete. 
-- 'max_count' is a parameter that limits the search to a specified count. 
+- The search uses 'filter' which is a filtering function.
+- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete.
+- 'max_count' is a parameter that limits the search to a specified count.
 
-This method applicable only for trees (regular or parentless), not for detached events. 
+This method applicable only for trees (regular or parentless), not for detached events.
 
 
 
 **Args:**
- 
- - <b>`filter`</b>:  Filter function. 
- - <b>`stop`</b>:  Stop function. If None searches for all nodes in the trees. 
- - <b>`max_count`</b>:  Max count of matched events. Stops searching when `max_count` will be reached. 
+
+ - <b>`filter`</b>:  Filter function.
+ - <b>`stop`</b>:  Stop function. If None searches for all nodes in the trees.
+ - <b>`max_count`</b>:  Max count of matched events. Stops searching when `max_count` will be reached.
 
 
 
 **Returns:**
- Matching events. 
+ Matching events.
 
 ---
 
@@ -195,27 +195,27 @@ findall_iter(
 ) → Generator[dict, NoneType, NoneType]
 ```
 
-Searches events matches as iterator. 
+Searches events matches as iterator.
 
 
-- The search uses 'filter' which is a filtering function. 
-- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete. 
-- 'max_count' is a parameter that limits the search to a specified count. 
+- The search uses 'filter' which is a filtering function.
+- Optionally, the search uses 'stop' which is a stopping function. If 'stop' function returns 'True' then search is complete.
+- 'max_count' is a parameter that limits the search to a specified count.
 
-This method applicable only for trees (regular or parentless), not for detached events. 
+This method applicable only for trees (regular or parentless), not for detached events.
 
 
 
 **Args:**
- 
- - <b>`filter`</b>:  Filter function. 
- - <b>`stop`</b>:  Stop function. If None searches for all nodes in the trees. 
- - <b>`max_count`</b>:  Max count of matched events. Stops searching when `max_count` will be reached. 
+
+ - <b>`filter`</b>:  Filter function.
+ - <b>`stop`</b>:  Stop function. If None searches for all nodes in the trees.
+ - <b>`max_count`</b>:  Max count of matched events. Stops searching when `max_count` will be reached.
 
 
 
 **Yields:**
- Matching events. 
+ Matching events.
 
 ---
 
@@ -227,7 +227,7 @@ This method applicable only for trees (regular or parentless), not for detached 
 get_all_events() → List[dict]
 ```
 
-Returns all events from the collection. 
+Returns all events from the collection.
 
 ---
 
@@ -239,7 +239,7 @@ Returns all events from the collection.
 get_all_events_iter() → Generator[dict, NoneType, NoneType]
 ```
 
-Yields all events from the collection. 
+Yields all events from the collection.
 
 ---
 
@@ -251,26 +251,26 @@ Yields all events from the collection.
 get_ancestors(id: str) → List[dict]
 ```
 
-Returns all event's ancestors in right order. 
+Returns all event's ancestors in right order.
 
-This method applicable only for trees (regular or parentless), not for detached events. 
+This method applicable only for trees (regular or parentless), not for detached events.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Returns:**
- All event's ancestors. 
+ All event's ancestors.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees.
 
 ---
 
@@ -282,21 +282,21 @@ This method applicable only for trees (regular or parentless), not for detached 
 get_children(id: str) → Tuple[dict]
 ```
 
-Returns children of the event by its id. 
+Returns children of the event by its id.
 
-This method applicable only for trees (regular or parentless), not for detached events. 
+This method applicable only for trees (regular or parentless), not for detached events.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees.
 
 ---
 
@@ -308,21 +308,21 @@ This method applicable only for trees (regular or parentless), not for detached 
 get_children_iter(id: str) → Generator[dict, NoneType, NoneType]
 ```
 
-Yields children of the event by its id. 
+Yields children of the event by its id.
 
-This method applicable only for trees (regular or parentless), not for detached events. 
+This method applicable only for trees (regular or parentless), not for detached events.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees.
 
 ---
 
@@ -334,7 +334,7 @@ This method applicable only for trees (regular or parentless), not for detached 
 get_detached_events() → List[dict]
 ```
 
-Returns detached events list. 
+Returns detached events list.
 
 ---
 
@@ -346,7 +346,7 @@ Returns detached events list.
 get_detached_events_iter() → Generator[dict, NoneType, NoneType]
 ```
 
-Yields detached events. 
+Yields detached events.
 
 ---
 
@@ -358,19 +358,19 @@ Yields detached events.
 get_event(id: str) → Union[dict, NoneType]
 ```
 
-Returns an event by its id. 
+Returns an event by its id.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the collection. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the collection.
 
 ---
 
@@ -382,16 +382,16 @@ Returns an event by its id.
 get_full_path(id: str, field: str = None) → List[Union[str, dict]]
 ```
 
-Returns the full path for the event by its id in the right order. 
+Returns the full path for the event by its id in the right order.
 
-This method applicable only for trees (regular or parentless), not for detached events. 
+This method applicable only for trees (regular or parentless), not for detached events.
 
 
 
 **Examples:**
- 
 
-Imagine we have the following tree. 
+
+Imagine we have the following tree.
 
 ```
 Harry
@@ -400,7 +400,7 @@ Harry
      ├── Diane
      │   └── Mary
      └── Mark
-``` 
+```
 
 ```
 collection.get_full_path('Jane', id)
@@ -411,25 +411,25 @@ collection.get_full_path('Jane', name)
 
 collection.get_full_path('Jane')
 ['Harry-event', 'Jane-event']
-``` 
+```
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
- - <b>`field`</b>:  Field of event. 
+
+ - <b>`id`</b>:  Event id.
+ - <b>`field`</b>:  Field of event.
 
 
 
 **Returns:**
- Full path of event. 
+ Full path of event.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees.
 
 ---
 
@@ -441,7 +441,7 @@ collection.get_full_path('Jane')
 get_leaves() → Tuple[dict]
 ```
 
-Returns all trees leaves, including parentless trees. 
+Returns all trees leaves, including parentless trees.
 
 ---
 
@@ -453,7 +453,7 @@ Returns all trees leaves, including parentless trees.
 get_leaves_iter() → Generator[dict, NoneType, NoneType]
 ```
 
-Yields all trees leaves, including parentless trees. 
+Yields all trees leaves, including parentless trees.
 
 ---
 
@@ -465,19 +465,19 @@ Yields all trees leaves, including parentless trees.
 get_parent(id: str) → dict
 ```
 
-Returns a parent of the event by its id. 
+Returns a parent of the event by its id.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Raises:**
- 
- - <b>`NodeIDAbsentError`</b>:  If event id is not in the trees. 
+
+ - <b>`NodeIDAbsentError`</b>:  If event id is not in the trees.
 
 ---
 
@@ -489,14 +489,14 @@ Returns a parent of the event by its id.
 get_parentless_tree_collection() → EventTreeCollection
 ```
 
-Builds and returns parentless trees by detached events as EventTreeCollection. 
+Builds and returns parentless trees by detached events as EventTreeCollection.
 
-Detached events will be removed from the collection. 
+Detached events will be removed from the collection.
 
 
 
 **Returns:**
-  EventTreeCollection. 
+  EventTreeCollection.
 
 ---
 
@@ -508,14 +508,14 @@ Detached events will be removed from the collection.
 get_parentless_trees() → List[EventTree]
 ```
 
-Builds and returns parentless trees by detached events. 
+Builds and returns parentless trees by detached events.
 
-Detached events will be removed from the tree. 
+Detached events will be removed from the tree.
 
 
 
 **Returns:**
-  List of parentless trees if they exist, otherwise empty list. 
+  List of parentless trees if they exist, otherwise empty list.
 
 ---
 
@@ -527,26 +527,26 @@ Detached events will be removed from the tree.
 get_root_by_id(id) → dict
 ```
 
-Returns the root event of a tree by id of any event in this tree. 
+Returns the root event of a tree by id of any event in this tree.
 
-If event id of parentless tree is passed, stub of this parentless tree will be returnd. 
+If event id of parentless tree is passed, stub of this parentless tree will be returnd.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Returns:**
- Th2Event. 
+ Th2Event.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees.
 
 ---
 
@@ -558,9 +558,9 @@ If event id of parentless tree is passed, stub of this parentless tree will be r
 get_roots_ids() → List[str]
 ```
 
-Returns ids of all trees roots located in the collection. 
+Returns ids of all trees roots located in the collection.
 
-If there are parentless trees, they also will be return. 
+If there are parentless trees, they also will be return.
 
 ---
 
@@ -572,26 +572,26 @@ If there are parentless trees, they also will be return.
 get_subtree(id: str) → EventTree
 ```
 
-Returns subtree of the event by its id. 
+Returns subtree of the event by its id.
 
-This method applicable only for trees (regular or parentless), not for detached events. 
+This method applicable only for trees (regular or parentless), not for detached events.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Returns:**
- Subtree. 
+ Subtree.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees.
 
 ---
 
@@ -603,26 +603,26 @@ This method applicable only for trees (regular or parentless), not for detached 
 get_tree_by_id(id) → EventTree
 ```
 
-Returns a tree by id of any event in this tree. 
+Returns a tree by id of any event in this tree.
 
-If event id of parentless tree is passed, stub of this parentless tree will be returnd. 
+If event id of parentless tree is passed, stub of this parentless tree will be returnd.
 
 
 
 **Args:**
- 
- - <b>`id`</b>:  Event id. 
+
+ - <b>`id`</b>:  Event id.
 
 
 
 **Returns:**
- Tree. 
+ Tree.
 
 
 
 **Raises:**
- 
- - <b>`EventIdNotInTree`</b>:  If event id is not in the trees. 
+
+ - <b>`EventIdNotInTree`</b>:  If event id is not in the trees.
 
 ---
 
@@ -634,9 +634,9 @@ If event id of parentless tree is passed, stub of this parentless tree will be r
 get_trees() → List[EventTree]
 ```
 
-Returns the list of trees inside the collection. 
+Returns the list of trees inside the collection.
 
-If there are parentless trees, they also will be return. 
+If there are parentless trees, they also will be return.
 
 ---
 
@@ -648,13 +648,13 @@ If there are parentless trees, they also will be return.
 recover_unknown_events(preprocessor=None) → None
 ```
 
-Loads missed events and finish tree building. 
+Loads missed events and finish tree building.
 
 
 
 **Args:**
- 
- - <b>`preprocessor`</b>:  the function that will be executed for each recovered event before store. 
+
+ - <b>`preprocessor`</b>:  the function that will be executed for each recovered event before store.
 
 ---
 
@@ -666,9 +666,9 @@ Loads missed events and finish tree building.
 show()
 ```
 
-Prints all EventsTrees as tree view. 
+Prints all EventsTrees as tree view.
 
-For example: 
+For example:
 
 ```
 Root
@@ -679,7 +679,7 @@ Root
      |___ C02
      |___ C03
      |    |___ C31
-``` 
+```
 
 ---
 
@@ -691,9 +691,9 @@ Root
 summary() → str
 ```
 
-Returns the collection summary. 
+Returns the collection summary.
 
-The same as repr(EventTreeCollection). 
+The same as repr(EventTreeCollection).
 
 
 

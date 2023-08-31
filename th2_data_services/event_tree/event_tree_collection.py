@@ -64,7 +64,9 @@ class EventTreeCollection:
 
         for id_ in stub_roots:
             stub_event = self._driver.build_stub_event(id_)
-            event_id, event_name = self._driver.get_event_id(stub_event), self._driver.get_event_name(stub_event)
+            event_id, event_name = self._driver.get_event_id(
+                stub_event
+            ), self._driver.get_event_name(stub_event)
             tree = EventTree(event_id=event_id, event_name=event_name, data=stub_event)
             self._fill_tree(self._detached_nodes, tree, id_)
             self._parentless.append(tree)
@@ -80,7 +82,9 @@ class EventTreeCollection:
         Returns:
             Nodes.
         """
-        events_store: Dict[Optional[str], List[dict]] = defaultdict(list)  # {parent_event_id: [event1, event2, ..]}
+        events_store: Dict[Optional[str], List[dict]] = defaultdict(
+            list
+        )  # {parent_event_id: [event1, event2, ..]}
 
         for event in data:
             parent_event_id: str = self._driver.get_parent_event_id(event)
@@ -96,7 +100,9 @@ class EventTreeCollection:
         """
         roots = []
         for root_event in events_nodes[None]:  # None - is parent_event_id for root events.
-            event_name, event_id = self._driver.get_event_name(root_event), self._driver.get_event_id(root_event)
+            event_name, event_id = self._driver.get_event_name(
+                root_event
+            ), self._driver.get_event_id(root_event)
             tree = EventTree(event_name=event_name, event_id=event_id, data=root_event)
             roots.append(tree)
             self._fill_tree(events_nodes, tree, event_id)
@@ -120,7 +126,9 @@ class EventTreeCollection:
                 event
             ), self._driver.get_event_id(event)
             if event_id not in current_tree:
-                current_tree.append_event(event_name=event_name, event_id=event_id, parent_id=parent_id, data=event)
+                current_tree.append_event(
+                    event_name=event_name, event_id=event_id, parent_id=parent_id, data=event
+                )
             events_store[parent_id].remove(event)
             self._fill_tree(events_store, current_tree, event_id)  # Recursive fill.
         events_store.pop(parent_id)
@@ -155,18 +163,25 @@ class EventTreeCollection:
             events_trees = list(filter(lambda tree: parent_event_id in tree, self._roots))
             if events_trees:
                 event_tree = events_trees[0]
-                event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(event)
+                event_id, event_name = self._driver.get_event_id(
+                    event
+                ), self._driver.get_event_name(event)
                 if event_id in event_tree:
                     pass
                 else:
                     event_tree.append_event(
-                        event_name=event_name, event_id=event_id, parent_id=parent_event_id, data=event
+                        event_name=event_name,
+                        event_id=event_id,
+                        parent_id=parent_event_id,
+                        data=event,
                     )
                     self._fill_tree(self._detached_nodes, event_tree, parent_event_id)
             else:
                 self._detached_nodes[parent_event_id].append(event)
         else:
-            event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(event)
+            event_id, event_name = self._driver.get_event_id(event), self._driver.get_event_name(
+                event
+            )
             tree = EventTree(event_id=event_id, event_name=event_name, data=event)
             self._roots.append(tree)
 
@@ -193,7 +208,9 @@ class EventTreeCollection:
         If there are parentless trees, they also will be return.
         """
         if self._parentless is not None:
-            return [tree.get_root_id() for tree in self._roots] + [tree.get_root_id() for tree in self._parentless]
+            return [tree.get_root_id() for tree in self._roots] + [
+                tree.get_root_id() for tree in self._parentless
+            ]
         return [tree.get_root_id() for tree in self._roots]
 
     def get_trees(self) -> List[EventTree]:
@@ -289,9 +306,7 @@ class EventTreeCollection:
 
         if self._parentless:
             len_parentless_trees = len(self.get_parentless_trees())
-            trees_parentless_info = (
-                f"[regular={len_regular_trees - len_parentless_trees}, parentless={len_parentless_trees}]"
-            )
+            trees_parentless_info = f"[regular={len_regular_trees - len_parentless_trees}, parentless={len_parentless_trees}]"
         else:
             trees_parentless_info = ""
 

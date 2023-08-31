@@ -26,7 +26,7 @@
 __init__()
 ```
 
-Stab interface. 
+Stab interface.
 
 
 ---
@@ -49,18 +49,18 @@ Stab interface.
 build(fields: dict) → dict
 ```
 
-Builds a stub. 
+Builds a stub.
 
 
 
 **Args:**
-  fields: 
+  fields:
 
 
 
 **Returns:**
- 
- - <b>`TypeError`</b>:  If required fields is absent in changed fields list. 
+
+ - <b>`TypeError`</b>:  If required fields is absent in changed fields list.
 
 
 ---
@@ -68,7 +68,7 @@ Builds a stub.
 <a href="../../th2/data_services/interfaces/stub_builder.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IEventStub`
-Just to mark Event Stub class. 
+Just to mark Event Stub class.
 
 <a href="../../th2/data_services/interfaces/stub_builder.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
@@ -78,7 +78,7 @@ Just to mark Event Stub class.
 __init__()
 ```
 
-Stab interface. 
+Stab interface.
 
 
 ---
@@ -101,18 +101,18 @@ Stab interface.
 build(fields: dict) → dict
 ```
 
-Builds a stub. 
+Builds a stub.
 
 
 
 **Args:**
-  fields: 
+  fields:
 
 
 
 **Returns:**
- 
- - <b>`TypeError`</b>:  If required fields is absent in changed fields list. 
+
+ - <b>`TypeError`</b>:  If required fields is absent in changed fields list.
 
 
 ---
@@ -120,7 +120,7 @@ Builds a stub.
 <a href="../../th2/data_services/interfaces/stub_builder.py#L73"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IMessageStub`
-Just to mark Message Stub class. 
+Just to mark Message Stub class.
 
 <a href="../../th2/data_services/interfaces/stub_builder.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
@@ -130,7 +130,7 @@ Just to mark Message Stub class.
 __init__()
 ```
 
-Stab interface. 
+Stab interface.
 
 
 ---
@@ -153,18 +153,18 @@ Stab interface.
 build(fields: dict) → dict
 ```
 
-Builds a stub. 
+Builds a stub.
 
 
 
 **Args:**
-  fields: 
+  fields:
 
 
 
 **Returns:**
- 
- - <b>`TypeError`</b>:  If required fields is absent in changed fields list. 
+
+ - <b>`TypeError`</b>:  If required fields is absent in changed fields list.
 
 
 

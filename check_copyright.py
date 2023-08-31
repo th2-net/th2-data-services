@@ -123,7 +123,9 @@ if __name__ == "__main__":
             print(
                 "You can either manually fix copyright text in these files or use command like this: python3 check_copyright copyright.txt dir_location --update"
             )
-            print("Beware that using --update argument will remove any comment at the start of problematic files")
+            print(
+                "Beware that using --update argument will remove any comment at the start of problematic files"
+            )
             sys.exit(1)
     else:
         print("No problems with copyright were detected")

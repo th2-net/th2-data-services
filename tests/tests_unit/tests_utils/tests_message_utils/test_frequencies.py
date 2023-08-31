@@ -5,7 +5,9 @@ from th2_data_services.config import options
 options.MESSAGE_FIELDS_RESOLVER = LwdpMessageFieldsResolver
 
 
-def test_message_get_category_frequencies_5s(messages_frequencies_test_data, messages_frequencies_expected_values_5s):
+def test_message_get_category_frequencies_5s(
+    messages_frequencies_test_data, messages_frequencies_expected_values_5s
+):
     table = message_utils.frequencies.get_category_frequencies(
         messages_frequencies_test_data,
         [],
@@ -57,7 +59,9 @@ def test_message_get_category_frequencies_5s(messages_frequencies_test_data, mes
     assert messages_frequencies_expected_values_5s["GAP_3_ANCHOR_TRUE_LEN"] == len(list(table))
 
 
-def test_message_get_category_frequencies_1h(messages_frequencies_test_data, messages_frequencies_expected_values_1h):
+def test_message_get_category_frequencies_1h(
+    messages_frequencies_test_data, messages_frequencies_expected_values_1h
+):
     table = message_utils.frequencies.get_category_frequencies(
         messages_frequencies_test_data,
         [],
@@ -111,7 +115,9 @@ def test_message_get_category_frequencies_1h(messages_frequencies_test_data, mes
     assert messages_frequencies_expected_values_1h["GAP_3_ANCHOR_TRUE_LEN"] == len(list(table))
 
 
-def test_message_get_category_frequencies_2h(messages_frequencies_test_data, messages_frequencies_expected_values_2h):
+def test_message_get_category_frequencies_2h(
+    messages_frequencies_test_data, messages_frequencies_expected_values_2h
+):
     table = message_utils.frequencies.get_category_frequencies(
         messages_frequencies_test_data,
         [],
@@ -163,7 +169,9 @@ def test_message_get_category_frequencies_2h(messages_frequencies_test_data, mes
     assert messages_frequencies_expected_values_2h["GAP_3_ANCHOR_TRUE_LEN"] == len(list(table))
 
 
-def test_message_get_category_frequencies_2d(messages_frequencies_test_data, messages_frequencies_expected_values_2d):
+def test_message_get_category_frequencies_2d(
+    messages_frequencies_test_data, messages_frequencies_expected_values_2d
+):
     table = message_utils.frequencies.get_category_frequencies(
         messages_frequencies_test_data,
         [],

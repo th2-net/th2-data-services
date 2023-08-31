@@ -23,5 +23,5 @@ jobs:
           pip install --pre -e .[${{ matrix.providers }}]
       - name: Test dependencies
         run: |
-          pip install pytest -q          
+          pip install pytest -q
           pytest tests/tests_unit/test_dependencies/ --provider=${{ matrix.providers }}

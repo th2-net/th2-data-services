@@ -26,13 +26,13 @@
 __init__(id_: str)
 ```
 
-Exception for the case when the tree hasn't the event. 
+Exception for the case when the tree hasn't the event.
 
 
 
 **Args:**
- 
- - <b>`id_`</b>:  Event id. 
+
+ - <b>`id_`</b>:  Event id.
 
 
 
@@ -55,13 +55,13 @@ Exception for the case when the tree hasn't the event.
 __init__(field_name: str)
 ```
 
-Exception for the case when event as dict hasn't field. 
+Exception for the case when event as dict hasn't field.
 
 
 
 **Args:**
- 
- - <b>`field_name`</b>:  Field name. 
+
+ - <b>`field_name`</b>:  Field name.
 
 
 
@@ -84,13 +84,13 @@ Exception for the case when event as dict hasn't field.
 __init__(event_id: str)
 ```
 
-Exception for the case when event already exist in tree. 
+Exception for the case when event already exist in tree.
 
 
 
 **Args:**
- 
- - <b>`event_id`</b>:  Event id. 
+
+ - <b>`event_id`</b>:  Event id.
 
 
 
@@ -113,13 +113,13 @@ Exception for the case when event already exist in tree.
 __init__(event_id: str)
 ```
 
-Exception for the case when root already added in tree. 
+Exception for the case when root already added in tree.
 
 
 
 **Args:**
- 
- - <b>`event_id`</b>:  Event id. 
+
+ - <b>`event_id`</b>:  Event id.
 
 
 
@@ -142,14 +142,14 @@ Exception for the case when root already added in tree.
 __init__(event_id: str, parent_id: str)
 ```
 
-Exception for the case when an event has link to a parent which is its descendant. 
+Exception for the case when an event has link to a parent which is its descendant.
 
 
 
 **Args:**
- 
- - <b>`event_id`</b>:  Event id. 
- - <b>`parent_id`</b>:  Parent id. 
+
+ - <b>`event_id`</b>:  Event id.
+ - <b>`parent_id`</b>:  Parent id.
 
 
 

@@ -1,10 +1,11 @@
-wheel>=0.38.1  # To get rid of wheel building errors
-sseclient-py~=1.7
+deprecated
+flatdict~=4.0
+orjson
+prettytable  # Temporary required for summary
 requests~=2.28
+sseclient-py~=1.7
+tabulate
+treelib==1.6.1
 # setuptools~=65.5
 urllib3~=1.26
-treelib==1.6.1
-tabulate
-prettytable  # Temporary required for summary
-deprecated
-orjson
+wheel>=0.38.1  # To get rid of wheel building errors

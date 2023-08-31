@@ -30,15 +30,15 @@ __init__(
 )
 ```
 
-The driver for EventsTreeCollection and its inheritors. 
+The driver for EventsTreeCollection and its inheritors.
 
 
 
 **Args:**
- 
- - <b>`event_struct`</b>:  Structure of the event. 
- - <b>`data_source`</b>:  DataSource object. 
- - <b>`use_stub`</b>:  Build stubs or not. 
+
+ - <b>`event_struct`</b>:  Structure of the event.
+ - <b>`data_source`</b>:  DataSource object.
+ - <b>`use_stub`</b>:  Build stubs or not.
 
 
 
@@ -53,13 +53,13 @@ The driver for EventsTreeCollection and its inheritors.
 build_stub_event(id_: str) → ~Th2EventType
 ```
 
-Builds stub event to generate parentless trees. 
+Builds stub event to generate parentless trees.
 
 
 
 **Args:**
- 
- - <b>`id_`</b>:  Event Id. 
+
+ - <b>`id_`</b>:  Event Id.
 
 ---
 
@@ -71,7 +71,7 @@ Builds stub event to generate parentless trees.
 get_event_id(event: ~Th2EventType)
 ```
 
-Returns event id from the event. 
+Returns event id from the event.
 
 ---
 
@@ -83,7 +83,7 @@ Returns event id from the event.
 get_event_name(event: ~Th2EventType)
 ```
 
-Returns event name from the event. 
+Returns event name from the event.
 
 ---
 
@@ -95,7 +95,7 @@ Returns event name from the event.
 get_events_by_id_from_source(ids: Sequence) → list
 ```
 
-Downloads the list of events from the provided data_source. 
+Downloads the list of events from the provided data_source.
 
 ---
 
@@ -107,7 +107,7 @@ Downloads the list of events from the provided data_source.
 get_parent_event_id(event: ~Th2EventType)
 ```
 
-Returns parent event id from the event. 
+Returns parent event id from the event.
 
 ---
 
@@ -119,7 +119,7 @@ Returns parent event id from the event.
 stub_event_name()
 ```
 
-Returns stub event name. 
+Returns stub event name.
 
 
 

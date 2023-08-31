@@ -31,9 +31,9 @@
 parse_timestamp(timestamp: ~TimestampType) → (<class 'str'>, <class 'str'>)
 ```
 
-Returns string representation of Unix time separated to seconds and nanoseconds. 
+Returns string representation of Unix time separated to seconds and nanoseconds.
 
-e.g. 2022-03-05T23:56:44.00123Z -> ('1646524604', '001230000') 
+e.g. 2022-03-05T23:56:44.00123Z -> ('1646524604', '001230000')
 
 ---
 
@@ -45,21 +45,21 @@ e.g. 2022-03-05T23:56:44.00123Z -> ('1646524604', '001230000')
 to_datetime(timestamp: ~TimestampType) → datetime
 ```
 
-Converts timestamp to datetime object. 
+Converts timestamp to datetime object.
 
-If your timestamp has nanoseconds, they will be just cut (not rounding). 
+If your timestamp has nanoseconds, they will be just cut (not rounding).
 
 
 
 **Args:**
- 
- - <b>`timestamp`</b>:  TimestampType object to convert. 
+
+ - <b>`timestamp`</b>:  TimestampType object to convert.
 
 
 
 **Returns:**
- 
- - <b>`datetime`</b>:  Timestamp in python datetime format. 
+
+ - <b>`datetime`</b>:  Timestamp in python datetime format.
 
 ---
 
@@ -71,21 +71,21 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
 to_microseconds(timestamp: ~TimestampType) → int
 ```
 
-Converts timestamp to microseconds. 
+Converts timestamp to microseconds.
 
-If your timestamp has nanoseconds, they will be just cut (not rounding). 
+If your timestamp has nanoseconds, they will be just cut (not rounding).
 
 
 
 **Args:**
- 
- - <b>`timestamp`</b>:  TimestampType object to convert. 
+
+ - <b>`timestamp`</b>:  TimestampType object to convert.
 
 
 
 **Returns:**
- 
- - <b>`int`</b>:  Timestamp in microseconds format. 
+
+ - <b>`int`</b>:  Timestamp in microseconds format.
 
 ---
 
@@ -97,21 +97,21 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
 to_milliseconds(timestamp: ~TimestampType)
 ```
 
-Converts timestamp to milliseconds. 
+Converts timestamp to milliseconds.
 
-If your timestamp has nanoseconds, they will be just cut (not rounding). 
+If your timestamp has nanoseconds, they will be just cut (not rounding).
 
 
 
 **Args:**
- 
- - <b>`timestamp`</b>:  TimestampType object to convert. 
+
+ - <b>`timestamp`</b>:  TimestampType object to convert.
 
 
 
 **Returns:**
- 
- - <b>`int`</b>:  Timestamp in microseconds format. 
+
+ - <b>`int`</b>:  Timestamp in microseconds format.
 
 ---
 
@@ -123,19 +123,19 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
 to_nanoseconds(timestamp: ~TimestampType) → int
 ```
 
-Converts timestamp to nanoseconds. 
+Converts timestamp to nanoseconds.
 
 
 
 **Args:**
- 
- - <b>`timestamp`</b>:  TimestampType object to convert. 
+
+ - <b>`timestamp`</b>:  TimestampType object to convert.
 
 
 
 **Returns:**
- 
- - <b>`int`</b>:  Timestamp in nanoseconds format. 
+
+ - <b>`int`</b>:  Timestamp in nanoseconds format.
 
 
 

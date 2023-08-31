@@ -64,7 +64,7 @@ There is also another part of _data services_
 
 ### Core
 
-- From PyPI (pip)   
+- From PyPI (pip)
   This package can be found on [PyPI](https://pypi.org/project/th2-data-services/ "th2-data-services").
     ```
     pip install th2-data-services
@@ -80,14 +80,14 @@ There is also another part of _data services_
 
 Since `v1.3.0`, the library doesn't provide data source dependencies.
 
-You should provide it manually during installation. 
+You should provide it manually during installation.
 You just need to add square brackets after library name and put dependency name.
 
 ```
 pip install th2-data-services[dependency_name]
 ```
 
-**Dependencies list** 
+**Dependencies list**
 
 |  dependency name  | provider version                      |
 |:-----------------:|---------------------------------------|
@@ -117,9 +117,18 @@ from typing import Tuple, List, Optional, Generator
 from datetime import datetime
 
 from th2_data_services.data import Data
-from th2_data_services.event_tree import EventTree, EventTreeCollection, ParentEventTreeCollection, IETCDriver
+from th2_data_services.event_tree import (
+    EventTree,
+    EventTreeCollection,
+    ParentEventTreeCollection,
+    IETCDriver,
+)
 from th2_data_services.interfaces import IDataSource
-from th2_data_services.utils.converters import DatetimeConverter, DatetimeStringConverter, ProtobufTimestampConverter
+from th2_data_services.utils.converters import (
+    DatetimeConverter,
+    DatetimeStringConverter,
+    ProtobufTimestampConverter,
+)
 
 # [0] Lib configuration
 # [0.1] Interactive or Script mode
@@ -194,7 +203,9 @@ filtered_and_mapped_events = filtered_events.map(transform_function)
 
 # [1.3] Data pipeline.
 #       Instead of doing data transformations step by step you can do it in one line.
-filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []).map(transform_function)
+filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []).map(
+    transform_function
+)
 # Content of these two Data objects should be equal.
 assert list(filtered_and_mapped_events) == list(filtered_and_mapped_events_by_pipeline)
 
@@ -238,7 +249,9 @@ list(events_filtered)  # Just to iterate Data object (cache file will be created
 
 filtered_events_types = events_filtered.map(lambda record: {"eventType": record.get("eventType")})
 
-events_without_types_with_batch = filtered_events_types.filter(lambda record: not record.get("eventType"))
+events_without_types_with_batch = filtered_events_types.filter(
+    lambda record: not record.get("eventType")
+)
 events_without_types_with_batch.use_cache()
 
 # [1.11] Data objects joining.
@@ -428,7 +441,7 @@ supports aggregate operations.
 
 The library describes the high-level interfaces `ISourceAPI`, `IDataSource`, `ICommand`, `IAdapter`.
 
-Any data source must be described by the `IDataSource` abstract class. These can be _FileDataSource_, 
+Any data source must be described by the `IDataSource` abstract class. These can be _FileDataSource_,
 _CSVDataSource_, _DBDataSource_ and other.
 
 Usually, data sources have some kind of API. Databases - provide SQL language, when working with a file, you can read
@@ -490,7 +503,7 @@ You can see example in 1.12 section of [get_started_example](examples/get_starte
 
 #### EventTree
 
-`EventTree` is a tree-based data structure of events. It allows you get children and parents of event, 
+`EventTree` is a tree-based data structure of events. It allows you get children and parents of event,
 display tree, get full path to event etc.
 
 Details:
@@ -525,7 +538,7 @@ are referenced in the data stream. The collection has features similar to _Event
 Details:
 
 * To use ET collections you need to initialize them by _ETCDriver_. Data sources usually provide them.
-  You can create it by yourself depending on your data structure.  
+  You can create it by yourself depending on your data structure.
 * The collection has a feature to recover events. All events that are not in the received data stream, but which are
   referenced will be loaded from the data source.
 * You can take `detached_events` to see which events are missing.
@@ -534,7 +547,7 @@ Details:
 
 Requirements:
 
-1. Events provided to ETC have to have `event_name`, `event_id`, `parent_event_id` fields. They 
+1. Events provided to ETC have to have `event_name`, `event_id`, `parent_event_id` fields. They
 can have another names (it resolves in the driver).
 
 #### Hints
@@ -547,27 +560,27 @@ can have another names (it resolves in the driver).
 * Use the python `len` keyword to get events number in the tree.
 
 ### FieldsResolver
-The idea of using resolvers:  
-It solves the problem of having a few DataSources with the same data, 
+The idea of using resolvers:
+It solves the problem of having a few DataSources with the same data,
 but with different ways to get it.
 
-These classes provide you getter methods. 
-Using these classes allows you to freely switch between different data 
-formats and don't change your code. 
+These classes provide you getter methods.
+Using these classes allows you to freely switch between different data
+formats and don't change your code.
 
-Resolvers solve the problem of data-format migration.  
+Resolvers solve the problem of data-format migration.
 - fields place can be changed
 - fields names can be changed
 
-Resolvers can work only with one event/message. 
-It means, if your message has sub-messages it won't work, because resolver will not 
-know with which sub-message should it work. 
+Resolvers can work only with one event/message.
+It means, if your message has sub-messages it won't work, because resolver will not
+know with which sub-message should it work.
 
 Implementation advice:
 1. raise NotImplementedError -- if your Implementation doesn't support this getter.
 
 Performance impact:
-- It a bit slower than using naked field access `dict['key']`. 
+- It a bit slower than using naked field access `dict['key']`.
 
 ## 2.4. Links
 
@@ -575,14 +588,14 @@ Performance impact:
 - [Th2 Data Services Utils](https://github.com/th2-net/th2-data-services-utils)
 
 # 3. Best practices
-Depending on how you work with `Data object`, it can be slow of fast.  
-As with a relational database, you can write a query that will return data slowly or quickly, 
+Depending on how you work with `Data object`, it can be slow of fast.
+As with a relational database, you can write a query that will return data slowly or quickly,
 the same when working with a `Data object`.
 
 Follow the rules to make your work with Data object fast:
 1. Use `Data.use_cache()` if you iterate data more than one time.
-2. Try to don't iterate one `Data object` inside the other one.  
-   If you should to do it, use short `Data object` first and long `Data object` inside the loop.  
+2. Try to don't iterate one `Data object` inside the other one.
+   If you should to do it, use short `Data object` first and long `Data object` inside the loop.
    It'll allow you open the cache file or create a request to `Data source` less number of times.
 
 # 4. Official DataSource implementations

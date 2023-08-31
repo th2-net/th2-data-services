@@ -8,7 +8,9 @@ from th2_data_services.event_tree.exceptions import EventIdNotInTree, TreeLoop
 
 def test_getitem(events_tree_for_test: EventTree):
     tree = events_tree_for_test
-    assert tree["D1_id"] == {"key1": "value1", "key2": "value2"} and tree["C_id"] == {"data": "test data"}
+    assert tree["D1_id"] == {"key1": "value1", "key2": "value2"} and tree["C_id"] == {
+        "data": "test data"
+    }
 
 
 def test_getitem_id_error(events_tree_for_test: EventTree):
@@ -75,7 +77,9 @@ def test_merge_events_tree(events_tree_for_test: EventTree):
     tree.merge_tree("A_id", other_tree=other_tree)
 
     merged_tree_events = tree.get_all_events()
-    expected_events = events_tree_for_test.get_all_events() + [event["data"] for event in other_tree_nodes]
+    expected_events = events_tree_for_test.get_all_events() + [
+        event["data"] for event in other_tree_nodes
+    ]
     assert merged_tree_events == expected_events
 
 

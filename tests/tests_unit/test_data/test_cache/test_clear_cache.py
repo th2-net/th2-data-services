@@ -1,6 +1,10 @@
 from typing import List
 
-from tests.tests_unit.utils import iterate_data_and_do_cache_checks, is_cache_file_exists, iterate_data
+from tests.tests_unit.utils import (
+    iterate_data_and_do_cache_checks,
+    is_cache_file_exists,
+    iterate_data,
+)
 from th2_data_services.data import Data
 
 

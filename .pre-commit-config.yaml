@@ -6,6 +6,12 @@ repos:
     rev: v2.3.0
     hooks:
       - id: check-merge-conflict
+      - id: end-of-file-fixer
+        # confilict with documentation generation
+#      - id: trailing-whitespace
+#        args: [--markdown-linebreak-ext=md]
+      - id: check-case-conflict
+      - id: requirements-txt-fixer
 
   - repo: https://github.com/psf/black
     rev: 22.10.0
@@ -63,7 +69,9 @@ repos:
         language: python
         pass_filenames: false
         always_run: true
-        additional_dependencies: [pytest, treelib, orjson, th2-data-services-lwdp==2.0.3.0]
+        # Don't know how to solve the libs problem other way.
+        additional_dependencies: [pytest, treelib, flatdict,
+                                  orjson, th2-data-services-lwdp==2.0.3.0]
 
       - id: check_copyright
         name: check_copyright

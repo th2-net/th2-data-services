@@ -73,7 +73,9 @@ def verification_fields_to_flat_dict(
         if field["type"] == "field":
             flat_list[prefix + tag] = format_comparison_line(field, failed_collection)
         if field["type"] == "collection":
-            next_failed_collection = ("status" in field and field["status"] == "FAILED") or failed_collection
+            next_failed_collection = (
+                "status" in field and field["status"] == "FAILED"
+            ) or failed_collection
             new_prefix = f"{prefix}{tag}."
             verification_fields_to_flat_dict(field, flat_list, new_prefix, next_failed_collection)
 
@@ -104,7 +106,9 @@ def check_if_verification_leaf_failed(leaf: Dict) -> bool:  # noqa
 #   Now don't return anything!
 #   2. We can move this function to Viewer utils and grouped to VerificationUtil class
 #   3. In 'verification_fields_to_flat_dict' we can provide prefix but here - NO!
-def verification_fields_to_simple_dict(collection: Dict, parent: Dict, failed_collection: bool = False) -> None:  # noqa
+def verification_fields_to_simple_dict(
+    collection: Dict, parent: Dict, failed_collection: bool = False
+) -> None:  # noqa
     """
 
     Examples:

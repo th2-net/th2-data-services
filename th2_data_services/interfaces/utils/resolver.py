@@ -12,33 +12,34 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 from abc import ABC, abstractmethod
+from typing import Dict, List, Any, Union
 
 """
 The idea of using resolvers:
-    It solves the problem of having a few DataSources with the same data, 
+    It solves the problem of having a few DataSources with the same data,
     but with different ways to get it.
-    
-    These classes provide you getter methods. 
-    Using these classes allows you to freely switch between different data 
-    formats and don't change your code. 
-    
+
+    These classes provide you getter methods.
+    Using these classes allows you to freely switch between different data
+    formats and don't change your code.
+
     Resolvers solve the problem of data-format migration.
         - fields place can be changed
         - fields names can be changed
-    
-    Resolvers can work only with one event/message. 
-    It means, if your message has sub-messages it won't work, because resolver will not 
-    know with which sub-message should it work. 
+
+    Resolvers can work only with one event/message.
+    It means, if your message has sub-messages it won't work, because resolver will not
+    know with which sub-message should it work.
 
 Implementation advice:
     1. raise NotImplementedError -- if your Implementation doesn't support this getter.
 
 Performance impact:
-    It a bit slower than using naked field access `dict['key']`. 
+    It a bit slower than using naked field access `dict['key']`.
 
     Data len: 2521467
     Every test has 10 takes of field. It means that the total number of them: 25214670
-    
+
     get_and_return_10_fields_directly
     Total time taken in :  test_iterate 14.274808883666992  ~ 1766970
     get_and_return_10_fields_by_resolvers
@@ -53,109 +54,112 @@ Performance impact:
 class EventFieldResolver(ABC):
     @staticmethod
     @abstractmethod
-    def get_id(event):
+    def get_id(event) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_parent_id(event):
+    def get_parent_id(event) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_status(event):
+    def get_status(event) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_name(event):
+    def get_name(event) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_batch_id(event):
+    def get_batch_id(event) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_is_batched(event):
+    def get_is_batched(event) -> bool:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_type(event):
+    def get_type(event) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_start_timestamp(event):
+    def get_start_timestamp(event) -> Dict[str, int]:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_end_timestamp(event):
+    def get_end_timestamp(event) -> Dict[str, int]:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_attached_messages_ids(event):
+    def get_attached_messages_ids(event) -> List[str]:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_body(event):
+    def get_body(event) -> Any:
         pass
 
 
 class MessageFieldResolver(ABC):
     @staticmethod
     @abstractmethod
-    def get_direction(message):
+    def get_direction(message) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_session_id(message):
+    def get_session_id(message) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_type(message):
+    def get_type(message) -> str:
+        """This field was removed since LwDP3.
+
+        Don't use it in new scripts.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def get_sequence(message) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_sequence(message):
+    def get_timestamp(message) -> Dict[str, int]:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_timestamp(message):
+    def get_body(message) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_body(message):
+    def get_body_base64(message) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_body_base64(message):
+    def get_id(message) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_id(message):
+    def get_attached_event_ids(message) -> List[str]:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_attached_event_ids(message):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def expand_message(message):
+    def expand_message(message) -> List[Dict[str, Any]]:
         """Extract compounded message into list of individual messages.
 
         Warnings:
@@ -175,27 +179,94 @@ class MessageFieldResolver(ABC):
 class SubMessageFieldResolver(ABC):
     @staticmethod
     @abstractmethod
-    def get_subsequence(message):
+    def get_subsequence(message) -> List[int]:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_type(message):
+    def get_type(message) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_fields(message):
+    def get_fields(message) -> Dict[str, Any]:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_metadata(message):
+    def get_metadata(message) -> Dict[str, Any]:
         pass
 
     @staticmethod
     @abstractmethod
-    def get_protocol(message):
+    def get_protocol(message) -> str:
+        pass
+
+
+class ExpandedMessageFieldResolver(ABC):
+    @staticmethod
+    @abstractmethod
+    def get_direction(message) -> str:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_session_id(message) -> str:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_type(message) -> str:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_sequence(message) -> str:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_timestamp(message) -> Dict[str, int]:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_body(message) -> Union[Dict[str, Any]]:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_body_base64(message) -> str:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_id(message) -> str:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_attached_event_ids(message) -> List[str]:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_subsequence(message) -> List[int]:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_fields(message) -> Dict[str, Any]:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_metadata(message) -> Dict[str, Any]:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_protocol(message) -> str:
         pass
 
 

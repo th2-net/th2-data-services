@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 from datetime import datetime, timezone
+from functools import wraps, partial
 from typing import Dict, Union
 from deprecated.classic import deprecated
+import time as time_
 
 
 def extract_timestamp(timestamp_element: Dict) -> str:
@@ -317,3 +319,35 @@ def _time_str_to_seconds(time_str: str):
         return int(num) * 3600 * 24
 
     raise KeyError(f"Invalid time string")
+
+
+def calculate_time(func=None, return_as_last_value=False):
+    """Calculate time decorator.
+
+    Apply for your functions to calculate the work time of it.
+
+    Args:
+        func:
+        return_as_last_value: if True will return (func return value, calc_time).
+
+    Returns:
+        prints calc time or returns (func return value, calc_time).
+    """
+    if func is None:
+        return partial(calculate_time, return_as_last_value=return_as_last_value)
+
+    @wraps(func)
+    def inner1(*args, **kwargs):
+        # storing time before function execution
+        begin = time_.time()
+
+        v = func(*args, **kwargs)
+
+        calc_time = time_.time() - begin
+        if return_as_last_value:
+            return v, calc_time
+        else:
+            print("Total time taken in : ", func.__name__, calc_time)
+            return v
+
+    return inner1
