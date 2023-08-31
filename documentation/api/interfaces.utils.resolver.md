@@ -768,6 +768,20 @@ get_type(message) → str
 
 ---
 
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L247"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_attached_event_ids`
+
+```python
+get_attached_event_ids(message) → List[str]
+```
+
+
+
+
+
+---
+
 <a href="../../th2_data_services/interfaces/utils/resolver.py#L232"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body`
@@ -810,7 +824,7 @@ get_direction(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L252"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L257"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_fields`
 
@@ -838,7 +852,7 @@ get_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L257"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L262"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_metadata`
 
@@ -852,7 +866,7 @@ get_metadata(message) → Dict[str, Any]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L262"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L267"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_protocol`
 
@@ -894,7 +908,7 @@ get_session_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L247"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L252"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subsequence`
 

@@ -246,6 +246,11 @@ class ExpandedMessageFieldResolver(ABC):
 
     @staticmethod
     @abstractmethod
+    def get_attached_event_ids(message) -> List[str]:
+        pass
+
+    @staticmethod
+    @abstractmethod
     def get_subsequence(message) -> List[int]:
         pass
 
