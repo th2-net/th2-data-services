@@ -357,7 +357,7 @@ get_type(event) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L157"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L160"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expand_message`
 
@@ -382,7 +382,7 @@ Warnings:  expand_message function is not backward-compatible.  If you use it in
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L152"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L155"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_attached_event_ids`
 
@@ -396,7 +396,7 @@ get_attached_event_ids(message) → List[str]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L137"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L140"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body`
 
@@ -410,7 +410,7 @@ get_body(message) → Union[Dict[str, Any], List[Dict[str, Any]]]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L142"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L145"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body_base64`
 
@@ -438,7 +438,7 @@ get_direction(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L147"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L150"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_id`
 
@@ -452,7 +452,7 @@ get_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L127"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L130"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_sequence`
 
@@ -480,7 +480,7 @@ get_session_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L132"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L135"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_timestamp`
 
@@ -502,9 +502,9 @@ get_timestamp(message) → Dict[str, int]
 get_type(message) → str
 ```
 
+This field was removed since LwDP3. 
 
-
-
+Don't use it in new scripts. 
 
 
 ---
@@ -521,7 +521,7 @@ get_type(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L157"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L160"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expand_message`
 
@@ -546,7 +546,7 @@ Warnings:  expand_message function is not backward-compatible.  If you use it in
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L152"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L155"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_attached_event_ids`
 
@@ -560,7 +560,7 @@ get_attached_event_ids(message) → List[str]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L137"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L140"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body`
 
@@ -574,7 +574,7 @@ get_body(message) → Union[Dict[str, Any], List[Dict[str, Any]]]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L142"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L145"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body_base64`
 
@@ -602,7 +602,7 @@ get_direction(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L147"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L150"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_id`
 
@@ -616,7 +616,7 @@ get_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L127"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L130"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_sequence`
 
@@ -644,7 +644,7 @@ get_session_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L132"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L135"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_timestamp`
 
@@ -666,14 +666,14 @@ get_timestamp(message) → Dict[str, int]
 get_type(message) → str
 ```
 
+This field was removed since LwDP3. 
 
-
-
+Don't use it in new scripts. 
 
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L176"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L179"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `SubMessageFieldResolver`
 
@@ -685,7 +685,7 @@ get_type(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L187"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L190"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_fields`
 
@@ -699,7 +699,7 @@ get_fields(message) → Dict[str, Any]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L192"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L195"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_metadata`
 
@@ -713,7 +713,7 @@ get_metadata(message) → Dict[str, Any]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L197"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L200"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_protocol`
 
@@ -727,7 +727,7 @@ get_protocol(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L177"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L180"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subsequence`
 
@@ -741,7 +741,7 @@ get_subsequence(message) → List[int]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L182"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L185"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_type`
 
@@ -756,7 +756,7 @@ get_type(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L203"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L206"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ExpandedMessageFieldResolver`
 
@@ -768,26 +768,12 @@ get_type(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L244"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `get_attached_event_ids`
-
-```python
-get_attached_event_ids(message) → List[str]
-```
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L229"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L232"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body`
 
 ```python
-get_body(message) → Union[Dict[str, Any], List[Dict[str, Any]]]
+get_body(message) → Dict[str, Any]
 ```
 
 
@@ -796,7 +782,7 @@ get_body(message) → Union[Dict[str, Any], List[Dict[str, Any]]]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L234"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L237"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_body_base64`
 
@@ -810,7 +796,7 @@ get_body_base64(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L204"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L207"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_direction`
 
@@ -824,7 +810,7 @@ get_direction(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L254"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L252"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_fields`
 
@@ -838,7 +824,7 @@ get_fields(message) → Dict[str, Any]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L239"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L242"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_id`
 
@@ -852,7 +838,7 @@ get_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L259"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L257"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_metadata`
 
@@ -866,7 +852,7 @@ get_metadata(message) → Dict[str, Any]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L264"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L262"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_protocol`
 
@@ -880,7 +866,7 @@ get_protocol(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L219"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L222"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_sequence`
 
@@ -894,7 +880,7 @@ get_sequence(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L209"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L212"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_session_id`
 
@@ -908,7 +894,7 @@ get_session_id(message) → str
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L249"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L247"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_subsequence`
 
@@ -922,7 +908,7 @@ get_subsequence(message) → List[int]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L224"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L227"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_timestamp`
 
@@ -936,7 +922,7 @@ get_timestamp(message) → Dict[str, int]
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/resolver.py#L214"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/resolver.py#L217"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_type`
 
