@@ -134,6 +134,8 @@ def get_objects_frequencies2(
 
     Returns timestamps in UTC format.
 
+    For more info please see: https://github.com/th2-net/th2-data-services/blob/dev_2.0.0/documentation/frequencies.md
+
     Args:
         objects_stream: Objects stream
         categories: Categories list
