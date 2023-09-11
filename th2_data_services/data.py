@@ -115,6 +115,7 @@ class Data(Generic[DataIterValues]):
         self.stop_iteration = None
         self._read_from_external_cache_file = False
         self.__metadata = {}
+        self._pickle_version = pickle.DEFAULT_PROTOCOL
 
     # LOG         self._logger.info(
     # LOG            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
@@ -367,7 +368,7 @@ class Data(Generic[DataIterValues]):
             self._cache_file_obj = open(filepath, "wb")
 
             for modified_record in self._iterate_modified_data_stream(data_stream, workflow):
-                pickle.dump(modified_record, self._cache_file_obj)
+                pickle.dump(modified_record, self._cache_file_obj, protocol=self._pickle_version)
                 yield modified_record
 
             self._cache_file_obj.close()
@@ -756,7 +757,7 @@ class Data(Generic[DataIterValues]):
                 file = open(filename, "wb")
 
                 for record in self:
-                    pickle.dump(record, file)
+                    pickle.dump(record, file, protocol=self._pickle_version)
 
                 file.close()
             gc.enable()
@@ -773,7 +774,7 @@ class Data(Generic[DataIterValues]):
                 self.__delete_cache()
 
     @classmethod
-    def from_cache_file(cls, filename) -> "Data":
+    def from_cache_file(cls, filename, pickle_version: int = pickle.DEFAULT_PROTOCOL) -> "Data":
         """Creates Data object from cache file with provided name.
 
         Args:
@@ -792,6 +793,7 @@ class Data(Generic[DataIterValues]):
         data_obj = cls([], cache=True)
         data_obj._set_custom_cache_destination(filename=filename)
         data_obj.update_metadata({"source_file": filename})
+        data_obj.pickle_version = pickle_version
         return data_obj
 
     @classmethod
