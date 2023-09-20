@@ -68,13 +68,16 @@ class Data(Generic[DataIterValues]):
     Such approach to data analysis called streaming transformation.
     """
 
-    def __init__(self, data: DataSet, cache: bool = False, workflow: WorkFlow = None):
+    def __init__(
+        self, data: DataSet, cache: bool = False, workflow: WorkFlow = None, pickle_version: int = 4
+    ):
         """Data constructor.
 
         Args:
             data: Data source. Any iterable, Data object or a function that creates generator.
             cache: Set True if you want to write and read from cache.
             workflow: Workflow.
+            pickle_version: Pickle protocol version. Set if using cache.
 
         """
         if isinstance(data, types.GeneratorType) and cache is False:
@@ -115,7 +118,7 @@ class Data(Generic[DataIterValues]):
         self.stop_iteration = None
         self._read_from_external_cache_file = False
         self.__metadata = {}
-        self.pickle_version = 4  # Default pickle protocol version
+        self._pickle_version = pickle_version  # Default pickle protocol version
 
     # LOG         self._logger.info(
     # LOG            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
@@ -368,7 +371,7 @@ class Data(Generic[DataIterValues]):
             self._cache_file_obj = open(filepath, "wb")
 
             for modified_record in self._iterate_modified_data_stream(data_stream, workflow):
-                pickle.dump(modified_record, self._cache_file_obj, protocol=self.pickle_version)
+                pickle.dump(modified_record, self._cache_file_obj, protocol=self._pickle_version)
                 yield modified_record
 
             self._cache_file_obj.close()
@@ -757,7 +760,7 @@ class Data(Generic[DataIterValues]):
                 file = open(filename, "wb")
 
                 for record in self:
-                    pickle.dump(record, file, protocol=self.pickle_version)
+                    pickle.dump(record, file, protocol=self._pickle_version)
 
                 file.close()
             gc.enable()
@@ -793,7 +796,7 @@ class Data(Generic[DataIterValues]):
         data_obj = cls([], cache=True)
         data_obj._set_custom_cache_destination(filename=filename)
         data_obj.update_metadata({"source_file": filename})
-        data_obj.pickle_version = pickle_version
+        data_obj._pickle_version = pickle_version
         return data_obj
 
     @classmethod

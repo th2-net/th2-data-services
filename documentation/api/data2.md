@@ -1,8 +1,8 @@
 <!-- markdownlint-disable -->
 
-<a href="../../th2_data_services/data.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-# <kbd>module</kbd> `data`
+# <kbd>module</kbd> `data2`
 
 
 
@@ -11,38 +11,36 @@
 
 ---
 
-<a href="../../th2_data_services/data.py#L63"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L63"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `Data`
+## <kbd>class</kbd> `Data2`
 A wrapper for data/data_stream. 
 
 The class provides methods for working with data as a stream. 
 
 Such approach to data analysis called streaming transformation. 
 
-<a href="../../th2_data_services/data.py#L71"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L71"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
 __init__(
-    data: Optional[Iterator, Callable[, Generator[~DataIterValues, NoneType]], List[Iterator]],
+    data: Optional[Iterator, Callable[, Generator[~Data2IterValues, NoneType]], List[Iterator]],
     cache: bool = False,
-    workflow: List[Dict[str, Union[Callable, str]]] = None,
-    pickle_version: int = 4
+    workflow: List[Dict[str, Union[Callable, str]]] = None
 )
 ```
 
-Data constructor. 
+Data2 constructor. 
 
 
 
 **Args:**
  
- - <b>`data`</b>:  Data source. Any iterable, Data object or a function that creates generator. 
+ - <b>`data`</b>:  Data2 source. Any iterable, Data2 object or a function that creates generator. 
  - <b>`cache`</b>:  Set True if you want to write and read from cache. 
  - <b>`workflow`</b>:  Workflow. 
- - <b>`pickle_version`</b>:  Pickle protocol version. Set if using cache. 
 
 
 ---
@@ -57,19 +55,19 @@ Data constructor.
 
 #### <kbd>property</kbd> is_empty
 
-bool: Indicates that the Data object doesn't contain data. 
+bool: Indicates that the Data2 object doesn't contain data. 
 
 ---
 
 #### <kbd>property</kbd> len
 
-int: How many records in the Data stream. 
+int: How many records in the Data2 stream. 
 
 
 
 **Notes:**
 
-> 1. It is a wasteful operation if you are performing it on the Data object that has never been iterated before. 
+> 1. It is a wasteful operation if you are performing it on the Data2 object that has never been iterated before. 
 >2. If you want just to check emptiness, use is_empty property instead. 
 
 ---
@@ -84,7 +82,7 @@ int: How many records in the Data stream.
 
 ---
 
-<a href="../../th2_data_services/data.py#L731"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L730"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `build_cache`
 
@@ -94,9 +92,9 @@ build_cache(filename)
 
 Creates cache file with provided name. 
 
-Important:  If the Data object cache status is True, it'll iterate itself. As a result the cache file  will be created and copied.  When you will iterate the Data object next time, it'll iterate created cache file. 
+Important:  If the Data2 object cache status is True, it'll iterate itself. As a result the cache file  will be created and copied.  When you will iterate the Data2 object next time, it'll iterate created cache file. 
 
- NOTE! If you build cache file, Data.cache_status was False and after that you'll set  Data.cache_status == TRUE -- the Data object WON'T iterate build file because it doesn't  keep the path to built cache file.. 
+ NOTE! If you build cache file, Data2.cache_status was False and after that you'll set  Data2.cache_status == TRUE -- the Data2 object WON'T iterate build file because it doesn't  keep the path to built cache file.. 
 
 
 
@@ -106,7 +104,7 @@ Important:  If the Data object cache status is True, it'll iterate itself. As a 
 
 ---
 
-<a href="../../th2_data_services/data.py#L768"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L767"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `clear_cache`
 
@@ -120,12 +118,12 @@ This function won't remove external cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L463"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L462"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `filter`
 
 ```python
-filter(callback: Callable) → Data
+filter(callback: Callable) → Data2
 ```
 
 Append `filter` to workflow. 
@@ -140,11 +138,11 @@ Append `filter` to workflow.
 
 **Returns:**
  
- - <b>`Data`</b>:  Data object. 
+ - <b>`Data2`</b>:  Data2 object. 
 
 ---
 
-<a href="../../th2_data_services/data.py#L647"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L646"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_by`
 
@@ -171,15 +169,15 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L828"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L826"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_any_file`
 
 ```python
-from_any_file(filename, mode='r') → Data[str]
+from_any_file(filename, mode='r') → Data2[str]
 ```
 
-Creates Data object from any file with provided name. 
+Creates Data2 object from any file with provided name. 
 
 It will just iterate file and return data line be line. 
 
@@ -194,7 +192,7 @@ It will just iterate file and return data line be line.
 
 **Returns:**
  
- - <b>`Data`</b>:  Data object. 
+ - <b>`Data2`</b>:  Data2 object. 
 
 
 
@@ -203,15 +201,15 @@ It will just iterate file and return data line be line.
 
 ---
 
-<a href="../../th2_data_services/data.py#L779"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L778"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_cache_file`
 
 ```python
-from_cache_file(filename, pickle_version: int = 4) → Data
+from_cache_file(filename) → Data2
 ```
 
-Creates Data object from cache file with provided name. 
+Creates Data2 object from cache file with provided name. 
 
 
 
@@ -223,7 +221,7 @@ Creates Data object from cache file with provided name.
 
 **Returns:**
  
- - <b>`Data`</b>:  Data object. 
+ - <b>`Data2`</b>:  Data2 object. 
 
 
 
@@ -232,7 +230,7 @@ Creates Data object from cache file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L852"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L850"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_csv`
 
@@ -243,10 +241,10 @@ from_csv(
     header_first_line=False,
     mode='r',
     delimiter=','
-) → Data
+) → Data2
 ```
 
-Creates Data object from any file with provided name. 
+Creates Data2 object from any file with provided name. 
 
 It will iterate the CSV file as if you were doing it with CSV module. 
 
@@ -255,8 +253,8 @@ It will iterate the CSV file as if you were doing it with CSV module.
 **Args:**
  
  - <b>`filename`</b>:  Name or path to the file. 
- - <b>`header`</b>:  If provided header for csv, Data object will yield Dict[str]. 
- - <b>`header_first_line`</b>:  If the first line of the csv file is header, it'll take header from  the first line. Data object will yield Dict[str].  `header` argument is not required in this case. 
+ - <b>`header`</b>:  If provided header for csv, Data2 object will yield Dict[str]. 
+ - <b>`header_first_line`</b>:  If the first line of the csv file is header, it'll take header from  the first line. Data2 object will yield Dict[str].  `header` argument is not required in this case. 
  - <b>`mode`</b>:  Read mode of open function. 
  - <b>`delimiter`</b>:  CSV file delimiter. 
 
@@ -264,7 +262,7 @@ It will iterate the CSV file as if you were doing it with CSV module.
 
 **Returns:**
  
- - <b>`Data`</b>:  Data object. 
+ - <b>`Data2`</b>:  Data2 object. 
 
 
 
@@ -273,15 +271,15 @@ It will iterate the CSV file as if you were doing it with CSV module.
 
 ---
 
-<a href="../../th2_data_services/data.py#L802"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L800"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_json`
 
 ```python
-from_json(filename, buffer_limit=250, gzip=False) → Data[dict]
+from_json(filename, buffer_limit=250, gzip=False) → Data2[dict]
 ```
 
-Creates Data object from json file with provided name. 
+Creates Data2 object from json file with provided name. 
 
 
 
@@ -295,7 +293,7 @@ Creates Data object from json file with provided name.
 
 **Returns:**
  
- - <b>`Data`</b>:  Data object. 
+ - <b>`Data2`</b>:  Data2 object. 
 
 
 
@@ -304,7 +302,7 @@ Creates Data object from json file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L315"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L312"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_cache_filepath`
 
@@ -316,7 +314,7 @@ Returns filepath for a cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L311"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L308"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_pending_cache_filepath`
 
@@ -328,12 +326,12 @@ Returns filepath for a pending cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L569"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L568"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `limit`
 
 ```python
-limit(num: int) → Data
+limit(num: int) → Data2
 ```
 
 Limits the stream to `num` entries. 
@@ -348,16 +346,16 @@ Limits the stream to `num` entries.
 
 **Returns:**
  
- - <b>`Data`</b>:  Data object. 
+ - <b>`Data2`</b>:  Data2 object. 
 
 ---
 
-<a href="../../th2_data_services/data.py#L497"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L496"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
 ```python
-map(callback_or_adapter: Union[Callable, IRecordAdapter]) → Data
+map(callback_or_adapter: Union[Callable, IRecordAdapter]) → Data2
 ```
 
 Append `transform` function to workflow. 
@@ -372,18 +370,18 @@ Append `transform` function to workflow.
 
 **Returns:**
  
- - <b>`Data`</b>:  Data object. 
+ - <b>`Data2`</b>:  Data2 object. 
 
 ---
 
-<a href="../../th2_data_services/data.py#L516"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L515"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_stream`
 
 ```python
 map_stream(
     adapter_or_generator: Union[IStreamAdapter, Callable[, Generator]]
-) → Data
+) → Data2
 ```
 
 Append `stream-transform` function to workflow. 
@@ -402,11 +400,11 @@ Difference between map and map_stream: 1. map_stream allows you return None valu
 
 **Returns:**
  
- - <b>`Data`</b>:  Data object. 
+ - <b>`Data2`</b>:  Data2 object. 
 
 ---
 
-<a href="../../th2_data_services/data.py#L609"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L608"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sift`
 
@@ -430,7 +428,7 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L960"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L958"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
@@ -456,7 +454,7 @@ Converts data to json format.
 
 ---
 
-<a href="../../th2_data_services/data.py#L984"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L982"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_jsons`
 
@@ -470,19 +468,19 @@ to_jsons(filename: str, indent: int = None, overwrite: bool = False, gzip=False)
 
 ---
 
-<a href="../../th2_data_services/data.py#L911"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L909"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `update_metadata`
 
 ```python
-update_metadata(metadata: Dict) → Data
+update_metadata(metadata: Dict) → Data2
 ```
 
 Update metadata of object with metadata argument. 
 
 Metadata is updated with new values, meaning previous values are kept and added with new values. 
 
-| Example: | data = Data(...) | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}} | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'} | data.update_metadata(new_metadata) | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'} 
+| Example: | data = Data2(...) | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}} | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'} | data.update_metadata(new_metadata) | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'} 
 
 
 
@@ -493,7 +491,7 @@ Metadata is updated with new values, meaning previous values are kept and added 
 
 
 **Returns:**
- Data objects (itself) 
+ Data2 objects (itself) 
 
 
 
@@ -504,12 +502,12 @@ Metadata is updated with new values, meaning previous values are kept and added 
 
 ---
 
-<a href="../../th2_data_services/data.py#L632"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L631"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `use_cache`
 
 ```python
-use_cache(status: bool = True) → Data
+use_cache(status: bool = True) → Data2
 ```
 
 Changes cache flag and returns self. 
@@ -518,17 +516,17 @@ Changes cache flag and returns self.
 
 **Args:**
  
- - <b>`status`</b> (bool):  If True the whole data stream will be saved to cache file. Further actions with the Data object will consume data from the cache file. True by default. 
+ - <b>`status`</b> (bool):  If True the whole data stream will be saved to cache file. Further actions with the Data2 object will consume data from the cache file. True by default. 
 
 
 
 **Returns:**
  
- - <b>`Data`</b>:  Data object. 
+ - <b>`Data2`</b>:  Data2 object. 
 
 ---
 
-<a href="../../th2_data_services/data.py#L673"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data2.py#L672"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `write_to_file`
 
