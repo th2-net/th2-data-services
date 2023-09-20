@@ -7,7 +7,6 @@
 - [`config`](./config.md#module-config)
 - [`config.config`](./config.config.md#module-configconfig)
 - [`data`](./data.md#module-data)
-- [`data2`](./data2.md#module-data2)
 - [`event_tree`](./event_tree.md#module-event_tree)
 - [`event_tree.etc_driver`](./event_tree.etc_driver.md#module-event_treeetc_driver)
 - [`event_tree.event_tree`](./event_tree.event_tree.md#module-event_treeevent_tree)
@@ -30,7 +29,6 @@
 
 - [`config.TH2Config`](./config.config.md#class-th2config)
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
-- [`data2.Data2`](./data2.md#class-data2): A wrapper for data/data_stream.
 - [`etc_driver.IETCDriver`](./event_tree.etc_driver.md#class-ietcdriver)
 - [`event_tree.EventTree`](./event_tree.event_tree.md#class-eventtree): EventTree is a tree-based data structure of events.
 - [`event_tree_collection.EventTreeCollection`](./event_tree.event_tree_collection.md#class-eventtreecollection): EventTreeCollection objective is building 'EventsTree's and storing them.
