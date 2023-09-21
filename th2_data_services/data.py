@@ -115,6 +115,7 @@ class Data(Generic[DataIterValues]):
         self.stop_iteration = None
         self._read_from_external_cache_file = False
         self.__metadata = {}
+        self._file = None
 
     # LOG         self._logger.info(
     # LOG            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
@@ -398,16 +399,21 @@ class Data(Generic[DataIterValues]):
         if not filepath.is_file():
             raise FileExistsError(f"{filepath} isn't file")
 
-        with open(filepath, "rb") as file:
-            while True:
-                try:
-                    decoded_data = pickle.load(file)
-                    yield decoded_data
-                except EOFError:
-                    break
-                except pickle.UnpicklingError:
-                    print(f"Cannot read {filepath} cache file")
-                    raise
+        if self._file is None:
+            self._file = open(filepath, "rb")
+
+        self._file.seek(0)
+
+        while True:
+            try:
+                decoded_data = pickle.load(self._file)
+                # print(decoded_data)
+                yield decoded_data
+            except EOFError:
+                break
+            except pickle.UnpicklingError:
+                print(f"Cannot read {filepath} cache file")
+                raise
 
     def _process_step(self, step: dict, record):
         res = step["callback"](record)
@@ -638,6 +644,10 @@ class Data(Generic[DataIterValues]):
         """
         # LOG         self._logger.info("Cache using activated" if status else "Cache using deactivated")
         self._cache_status = status
+        if not status:
+            # if self._file:
+            #     self._file.close()
+            self._file = None
         return self
 
     def find_by(self, record_field, field_values) -> Generator:

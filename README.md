@@ -7,31 +7,7 @@ Table of Contents
 =================
 
 <!--ts-->
-* [Table of Contents](#table-of-contents)
-* [1. Introduction](#1-introduction)
-* [2. Getting started](#2-getting-started)
-   * [2.1. Installation](#21-installation)
-      * [Core](#core)
-      * [Data sources (providers)](#data-sources-providers)
-   * [2.2. Example](#22-example)
-   * [2.3. Short theory](#23-short-theory)
-      * [Terms](#terms)
-      * [Concept](#concept)
-      * [Stream operations](#stream-operations)
-         * [Pipelining](#pipelining)
-         * [Internal iteration](#internal-iteration)
-      * [Data caching](#data-caching)
-         * [Forced caching](#forced-caching)
-      * [EventTree and collections](#eventtree-and-collections)
-         * [EventTree](#eventtree)
-         * [Collections](#collections)
-         * [Hints](#hints)
-      * [FieldsResolver](#fieldsresolver)
-   * [2.4. Links](#24-links)
-* [3. Best practices](#3-best-practices)
-* [4. Official DataSource implementations](#4-official-datasource-implementations)
-* [5. API](#5-api)
-* [6. Examples](#6-examples)
+
 <!--te-->
 
 # 1. Introduction
