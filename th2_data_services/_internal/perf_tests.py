@@ -105,6 +105,9 @@ def cache_files_reading_speed(data):  # noqa
 if __name__ == "__main__":
 
     if len(sys.argv) > 1:
+        """
+        python -m th2_data_services._internal.perf_test FILE_FOR_DATA_OBJ
+        """
         arg = sys.argv[1]
         cache_files_reading_speed(arg)
     else:
