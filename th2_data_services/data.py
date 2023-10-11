@@ -802,10 +802,10 @@ class Data(Generic[DataIterValues]):
                 raise FileNotFoundError(f"{filename} doesn't exist")
         except OSError as e:
             if os.name == "nt" and e.winerror == 123:
-                illegal_characters = [char for char in file_path if char in r'\/:*?"<>|']
+                illegal_characters = [char for char in filename if char in r'\/:*?"<>|']
                 illegal_characters_str = ", ".join(illegal_characters)
                 raise ValueError(
-                    f"Invalid file path: {file_path}. It contains illegal characters: {illegal_characters_str}"
+                    f"Invalid file path: {filename}. It contains illegal characters: {illegal_characters_str}"
                 )
             else:
                 raise e
@@ -837,10 +837,10 @@ class Data(Generic[DataIterValues]):
                 raise FileNotFoundError(f"{filename} doesn't exist")
         except OSError as e:
             if os.name == "nt" and e.winerror == 123:
-                illegal_characters = [char for char in file_path if char in r'\/:*?"<>|']
+                illegal_characters = [char for char in filename if char in r'\/:*?"<>|']
                 illegal_characters_str = ", ".join(illegal_characters)
                 raise ValueError(
-                    f"Invalid file path: {file_path}. It contains illegal characters: {illegal_characters_str}"
+                    f"Invalid file path: {filename}. It contains illegal characters: {illegal_characters_str}"
                 )
             else:
                 raise e
@@ -874,10 +874,10 @@ class Data(Generic[DataIterValues]):
                 raise FileNotFoundError(f"{filename} doesn't exist")
         except OSError as e:
             if os.name == "nt" and e.winerror == 123:
-                illegal_characters = [char for char in file_path if char in r'\/:*?"<>|']
+                illegal_characters = [char for char in filename if char in r'\/:*?"<>|']
                 illegal_characters_str = ", ".join(illegal_characters)
                 raise ValueError(
-                    f"Invalid file path: {file_path}. It contains illegal characters: {illegal_characters_str}"
+                    f"Invalid file path: {filename}. It contains illegal characters: {illegal_characters_str}"
                 )
             else:
                 raise e
@@ -916,10 +916,10 @@ class Data(Generic[DataIterValues]):
                 raise FileNotFoundError(f"{filename} doesn't exist")
         except OSError as e:
             if os.name == "nt" and e.winerror == 123:
-                illegal_characters = [char for char in file_path if char in r'\/:*?"<>|']
+                illegal_characters = [char for char in filename if char in r'\/:*?"<>|']
                 illegal_characters_str = ", ".join(illegal_characters)
                 raise ValueError(
-                    f"Invalid file path: {file_path}. It contains illegal characters: {illegal_characters_str}"
+                    f"Invalid file path: {filename}. It contains illegal characters: {illegal_characters_str}"
                 )
             else:
                 raise e
