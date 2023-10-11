@@ -13,6 +13,8 @@
 #  limitations under the License.
 
 from th2_data_services.config import options
+from pathlib import Path
+import os
 
 
 def transform_filename_to_valid(filename: str) -> str:
@@ -62,3 +64,27 @@ def check_if_filename_valid(filename: str):
             return False, f"Forbidden char: '{sym}', filename: '{filename}'"
 
     return True, ""
+
+
+def check_if_file_exists(filename):
+    """Raises error if file doesn't exist.
+
+    Args:
+        filename: string.
+
+    Raises:
+        FileNotFoundError: if file doesn't exist.
+        ValueError: if filename contains illegal characters.
+    """
+    try:
+        if not Path(filename).resolve().exists():
+            raise FileNotFoundError(f"{filename} doesn't exist")
+    except OSError as e:
+        if os.name == "nt" and e.winerror == 123:
+            illegal_characters = set([char for char in filename if char in r'\/:*?"<>|'])
+            illegal_characters_str = ", ".join(illegal_characters)
+            raise ValueError(
+                f"Invalid file path: {filename}. It contains illegal characters: {illegal_characters_str}"
+            )
+        else:
+            raise e

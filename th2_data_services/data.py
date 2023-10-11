@@ -52,7 +52,7 @@ import gzip as gzip_
 # LOG class _DataLogger(logging.LoggerAdapter):
 # LOG     def process(self, msg, kwargs):
 # LOG         return "Data[%s] %s" % (self.extra["id"], msg), kwargs
-from th2_data_services.utils.path_utils import check_if_filename_valid
+from th2_data_services.utils.path_utils import check_if_filename_valid, check_if_file_exists
 
 DataIterValues = TypeVar("DataIterValues")
 DataGenerator = Generator[DataIterValues, None, None]
@@ -796,9 +796,7 @@ class Data(Generic[DataIterValues]):
             FileNotFoundError if provided file does not exist.
 
         """
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
-
+        check_if_file_exists(filename)
         data_obj = cls([], cache=True)
         data_obj._set_custom_cache_destination(filename=filename)
         data_obj.update_metadata({"source_file": filename})
@@ -821,9 +819,7 @@ class Data(Generic[DataIterValues]):
             FileNotFoundError if provided file does not exist.
 
         """
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
-
+        check_if_file_exists(filename)
         if gzip:
             data = cls(iter_json_gzip_file(filename, buffer_limit))
         else:
@@ -848,9 +844,7 @@ class Data(Generic[DataIterValues]):
             FileNotFoundError if provided file does not exist.
 
         """
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
-
+        check_if_file_exists(filename)
         data = cls(_iter_any_file(filename, mode))
         data.update_metadata({"source_file": filename})
         return data
@@ -880,9 +874,7 @@ class Data(Generic[DataIterValues]):
 
         """
         # TODO - bug here TH2-4930 - new data object doesn't work with limit method
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
-
+        check_if_file_exists(filename)
         data = cls(_iter_csv(filename, header, header_first_line, mode, delimiter))
         data.update_metadata({"source_file": filename})
 
