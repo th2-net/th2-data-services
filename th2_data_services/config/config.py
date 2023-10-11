@@ -33,6 +33,7 @@ class TH2Config:
         self.MAX_PATH: int = 255  # OS limitation. Both Windows and Linux
         self.FORBIDDEN_CHARACTERS_IN_FILENAME: str = '<>:"|?*/\\'
         self.FORBIDDEN_CHARACTERS_IN_FILENAME_CHANGE_TO: str = "_"
+        self.DEFAULT_PICKLE_VERSION = 4
 
         # Aliases
         self.efr = self.EVENT_FIELDS_RESOLVER

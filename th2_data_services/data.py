@@ -40,7 +40,7 @@ import types
 from inspect import isgeneratorfunction
 from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
-from th2_data_services.config import options
+from th2_data_services.config import options as o
 from th2_data_services.utils._json import iter_json_file, iter_json_gzip_file
 import gzip as gzip_
 
@@ -69,7 +69,11 @@ class Data(Generic[DataIterValues]):
     """
 
     def __init__(
-        self, data: DataSet, cache: bool = False, workflow: WorkFlow = None, pickle_version: int = 4
+        self,
+        data: DataSet,
+        cache: bool = False,
+        workflow: WorkFlow = None,
+        pickle_version: int = o.DEFAULT_PICKLE_VERSION,
     ):
         """Data constructor.
 
@@ -244,7 +248,7 @@ class Data(Generic[DataIterValues]):
                     # Do not delete cache file if it reads an external cache file.
                     if not self._read_from_external_cache_file:
                         # Do not delete cache file if it's an interactive mode and Data has read cache.
-                        if not options.INTERACTIVE_MODE:
+                        if not o.INTERACTIVE_MODE:
                             self.__delete_cache()
 
             self.iter_num -= 1
@@ -777,11 +781,13 @@ class Data(Generic[DataIterValues]):
                 self.__delete_cache()
 
     @classmethod
-    def from_cache_file(cls, filename, pickle_version: int = 4) -> "Data":
+    def from_cache_file(cls, filename, pickle_version: int = o.DEFAULT_PICKLE_VERSION) -> "Data":
         """Creates Data object from cache file with provided name.
 
         Args:
             filename: Name or path to cache file.
+            pickle_version: Pickle protocol version. Change default value
+                if your pickle file was created with another pickle version.
 
         Returns:
             Data: Data object.
