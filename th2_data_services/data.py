@@ -407,26 +407,16 @@ class Data(Generic[DataIterValues]):
         if not filepath.is_file():
             raise FileExistsError(f"{filepath} isn't file")
 
-        try:
-            with open(filepath, "rb") as file:
-                while True:
-                    try:
-                        decoded_data = pickle.load(file)
-                        yield decoded_data
-                    except EOFError:
-                        break
-                    except pickle.UnpicklingError:
-                        print(f"Cannot read {filepath} cache file")
-                        raise
-        except OSError as e:
-            if os.name == "nt" and e.winerror == 123:
-                illegal_characters = [char for char in file_path if char in r'\/:*?"<>|']
-                illegal_characters_str = ", ".join(illegal_characters)
-                raise ValueError(
-                    f"Invalid file path: {file_path}. It contains illegal characters: {illegal_characters_str}"
-                )
-            else:
-                raise e
+        with open(filepath, "rb") as file:
+            while True:
+                try:
+                    decoded_data = pickle.load(file)
+                    yield decoded_data
+                except EOFError:
+                    break
+                except pickle.UnpicklingError:
+                    print(f"Cannot read {filepath} cache file")
+                    raise
 
     def _process_step(self, step: dict, record):
         res = step["callback"](record)
@@ -807,8 +797,18 @@ class Data(Generic[DataIterValues]):
             FileNotFoundError if provided file does not exist.
 
         """
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
+        try:
+            if not Path(filename).resolve().exists():
+                raise FileNotFoundError(f"{filename} doesn't exist")
+        except OSError as e:
+            if os.name == "nt" and e.winerror == 123:
+                illegal_characters = [char for char in file_path if char in r'\/:*?"<>|']
+                illegal_characters_str = ", ".join(illegal_characters)
+                raise ValueError(
+                    f"Invalid file path: {file_path}. It contains illegal characters: {illegal_characters_str}"
+                )
+            else:
+                raise e
 
         data_obj = cls([], cache=True)
         data_obj._set_custom_cache_destination(filename=filename)
@@ -832,8 +832,18 @@ class Data(Generic[DataIterValues]):
             FileNotFoundError if provided file does not exist.
 
         """
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
+        try:
+            if not Path(filename).resolve().exists():
+                raise FileNotFoundError(f"{filename} doesn't exist")
+        except OSError as e:
+            if os.name == "nt" and e.winerror == 123:
+                illegal_characters = [char for char in file_path if char in r'\/:*?"<>|']
+                illegal_characters_str = ", ".join(illegal_characters)
+                raise ValueError(
+                    f"Invalid file path: {file_path}. It contains illegal characters: {illegal_characters_str}"
+                )
+            else:
+                raise e
 
         if gzip:
             data = cls(iter_json_gzip_file(filename, buffer_limit))
@@ -859,8 +869,18 @@ class Data(Generic[DataIterValues]):
             FileNotFoundError if provided file does not exist.
 
         """
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
+        try:
+            if not Path(filename).resolve().exists():
+                raise FileNotFoundError(f"{filename} doesn't exist")
+        except OSError as e:
+            if os.name == "nt" and e.winerror == 123:
+                illegal_characters = [char for char in file_path if char in r'\/:*?"<>|']
+                illegal_characters_str = ", ".join(illegal_characters)
+                raise ValueError(
+                    f"Invalid file path: {file_path}. It contains illegal characters: {illegal_characters_str}"
+                )
+            else:
+                raise e
 
         data = cls(_iter_any_file(filename, mode))
         data.update_metadata({"source_file": filename})
@@ -891,8 +911,18 @@ class Data(Generic[DataIterValues]):
 
         """
         # TODO - bug here TH2-4930 - new data object doesn't work with limit method
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
+        try:
+            if not Path(filename).resolve().exists():
+                raise FileNotFoundError(f"{filename} doesn't exist")
+        except OSError as e:
+            if os.name == "nt" and e.winerror == 123:
+                illegal_characters = [char for char in file_path if char in r'\/:*?"<>|']
+                illegal_characters_str = ", ".join(illegal_characters)
+                raise ValueError(
+                    f"Invalid file path: {file_path}. It contains illegal characters: {illegal_characters_str}"
+                )
+            else:
+                raise e
 
         data = cls(_iter_csv(filename, header, header_first_line, mode, delimiter))
         data.update_metadata({"source_file": filename})
