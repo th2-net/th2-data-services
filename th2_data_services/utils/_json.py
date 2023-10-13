@@ -16,6 +16,7 @@ import gzip
 
 import orjson as json
 from orjson import JSONDecodeError
+from th2_data_services.utils.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 
 def iter_json_file(filename, buffer_limit=250):
@@ -56,7 +57,7 @@ def iter_json_gzip_file(filename, buffer_limit=250):
         with gzip.open(filename, "r") as data:
             while True:
                 try:
-                    v = data.readline().decode("ascii")
+                    v = data.readline().decode("utf-8", UNICODE_REPLACE_HANDLER)
                     if not v:
                         break
 
