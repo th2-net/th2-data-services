@@ -443,6 +443,9 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 8. [I] Change in iteration logic also changed how map function behaves. If map function returned lists or tuples their content won't be iterated separately anymore.\
    [M] Update map functions and switch to map_stream or new map_yield methods.
 
+8. [I] Data will not iterate over contents of its stream if all of the items are iterables anymore. Only exception will be if all of the items are Data objects themselves.\
+   [M] Update nested lists in Data initializations to either Data objects or switch to using addition operator.
+
 ## Features
 
 1. [TH2-4128] pip no longer installs RDP by default
