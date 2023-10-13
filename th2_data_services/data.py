@@ -167,8 +167,7 @@ class Data(Generic[DataIterValues]):
     def _is_iterables_list(self, data: DataSet) -> bool:
         if not isinstance(data, (list, tuple)):
             return False
-
-        return all([isinstance(d, (Data, tuple, list)) for d in data])
+        return all([isinstance(d, Data) for d in data])
 
     @property
     def len(self) -> int:
@@ -336,10 +335,7 @@ class Data(Generic[DataIterValues]):
                 modified_records = e.value
 
                 if modified_records is not None:
-                    if isinstance(modified_records, (list, tuple)):
-                        yield from modified_records
-                    else:  # Just one record.
-                        yield modified_records
+                    yield modified_records
 
                 # There is some magic.
                 # It'll stop data stream and will be handled in the finally statements.
@@ -350,9 +346,7 @@ class Data(Generic[DataIterValues]):
 
             if modified_records is None:
                 continue
-            elif isinstance(modified_records, (list, tuple)):
-                yield from modified_records
-            else:  # Just one record.
+            else:
                 yield modified_records
 
     def __change_data(
@@ -433,33 +427,12 @@ class Data(Generic[DataIterValues]):
         """
         # LOG         self._logger.debug("Apply workflow for %s", record)
         for step in workflow:
-            if isinstance(record, (list, tuple)):
-                result = []
-                for r in record:
-                    step_res = None
-                    try:
-                        step_res = self._process_step(step, r)
-                    except StopIteration as e:
-                        step_res = e.value
-                        raise StopIteration(result if result else None)
-                    finally:
-                        if step_res is not None:
-                            if isinstance(step_res, (list, tuple)):
-                                result += step_res  # To make flat list.
-                            else:
-                                result.append(step_res)
-
-                record = result
-                if not record:
-                    record = None
-                    break  # Break iteration if step result is None.
-            else:
-                try:
-                    record = self._process_step(step, record)
-                    if record is None:
-                        break  # Break workflow iteration if step result is None.
-                except StopIteration:
-                    raise
+            try:
+                record = self._process_step(step, record)
+                if record is None:
+                    break  # Break workflow iteration if step result is None.
+            except StopIteration:
+                raise
 
         # LOG         self._logger.debug("-> %s", record)
         return record
@@ -553,6 +526,18 @@ class Data(Generic[DataIterValues]):
         data = Data(source)
         data._set_metadata(self.metadata)
         return data
+
+    def map_yield(self, callback_or_adapter: Union[Callable, IRecordAdapter]):
+        def generator(stream):
+            for record in stream:
+                modified_record = callback_or_adapter(record)
+                if isinstance(modified_record, Iterable):
+                    for item in modified_record:
+                        yield item
+                else:
+                    yield modified_record
+
+        return self.map_stream(generator)
 
     def _build_limit_callback(self, num) -> Callable:
         # LOG         self._logger.debug("Build limit callback with limit = %s", num)
@@ -877,19 +862,6 @@ class Data(Generic[DataIterValues]):
         check_if_file_exists(filename)
         data = cls(_iter_csv(filename, header, header_first_line, mode, delimiter))
         data.update_metadata({"source_file": filename})
-
-        # TH2-4930
-        # TODO - should be deleted after bugfix
-        if header is None and not header_first_line:
-
-            def limit(*args, **kwargs):
-                raise RuntimeError(
-                    "The data object that was get by using 'from_csv' "
-                    "cannot work with 'limit' method. Known issue TH2-4930."
-                )
-
-            data.limit = limit
-
         return data
 
     def _set_metadata(self, metadata: Dict) -> None:
@@ -1034,7 +1006,7 @@ def _iter_csv(filename, header=None, header_first_line=False, mode="r", delimite
                 reader = csv.reader(data, delimiter=delimiter)
 
             for row in reader:
-                yield (row,)  # Because if provide just a list it will iterate it.
+                yield row
 
     def iter_wrapper(*args, **kwargs):
         """Wrapper function that allows passing arguments to the generator."""
