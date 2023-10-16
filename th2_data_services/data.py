@@ -708,6 +708,8 @@ class Data(Generic[DataIterValues]):
         data = Data(self._create_data_set_from_iterables([self, other_data]))
         data._set_metadata(self.metadata)
         if isinstance(other_data, Data):
+            if "source_file" in other_data.metadata and "source_file" in self.metadata:
+                data.update_metadata({"source_file": [other_data.metadata["source_file"]]})
             data.update_metadata(other_data.metadata)
         return data
 
@@ -945,7 +947,7 @@ class Data(Generic[DataIterValues]):
                     else:
                         self.__metadata[k] = [current, *v]
                 else:  # Single Item
-                    if isinstance(current, Iterable):
+                    if isinstance(current, Iterable) and not isinstance(current, str):
                         self.__metadata[k] = [*current, v]
                     else:
                         self.__metadata[k] = v
