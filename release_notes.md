@@ -437,6 +437,15 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 6. [I] Message utils method `expand_message` moved into MessageFieldResolver.\
    [M] Implement new method in your resolver.
 
+7. [I] Data iteration logic is changed. Lists and tuples used in building Data objects are treated as single item and items inside them aren't iterated anymore.\
+   [M] Update Data objects initialized with lists or tuples.
+
+8. [I] Change in iteration logic also changed how map function behaves. If map function returned lists or tuples their content won't be iterated separately anymore.\
+   [M] Update map functions and switch to map_stream or new map_yield methods.
+
+8. [I] Data will not iterate over contents of its stream if all of the items are iterables anymore. Only exception will be if all of the items are Data objects themselves.\
+   [M] Update nested lists in Data initializations to either Data objects or switch to using addition operator.
+
 ## Features
 
 1. [TH2-4128] pip no longer installs RDP by default
@@ -485,10 +494,12 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    (file where every line is separate json-format line. That's not valid json format.)
 24. [TH2-5049] Added ExpandedMessageFieldResolver
 25. [TH2-5053] Added pickle_version to Data.from_cache_file method.
+26. [TH2-5081] Added map_yield function, that should behave similar to old map method.
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
 2. [TH2-4917] Readme duplicates removed.
+3. [TH2-5081] Fixed iteration bug for case where Data object was made using lists and tuple.
 
 ## Improvements
 1. Added vulnerabilities scanning
