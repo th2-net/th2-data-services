@@ -77,3 +77,10 @@ def triple_generator(stream):
 def event_type_generator(stream):
     for item in stream:
         yield item.get("eventType")
+
+
+def return_two_items_if_value_greater_than_10(item):
+    if item > 10:
+        return [item, item]
+    else:
+        return item

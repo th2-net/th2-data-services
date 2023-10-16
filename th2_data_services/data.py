@@ -531,7 +531,7 @@ class Data(Generic[DataIterValues]):
         def generator(stream):
             for record in stream:
                 modified_record = callback_or_adapter(record)
-                if isinstance(modified_record, Iterable):
+                if isinstance(modified_record, (list, tuple)):
                     for item in modified_record:
                         yield item
                 else:
