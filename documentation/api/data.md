@@ -431,7 +431,7 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L960"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L967"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
@@ -457,7 +457,7 @@ Converts data to json format.
 
 ---
 
-<a href="../../th2_data_services/data.py#L984"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L991"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_jsons`
 
@@ -484,6 +484,10 @@ Update metadata of object with metadata argument.
 Metadata is updated with new values, meaning previous values are kept and added with new values. 
 
 | Example: | data = Data(...) | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}} | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'} | data.update_metadata(new_metadata) | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'} 
+
+If at least one value with is a list in one Data object, update_metadata adds both values in a list. 
+
+| Example: | data = Data(...) | # data.metadata => {'str_example_one': ['str1'], 'str_example_two': 'str1'} | new_metadata = {'str_example_one': 'str2', 'str_example_two': ['str2']} | data.update_metadata(new_metadata) | # data.metadata => {'str_example_one': ['str1', 'str2'], 'str_example_two': ['str1', 'str2']} 
 
 
 

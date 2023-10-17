@@ -708,9 +708,9 @@ class Data(Generic[DataIterValues]):
         data = Data(self._create_data_set_from_iterables([self, other_data]))
         data._set_metadata(self.metadata)
         if isinstance(other_data, Data):
-            if "source_file" in other_data.metadata and "source_file" in self.metadata:
-                data.update_metadata({"source_file": [other_data.metadata["source_file"]]})
             data.update_metadata(other_data.metadata)
+            if "source_file" in data.metadata:
+                data.metadata.pop("source_file")
         return data
 
     def __iadd__(self, other_data: Iterable) -> "Data":
@@ -920,6 +920,15 @@ class Data(Generic[DataIterValues]):
         | data.update_metadata(new_metadata)
         | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'}
 
+        If at least one value with is a list in one Data object, update_metadata adds both values in a list.
+
+        | Example:
+        | data = Data(...)
+        | # data.metadata => {'str_example_one': ['str1'], 'str_example_two': 'str1'}
+        | new_metadata = {'str_example_one': 'str2', 'str_example_two': ['str2']}
+        | data.update_metadata(new_metadata)
+        | # data.metadata => {'str_example_one': ['str1', 'str2'], 'str_example_two': ['str1', 'str2']}
+
         Args:
             metadata (dict): New Metadata
 
@@ -939,10 +948,8 @@ class Data(Generic[DataIterValues]):
                 # Check For Iterable Types
                 if isinstance(v, dict):
                     self.__metadata[k].update({**current, **v})
-                elif isinstance(v, Iterable) and not (
-                    isinstance(v, str) or isinstance(current, str)
-                ):
-                    if isinstance(current, Iterable):
+                elif isinstance(v, Iterable) and not (isinstance(v, str)):
+                    if isinstance(current, Iterable) and not isinstance(current, str):
                         self.__metadata[k] = [*current, *v]
                     else:
                         self.__metadata[k] = [current, *v]
