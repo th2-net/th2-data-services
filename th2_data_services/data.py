@@ -502,7 +502,10 @@ class Data(Generic[DataIterValues]):
         """Append `transform` function to workflow.
 
         Args:
-            callback_or_adapter: Transform function or an Adapter with IRecordAdapter interface implementation.
+            callback_or_adapter: Transform function or an Adapter with IRecordAdapter
+                interface implementation.
+                If the function returns None value, this value will be skipped from OUT stream.
+                If you don't want skip None values -- use `map_stream`.
 
         Returns:
             Data: Data object.
@@ -526,8 +529,9 @@ class Data(Generic[DataIterValues]):
 
         Difference between map and map_stream:
         1. map_stream allows you return None values.
-        2. map_stream allows you work with the whole stream but not with only 1 element, so you can implement some buffers inside handler.
-        3. map_stream works slightly efficent (faster on 5-10%).
+        2. map_stream allows you work with the whole stream but not with only 1 element,
+            so you can implement some buffers inside handler.
+        3. map_stream works slightly efficient (faster on 5-10%).
 
         Args:
             adapter_or_generator: StreamAdapter object or generator function.
