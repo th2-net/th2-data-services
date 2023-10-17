@@ -167,7 +167,7 @@ class Data(Generic[DataIterValues]):
     def _is_iterables_list(self, data: DataSet) -> bool:
         if not isinstance(data, (list, tuple)):
             return False
-        return all([isinstance(d, Data) for d in data])
+        return all(isinstance(d, Data) for d in data)
 
     @property
     def len(self) -> int:
@@ -528,6 +528,20 @@ class Data(Generic[DataIterValues]):
         return data
 
     def map_yield(self, callback_or_adapter: Union[Callable, IRecordAdapter]):
+        """Maps the stream using callback function or adapter.
+
+        Differences between map and map yield:
+        1. map_yield is a wrapper function using map_stream.
+        2. map_yield iterates over each item in record if callback return value is a list or tuple.
+
+        Args:
+            callback_or_adapter: Transform function or an Adapter with IRecordAdapter interface implementation.
+
+        Returns:
+            Data: Data object.
+
+        """
+
         def generator(stream):
             for record in stream:
                 modified_record = callback_or_adapter(record)
