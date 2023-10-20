@@ -96,7 +96,7 @@ build(data: Iterable)
 ### <kbd>method</kbd> `find`
 
 ```python
-find(filter: Callable, stop: Callable = None) → Union[dict, NoneType]
+find(filter: Callable, stop: Callable = None) → Optional[dict]
 ```
 
 Searches the first event match. 
@@ -126,7 +126,7 @@ This method applicable only for trees (regular or parentless), not for detached 
 ### <kbd>method</kbd> `find_ancestor`
 
 ```python
-find_ancestor(id: str, filter: Callable) → Union[dict, NoneType]
+find_ancestor(id: str, filter: Callable) → Optional[dict]
 ```
 
 Finds the ancestor of an event. 
@@ -355,7 +355,7 @@ Yields detached events.
 ### <kbd>method</kbd> `get_event`
 
 ```python
-get_event(id: str) → Union[dict, NoneType]
+get_event(id: str) → Optional[dict]
 ```
 
 Returns an event by its id. 

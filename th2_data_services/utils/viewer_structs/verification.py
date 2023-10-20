@@ -19,15 +19,13 @@ def format_comparison_line(field: Dict, failed_collection: bool = False) -> str:
     # TODO: Add docstrings
     key_piece = "!" if field["key"] else " "
     status_piece = "? "
-    if failed_collection:
-        status_piece = "# "
-        expected_piece = f" [{field['expected']}]" if "expected" in field else " [no_group]"
-        actual_piece = field["actual"] if "actual" in field else "no_group"
-    else:
-        if "status" in field:
-            status_piece = "# " if field["status"] == "FAILED" else "  "
-        expected_piece = f" [{field['expected']}]" if "expected" in field else " [no_val]"
-        actual_piece = field["actual"] if "actual" in field else "no_val"
+    no_val_or_no_group = "no_group" if failed_collection else "no_val"
+    if "status" in field:
+        status_piece = "# " if field["status"] == "FAILED" else "  "
+    expected_piece = (
+        f" [{field['expected']}]" if "expected" in field else f" [{no_val_or_no_group}]"
+    )
+    actual_piece = field["actual"] if "actual" in field else no_val_or_no_group
     return key_piece + status_piece + actual_piece + expected_piece
 
 
