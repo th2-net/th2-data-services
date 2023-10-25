@@ -490,6 +490,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
 2. [TH2-4917] Readme duplicates removed.
 3. [TH2-5083] Fixed comparison line formatting. Every event in block isn't formatted as failed now if parent is failed.
+4. [TH2-5091] Adding Data.from_cache() and Data.from_json() objects using '+=' operator doesn't keep cache_status of Data.from_cache() object.
 
 ## Improvements
 1. Added vulnerabilities scanning
