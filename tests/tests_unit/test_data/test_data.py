@@ -438,7 +438,6 @@ class TestDataObjectJoining:
         cls.data_via_init = Data([cls.d1, cls.d2, cls.d3])
         cls.data_via_add = cls.d1 + cls.d2 + cls.d3
         cls.data_with_non_data_obj_via_init = Data([cls.d1, ["a", {"id": 123}, "c"], cls.d3])
-        cls.data_with_non_data_obj_via_add = cls.d1 + ["a", {"id": 123}, "c"] + cls.d3
         cls.expected_dx_lst = [1, 2, 3, "a", {"id": 123}, "c", 7, 8, 9]
 
         # It contains Data objects with exactly the same values inside == cls.expected_dx_lst.
@@ -446,7 +445,6 @@ class TestDataObjectJoining:
             cls.data_via_init,
             cls.data_via_add,
             cls.data_with_non_data_obj_via_init,
-            cls.data_with_non_data_obj_via_add,
         ]
 
     def test_iters_all_data_objects_inside(self):

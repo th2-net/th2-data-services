@@ -497,3 +497,5 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 3. [TH2-4775] Speed up `Data.build_cache` by disabling garbage collection at the time of storing pickle file.
 4. [TH2-4901] Added gap_mode and zero_anchor parameters for message and event utils get_category_frequencies methods. [See doc](documentation/frequencies.md)
 5. [TH2-5048] - Added typing hints for resolver methods
+6. [TH2-5099] Fixed slow iteration for Data objects created with many addition operators.
+7. [TH2-5100] Fixed recursion exception for Data objects created with many addition operators.

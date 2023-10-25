@@ -105,6 +105,7 @@ class Data(Generic[DataIterValues]):
         self._pending_cache_path = (
             self._cache_path.with_name("[PENDING]" + self._cache_filename).resolve().absolute()
         )
+        self._data_list = [self]
         self._cache_file_obj = None
         self._len = None
         self._workflow = (
@@ -702,20 +703,23 @@ class Data(Generic[DataIterValues]):
             return True
         return False
 
-    def __add__(self, other_data: Iterable) -> "Data":
+    def __add__(self, other_data: "Data") -> "Data":
         """Joining feature.
 
         Don't keep cache status.
 
         e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
         """
-        data = Data(self._create_data_set_from_iterables([self, other_data]))
+        if not isinstance(other_data, Data):
+            raise TypeError("Addition only works between Data objects")
+        new_data_list = self._data_list + other_data._data_list
+        data = Data(new_data_list)
+        data._data_list = new_data_list
         data._set_metadata(self.metadata)
-        if isinstance(other_data, Data):
-            data.update_metadata(other_data.metadata)
+        data.update_metadata(other_data.metadata)
         return data
 
-    def __iadd__(self, other_data: Iterable) -> "Data":
+    def __iadd__(self, other_data: "Data") -> "Data":
         """Joining feature.
 
         Keeps cache status.
