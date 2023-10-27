@@ -50,6 +50,9 @@ CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
     "lwdp2": [
         "th2-data-services-lwdp>=2,<3",
     ],
+    "lwdp3": [
+        "th2-data-services-lwdp>=3,<4",
+    ],
     "lwdp-dev": [
         "th2-data-services-lwdp~=2.0.2.0.dev",
     ],
