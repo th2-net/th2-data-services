@@ -426,7 +426,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    [M] All records should be changed from "from th2_data_services import Data" to "from th2_data_services.data import Data".
 
 3. [I] Provider module is removed.\
-   [M] We should move to data source implementations, like th2-ds-source-lwdp.
+   [M] You should use data source implementations, like th2-ds-source-lwdp.
 
 4. [I] INTERACTIVE_MODE cannot be accessed like th2_data_services.INTERACTIVE_MODE anymore.\
    [M] It's now changed to th2_data_services.config.options.INTERACTIVE_MODE
@@ -437,15 +437,26 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 6. [I] Message utils method `expand_message` moved into MessageFieldResolver.\
    [M] Implement new method in your resolver.
 
-7. [I] Data iteration logic is changed. Lists and tuples used in building Data objects are treated as single item and items inside them aren't iterated anymore.\
-   [M] Update Data objects initialized with lists or tuples.
+7. [I] Data iteration logic is changed.\
+   Why? Current behavior causes problems in some cases. E.g. when we don't want to iterate objects inside the DataSet.
+   
+   - [I.1]  Lists and tuples used in building Data objects are treated as single item and items inside them aren't iterated anymore.\
+   [M.1] Update Data objects initialized with lists or tuples.
 
-8. [I] Change in iteration logic also changed how map function behaves. If map function returned lists or tuples their content won't be iterated separately anymore.\
-   [M] Update map functions and switch to map_stream or new map_yield methods.
+   - [I.2] Change in iteration logic also changed how `map` function behaves. If `map` function returns lists or tuples their content won't be iterated anymore.\
+   [M.2] If you are interest previous `map` function behavior, just update `map` to `map_yield`.
 
-8. [I] Data will not iterate over contents of its stream if all of the items are iterables anymore. Only exception will be if all of the items are Data objects themselves.\
-   [M] Update nested lists in Data initializations to either Data objects or switch to using addition operator.
-
+   - [I.3] Data object will not iterate over contents of its stream if any of the items are iterables (but not Data object).\
+       It means that Data object will not iterate lists and tuples inside the provided DataSet and will return they as is.\
+       Only exception will be if all of the items are Data objects themselves.\
+   [M.3] Update nested lists in Data  object initializations to either Data objects or switch to using addition operator.\
+   [Examples]\
+      `d1 = Data(['a', 'b'])`\
+      a. `Data([1, 2, [3, 4], d1])` will yield 1,2,[3,4],d1.  Prev. behavior: 1,2,3,4,'a','b'\
+      b. `Data([d1, d2])` where d1 and d2 are Data objects. It will yield from d1, and after that yield from d2.\
+      c. You can update the example from `a` to `Data([1,2,3,4])` or to `new_data = Data([1,2]) + Data([3,4]) + d1`.\
+      d. You also can return prev behaviour doing the following:  `new_data = Data([1, 2, [3, 4], d1]).map_yield(lambda r: r)`
+ 
 ## Features
 
 1. [TH2-4128] pip no longer installs RDP by default
