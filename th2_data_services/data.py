@@ -105,6 +105,7 @@ class Data(Generic[DataIterValues]):
         self._pending_cache_path = (
             self._cache_path.with_name("[PENDING]" + self._cache_filename).resolve().absolute()
         )
+        self._data_list = [self]
         self._cache_file_obj = None
         self._len = None
         self._workflow = (
@@ -123,6 +124,7 @@ class Data(Generic[DataIterValues]):
         self._read_from_external_cache_file = False
         self.__metadata = {}
         self._pickle_version = pickle_version  # Default pickle protocol version
+        self._filetype = None
 
     # LOG         self._logger.info(
     # LOG            "New data object with data stream = '%s', cache = '%s' initialized", id(self._data_stream), cache
@@ -702,26 +704,31 @@ class Data(Generic[DataIterValues]):
             return True
         return False
 
-    def __add__(self, other_data: Iterable) -> "Data":
+    def __add__(self, other_data: "Data") -> "Data":
         """Joining feature.
 
         Don't keep cache status.
 
         e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
         """
-        data = Data(self._create_data_set_from_iterables([self, other_data]))
+        if not isinstance(other_data, Data):
+            raise TypeError("Addition only works between Data objects")
+        new_data_list = self._data_list + other_data._data_list
+        data = Data(new_data_list)
+        data._data_list = new_data_list
         data._set_metadata(self.metadata)
-        if isinstance(other_data, Data):
-            data.update_metadata(other_data.metadata)
+        data.update_metadata(other_data.metadata)
         return data
 
-    def __iadd__(self, other_data: Iterable) -> "Data":
+    def __iadd__(self, other_data: "Data") -> "Data":
         """Joining feature.
 
         Keeps cache status.
 
         e.g. data1 += data2  -- will keep the cache status of data1.
         """
+        if self._filetype == "cache" and other_data._filetype in ["json", "gzip"]:
+            return self.__add__(other_data).use_cache(False)
         return self.__add__(other_data).use_cache(self._cache_status)
 
     def _set_custom_cache_destination(self, filename):
@@ -805,6 +812,7 @@ class Data(Generic[DataIterValues]):
         data_obj._set_custom_cache_destination(filename=filename)
         data_obj.update_metadata({"source_file": filename})
         data_obj._pickle_version = pickle_version
+        data_obj._filetype = "cache"
         return data_obj
 
     @classmethod
@@ -826,8 +834,10 @@ class Data(Generic[DataIterValues]):
         check_if_file_exists(filename)
         if gzip:
             data = cls(iter_json_gzip_file(filename, buffer_limit))
+            data._filetype = "gzip"
         else:
             data = cls(iter_json_file(filename, buffer_limit))
+            data._filetype = "json"
         data.update_metadata({"source_file": filename})
         return data
 
@@ -851,6 +861,7 @@ class Data(Generic[DataIterValues]):
         check_if_file_exists(filename)
         data = cls(_iter_any_file(filename, mode))
         data.update_metadata({"source_file": filename})
+        data._filetype = "file"
         return data
 
     @classmethod
@@ -881,6 +892,7 @@ class Data(Generic[DataIterValues]):
         check_if_file_exists(filename)
         data = cls(_iter_csv(filename, header, header_first_line, mode, delimiter))
         data.update_metadata({"source_file": filename})
+        data._filetype = "csv"
 
         # TH2-4930
         # TODO - should be deleted after bugfix
