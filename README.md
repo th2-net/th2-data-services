@@ -475,6 +475,31 @@ Many stream operations return a stream themselves. This allows operations to be 
 In contrast to collections, which are iterated explicitly (external iteration), stream operations do the iteration
 behind the scenes for you. Note, it doesn't mean you cannot iterate the _Data object_.
 
+
+### Data iteration
+
+The Data object constructor method takes in as argument either an iterator over objects or a generator function.
+The Data object iterator handles each item in this iterator or generator as they are, meaning it doesn't try to read the content of item or return them modified in any way, instead returns the item itself.
+The only exception to this is when Data object is built using iterator or generator over other Data objects. Note that this iterator or generator must only be yielding Data objects and nothing else. If we build from a mix of Data objects and some other types, Data objects' content won't be read and instead it will be returned as Data object itself.
+
+Small example to demonstrate:
+
+```python
+from th2_data_services.data import Data
+
+d1 = Data([1,2,3])
+d2 = Data([4,5,6])
+
+only_data_objects = Data([d1,d2]) # Will iterate as 1,2,3,4,5,6
+data_and_list = Data([d1,[4,5,6]]) # Will iterate as d1, [4,5,6]
+data_and_numbers = Data([d1,4,5,6]) # Will iterate as d1,4,5,6
+lists_only = Data([1,2,3],[4,5,6]) # Will iterate as [1,2,3],[4,5,6]
+
+# If we want to iterate over content of list of lists, we should first create Data objects from them,
+# then use them to construct new Data object as in case of d1 and d2, creating 'only_data_objects' in this example.
+```
+ 
+
 ### Data caching
 
 The _Data object_ provides the ability to use the cache. The cache works for each _Data object_, that is, you choose
