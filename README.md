@@ -263,8 +263,6 @@ d3 = Data([7, 8, 9])
 # Please note, new Data object will have cache status == False.
 data_via_init = Data([d1, d2, d3])
 data_via_add = d1 + d2 + d3
-data_with_non_data_obj_via_init = Data([d1, ["a", {"id": 123}, "c"], d3])
-data_with_non_data_obj_via_add = d1 + ["a", {"id": 123}, "c"] + d3
 # You can join current Data object on place using +=.
 # It will keep cache status.
 d1 += d3  # d1 will become Data([1,2,3,7,8,9])
