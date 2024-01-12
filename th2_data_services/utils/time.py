@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,24 +11,18 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from datetime import datetime, timezone
 from functools import wraps, partial
 from typing import Dict, Union
 from deprecated.classic import deprecated
 import time as time_
+from th2_data_services.utils.converters import ProtobufTimestampConverter
 
 
 def extract_timestamp(timestamp_element: Dict) -> str:
-    """Extracts timestamp from argument.
-
-    Args:
-        timestamp_element:
-
-    Returns:
-        str representation of th2-timestamp(protobuf) e.g. 2023-03-09T05:37:53.263895000
-    """
-    timestamp = datetime.fromtimestamp(timestamp_element["epochSecond"])
-    return f"{timestamp.isoformat()}.{str(timestamp_element['nano']).zfill(9)}"
+    """Returns datetime string in the format: 2023-10-02T10:47:20.413072000."""
+    return ProtobufTimestampConverter.to_datetime_str(timestamp_element)
 
 
 @deprecated("Use `extract_timestamp` instead")

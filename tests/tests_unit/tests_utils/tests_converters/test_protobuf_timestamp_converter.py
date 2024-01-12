@@ -27,3 +27,10 @@ def test_to_milliseconds(datetime_strings):
         ProtobufTimestampConverter.to_milliseconds(datetime_strings.th2_timestamp)
         == datetime_strings.expected_ms
     )
+
+
+def test_to_datetime_string(datetime_strings):
+    assert (
+        ProtobufTimestampConverter.to_datetime_str(datetime_strings.th2_timestamp)
+        == datetime_strings.expected_datestring
+    )

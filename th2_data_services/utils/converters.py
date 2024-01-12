@@ -1,4 +1,4 @@
-#  Copyright 2022-2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2022-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,6 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
+import base64
 from collections import namedtuple
 from datetime import datetime, timezone
 import shutil
@@ -26,7 +28,8 @@ _DatetimeTuple = namedtuple("DatetimeTuple", ["datetime", "mantissa"])
 class DatetimeStringConverter(ITimestampConverter[str]):
     """Converts datetime strings.
 
-    If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding).
+    If you request microseconds but your timestamp has nanoseconds,
+    they will be just cut (not rounding).
 
     Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z".
     If you don't provide 'Z' in the end, it can return wrong results.
@@ -49,17 +52,25 @@ class DatetimeStringConverter(ITimestampConverter[str]):
             dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0Z')
 
         mantissa_wo_z = dt_tuple.mantissa[:-1]
-        nanoseconds = f"{mantissa_wo_z:0<9}"
+        nanoseconds = f"{mantissa_wo_z:0<9}"  # Add zeros on right.
         seconds = str(int(timestamp.timestamp()))
 
         return seconds, nanoseconds
+
+    @classmethod
+    def parse_timestamp_int(cls, datetime_string: str) -> (int, int):
+        # TODO - there should be better solution
+        seconds, nanoseconds = cls.parse_timestamp(datetime_string)
+        return int(seconds), int(nanoseconds)
 
 
 class DatetimeConverter(ITimestampConverter[datetime]):
     """Converts datetime objects to timestamp.
 
-    If you request milliseconds but your timestamp has microseconds, they will be just cut (not rounding).
-    If you request nanoseconds, last 3 number will be zeros, because datatime object doesn't have nanoseconds.
+    If you request milliseconds but your timestamp has microseconds, they will
+    be just cut (not rounding).
+    If you request nanoseconds, last 3 number will be zeros, because datatime
+    object doesn't have nanoseconds.
 
     Expected timestamp format "datetime.datetime object".
     Expected that you provide UTC time in your data object.
@@ -69,21 +80,34 @@ class DatetimeConverter(ITimestampConverter[datetime]):
     def parse_timestamp(cls, datetime_obj: datetime) -> (str, str):
         sec_and_mantissa = str(datetime_obj.replace(tzinfo=timezone.utc).timestamp()).split(".")
         seconds = sec_and_mantissa[0]
-        nanoseconds = f"{sec_and_mantissa[1]:0<9}"
+        nanoseconds = f"{sec_and_mantissa[1]:0<9}"  # Add zeros on right.
         return seconds, nanoseconds
+
+    @classmethod
+    def parse_timestamp_int(cls, datetime_obj: datetime) -> (int, int):
+        # TODO - there should be better solution
+        seconds, nanoseconds = cls.parse_timestamp(datetime_obj)
+        return int(seconds), int(nanoseconds)
 
 
 class ProtobufTimestampConverter(ITimestampConverter[dict]):
     """Converts Th2 timestamps.
 
-    If you request microseconds but your timestamp has nanoseconds, they will be just cut (not rounding).
+    If you request microseconds but your timestamp has nanoseconds,
+    they will be just cut (not rounding).
 
     Expected timestamp format {'epochSecond': 123, 'nano': 500}.
+    Values are Int.
     """
 
     @classmethod
     def parse_timestamp(cls, timestamp: dict) -> (str, str):
-        seconds, nanoseconds = timestamp["epochSecond"], f"{timestamp['nano']:0>9}"
+        seconds, nanoseconds = timestamp["epochSecond"], timestamp["nano"]
+        return str(seconds), str(nanoseconds).zfill(9)  # Add zeros on left.
+
+    @classmethod
+    def parse_timestamp_int(cls, timestamp: dict) -> (int, int):
+        seconds, nanoseconds = timestamp["epochSecond"], timestamp["nano"]
         return seconds, nanoseconds
 
 
@@ -142,3 +166,8 @@ def flatten_dict(dictionary: dict, separator: str = ".") -> dict:
     """
     rv = _flatdict.FlatterDict(dictionary, delimiter=separator)
     return dict(rv)
+
+
+def decode_base64(coded_string: str) -> bytes:
+    """Returns decoded bytes."""
+    return base64.b64decode(coded_string)

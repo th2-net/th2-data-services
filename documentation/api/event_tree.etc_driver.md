@@ -11,14 +11,14 @@
 
 ---
 
-<a href="../../th2_data_services/event_tree/etc_driver.py#L22"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/etc_driver.py#L23"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IETCDriver`
 
 
 
 
-<a href="../../th2_data_services/event_tree/etc_driver.py#L23"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/etc_driver.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -45,7 +45,7 @@ The driver for EventsTreeCollection and its inheritors.
 
 ---
 
-<a href="../../th2_data_services/event_tree/etc_driver.py#L40"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/etc_driver.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `build_stub_event`
 
@@ -63,7 +63,7 @@ Builds stub event to generate parentless trees.
 
 ---
 
-<a href="../../th2_data_services/event_tree/etc_driver.py#L52"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/etc_driver.py#L53"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event_id`
 
@@ -75,7 +75,7 @@ Returns event id from the event.
 
 ---
 
-<a href="../../th2_data_services/event_tree/etc_driver.py#L56"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/etc_driver.py#L57"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_event_name`
 
@@ -87,7 +87,7 @@ Returns event name from the event.
 
 ---
 
-<a href="../../th2_data_services/event_tree/etc_driver.py#L60"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/etc_driver.py#L61"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_events_by_id_from_source`
 
@@ -99,7 +99,7 @@ Downloads the list of events from the provided data_source.
 
 ---
 
-<a href="../../th2_data_services/event_tree/etc_driver.py#L48"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/etc_driver.py#L49"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_parent_event_id`
 
@@ -111,7 +111,7 @@ Returns parent event id from the event.
 
 ---
 
-<a href="../../th2_data_services/event_tree/etc_driver.py#L64"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/etc_driver.py#L65"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `stub_event_name`
 

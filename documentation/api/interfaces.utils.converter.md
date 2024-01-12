@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L21"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ITimestampConverter`
 
@@ -23,7 +23,7 @@
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L22"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L42"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `parse_timestamp`
 
@@ -31,13 +31,33 @@
 parse_timestamp(timestamp: ~TimestampType) → (<class 'str'>, <class 'str'>)
 ```
 
-Returns string representation of Unix time separated to seconds and nanoseconds. 
+Returns string representation of Unix time. 
+
+Separated for seconds and nanoseconds. 
+
+Please note, nanoseconds can have zeroes from left. 
 
 e.g. 2022-03-05T23:56:44.00123Z -> ('1646524604', '001230000') 
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L30"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L54"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>classmethod</kbd> `parse_timestamp_int`
+
+```python
+parse_timestamp_int(timestamp: dict) → (<class 'int'>, <class 'int'>)
+```
+
+Returns int representation of Unix time. 
+
+Separated for seconds and nanoseconds. 
+
+e.g. 2022-03-05T23:56:44.00123Z -> (1646524604, 001230000) 
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/converter.py#L64"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `to_datetime`
 
@@ -45,9 +65,9 @@ e.g. 2022-03-05T23:56:44.00123Z -> ('1646524604', '001230000')
 to_datetime(timestamp: ~TimestampType) → datetime
 ```
 
-Converts timestamp to datetime object. 
+Converts timestamp to UTC datetime object. 
 
-If your timestamp has nanoseconds, they will be just cut (not rounding). 
+If your timestamp has nanoseconds, they will be just cut (not rounded). 
 
 
 
@@ -61,9 +81,39 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
  
  - <b>`datetime`</b>:  Timestamp in python datetime format. 
 
+Speed test: AMD Ryzen 7 6800H with Radeon Graphics 3.20 GHz ~ 987 ns per iteration  ~= 1000000 iterations per second 
+
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L48"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L129"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>classmethod</kbd> `to_datetime_str`
+
+```python
+to_datetime_str(timestamp: ~TimestampType) → str
+```
+
+Converts timestamp to UTC datetime string in ISO format. 
+
+Format example: 
+    - 2022-03-06T04:56:44.123456789 
+    - 2022-03-06T04:56:44.000000000 
+
+
+
+**Args:**
+ 
+ - <b>`timestamp`</b>:  TimestampType object to convert. 
+
+
+
+**Returns:**
+ 
+ - <b>`str`</b>:  datetime string in YYYY-MM-DDTHH:MM:SS.mmmmmm format. 
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/converter.py#L86"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `to_microseconds`
 
@@ -89,7 +139,7 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L63"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L101"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `to_milliseconds`
 
@@ -115,7 +165,7 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L78"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L116"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `to_nanoseconds`
 
