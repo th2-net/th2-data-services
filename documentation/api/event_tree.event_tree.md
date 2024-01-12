@@ -88,7 +88,7 @@ Appends the event to the tree.
 ### <kbd>method</kbd> `find`
 
 ```python
-find(filter: Callable, stop: Callable = None) → Optional[dict]
+find(filter: Callable, stop: Callable = None) → Union[dict, NoneType]
 ```
 
 Searches the first event match. 
@@ -116,7 +116,7 @@ Searches the first event match.
 ### <kbd>method</kbd> `find_ancestor`
 
 ```python
-find_ancestor(id: str, filter: Callable) → Optional[dict]
+find_ancestor(id: str, filter: Callable) → Union[dict, NoneType]
 ```
 
 Finds the ancestor of an event. 
