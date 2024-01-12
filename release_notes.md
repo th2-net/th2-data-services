@@ -485,6 +485,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    (file where every line is separate json-format line. That's not valid json format.)
 24. [TH2-5049] Added ExpandedMessageFieldResolver
 25. [TH2-5053] Added pickle_version to Data.from_cache_file method.
+26. `decode_base64` function added to converter utils.
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
