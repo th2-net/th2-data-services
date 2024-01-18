@@ -31,24 +31,24 @@ class DatetimeStringConverter(ITimestampConverter[str]):
     If you request microseconds but your timestamp has nanoseconds,
     they will be just cut (not rounding).
 
-    Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z".
-    If you don't provide 'Z' in the end, it can return wrong results.
+    Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z" or without Z or T as separators.
     """
 
     @classmethod
     def parse_timestamp(cls, datetime_string: str) -> (str, str):
         if datetime_string.endswith("Z"):
             datetime_string = datetime_string[:-1]
+        datetime_string = datetime_string.replace("T", " ")
         # Exception handling works faster than using `if`.
         try:
             # Handles "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ"
             dt_tuple = _DatetimeTuple(*datetime_string.rsplit("."))
-            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%dT%H:%M:%S").replace(
+            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%d %H:%M:%S").replace(
                 tzinfo=timezone.utc
             )
         except TypeError:
             # Handles "yyyy-MM-ddTHH:mm:ssZ"
-            timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S").replace(
+            timestamp = datetime.strptime(datetime_string, "%Y-%m-%d %H:%M:%S").replace(
                 tzinfo=timezone.utc
             )
             dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0')
