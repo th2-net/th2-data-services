@@ -37,6 +37,8 @@ class DatetimeStringConverter(ITimestampConverter[str]):
 
     @classmethod
     def parse_timestamp(cls, datetime_string: str) -> (str, str):
+        if datetime_string.endswith("Z"):
+            datetime_string = datetime_string[:-1]
         # Exception handling works faster than using `if`.
         try:
             # Handles "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ"
@@ -46,13 +48,12 @@ class DatetimeStringConverter(ITimestampConverter[str]):
             )
         except TypeError:
             # Handles "yyyy-MM-ddTHH:mm:ssZ"
-            timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%SZ").replace(
+            timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S").replace(
                 tzinfo=timezone.utc
             )
-            dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0Z')
+            dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0')
 
-        mantissa_wo_z = dt_tuple.mantissa[:-1]
-        nanoseconds = f"{mantissa_wo_z:0<9}"  # Add zeros on right.
+        nanoseconds = f"{dt_tuple.mantissa:0<9}"  # Add zeros on right.
         seconds = str(int(timestamp.timestamp()))
 
         return seconds, nanoseconds
@@ -86,6 +87,33 @@ class DatetimeConverter(ITimestampConverter[datetime]):
     @classmethod
     def parse_timestamp_int(cls, datetime_obj: datetime) -> (int, int):
         # TODO - there should be better solution
+        seconds, nanoseconds = cls.parse_timestamp(datetime_obj)
+        return int(seconds), int(nanoseconds)
+
+
+class UnixTimestampConverter(ITimestampConverter[int]):
+    """Converts unix timestamp integers to timestamp.
+
+    If you request microseconds but your timestamp has nanoseconds,
+    they will be just cut (not rounding).
+
+    Expected timestamp format 1705581844 (seconds), 1705581844123 (milliseconds), 17055818441123456 (microseconds), 17055818441123456789 (nanoseconds).
+    Timestamp should be given as integer.
+    """
+
+    @classmethod
+    def parse_timestamp(cls, unix_timestamp: int) -> (str, str):
+        if unix_timestamp < 99999999999:
+            return str(unix_timestamp), "000000000"
+        elif unix_timestamp < 99999999999999:
+            return str(unix_timestamp)[:-3], f"{str(unix_timestamp)[-3:]}000000"
+        elif unix_timestamp < 99999999999999999:
+            return str(unix_timestamp)[:-6], f"{str(unix_timestamp)[-6:]}000"
+        else:
+            return str(unix_timestamp)[:-9], str(unix_timestamp)[-9:]
+
+    @classmethod
+    def parse_timestamp_int(cls, datetime_obj: datetime) -> (int, int):
         seconds, nanoseconds = cls.parse_timestamp(datetime_obj)
         return int(seconds), int(nanoseconds)
 
