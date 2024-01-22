@@ -28,6 +28,47 @@ _DatetimeTuple = namedtuple("DatetimeTuple", ["datetime", "mantissa"])
 class DatetimeStringConverter(ITimestampConverter[str]):
     """Converts datetime strings.
 
+    Works with ISO_8601 datetime strings.
+
+    If you request microseconds but your timestamp has nanoseconds,
+    they will be just cut (not rounding).
+
+    Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z".
+    If you don't provide 'Z' in the end, it can return wrong results.
+    """
+
+    @classmethod
+    def parse_timestamp(cls, datetime_string: str) -> (str, str):
+        # Exception handling works faster than using `if`.
+        try:
+            # Handles "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ"
+            dt_tuple = _DatetimeTuple(*datetime_string.rsplit("."))
+            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%dT%H:%M:%S").replace(
+                tzinfo=timezone.utc
+            )
+        except TypeError:
+            # Handles "yyyy-MM-ddTHH:mm:ssZ"
+            timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%SZ").replace(
+                tzinfo=timezone.utc
+            )
+            dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0Z')
+
+        mantissa_wo_z = dt_tuple.mantissa[:-1]
+        nanoseconds = f"{mantissa_wo_z:0<9}"  # Add zeros on right.
+        seconds = str(int(timestamp.timestamp()))
+
+        return seconds, nanoseconds
+
+    @classmethod
+    def parse_timestamp_int(cls, datetime_string: str) -> (int, int):
+        # TODO - there should be better solution
+        seconds, nanoseconds = cls.parse_timestamp(datetime_string)
+        return int(seconds), int(nanoseconds)
+
+
+class UniversalDatetimeStringConverter(ITimestampConverter[str]):
+    """Converts datetime strings.
+
     If you request microseconds but your timestamp has nanoseconds,
     they will be just cut (not rounding).
 
@@ -113,8 +154,8 @@ class UnixTimestampConverter(ITimestampConverter[int]):
             return str(unix_timestamp)[:-9], str(unix_timestamp)[-9:]
 
     @classmethod
-    def parse_timestamp_int(cls, datetime_obj: datetime) -> (int, int):
-        seconds, nanoseconds = cls.parse_timestamp(datetime_obj)
+    def parse_timestamp_int(cls, unix_timestamp: int) -> (int, int):
+        seconds, nanoseconds = cls.parse_timestamp(unix_timestamp)
         return int(seconds), int(nanoseconds)
 
 
