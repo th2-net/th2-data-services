@@ -53,7 +53,7 @@ class ITimestampConverter(ABC, Generic[TimestampType]):
 
     @classmethod
     @abstractmethod
-    def parse_timestamp_int(cls, timestamp: dict) -> (int, int):
+    def parse_timestamp_int(cls, timestamp: TimestampType) -> (int, int):
         """Returns int representation of Unix time.
 
         Separated for seconds and nanoseconds.

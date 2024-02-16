@@ -46,7 +46,7 @@ e.g. 2022-03-05T23:56:44.00123Z -> ('1646524604', '001230000')
 ### <kbd>classmethod</kbd> `parse_timestamp_int`
 
 ```python
-parse_timestamp_int(timestamp: dict) → (<class 'int'>, <class 'int'>)
+parse_timestamp_int(timestamp: ~TimestampType) → (<class 'int'>, <class 'int'>)
 ```
 
 Returns int representation of Unix time. 
