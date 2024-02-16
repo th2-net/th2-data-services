@@ -28,6 +28,8 @@ _DatetimeTuple = namedtuple("DatetimeTuple", ["datetime", "mantissa"])
 class DatetimeStringConverter(ITimestampConverter[str]):
     """Converts datetime strings.
 
+    Works with ISO_8601 datetime strings.
+
     If you request microseconds but your timestamp has nanoseconds,
     they will be just cut (not rounding).
 
@@ -64,6 +66,46 @@ class DatetimeStringConverter(ITimestampConverter[str]):
         return int(seconds), int(nanoseconds)
 
 
+class UniversalDatetimeStringConverter(ITimestampConverter[str]):
+    """Converts datetime strings.
+
+    If you request microseconds but your timestamp has nanoseconds,
+    they will be just cut (not rounding).
+
+    Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z" or without Z or T as separators.
+    """
+
+    @classmethod
+    def parse_timestamp(cls, datetime_string: str) -> (str, str):
+        if datetime_string.endswith("Z"):
+            datetime_string = datetime_string[:-1]
+        datetime_string = datetime_string.replace("T", " ")
+        # Exception handling works faster than using `if`.
+        try:
+            # Handles "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ"
+            dt_tuple = _DatetimeTuple(*datetime_string.rsplit("."))
+            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%d %H:%M:%S").replace(
+                tzinfo=timezone.utc
+            )
+        except TypeError:
+            # Handles "yyyy-MM-ddTHH:mm:ssZ"
+            timestamp = datetime.strptime(datetime_string, "%Y-%m-%d %H:%M:%S").replace(
+                tzinfo=timezone.utc
+            )
+            dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0')
+
+        nanoseconds = f"{dt_tuple.mantissa:0<9}"  # Add zeros on right.
+        seconds = str(int(timestamp.timestamp()))
+
+        return seconds, nanoseconds
+
+    @classmethod
+    def parse_timestamp_int(cls, datetime_string: str) -> (int, int):
+        # TODO - there should be better solution
+        seconds, nanoseconds = cls.parse_timestamp(datetime_string)
+        return int(seconds), int(nanoseconds)
+
+
 class DatetimeConverter(ITimestampConverter[datetime]):
     """Converts datetime objects to timestamp.
 
@@ -87,6 +129,33 @@ class DatetimeConverter(ITimestampConverter[datetime]):
     def parse_timestamp_int(cls, datetime_obj: datetime) -> (int, int):
         # TODO - there should be better solution
         seconds, nanoseconds = cls.parse_timestamp(datetime_obj)
+        return int(seconds), int(nanoseconds)
+
+
+class UnixTimestampConverter(ITimestampConverter[int]):
+    """Converts unix timestamp integers to timestamp.
+
+    If you request microseconds but your timestamp has nanoseconds,
+    they will be just cut (not rounding).
+
+    Expected timestamp format 1705581844 (seconds), 1705581844123 (milliseconds), 17055818441123456 (microseconds), 17055818441123456789 (nanoseconds).
+    Timestamp should be given as integer.
+    """
+
+    @classmethod
+    def parse_timestamp(cls, unix_timestamp: int) -> (str, str):
+        if unix_timestamp < 99999999999:
+            return str(unix_timestamp), "000000000"
+        elif unix_timestamp < 99999999999999:
+            return str(unix_timestamp)[:-3], f"{str(unix_timestamp)[-3:]}000000"
+        elif unix_timestamp < 99999999999999999:
+            return str(unix_timestamp)[:-6], f"{str(unix_timestamp)[-6:]}000"
+        else:
+            return str(unix_timestamp)[:-9], str(unix_timestamp)[-9:]
+
+    @classmethod
+    def parse_timestamp_int(cls, unix_timestamp: int) -> (int, int):
+        seconds, nanoseconds = cls.parse_timestamp(unix_timestamp)
         return int(seconds), int(nanoseconds)
 
 
