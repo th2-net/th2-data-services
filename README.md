@@ -403,11 +403,43 @@ parentless_trees: List[EventTree] = etc.get_parentless_trees()
 data_source: IDataSource  # You should init DataSource object. E.g. from LwDP module.
 # ETCDriver here is a stub, actually the lib don't have such class.
 # You can take it in LwDP module or create yourself class if you have some special events structure.
+from th2_data_services.data_source.lwdp.event_tree import HttpETCDriver as ETCDriver
+
 driver = ETCDriver(data_source=data_source)
 etc = ParentEventTreeCollection(driver)
 etc.build(events)
 
 etc.show()
+
+# [4] Field Resolvers
+# Please read `Field Resolvers` block in readme first.
+# [4.1] Usage example from client code
+from th2_data_services.data_source import (
+    lwdp,
+)  # lwdp data_source initialize th2_data_services.config during import.
+from th2_data_services.config import options as o_
+
+for m in data:
+    o_.mfr.expand_message(m)  # mfr - stands for MessageFieldResolver
+    # or
+    o_.emfr.expand_message(m)  # emfr - stands for ExpandedMessageFieldResolver
+
+# [4.2] Libraries usage.
+# Don't import exact resolvers implementation please in your code.
+# Allow your client to do it instead.
+# Just import `options` from `th2_data_services.config` and use it.
+from th2_data_services.config import options as o_
+
+for m in data:
+    o_.mfr.expand_message(m)
+    # or
+    o_.emfr.expand_message(m)
+
+# More tech details:
+#   In this case, there is no line `from th2_data_services.data_source import lwdp `
+#   because we should not choose for the user which data source to use.
+#   We do not know what he will choose, therefore we must simply access
+#   the interface, which will be initialized by the user.
 ```
 <!-- end get_started_example.py -->
 
@@ -560,9 +592,12 @@ can have another names (it resolves in the driver).
 * If you want to know that specified event exists, use the python `in` keyword (e.g. `'event-id' in events_tree`).
 * Use the python `len` keyword to get events number in the tree.
 
-### FieldsResolver
+### Field Resolvers
+Interface can be found in `th2_data_services/interfaces/utils/resolver.py`.  
+All data-sources should implement them.
+
 The idea of using resolvers:
-It solves the problem of having a few DataSources with the same data,
+It solves the problem of having a few DataSources with similar data,
 but with different ways to get it.
 
 These classes provide you getter methods.
@@ -574,13 +609,18 @@ Resolvers solve the problem of data-format migration.
 - fields names can be changed
 
 Resolvers can work only with one event/message.
-It means, if your message has sub-messages it won't work, because resolver will not
-know with which sub-message should it work.
+It means, if your message has sub-messages (like th2-messages in lwdp) it 
+won't work, because resolver will not know with which sub-message should it work. 
 
-Implementation advice:
+**Workaround**  
+1. Expand all your messages -> `new_d = your_data.map(MessageFieldResolver.expand_message)`
+2. Use `ExpandedMessageFieldResolver` instead of usual `MessageFieldResolver` when 
+    you take fields for expanded messages.
+
+**Implementation advice:**
 1. raise NotImplementedError -- if your Implementation doesn't support this getter.
 
-Performance impact:
+**Performance impact:**
 - It a bit slower than using naked field access `dict['key']`.
 
 ## 2.4. Links

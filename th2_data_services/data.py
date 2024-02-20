@@ -57,7 +57,7 @@ from th2_data_services.utils.path_utils import check_if_filename_valid, check_if
 
 DataIterValues = TypeVar("DataIterValues")
 DataGenerator = Generator[DataIterValues, None, None]
-DataSet = Union[Iterator, Callable[..., DataGenerator], List[Iterator]]
+DataSet = Union[Iterator, Callable[..., DataGenerator], List[Iterable], Iterable]
 WorkFlow = List[Dict[str, Union[Callable, str]]]
 
 
