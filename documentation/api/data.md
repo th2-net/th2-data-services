@@ -26,7 +26,7 @@ Such approach to data analysis called streaming transformation.
 
 ```python
 __init__(
-    data: Optional[Iterator, Callable[, Generator[~DataIterValues, NoneType]], List[Iterator]],
+    data: Optional[Iterator, Callable[, Generator[~DataIterValues, NoneType]], List[Iterable], Iterable],
     cache: bool = False,
     workflow: List[Dict[str, Union[Callable, str]]] = None,
     pickle_version: int = 4

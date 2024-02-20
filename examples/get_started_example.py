@@ -287,8 +287,40 @@ parentless_trees: List[EventTree] = etc.get_parentless_trees()
 data_source: IDataSource  # You should init DataSource object. E.g. from LwDP module.
 # ETCDriver here is a stub, actually the lib don't have such class.
 # You can take it in LwDP module or create yourself class if you have some special events structure.
+from th2_data_services.data_source.lwdp.event_tree import HttpETCDriver as ETCDriver
+
 driver = ETCDriver(data_source=data_source)
 etc = ParentEventTreeCollection(driver)
 etc.build(events)
 
 etc.show()
+
+# [4] Field Resolvers
+# Please read `Field Resolvers` block in readme first.
+# [4.1] Usage example from client code
+from th2_data_services.data_source import (
+    lwdp,
+)  # lwdp data_source initialize th2_data_services.config during import.
+from th2_data_services.config import options as o_
+
+for m in data:
+    o_.mfr.expand_message(m)  # mfr - stands for MessageFieldResolver
+    # or
+    o_.emfr.expand_message(m)  # emfr - stands for ExpandedMessageFieldResolver
+
+# [4.2] Libraries usage.
+# Don't import exact resolvers implementation please in your code.
+# Allow your client to do it instead.
+# Just import `options` from `th2_data_services.config` and use it.
+from th2_data_services.config import options as o_
+
+for m in data:
+    o_.mfr.expand_message(m)
+    # or
+    o_.emfr.expand_message(m)
+
+# More tech details:
+#   In this case, there is no line `from th2_data_services.data_source import lwdp `
+#   because we should not choose for the user which data source to use.
+#   We do not know what he will choose, therefore we must simply access
+#   the interface, which will be initialized by the user.
