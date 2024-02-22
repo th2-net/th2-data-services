@@ -247,7 +247,7 @@ from_csv(
 ) → Data
 ```
 
-Creates Data object from any file with provided name. 
+Creates Data object from CSV file with provided name. 
 
 It will iterate the CSV file as if you were doing it with CSV module. 
 
@@ -256,12 +256,17 @@ It will iterate the CSV file as if you were doing it with CSV module.
 **Args:**
  
  - <b>`filename`</b>:  Name or path to the file. 
- - <b>`header`</b>:  If provided header for csv, Data object will yield Dict[str]. 
- - <b>`header_first_line`</b>:  If the first line of the csv file is header, it'll take header from  the first line. Data object will yield Dict[str].  `header` argument is not required in this case. 
+ - <b>`header`</b>:  If provided header for csv, Data object will yield Dict[str].  Note, if your first line is header in csv, it also will be yielded. 
+ - <b>`header_first_line`</b>:  If the first line of the csv file is header,  it'll take header from the first line. Data object will yield  Dict[str]. `header` argument is not required in this case.  First line of the CSV file will be skipped (header line). 
  - <b>`mode`</b>:  Read mode of open function. 
  - <b>`delimiter`</b>:  CSV file delimiter. 
 
 
+
+**Note:**
+
+> If `header` provided and `header_first_line == True`, Data object will yield Dict[str] where key names (columns) as described in the `header`. First line of the CSV file will be skipped. 
+>
 
 **Returns:**
  
@@ -431,7 +436,7 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L963"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L970"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
@@ -457,7 +462,7 @@ Converts data to json format.
 
 ---
 
-<a href="../../th2_data_services/data.py#L987"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L994"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_jsons`
 
@@ -471,7 +476,7 @@ to_jsons(filename: str, indent: int = None, overwrite: bool = False, gzip=False)
 
 ---
 
-<a href="../../th2_data_services/data.py#L914"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L921"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `update_metadata`
 
