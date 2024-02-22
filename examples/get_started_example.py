@@ -331,7 +331,7 @@ from th2_data_services.utils.event_utils.frequencies import get_category_frequen
 from th2_data_services.utils.event_utils.totals import get_category_totals2
 from th2_data_services.utils.category import Category
 
-# [5.1] Get the quantities of events for different categories as a dictionary.
+# [5.1] Get the quantities of events for different categories.
 metrics = [
     Category("date", lambda m: Th2TimestampConverter.to_datetime(m["startTimestamp"]).date()),
     Category("status", lambda m: m["successful"]),
