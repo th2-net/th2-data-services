@@ -13,6 +13,7 @@ from th2_data_services.utils.converters import (
     DatetimeConverter,
     DatetimeStringConverter,
     ProtobufTimestampConverter,
+    Th2TimestampConverter,
 )
 
 # [0] Lib configuration
@@ -324,3 +325,41 @@ for m in data:
 #   because we should not choose for the user which data source to use.
 #   We do not know what he will choose, therefore we must simply access
 #   the interface, which will be initialized by the user.
+
+# [5] Using utility functions.
+from th2_data_services.utils.event_utils.frequencies import get_category_frequencies2
+from th2_data_services.utils.event_utils.totals import get_category_totals2
+from th2_data_services.utils.category import Category
+
+# [5.1] Get the quantities of events for different categories as a dictionary.
+metrics = [
+    Category("date", lambda m: Th2TimestampConverter.to_datetime(m["startTimestamp"]).date()),
+    Category("status", lambda m: m["successful"]),
+]
+category_totals = get_category_totals2(events, metrics)
+"""
++--------+------------+----------+---------+
+|        | date       | status   |   count |
++========+============+==========+=========+
+|        | 2023-01-05 | True     |       3 |
++--------+------------+----------+---------+
+| count  |            |          |       1 |
++--------+------------+----------+---------+
+| totals |            | 1/0      |       3 |
++--------+------------+----------+---------+
+"""
+
+# [5.2] Get the number of events with status successful.
+category = Category("status", lambda m: m["successful"])
+category_frequencies = get_category_frequencies2(events, category)
+"""
++--------+---------------------+---------------------+--------+
+|        | timestamp_start     | timestamp_end       |   True |
++========+=====================+=====================+========+
+|        | 2023-01-05T13:57:05 | 2023-01-05T13:57:06 |      3 |
++--------+---------------------+---------------------+--------+
+| count  |                     |                     |      1 |
++--------+---------------------+---------------------+--------+
+| totals |                     |                     |      3 |
++--------+---------------------+---------------------+--------+
+"""
