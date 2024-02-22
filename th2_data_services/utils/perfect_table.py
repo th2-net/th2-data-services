@@ -173,7 +173,7 @@ class PerfectTable:
 
             rows = tuple(
                 row for row in reader
-            )  # 'generator' object is not subscriptable  если генератор
+            )  # 'generator' object is not subscriptable  if generator
 
         self._headers = tuple(rows[0])
         self.row_class = self._create_row_class(self.header)
