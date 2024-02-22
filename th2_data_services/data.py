@@ -858,18 +858,25 @@ class Data(Generic[DataIterValues]):
     def from_csv(
         cls, filename, header=None, header_first_line=False, mode="r", delimiter=","
     ) -> "Data":
-        """Creates Data object from any file with provided name.
+        """Creates Data object from CSV file with provided name.
 
         It will iterate the CSV file as if you were doing it with CSV module.
 
         Args:
             filename: Name or path to the file.
             header: If provided header for csv, Data object will yield Dict[str].
-            header_first_line: If the first line of the csv file is header, it'll take header from
-                                the first line. Data object will yield Dict[str].
-                                `header` argument is not required in this case.
+                Note, if your first line is header in csv, it also will be yielded.
+            header_first_line: If the first line of the csv file is header,
+                it'll take header from the first line. Data object will yield
+                Dict[str]. `header` argument is not required in this case.
+                First line of the CSV file will be skipped (header line).
             mode: Read mode of open function.
             delimiter: CSV file delimiter.
+
+        Note:
+            If `header` provided and `header_first_line == True`,
+            Data object will yield Dict[str] where key names (columns) as
+            described in the `header`. First line of the CSV file will be skipped.
 
         Returns:
             Data: Data object.
@@ -1031,10 +1038,13 @@ def _iter_csv(filename, header=None, header_first_line=False, mode="r", delimite
 
     def iter_logic():
         with open(filename, mode) as data:
-            if header is not None:
-                reader = csv.DictReader(data, fieldnames=header)
+            if header is not None and header_first_line:
+                reader = csv.DictReader(data, fieldnames=header, delimiter=delimiter)
+                next(reader)  # Skip first line with header.
+            elif header is not None:
+                reader = csv.DictReader(data, fieldnames=header, delimiter=delimiter)
             elif header_first_line:
-                reader = csv.DictReader(data)
+                reader = csv.DictReader(data, delimiter=delimiter)
             else:
                 reader = csv.reader(data, delimiter=delimiter)
 
