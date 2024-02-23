@@ -390,3 +390,31 @@ def get_messages_examples(
                         return result
 
     return result
+
+
+def is_sorted(messages: Iterable[Th2Message]) -> bool:
+    """Checks whether messages are sorted.
+
+    Args:
+        messages (Dict): Th2-Messages
+
+    Returns:
+        bool
+    """
+    flag = True
+    previous_timestamp = None
+    for message in messages:
+        print(message)
+        print(options.MESSAGE_FIELDS_RESOLVER.get_id(message))
+        if flag:
+            previous_timestamp = options.mfr.get_timestamp(message)
+            flag = False
+        current_timestamp = options.MESSAGE_FIELDS_RESOLVER.get_timestamp(message)
+        if previous_timestamp["epochSecond"] > current_timestamp["epochSecond"] or (
+            previous_timestamp["epochSecond"] == current_timestamp["epochSecond"]
+            and previous_timestamp["nano"] > current_timestamp["nano"]
+        ):
+            return False
+        previous_timestamp = current_timestamp
+
+    return True

@@ -223,3 +223,29 @@ def extract_parent_as_json(
 
     with open(json_file_path, "w") as file:
         json.dump(tree, file, indent=3)
+
+
+def is_sorted(events: Iterable[Th2Event]) -> bool:
+    """Checks whether events are sorted.
+
+    Args:
+        events (Dict): Th2-Events
+
+    Returns:
+        bool
+    """
+    flag = True
+    previous_timestamp = None
+    for event in events:
+        if flag:
+            previous_timestamp = options.EVENT_FIELDS_RESOLVER.get_start_timestamp(event)
+            flag = False
+        current_timestamp = options.EVENT_FIELDS_RESOLVER.get_start_timestamp(event)
+        if previous_timestamp["epochSecond"] > current_timestamp["epochSecond"] or (
+            previous_timestamp["epochSecond"] == current_timestamp["epochSecond"]
+            and previous_timestamp["nano"] > current_timestamp["nano"]
+        ):
+            return False
+        previous_timestamp = current_timestamp
+
+    return True

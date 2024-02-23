@@ -43,6 +43,7 @@ from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 from th2_data_services.config import options as o
 from th2_data_services.utils._json import iter_json_file, iter_json_gzip_file
+from th2_data_services.utils.stream_utils.stream_utils import is_sorted
 import gzip as gzip_
 
 # LOG import logging
@@ -637,6 +638,17 @@ class Data(Generic[DataIterValues]):
                 break
             yield record
             pushed += 1
+
+    def is_sorted(self, get_timestamp_func: Callable[[Any], dict]) -> bool:
+        """Checks whether Data is sorted.
+
+        Args:
+            get_timestamp_func: This function is responsible for getting the timestamp.
+
+        Returns:
+            bool
+        """
+        return is_sorted(self, get_timestamp_func)
 
     def use_cache(self, status: bool = True) -> "Data":
         """Changes cache flag and returns self.
