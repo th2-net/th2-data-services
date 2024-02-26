@@ -15,7 +15,7 @@
 from typing import Iterable, Callable, Any
 
 
-def is_sorted(obj: Iterable, get_timestamp_func: Callable[[Any], dict]) -> bool:
+def is_sorted(obj: Iterable, get_timestamp_func: Callable[[Any], Any]) -> bool:
     """Checks whether stream is sorted.
 
     Args:
@@ -32,10 +32,7 @@ def is_sorted(obj: Iterable, get_timestamp_func: Callable[[Any], dict]) -> bool:
             previous_timestamp = get_timestamp_func(record)
             flag = False
         current_timestamp = get_timestamp_func(record)
-        if previous_timestamp["epochSecond"] > current_timestamp["epochSecond"] or (
-            previous_timestamp["epochSecond"] == current_timestamp["epochSecond"]
-            and previous_timestamp["nano"] > current_timestamp["nano"]
-        ):
+        if previous_timestamp > current_timestamp:
             return False
         previous_timestamp = current_timestamp
 

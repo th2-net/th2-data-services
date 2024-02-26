@@ -639,7 +639,7 @@ class Data(Generic[DataIterValues]):
             yield record
             pushed += 1
 
-    def is_sorted(self, get_timestamp_func: Callable[[Any], dict]) -> bool:
+    def is_sorted(self, get_timestamp_func: Callable[[Any], Any]) -> bool:
         """Checks whether Data is sorted.
 
         Args:

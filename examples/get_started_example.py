@@ -74,6 +74,7 @@ events = Data(
         },
     ]
 )
+
 # [1] Working with a Data object.
 # [1.1] Filter.
 filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter events with empty body.
@@ -159,7 +160,7 @@ events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
 # [1.13] Check if Data is sorted.
-is_sorted = events.is_sorted(lambda e: e["startTimestamp"])
+is_sorted = events.is_sorted(lambda e: e["startTimestamp"]["epochSecond"])
 
 # [2] Working with converters.
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
