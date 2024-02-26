@@ -404,8 +404,6 @@ def is_sorted(messages: Iterable[Th2Message]) -> bool:
     flag = True
     previous_timestamp = None
     for message in messages:
-        print(message)
-        print(options.MESSAGE_FIELDS_RESOLVER.get_id(message))
         if flag:
             previous_timestamp = options.mfr.get_timestamp(message)
             flag = False
