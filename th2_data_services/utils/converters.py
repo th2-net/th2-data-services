@@ -20,7 +20,7 @@ import gzip
 
 import flatdict as _flatdict
 
-from th2_data_services.interfaces.utils.converter import ITimestampConverter
+from th2_data_services.interfaces.utils.converter import ITimestampConverter, TimestampType
 
 _DatetimeTuple = namedtuple("DatetimeTuple", ["datetime", "mantissa"])
 
@@ -178,6 +178,49 @@ class ProtobufTimestampConverter(ITimestampConverter[dict]):
     def parse_timestamp_int(cls, timestamp: dict) -> (int, int):
         seconds, nanoseconds = timestamp["epochSecond"], timestamp["nano"]
         return seconds, nanoseconds
+
+    @classmethod
+    def to_microseconds(cls, timestamp: TimestampType) -> int:
+        """Converts timestamp to microseconds.
+
+        If your timestamp has nanoseconds, they will be just cut (not rounding).
+
+        Args:
+            timestamp: TimestampType object to convert.
+
+        Returns:
+            int: Timestamp in microseconds format.
+        """
+        seconds, nanoseconds = timestamp["epochSecond"], timestamp["nano"]
+        return 1_000_000 * seconds + nanoseconds // 1_000
+
+    @classmethod
+    def to_milliseconds(cls, timestamp: TimestampType) -> int:
+        """Converts timestamp to milliseconds.
+
+        If your timestamp has nanoseconds, they will be just cut (not rounding).
+
+        Args:
+            timestamp: TimestampType object to convert.
+
+        Returns:
+            int: Timestamp in microseconds format.
+        """
+        seconds, nanoseconds = timestamp["epochSecond"], timestamp["nano"]
+        return 1_000 * seconds + nanoseconds // 1_000_000
+
+    @classmethod
+    def to_nanoseconds(cls, timestamp: TimestampType) -> int:
+        """Converts timestamp to nanoseconds.
+
+        Args:
+            timestamp: TimestampType object to convert.
+
+        Returns:
+            int: Timestamp in nanoseconds format.
+        """
+        seconds, nanoseconds = timestamp["epochSecond"], timestamp["nano"]
+        return 1_000_000_000 * seconds + nanoseconds
 
 
 Th2TimestampConverter = ProtobufTimestampConverter
