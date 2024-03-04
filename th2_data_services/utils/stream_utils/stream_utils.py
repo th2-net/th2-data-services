@@ -13,9 +13,10 @@
 #  limitations under the License.
 
 from typing import Iterable, Callable, Any
+from th2_data_services.utils.is_sorted_result import IsSortedResult
 
 
-def is_sorted(obj: Iterable, get_timestamp_func: Callable[[Any], Any]) -> bool:
+def is_sorted(obj: Iterable, get_timestamp_func: Callable[[Any], Any]) -> IsSortedResult:
     """Checks whether stream is sorted.
 
     Args:
@@ -25,15 +26,20 @@ def is_sorted(obj: Iterable, get_timestamp_func: Callable[[Any], Any]) -> bool:
     Returns:
         bool
     """
+    is_sorted_result = IsSortedResult()
     flag = True
     previous_timestamp = None
+    i = 0
     for record in obj:
         if flag:
             previous_timestamp = get_timestamp_func(record)
             flag = False
         current_timestamp = get_timestamp_func(record)
         if previous_timestamp > current_timestamp:
-            return False
+            is_sorted_result.set_status(False)
+            is_sorted_result.set_first_unsorted(i)
+            break
         previous_timestamp = current_timestamp
+        i += 1
 
-    return True
+    return is_sorted_result

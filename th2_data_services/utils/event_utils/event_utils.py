@@ -32,6 +32,7 @@ from th2_data_services.utils.event_utils.select import (
     get_children_from_parents_as_list,
     sublist,
 )
+from th2_data_services.utils.is_sorted_result import IsSortedResult
 
 
 # NOT STREAMING
@@ -225,7 +226,7 @@ def extract_parent_as_json(
         json.dump(tree, file, indent=3)
 
 
-def is_sorted(events: Iterable[Th2Event]) -> bool:
+def is_sorted(events: Iterable[Th2Event]) -> IsSortedResult:
     """Checks whether events are sorted.
 
     Args:
@@ -234,8 +235,10 @@ def is_sorted(events: Iterable[Th2Event]) -> bool:
     Returns:
         bool
     """
+    is_sorted_result = IsSortedResult()
     flag = True
     previous_timestamp = None
+    i = 0
     for event in events:
         if flag:
             previous_timestamp = options.EVENT_FIELDS_RESOLVER.get_start_timestamp(event)
@@ -245,7 +248,10 @@ def is_sorted(events: Iterable[Th2Event]) -> bool:
             previous_timestamp["epochSecond"] == current_timestamp["epochSecond"]
             and previous_timestamp["nano"] > current_timestamp["nano"]
         ):
-            return False
+            is_sorted_result.set_status(False)
+            is_sorted_result.set_first_unsorted(i)
+            break
         previous_timestamp = current_timestamp
+        i += 1
 
-    return True
+    return is_sorted_result

@@ -16,7 +16,8 @@ def test_stream_is_sorted_sorted():
             {"timestamp": {"epochSecond": 1632400689, "nano": 4000000}},
         ]
     )
-    assert is_sorted(data, lambda e: e["timestamp"]["epochSecond"])
+    result = is_sorted(data, lambda e: e["timestamp"]["epochSecond"])
+    assert result and result.get_first_unsorted() is None
 
 
 def test_stream_is_sorted_not_sorted():
@@ -29,4 +30,5 @@ def test_stream_is_sorted_not_sorted():
             {"timestamp": {"epochSecond": 1632400689, "nano": 4000000}},
         ]
     )
-    assert not is_sorted(data, lambda e: e["timestamp"]["epochSecond"])
+    result = is_sorted(data, lambda e: e["timestamp"]["epochSecond"])
+    assert not result and result.get_first_unsorted() == 1
