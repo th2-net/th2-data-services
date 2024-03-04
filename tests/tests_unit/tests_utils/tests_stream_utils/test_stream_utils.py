@@ -17,7 +17,7 @@ def test_stream_is_sorted_sorted():
         ]
     )
     result = is_sorted(data, lambda e: e["timestamp"]["epochSecond"])
-    assert result and result.get_first_unsorted() is None
+    assert result and result.first_unsorted is None
 
 
 def test_stream_is_sorted_not_sorted():
@@ -31,4 +31,4 @@ def test_stream_is_sorted_not_sorted():
         ]
     )
     result = is_sorted(data, lambda e: e["timestamp"]["epochSecond"])
-    assert not result and result.get_first_unsorted() == 1
+    assert not result and result.first_unsorted == 1

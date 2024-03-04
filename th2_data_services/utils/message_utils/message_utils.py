@@ -415,8 +415,8 @@ def is_sorted(messages: Iterable[Th2Message]) -> IsSortedResult:
             previous_timestamp["epochSecond"] == current_timestamp["epochSecond"]
             and previous_timestamp["nano"] > current_timestamp["nano"]
         ):
-            is_sorted_result.set_status(False)
-            is_sorted_result.set_first_unsorted(i)
+            is_sorted_result.status = False
+            is_sorted_result.first_unsorted = i
             break
         previous_timestamp = current_timestamp
         i += 1

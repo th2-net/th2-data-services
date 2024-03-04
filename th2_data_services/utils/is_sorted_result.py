@@ -25,20 +25,8 @@ class IsSortedResult:
         Args:
             status: Whether the sequence is sorted.
         """
-        self._status = status
-        self._first_unsorted = None
+        self.status = status
+        self.first_unsorted = None
 
     def __bool__(self):
-        return self._status
-
-    def get_status(self) -> bool:
-        return self._status
-
-    def set_status(self, status: bool):
-        self._status = status
-
-    def get_first_unsorted(self) -> int:
-        return self._first_unsorted
-
-    def set_first_unsorted(self, first_unsorted: int):
-        self._first_unsorted = first_unsorted
+        return self.status

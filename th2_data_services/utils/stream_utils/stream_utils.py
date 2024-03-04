@@ -36,8 +36,8 @@ def is_sorted(obj: Iterable, get_timestamp_func: Callable[[Any], Any]) -> IsSort
             flag = False
         current_timestamp = get_timestamp_func(record)
         if previous_timestamp > current_timestamp:
-            is_sorted_result.set_status(False)
-            is_sorted_result.set_first_unsorted(i)
+            is_sorted_result.status = False
+            is_sorted_result.first_unsorted = i
             break
         previous_timestamp = current_timestamp
         i += 1
