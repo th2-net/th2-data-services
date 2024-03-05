@@ -514,11 +514,21 @@ class Data(Generic[DataIterValues]):
             Data: Data object.
 
         """
+
+        def print_message_if_exception_wrapper(m, func):
+            try:
+                return func(m)
+            except Exception:
+                print("Exception during mapping the message: \n" f"{pprint.pformat(m)}")
+                raise
+
         # LOG         self._logger.info("Apply map")
         if isinstance(callback_or_adapter, IRecordAdapter):
-            new_workflow = [{"type": "map", "callback": callback_or_adapter.handle}]
+            cb = partial(print_message_if_exception_wrapper, func=callback_or_adapter.handle)
+            new_workflow = [{"type": "map", "callback": cb}]
         else:
-            new_workflow = [{"type": "map", "callback": callback_or_adapter}]
+            cb = partial(print_message_if_exception_wrapper, func=callback_or_adapter)
+            new_workflow = [{"type": "map", "callback": cb}]
         data = Data(data=self, workflow=new_workflow)
         data._set_metadata(self.metadata)
         return data
