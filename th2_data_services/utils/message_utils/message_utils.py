@@ -23,6 +23,7 @@ import th2_data_services.utils.display
 import th2_data_services.utils.time
 from th2_data_services.utils._types import Th2Message
 from th2_data_services.utils.converters import flatten_dict
+from th2_data_services.utils._is_sorted_result import IsSortedResult
 
 
 # DON'T USE `options` like this. By default MESSAGE_FIELDS_RESOLVER.expand_message == None
@@ -390,3 +391,34 @@ def get_messages_examples(
                         return result
 
     return result
+
+
+def is_sorted(messages: Iterable[Th2Message]) -> IsSortedResult:
+    """Checks whether messages are sorted.
+
+    Args:
+        messages (Dict): Th2-Messages
+
+    Returns:
+        IsSortedResult: Whether messages are sorted and additional info (e.g. index of the first unsorted element).
+    """
+    is_sorted_result = IsSortedResult()
+    flag = True
+    previous_timestamp = None
+    i = 0
+    for message in messages:
+        if flag:
+            previous_timestamp = options.mfr.get_timestamp(message)
+            flag = False
+        current_timestamp = options.MESSAGE_FIELDS_RESOLVER.get_timestamp(message)
+        if previous_timestamp["epochSecond"] > current_timestamp["epochSecond"] or (
+            previous_timestamp["epochSecond"] == current_timestamp["epochSecond"]
+            and previous_timestamp["nano"] > current_timestamp["nano"]
+        ):
+            is_sorted_result.status = False
+            is_sorted_result.first_unsorted = i
+            break
+        previous_timestamp = current_timestamp
+        i += 1
+
+    return is_sorted_result
