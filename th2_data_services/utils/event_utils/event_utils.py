@@ -233,7 +233,7 @@ def is_sorted(events: Iterable[Th2Event]) -> IsSortedResult:
         events (Dict): Th2-Events
 
     Returns:
-        bool
+        IsSortedResult: Whether events are sorted and additional info (e.g. index of the first unsorted element).
     """
     is_sorted_result = IsSortedResult()
     flag = True

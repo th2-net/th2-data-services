@@ -24,7 +24,7 @@ def is_sorted(obj: Iterable, get_timestamp_func: Callable[[Any], Any]) -> IsSort
         get_timestamp_func: This function is responsible for getting the timestamp.
 
     Returns:
-        bool
+        IsSortedResult: Whether stream is sorted and additional info (e.g. index of the first unsorted element).
     """
     is_sorted_result = IsSortedResult()
     flag = True

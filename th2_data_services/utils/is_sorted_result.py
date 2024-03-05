@@ -16,7 +16,8 @@
 class IsSortedResult:
     """IsSortedResult is used by util methods that check whether a sequence of elements is sorted.
 
-    The class provides some attributes that tells its user additional information about the sequence provided.
+    The class provides some attributes that tells its user additional information about the sequence provided,
+    for example: index of the first unsorted element.
     """
 
     def __init__(self, status: bool = True):

@@ -43,6 +43,7 @@ from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 from th2_data_services.config import options as o
 from th2_data_services.utils._json import iter_json_file, iter_json_gzip_file
+from th2_data_services.utils.is_sorted_result import IsSortedResult
 from th2_data_services.utils.stream_utils.stream_utils import is_sorted
 import gzip as gzip_
 
@@ -639,14 +640,14 @@ class Data(Generic[DataIterValues]):
             yield record
             pushed += 1
 
-    def is_sorted(self, get_timestamp_func: Callable[[Any], Any]) -> bool:
+    def is_sorted(self, get_timestamp_func: Callable[[Any], Any]) -> IsSortedResult:
         """Checks whether Data is sorted.
 
         Args:
             get_timestamp_func: This function is responsible for getting the timestamp.
 
         Returns:
-            bool
+            IsSortedResult: Whether data is sorted and additional info (e.g. index of the first unsorted element).
         """
         return is_sorted(self, get_timestamp_func)
 

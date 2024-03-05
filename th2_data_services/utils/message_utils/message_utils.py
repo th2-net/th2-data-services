@@ -400,7 +400,7 @@ def is_sorted(messages: Iterable[Th2Message]) -> IsSortedResult:
         messages (Dict): Th2-Messages
 
     Returns:
-        bool
+        IsSortedResult: Whether messages are sorted and additional info (e.g. index of the first unsorted element).
     """
     is_sorted_result = IsSortedResult()
     flag = True
