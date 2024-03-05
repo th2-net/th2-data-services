@@ -23,7 +23,7 @@ import th2_data_services.utils.display
 import th2_data_services.utils.time
 from th2_data_services.utils._types import Th2Message
 from th2_data_services.utils.converters import flatten_dict
-from th2_data_services.utils.is_sorted_result import IsSortedResult
+from th2_data_services.utils._is_sorted_result import IsSortedResult
 
 
 # DON'T USE `options` like this. By default MESSAGE_FIELDS_RESOLVER.expand_message == None

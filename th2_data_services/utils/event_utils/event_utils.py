@@ -32,7 +32,7 @@ from th2_data_services.utils.event_utils.select import (
     get_children_from_parents_as_list,
     sublist,
 )
-from th2_data_services.utils.is_sorted_result import IsSortedResult
+from th2_data_services.utils._is_sorted_result import IsSortedResult
 
 
 # NOT STREAMING

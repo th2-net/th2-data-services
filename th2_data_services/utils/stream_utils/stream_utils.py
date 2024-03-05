@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from typing import Iterable, Callable, Any
-from th2_data_services.utils.is_sorted_result import IsSortedResult
+from th2_data_services.utils._is_sorted_result import IsSortedResult
 
 
 def is_sorted(obj: Iterable, get_timestamp_func: Callable[[Any], Any]) -> IsSortedResult:
