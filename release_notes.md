@@ -487,6 +487,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 25. [TH2-5053] Added pickle_version to Data.from_cache_file method.
 26. `decode_base64` function added to converter utils.
 27. [TH2-5156] UniversalDatetimeStringConverter and UnixTimestampConverter added.
+28. [TH2-5167] `Data.is_sorted`, `event_utils.is_sorted`, `message_utils.is_sorted` and `stream_utils.is_sorted` methods were added.
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.

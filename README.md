@@ -275,6 +275,9 @@ d1 += d3  # d1 will become Data([1,2,3,7,8,9])
 events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
+# [1.13] Check if Data is sorted.
+is_sorted = events.is_sorted(lambda e: e["startTimestamp"]["epochSecond"])
+
 # [2] Working with converters.
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
 # They all implement same methods from base class.
@@ -446,6 +449,7 @@ for m in data:
 from th2_data_services.utils.event_utils.frequencies import get_category_frequencies2
 from th2_data_services.utils.event_utils.totals import get_category_totals2
 from th2_data_services.utils.category import Category
+from th2_data_services.utils.event_utils.event_utils import is_sorted
 
 # [5.1] Get the quantities of events for different categories.
 metrics = [
@@ -479,6 +483,9 @@ category_frequencies = get_category_frequencies2(events, category)
 | totals |                     |                     |      3 |
 +--------+---------------------+---------------------+--------+
 """
+
+# [5.3] Check if events are sorted.
+result = is_sorted(events)
 ```
 <!-- end get_started_example.py -->
 
