@@ -14,8 +14,7 @@
 
 import copy
 import csv
-import io
-import json
+import orjson as json
 import gc
 import pickle
 import pprint
@@ -1004,23 +1003,41 @@ class Data(Generic[DataIterValues]):
             file.seek(file.tell() - 3)  # Delete last comma for valid JSON
             file.write("]")  # Close list
 
-    def to_jsons(self, filename: str, indent: int = None, overwrite: bool = False, gzip=False):
+    def to_jsons(
+        self,
+        filename: str,
+        indent: int = None,
+        overwrite: bool = False,
+        gzip=False,
+        compresslevel=5,
+    ):
+        """Converts data to jsons format.
+
+        `Jsons format` means every line is a valid json, but the whole file - not.
+
+        Args:
+            filename (str): Output JSON filename.
+            indent (int, optional): DON'T used now.
+            overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
+            gzip: Set to True if you want to compress the file using gzip.
+            compresslevel: gzip compression level.
+
+        Raises:
+            FileExistsError: If file exists and overwrite=False
+        """
         if Path(filename).absolute().exists() and not overwrite:
             raise FileExistsError(
                 f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
             )
 
         if gzip:
-            with gzip_.open(filename, "wb") as f:
-                with io.TextIOWrapper(f, encoding="utf-8") as encode:
-                    for record in self:
-                        json_str = json.dumps(record, indent=indent)
-                        encode.write(json_str + "\n")
+            with gzip_.open(filename, "wb", compresslevel=compresslevel) as f:
+                for record in self:
+                    f.write(json.dumps(record) + b"\n")
         else:
             with open(filename, "w", encoding="UTF-8") as file:
                 for record in self:
-                    json.dump(record, file, indent=indent)
-                    file.write("\n")
+                    file.write((json.dumps(record) + b"\n").decode())
 
 
 def _iter_any_file(filename, mode="r"):

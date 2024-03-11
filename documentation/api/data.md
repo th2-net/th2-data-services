@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2_data_services/data.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L65"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Data`
 A wrapper for data/data_stream. 
@@ -20,7 +20,7 @@ The class provides methods for working with data as a stream.
 
 Such approach to data analysis called streaming transformation. 
 
-<a href="../../th2_data_services/data.py#L74"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L73"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -84,7 +84,7 @@ int: How many records in the Data stream.
 
 ---
 
-<a href="../../th2_data_services/data.py#L753"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L752"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `build_cache`
 
@@ -106,7 +106,7 @@ Important:  If the Data object cache status is True, it'll iterate itself. As a 
 
 ---
 
-<a href="../../th2_data_services/data.py#L790"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L789"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `clear_cache`
 
@@ -120,7 +120,7 @@ This function won't remove external cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L470"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L469"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `filter`
 
@@ -144,7 +144,7 @@ Append `filter` to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L669"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L668"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_by`
 
@@ -171,7 +171,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L848"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L847"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_any_file`
 
@@ -203,7 +203,7 @@ It will just iterate file and return data line be line.
 
 ---
 
-<a href="../../th2_data_services/data.py#L801"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L800"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_cache_file`
 
@@ -233,7 +233,7 @@ Creates Data object from cache file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L870"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L869"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_csv`
 
@@ -279,7 +279,7 @@ It will iterate the CSV file as if you were doing it with CSV module.
 
 ---
 
-<a href="../../th2_data_services/data.py#L824"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L823"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_json`
 
@@ -310,7 +310,7 @@ Creates Data object from json file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L322"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L321"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_cache_filepath`
 
@@ -322,7 +322,7 @@ Returns filepath for a cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L318"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L317"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_pending_cache_filepath`
 
@@ -334,7 +334,7 @@ Returns filepath for a pending cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L643"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L642"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_sorted`
 
@@ -358,7 +358,7 @@ Checks whether Data is sorted.
 
 ---
 
-<a href="../../th2_data_services/data.py#L580"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L579"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `limit`
 
@@ -382,7 +382,7 @@ Limits the stream to `num` entries.
 
 ---
 
-<a href="../../th2_data_services/data.py#L504"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L503"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -406,7 +406,7 @@ Append `transform` function to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L526"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L525"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_stream`
 
@@ -436,7 +436,7 @@ Difference between map and map_stream: 1. map_stream allows you return None valu
 
 ---
 
-<a href="../../th2_data_services/data.py#L620"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L619"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sift`
 
@@ -460,7 +460,7 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L983"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L982"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
@@ -486,21 +486,43 @@ Converts data to json format.
 
 ---
 
-<a href="../../th2_data_services/data.py#L1007"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L1006"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_jsons`
 
 ```python
-to_jsons(filename: str, indent: int = None, overwrite: bool = False, gzip=False)
+to_jsons(
+    filename: str,
+    indent: int = None,
+    overwrite: bool = False,
+    gzip=False,
+    compresslevel=5
+)
 ```
 
+Converts data to jsons format. 
+
+`Jsons format` means every line is a valid json, but the whole file - not. 
 
 
 
+**Args:**
+ 
+ - <b>`filename`</b> (str):  Output JSON filename. 
+ - <b>`indent`</b> (int, optional):  DON'T used now. 
+ - <b>`overwrite`</b> (bool, optional):  Overwrite if filename exists. Defaults to False. 
+ - <b>`gzip`</b>:  Set to True if you want to compress the file using gzip. 
+ - <b>`compresslevel`</b>:  gzip compression level. 
+
+
+
+**Raises:**
+ 
+ - <b>`FileExistsError`</b>:  If file exists and overwrite=False 
 
 ---
 
-<a href="../../th2_data_services/data.py#L934"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L933"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `update_metadata`
 
@@ -534,7 +556,7 @@ Metadata is updated with new values, meaning previous values are kept and added 
 
 ---
 
-<a href="../../th2_data_services/data.py#L654"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L653"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `use_cache`
 
@@ -558,7 +580,7 @@ Changes cache flag and returns self.
 
 ---
 
-<a href="../../th2_data_services/data.py#L695"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L694"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `write_to_file`
 
