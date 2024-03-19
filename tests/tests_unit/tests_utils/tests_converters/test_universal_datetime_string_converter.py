@@ -34,3 +34,10 @@ def test_to_datetime_string(datetime_strings):
         UniversalDatetimeStringConverter.to_datetime_str(datetime_strings.datetime_string)
         == datetime_strings.expected_datestring
     )
+
+
+def test_to_th2_timestamp(datetime_strings):
+    assert (
+        UniversalDatetimeStringConverter.to_th2_timestamp(datetime_strings.datetime_string)
+        == datetime_strings.expected_th2_timestamp
+    )
