@@ -30,7 +30,7 @@ repos:
         args: [ --in-place, --remove-all-unused-imports, --ignore-init-module-imports ]
 
   - repo: https://github.com/pycqa/pydocstyle
-    rev: 6.1.1  # pick a git hash / tag to point to
+    rev: 6.3.0  # pick a git hash / tag to point to
     hooks:
       - id: pydocstyle
         files: th2_data_services

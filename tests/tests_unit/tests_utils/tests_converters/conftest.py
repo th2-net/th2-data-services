@@ -20,6 +20,8 @@ TestCase = namedtuple(
         "expected_us",
         "expected_ms",
         "expected_datestring",
+        "expected_th2_timestamp",
+        "expected_th2_timestamp_datetime",
     ],
 )
 
@@ -95,6 +97,8 @@ seconds = 1646524604
             # expected_datestring --
             #   DatetimeConverter will have '2022-03-05T23:56:44.123456000'
             expected_datestring="2022-03-05T23:56:44.123456789",
+            expected_th2_timestamp={"epochSecond": seconds, "nano": 123_456_789},
+            expected_th2_timestamp_datetime={"epochSecond": seconds, "nano": 123_456_000},
         ),
         # 4
         TestCase(
@@ -110,6 +114,8 @@ seconds = 1646524604
             expected_us=microseconds + 123_000,
             expected_ms=milliseconds + 123,
             expected_datestring="2022-03-05T23:56:44.123000000",
+            expected_th2_timestamp={"epochSecond": seconds, "nano": 123_000_000},
+            expected_th2_timestamp_datetime={"epochSecond": seconds, "nano": 123_000_000},
         ),
         # 5
         TestCase(
@@ -125,6 +131,8 @@ seconds = 1646524604
             expected_us=microseconds + 1_230,
             expected_ms=milliseconds + 1,
             expected_datestring="2022-03-05T23:56:44.001230000",
+            expected_th2_timestamp={"epochSecond": seconds, "nano": 1_230_000},
+            expected_th2_timestamp_datetime={"epochSecond": seconds, "nano": 1_230_000},
         ),
     ]
 )

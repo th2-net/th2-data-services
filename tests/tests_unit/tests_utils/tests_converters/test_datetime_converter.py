@@ -35,3 +35,10 @@ def test_to_datetime_string(datetime_strings):
         DatetimeConverter.to_datetime_str(datetime_strings.datetime_obj)
         == datetime_strings.expected_datestring[:-3] + "000"
     )
+
+
+def test_to_th2_timestamp(datetime_strings):
+    assert (
+        DatetimeConverter.to_th2_timestamp(datetime_strings.datetime_obj)
+        == datetime_strings.expected_th2_timestamp_datetime
+    )

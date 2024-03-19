@@ -143,3 +143,16 @@ class ITimestampConverter(ABC, Generic[TimestampType]):
         seconds, nanoseconds = cls.parse_timestamp(timestamp)
         dt = datetime.utcfromtimestamp(int(seconds))
         return f"{dt.isoformat()}.{nanoseconds}"
+
+    @classmethod
+    def to_th2_timestamp(cls, timestamp: int) -> dict:
+        """Converts timestamp to th2 timestamp.
+
+        Args:
+            timestamp: int object to convert.
+
+        Returns:
+            dict: {"epochSecond": seconds, "nano": nanoseconds}
+        """
+        seconds, nanoseconds = cls.parse_timestamp_int(timestamp)
+        return {"epochSecond": seconds, "nano": nanoseconds}
