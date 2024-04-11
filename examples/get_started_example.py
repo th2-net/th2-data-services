@@ -13,6 +13,7 @@ from th2_data_services.utils.converters import (
     DatetimeConverter,
     DatetimeStringConverter,
     ProtobufTimestampConverter,
+    Th2TimestampConverter,
 )
 
 # [0] Lib configuration
@@ -158,6 +159,9 @@ d1 += d3  # d1 will become Data([1,2,3,7,8,9])
 events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
+# [1.13] Check if Data is sorted.
+is_sorted = events.is_sorted(lambda e: e["startTimestamp"]["epochSecond"])
+
 # [2] Working with converters.
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
 # They all implement same methods from base class.
@@ -287,8 +291,82 @@ parentless_trees: List[EventTree] = etc.get_parentless_trees()
 data_source: IDataSource  # You should init DataSource object. E.g. from LwDP module.
 # ETCDriver here is a stub, actually the lib don't have such class.
 # You can take it in LwDP module or create yourself class if you have some special events structure.
+from th2_data_services.data_source.lwdp.event_tree import HttpETCDriver as ETCDriver
+
 driver = ETCDriver(data_source=data_source)
 etc = ParentEventTreeCollection(driver)
 etc.build(events)
 
 etc.show()
+
+# [4] Field Resolvers
+# Please read `Field Resolvers` block in readme first.
+# [4.1] Usage example from client code
+from th2_data_services.data_source import (
+    lwdp,
+)  # lwdp data_source initialize th2_data_services.config during import.
+from th2_data_services.config import options as o_
+
+for m in data:
+    o_.mfr.expand_message(m)  # mfr - stands for MessageFieldResolver
+    # or
+    o_.emfr.expand_message(m)  # emfr - stands for ExpandedMessageFieldResolver
+
+# [4.2] Libraries usage.
+# Don't import exact resolvers implementation please in your code.
+# Allow your client to do it instead.
+# Just import `options` from `th2_data_services.config` and use it.
+from th2_data_services.config import options as o_
+
+for m in data:
+    o_.mfr.expand_message(m)
+    # or
+    o_.emfr.expand_message(m)
+
+# More tech details:
+#   In this case, there is no line `from th2_data_services.data_source import lwdp `
+#   because we should not choose for the user which data source to use.
+#   We do not know what he will choose, therefore we must simply access
+#   the interface, which will be initialized by the user.
+
+# [5] Using utility functions.
+from th2_data_services.utils.event_utils.frequencies import get_category_frequencies2
+from th2_data_services.utils.event_utils.totals import get_category_totals2
+from th2_data_services.utils.category import Category
+from th2_data_services.utils.event_utils.event_utils import is_sorted
+
+# [5.1] Get the quantities of events for different categories.
+metrics = [
+    Category("date", lambda m: Th2TimestampConverter.to_datetime(m["startTimestamp"]).date()),
+    Category("status", lambda m: m["successful"]),
+]
+category_totals = get_category_totals2(events, metrics)
+"""
++--------+------------+----------+---------+
+|        | date       | status   |   count |
++========+============+==========+=========+
+|        | 2023-01-05 | True     |       3 |
++--------+------------+----------+---------+
+| count  |            |          |       1 |
++--------+------------+----------+---------+
+| totals |            | 1/0      |       3 |
++--------+------------+----------+---------+
+"""
+
+# [5.2] Get the number of events with status successful.
+category = Category("status", lambda m: m["successful"])
+category_frequencies = get_category_frequencies2(events, category)
+"""
++--------+---------------------+---------------------+--------+
+|        | timestamp_start     | timestamp_end       |   True |
++========+=====================+=====================+========+
+|        | 2023-01-05T13:57:05 | 2023-01-05T13:57:06 |      3 |
++--------+---------------------+---------------------+--------+
+| count  |                     |                     |      1 |
++--------+---------------------+---------------------+--------+
+| totals |                     |                     |      3 |
++--------+---------------------+---------------------+--------+
+"""
+
+# [5.3] Check if events are sorted.
+result = is_sorted(events)

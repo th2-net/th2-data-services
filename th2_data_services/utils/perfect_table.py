@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 import re
 from copy import copy
 from operator import itemgetter
@@ -172,7 +173,7 @@ class PerfectTable:
 
             rows = tuple(
                 row for row in reader
-            )  # 'generator' object is not subscriptable  если генератор
+            )  # 'generator' object is not subscriptable  if generator
 
         self._headers = tuple(rows[0])
         self.row_class = self._create_row_class(self.header)

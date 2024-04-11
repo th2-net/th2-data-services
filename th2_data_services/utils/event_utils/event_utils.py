@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 import json
 
 from th2_data_services.utils._types import Th2Event
@@ -31,6 +32,7 @@ from th2_data_services.utils.event_utils.select import (
     get_children_from_parents_as_list,
     sublist,
 )
+from th2_data_services.utils._is_sorted_result import IsSortedResult
 
 
 # NOT STREAMING
@@ -222,3 +224,34 @@ def extract_parent_as_json(
 
     with open(json_file_path, "w") as file:
         json.dump(tree, file, indent=3)
+
+
+def is_sorted(events: Iterable[Th2Event]) -> IsSortedResult:
+    """Checks whether events are sorted.
+
+    Args:
+        events (Dict): Th2-Events
+
+    Returns:
+        IsSortedResult: Whether events are sorted and additional info (e.g. index of the first unsorted element).
+    """
+    is_sorted_result = IsSortedResult()
+    flag = True
+    previous_timestamp = None
+    i = 0
+    for event in events:
+        if flag:
+            previous_timestamp = options.EVENT_FIELDS_RESOLVER.get_start_timestamp(event)
+            flag = False
+        current_timestamp = options.EVENT_FIELDS_RESOLVER.get_start_timestamp(event)
+        if previous_timestamp["epochSecond"] > current_timestamp["epochSecond"] or (
+            previous_timestamp["epochSecond"] == current_timestamp["epochSecond"]
+            and previous_timestamp["nano"] > current_timestamp["nano"]
+        ):
+            is_sorted_result.status = False
+            is_sorted_result.first_unsorted = i
+            break
+        previous_timestamp = current_timestamp
+        i += 1
+
+    return is_sorted_result

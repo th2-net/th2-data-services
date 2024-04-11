@@ -1,4 +1,4 @@
-#  Copyright 2022-2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2022-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,10 +11,10 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 import copy
 import csv
-import io
-import json
+import orjson as json
 import gc
 import pickle
 import pprint
@@ -42,6 +42,8 @@ from typing import TypeVar
 from th2_data_services.interfaces.adapter import IStreamAdapter, IRecordAdapter
 from th2_data_services.config import options as o
 from th2_data_services.utils._json import iter_json_file, iter_json_gzip_file
+from th2_data_services.utils._is_sorted_result import IsSortedResult
+from th2_data_services.utils.stream_utils.stream_utils import is_sorted
 import gzip as gzip_
 
 # LOG import logging
@@ -53,10 +55,11 @@ import gzip as gzip_
 # LOG     def process(self, msg, kwargs):
 # LOG         return "Data[%s] %s" % (self.extra["id"], msg), kwargs
 from th2_data_services.utils.path_utils import check_if_filename_valid, check_if_file_exists
+from deprecated.classic import deprecated
 
 DataIterValues = TypeVar("DataIterValues")
 DataGenerator = Generator[DataIterValues, None, None]
-DataSet = Union[Iterator, Callable[..., DataGenerator], List[Iterator]]
+DataSet = Union[Iterator, Callable[..., DataGenerator], List[Iterable], Iterable]
 WorkFlow = List[Dict[str, Union[Callable, str]]]
 
 
@@ -269,7 +272,7 @@ class Data(Generic[DataIterValues]):
     def _build_workflow(self, workflow):
         """Updates limit callbacks each time when Data object is iterated.
 
-        It used to have possibility iterate the same Data object several times in the loops.
+        It used to have the possibility to iterate the same Data object several times in the loops.
         """
         new_workflow = copy.deepcopy(workflow)
         for w in new_workflow[::-1]:
@@ -475,7 +478,10 @@ class Data(Generic[DataIterValues]):
         """Append `transform` function to workflow.
 
         Args:
-            callback_or_adapter: Transform function or an Adapter with IRecordAdapter interface implementation.
+            callback_or_adapter: Transform function or an Adapter with IRecordAdapter
+                interface implementation.
+                If the function returns None value, this value will be skipped from OUT stream.
+                If you don't want skip None values -- use `map_stream`.
 
         Returns:
             Data: Data object.
@@ -499,8 +505,9 @@ class Data(Generic[DataIterValues]):
 
         Difference between map and map_stream:
         1. map_stream allows you return None values.
-        2. map_stream allows you work with the whole stream but not with only 1 element, so you can implement some buffers inside handler.
-        3. map_stream works slightly efficent (faster on 5-10%).
+        2. map_stream allows you work with the whole stream but not with only 1 element,
+            so you can implement some buffers inside handler.
+        3. map_stream works slightly efficient (faster on 5-10%).
 
         Args:
             adapter_or_generator: StreamAdapter object or generator function.
@@ -631,6 +638,17 @@ class Data(Generic[DataIterValues]):
                 break
             yield record
             pushed += 1
+
+    def is_sorted(self, get_timestamp_func: Callable[[Any], Any]) -> IsSortedResult:
+        """Checks whether Data is sorted.
+
+        Args:
+            get_timestamp_func: This function is responsible for getting the timestamp.
+
+        Returns:
+            IsSortedResult: Whether data is sorted and additional info (e.g. index of the first unsorted element).
+        """
+        return is_sorted(self, get_timestamp_func)
 
     def use_cache(self, status: bool = True) -> "Data":
         """Changes cache flag and returns self.
@@ -804,7 +822,7 @@ class Data(Generic[DataIterValues]):
 
     @classmethod
     def from_json(cls, filename, buffer_limit=250, gzip=False) -> "Data[dict]":
-        """Creates Data object from json file with provided name.
+        """Creates Data object from json-lines file with provided name.
 
         Args:
             filename: Name or path to cache file.
@@ -828,7 +846,7 @@ class Data(Generic[DataIterValues]):
 
     @classmethod
     def from_any_file(cls, filename, mode="r") -> "Data[str]":
-        """Creates Data object from any file with provided name.
+        """Creates a Data object from any file with the provided name.
 
         It will just iterate file and return data line be line.
 
@@ -850,20 +868,32 @@ class Data(Generic[DataIterValues]):
 
     @classmethod
     def from_csv(
-        cls, filename, header=None, header_first_line=False, mode="r", delimiter=","
+        cls,
+        filename: Union[str, Path],
+        header=None,
+        header_first_line=False,
+        mode="r",
+        delimiter=",",
     ) -> "Data":
-        """Creates Data object from any file with provided name.
+        """Creates Data object from CSV file with provided name.
 
         It will iterate the CSV file as if you were doing it with CSV module.
 
         Args:
             filename: Name or path to the file.
             header: If provided header for csv, Data object will yield Dict[str].
-            header_first_line: If the first line of the csv file is header, it'll take header from
-                                the first line. Data object will yield Dict[str].
-                                `header` argument is not required in this case.
+                Note, if your first line is header in csv, it also will be yielded.
+            header_first_line: If the first line of the csv file is header,
+                it'll take header from the first line. Data object will yield
+                Dict[str]. `header` argument is not required in this case.
+                First line of the CSV file will be skipped (header line).
             mode: Read mode of open function.
             delimiter: CSV file delimiter.
+
+        Note:
+            If `header` provided and `header_first_line == True`,
+            Data object will yield Dict[str] where key names (columns) as
+            described in the `header`. First line of the CSV file will be skipped.
 
         Returns:
             Data: Data object.
@@ -941,13 +971,17 @@ class Data(Generic[DataIterValues]):
 
         return self
 
-    def to_json(self, filename: str, indent: int = None, overwrite: bool = False):
-        """Converts data to json format.
+    def to_json(self, filename: Union[str, Path], indent: int = None, overwrite: bool = False):
+        """Converts data to valid json format.
 
         Args:
             filename (str): Output JSON filename
             indent (int, optional): JSON format indent. Defaults to None.
             overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
+
+        NOTE:
+            Data object can iterate not only dicts. So not every data can be
+            saved as json.
 
         Raises:
             FileExistsError: If file exists and overwrite=False
@@ -960,31 +994,82 @@ class Data(Generic[DataIterValues]):
         with open(filename, "w", encoding="UTF-8") as file:
             file.write("[")  # Start list
             for record in self:
+                # TODO
+                (json.dumps(record) + b"\n").decode()
                 json.dump(record, file, indent=indent)
                 file.write(",\n")
             file.seek(file.tell() - 3)  # Delete last comma for valid JSON
             file.write("]")  # Close list
 
-    def to_jsons(self, filename: str, indent: int = None, overwrite: bool = False, gzip=False):
+    @deprecated(
+        reason="Use `to_json_lines` instead. " "`to_jsons` will be removed on 2.0.0 release."
+    )
+    def to_jsons(
+        self,
+        filename: Union[str, Path],
+        indent: int = None,
+        overwrite: bool = False,
+        gzip=False,
+        compresslevel=5,
+    ):
+        """[DEPRECATED] Converts data to json lines.
+
+        Every line is a valid json, but the whole file - not.
+
+        Args:
+            filename (str): Output JSON filename.
+            indent (int, optional): DON'T used now.
+            overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
+            gzip: Set to True if you want to compress the file using gzip.
+            compresslevel: gzip compression level.
+
+        Raises:
+            FileExistsError: If file exists and overwrite=False
+        """
+        return self.to_json_lines(filename, indent, overwrite, gzip, compresslevel)
+
+    def to_json_lines(
+        self,
+        filename: Union[str, Path],
+        indent: int = None,
+        overwrite: bool = False,
+        gzip: bool = False,
+        compresslevel: int = 5,
+    ):
+        """Converts Data to json lines.
+
+        Every line is a valid json, but the whole file - not.
+
+        Args:
+            filename (str): Output JSON filename.
+            indent (int, optional): DON'T used now.
+            overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
+            gzip: Set to True if you want to compress the file using gzip.
+            compresslevel: gzip compression level.
+
+        NOTE:
+            Data object can iterate not only dicts. So not every data can be
+            saved as json.
+
+        Raises:
+            FileExistsError: If file exists and overwrite=False
+        """
         if Path(filename).absolute().exists() and not overwrite:
             raise FileExistsError(
                 f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
             )
 
         if gzip:
-            with gzip_.open(filename, "wb") as f:
-                with io.TextIOWrapper(f, encoding="utf-8") as encode:
-                    for record in self:
-                        json_str = json.dumps(record, indent=indent)
-                        encode.write(json_str + "\n")
+            with gzip_.open(filename, "wb", compresslevel=compresslevel) as f:
+                for record in self:
+                    f.write(json.dumps(record) + b"\n")
         else:
             with open(filename, "w", encoding="UTF-8") as file:
                 for record in self:
-                    json.dump(record, file, indent=indent)
-                    file.write("\n")
+                    file.write((json.dumps(record) + b"\n").decode())
 
 
-def _iter_any_file(filename, mode="r"):
+def _iter_any_file(filename: Union[str, Path], mode="r"):
     """Returns the function that returns generators."""
 
     def iter_any_file_logic():
@@ -1007,15 +1092,20 @@ def _iter_any_file(filename, mode="r"):
     return iter_any_file_wrapper
 
 
-def _iter_csv(filename, header=None, header_first_line=False, mode="r", delimiter=","):
+def _iter_csv(
+    filename: Union[str, Path], header=None, header_first_line=False, mode="r", delimiter=","
+):
     """Returns the function that returns generators."""
 
     def iter_logic():
         with open(filename, mode) as data:
-            if header is not None:
-                reader = csv.DictReader(data, fieldnames=header)
+            if header is not None and header_first_line:
+                reader = csv.DictReader(data, fieldnames=header, delimiter=delimiter)
+                next(reader)  # Skip first line with header.
+            elif header is not None:
+                reader = csv.DictReader(data, fieldnames=header, delimiter=delimiter)
             elif header_first_line:
-                reader = csv.DictReader(data)
+                reader = csv.DictReader(data, delimiter=delimiter)
             else:
                 reader = csv.reader(data, delimiter=delimiter)
 

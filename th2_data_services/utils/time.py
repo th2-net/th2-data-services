@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,24 +11,18 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from datetime import datetime, timezone
 from functools import wraps, partial
-from typing import Dict, Union
+from typing import Dict, Union, Callable
 from deprecated.classic import deprecated
 import time as time_
+from th2_data_services.utils.converters import Th2TimestampConverter
 
 
 def extract_timestamp(timestamp_element: Dict) -> str:
-    """Extracts timestamp from argument.
-
-    Args:
-        timestamp_element:
-
-    Returns:
-        str representation of th2-timestamp(protobuf) e.g. 2023-03-09T05:37:53.263895000
-    """
-    timestamp = datetime.fromtimestamp(timestamp_element["epochSecond"])
-    return f"{timestamp.isoformat()}.{str(timestamp_element['nano']).zfill(9)}"
+    """Returns datetime string in the format: 2023-10-02T10:47:20.413072000."""
+    return Th2TimestampConverter.to_datetime_str(timestamp_element)
 
 
 @deprecated("Use `extract_timestamp` instead")
@@ -50,10 +44,13 @@ def time_interval_filter_seconds_precision(
 ) -> bool:
     """Returns if th2-timestamp within time range.
 
+    Please note:
+        It takes SECONDS only!
+
     Args:
-        timestamp_element: Timestamp element
-        start_timestamp: Start timestamp
-        end_timestamp: End timestamp
+        timestamp_element: ProtobufTimestamp dict.
+        start_timestamp: Start timestamp in `unix time` format.
+        end_timestamp: End timestamp in `unix time` format.
 
     Returns:
         bool
@@ -61,38 +58,49 @@ def time_interval_filter_seconds_precision(
     return start_timestamp <= timestamp_element["epochSecond"] <= end_timestamp
 
 
-def timestamp_delta_us(start_timestamp: Dict, end_timestamp: Dict) -> float:
-    """Returns timestamp delta in milliseconds.
+def timestamp_delta_us(start_timestamp: Dict, end_timestamp: Dict) -> int:
+    """Returns timestamp delta in microseconds.
 
     Args:
         start_timestamp: Start timestamp
         end_timestamp: End timestamp
 
     Returns:
-        float
+        int
     """
-    seconds_delta = (end_timestamp["epochSecond"] - start_timestamp["epochSecond"]) * 1000000
-    nano_delta = (end_timestamp["nano"] - start_timestamp["nano"]) / 1000
+    st_seconds, st_nanoseconds = Th2TimestampConverter.parse_timestamp_int(start_timestamp)
+    et_seconds, et_nanoseconds = Th2TimestampConverter.parse_timestamp_int(end_timestamp)
+
+    seconds_delta = (et_seconds - st_seconds) * 1000000
+    nano_delta = (et_nanoseconds - st_nanoseconds) / 1000
     return seconds_delta + nano_delta
 
 
 # TODO - looks ok, but we need to think about unified timestamps
 def time_slice_object_filter(
-    timestamp_field: Dict, timestamp_iso: str, duration_seconds: int
-):  # noqa
-    """Filter elements that from time moment  A to  A+duration_seconds.
+    timestamp_field: str, start_timestamp_iso: str, duration_seconds: int
+) -> Callable:  # noqa
+    """Filter elements that from time moment `A` to `A+duration_seconds`.
 
     Args:
-        timestamp_field:
-        timestamp_iso:
-        duration_seconds:
+        timestamp_field: expects the field name that contains ProtobufTimestamp
+            It usually 'timestamp' field.
+        start_timestamp_iso: string in the ISO 8601 format.
+            Example: 2009-05-28T16:15:00 or 2021-12-25
+            Note: It cannot take strings with `Z` in the end.
+        duration_seconds: seconds.
 
     Returns:
-
+        Filter function.
     """
-    ts1 = datetime.fromisoformat(timestamp_iso).timestamp()
+    ts1 = datetime.fromisoformat(start_timestamp_iso).timestamp()
     ts2 = ts1 + duration_seconds
 
+    # FIXME
+    #   time_interval_filter_seconds_precision require ProtobufTimestamp var as
+    #   a first argument now.
+    #
+    #   TODO - We should do our methods universal!
     return lambda obj: time_interval_filter_seconds_precision(obj[timestamp_field], ts1, ts2)
 
 

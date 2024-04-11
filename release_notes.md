@@ -440,13 +440,13 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 7. [I] Data iteration logic is changed.\
    Why? Current behavior causes problems in some cases. E.g. when we don't want to iterate objects inside the DataSet.
    
-   - [I.1]  Lists and tuples used in building Data objects are treated as single item and items inside them aren't iterated anymore.\
+   [I.1]  Lists and tuples used in building Data objects are treated as single item and items inside them aren't iterated anymore.\
    [M.1] Update Data objects initialized with lists or tuples.
 
-   - [I.2] Change in iteration logic also changed how `map` function behaves. If `map` function returns lists or tuples their content won't be iterated anymore.\
+   [I.2] Change in iteration logic also changed how `map` function behaves. If `map` function returns lists or tuples their content won't be iterated anymore.\
    [M.2] If you are interest previous `map` function behavior, just update `map` to `map_yield`.
 
-   - [I.3] Data object will not iterate over contents of its stream if any of the items are iterables (but not Data object).\
+   [I.3] Data object will not iterate over contents of its stream if any of the items are iterables (but not Data object).\
        It means that Data object will not iterate lists and tuples inside the provided DataSet and will return they as is.\
        Only exception will be if all of the items are Data objects themselves.\
    [M.3] Update nested lists in Data  object initializations to either Data objects or switch to using addition operator.\
@@ -505,12 +505,17 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    (file where every line is separate json-format line. That's not valid json format.)
 24. [TH2-5049] Added ExpandedMessageFieldResolver
 25. [TH2-5053] Added pickle_version to Data.from_cache_file method.
-26. [TH2-5081] Added map_yield function, that should behave similar to old map method.
+26. `decode_base64` function added to converter utils.
+27. [TH2-5156] UniversalDatetimeStringConverter and UnixTimestampConverter added.
+28. [TH2-5167] `Data.is_sorted`, `event_utils.is_sorted`, `message_utils.is_sorted` and `stream_utils.is_sorted` methods were added.
+29. [TH2-5176] `to_th2_timestamp` method was added for converters.
+30. [TH2-5081] Added map_yield function, that should behave similar to old map method.
 
 ## BugFixes
 1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
 2. [TH2-4917] Readme duplicates removed.
-3. [TH2-5081] Fixed iteration bug for case where Data object was made using lists and tuple.
+3. [TH2-5083] Fixed comparison line formatting. Every event in block isn't formatted as failed now if parent is failed.
+4. [TH2-5081] Fixed iteration bug for case where Data object was made using lists and tuple.
 
 ## Improvements
 1. Added vulnerabilities scanning
@@ -518,3 +523,4 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 3. [TH2-4775] Speed up `Data.build_cache` by disabling garbage collection at the time of storing pickle file.
 4. [TH2-4901] Added gap_mode and zero_anchor parameters for message and event utils get_category_frequencies methods. [See doc](documentation/frequencies.md)
 5. [TH2-5048] - Added typing hints for resolver methods
+6. [TH2-5172] Add faster implementations of following ProtobufTimestampConverter functions: to_microseconds, to_milliseconds, to_nanoseconds.

@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from typing import Dict
 
 
@@ -18,15 +19,13 @@ def format_comparison_line(field: Dict, failed_collection: bool = False) -> str:
     # TODO: Add docstrings
     key_piece = "!" if field["key"] else " "
     status_piece = "? "
-    if failed_collection:
-        status_piece = "# "
-        expected_piece = f" [{field['expected']}]" if "expected" in field else " [no_group]"
-        actual_piece = field["actual"] if "actual" in field else "no_group"
-    else:
-        if "status" in field:
-            status_piece = "# " if field["status"] == "FAILED" else "  "
-        expected_piece = f" [{field['expected']}]" if "expected" in field else " [no_val]"
-        actual_piece = field["actual"] if "actual" in field else "no_val"
+    no_val_or_no_group = "no_group" if failed_collection else "no_val"
+    if "status" in field:
+        status_piece = "# " if field["status"] == "FAILED" else "  "
+    expected_piece = (
+        f" [{field['expected']}]" if "expected" in field else f" [{no_val_or_no_group}]"
+    )
+    actual_piece = field["actual"] if "actual" in field else no_val_or_no_group
     return key_piece + status_piece + actual_piece + expected_piece
 
 

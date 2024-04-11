@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from typing import Callable, Dict, Iterable, List
 from collections import defaultdict
 
@@ -108,7 +109,7 @@ def get_category_totals(
     return CategoryTotal(event_categories)
 
 
-# TODO - it will be renamed to get_category_totals
+# TODO - it will be renamed to get_category_totals before release
 def get_category_totals2(
     events: Iterable[Th2Event],
     categories: List[Category],
@@ -141,10 +142,10 @@ def get_category_totals2(
     return tct
 
 
-# USEFUL
-# STREAMING
-# TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
 def get_attached_messages_totals(events: Iterable[Th2Event]) -> CategoryTotal:
+    # USEFUL
+    # STREAMING
+    # TODO - NOT-READY -- event["attachedMessageIds"] should be updated by resolver
     """Returns dictionary quantities of messages attached to events for each stream.
 
     Args:
@@ -167,13 +168,13 @@ def get_attached_messages_totals(events: Iterable[Th2Event]) -> CategoryTotal:
     return CategoryTotal(streams)
 
 
-# TODO - USEFULL ??? Do we need ignore status??
-# partly the same as get_category_totals and WO ignore status
-# Because it's the same we can you get_category_totals inside
-#
-# STREAMING
-# TODO - NOT-READY -- event["successful"] should be updated by resolver
 def get_type_totals(events: Iterable[Th2Event]) -> CategoryTotal:
+    # TODO - USEFULL ??? Do we need ignore status??
+    # partly the same as get_category_totals and WO ignore status
+    # Because it's the same we can you get_category_totals inside
+    #
+    # STREAMING
+    # TODO - NOT-READY -- event["successful"] should be updated by resolver
     """Returns dictionary quantities of events for different event types.
 
     Args:

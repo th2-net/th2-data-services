@@ -93,6 +93,7 @@ pip install th2-data-services[dependency_name]
 |:-----------------:|---------------------------------------|
 |       lwdp        | latest version of lwdp                |
 |       lwdp2       | latest version of lwdp v2             |
+|       lwdp3       | latest version of lwdp v3             |
 | utils-rpt-viewer  | latest version of utils-rpt-viewer    |
 | utils-rpt-viewer5 | latest version of utils-rpt-viewer v5 |
 |   utils-advanced  | latest version of ds-utils            |
@@ -128,6 +129,7 @@ from th2_data_services.utils.converters import (
     DatetimeConverter,
     DatetimeStringConverter,
     ProtobufTimestampConverter,
+    Th2TimestampConverter,
 )
 
 # [0] Lib configuration
@@ -263,6 +265,8 @@ d3 = Data([7, 8, 9])
 # Please note, new Data object will have cache status == False.
 data_via_init = Data([d1, d2, d3])
 data_via_add = d1 + d2 + d3
+data_with_non_data_obj_via_init = Data([d1, ["a", {"id": 123}, "c"], d3])
+data_with_non_data_obj_via_add = d1 + ["a", {"id": 123}, "c"] + d3
 # You can join current Data object on place using +=.
 # It will keep cache status.
 d1 += d3  # d1 will become Data([1,2,3,7,8,9])
@@ -270,6 +274,9 @@ d1 += d3  # d1 will become Data([1,2,3,7,8,9])
 # [1.12] Build and read Data object cache files.
 events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
+
+# [1.13] Check if Data is sorted.
+is_sorted = events.is_sorted(lambda e: e["startTimestamp"]["epochSecond"])
 
 # [2] Working with converters.
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
@@ -400,11 +407,85 @@ parentless_trees: List[EventTree] = etc.get_parentless_trees()
 data_source: IDataSource  # You should init DataSource object. E.g. from LwDP module.
 # ETCDriver here is a stub, actually the lib don't have such class.
 # You can take it in LwDP module or create yourself class if you have some special events structure.
+from th2_data_services.data_source.lwdp.event_tree import HttpETCDriver as ETCDriver
+
 driver = ETCDriver(data_source=data_source)
 etc = ParentEventTreeCollection(driver)
 etc.build(events)
 
 etc.show()
+
+# [4] Field Resolvers
+# Please read `Field Resolvers` block in readme first.
+# [4.1] Usage example from client code
+from th2_data_services.data_source import (
+    lwdp,
+)  # lwdp data_source initialize th2_data_services.config during import.
+from th2_data_services.config import options as o_
+
+for m in data:
+    o_.mfr.expand_message(m)  # mfr - stands for MessageFieldResolver
+    # or
+    o_.emfr.expand_message(m)  # emfr - stands for ExpandedMessageFieldResolver
+
+# [4.2] Libraries usage.
+# Don't import exact resolvers implementation please in your code.
+# Allow your client to do it instead.
+# Just import `options` from `th2_data_services.config` and use it.
+from th2_data_services.config import options as o_
+
+for m in data:
+    o_.mfr.expand_message(m)
+    # or
+    o_.emfr.expand_message(m)
+
+# More tech details:
+#   In this case, there is no line `from th2_data_services.data_source import lwdp `
+#   because we should not choose for the user which data source to use.
+#   We do not know what he will choose, therefore we must simply access
+#   the interface, which will be initialized by the user.
+
+# [5] Using utility functions.
+from th2_data_services.utils.event_utils.frequencies import get_category_frequencies2
+from th2_data_services.utils.event_utils.totals import get_category_totals2
+from th2_data_services.utils.category import Category
+from th2_data_services.utils.event_utils.event_utils import is_sorted
+
+# [5.1] Get the quantities of events for different categories.
+metrics = [
+    Category("date", lambda m: Th2TimestampConverter.to_datetime(m["startTimestamp"]).date()),
+    Category("status", lambda m: m["successful"]),
+]
+category_totals = get_category_totals2(events, metrics)
+"""
++--------+------------+----------+---------+
+|        | date       | status   |   count |
++========+============+==========+=========+
+|        | 2023-01-05 | True     |       3 |
++--------+------------+----------+---------+
+| count  |            |          |       1 |
++--------+------------+----------+---------+
+| totals |            | 1/0      |       3 |
++--------+------------+----------+---------+
+"""
+
+# [5.2] Get the number of events with status successful.
+category = Category("status", lambda m: m["successful"])
+category_frequencies = get_category_frequencies2(events, category)
+"""
++--------+---------------------+---------------------+--------+
+|        | timestamp_start     | timestamp_end       |   True |
++========+=====================+=====================+========+
+|        | 2023-01-05T13:57:05 | 2023-01-05T13:57:06 |      3 |
++--------+---------------------+---------------------+--------+
+| count  |                     |                     |      1 |
++--------+---------------------+---------------------+--------+
+| totals |                     |                     |      3 |
++--------+---------------------+---------------------+--------+
+"""
+
+# [5.3] Check if events are sorted.
+result = is_sorted(events)
 ```
 <!-- end get_started_example.py -->
 
@@ -582,9 +663,12 @@ can have another names (it resolves in the driver).
 * If you want to know that specified event exists, use the python `in` keyword (e.g. `'event-id' in events_tree`).
 * Use the python `len` keyword to get events number in the tree.
 
-### FieldsResolver
+### Field Resolvers
+Interface can be found in `th2_data_services/interfaces/utils/resolver.py`.  
+All data-sources should implement them.
+
 The idea of using resolvers:
-It solves the problem of having a few DataSources with the same data,
+It solves the problem of having a few DataSources with similar data,
 but with different ways to get it.
 
 These classes provide you getter methods.
@@ -596,13 +680,18 @@ Resolvers solve the problem of data-format migration.
 - fields names can be changed
 
 Resolvers can work only with one event/message.
-It means, if your message has sub-messages it won't work, because resolver will not
-know with which sub-message should it work.
+It means, if your message has sub-messages (like th2-messages in lwdp) it 
+won't work, because resolver will not know with which sub-message should it work. 
 
-Implementation advice:
+**Workaround**  
+1. Expand all your messages -> `new_d = your_data.map(MessageFieldResolver.expand_message)`
+2. Use `ExpandedMessageFieldResolver` instead of usual `MessageFieldResolver` when 
+    you take fields for expanded messages.
+
+**Implementation advice:**
 1. raise NotImplementedError -- if your Implementation doesn't support this getter.
 
-Performance impact:
+**Performance impact:**
 - It a bit slower than using naked field access `dict['key']`.
 
 ## 2.4. Links

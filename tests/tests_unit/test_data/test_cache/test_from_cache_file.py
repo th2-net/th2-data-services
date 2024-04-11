@@ -18,6 +18,11 @@ def test_from_cache_file(general_data: List[dict], cache_file):
     assert list(data) == general_data
 
 
+# def test_from_cache_file_windows_path():
+#     # https://exactpro.atlassian.net/browse/TH2-5085
+#     data = Data.from_cache_file("abc:20:20.pickle")
+
+
 def test_from_cache_file_non_exist_file(general_data: List[dict]):
     """Check that the lib will raise exception."""
     cache_file = Path().cwd() / "tests/non_exist_file"

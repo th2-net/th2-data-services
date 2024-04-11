@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,11 +11,13 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from typing import Generator
 import gzip
 
 import orjson as json
 from orjson import JSONDecodeError
+from th2_data_services.utils.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 
 def iter_json_file(filename, buffer_limit=250):
@@ -56,7 +58,7 @@ def iter_json_gzip_file(filename, buffer_limit=250):
         with gzip.open(filename, "r") as data:
             while True:
                 try:
-                    v = data.readline().decode("ascii")
+                    v = data.readline().decode("utf-8", UNICODE_REPLACE_HANDLER)
                     if not v:
                         break
 

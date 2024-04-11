@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2_data_services/data.py#L63"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Data`
 A wrapper for data/data_stream. 
@@ -20,13 +20,13 @@ The class provides methods for working with data as a stream.
 
 Such approach to data analysis called streaming transformation. 
 
-<a href="../../th2_data_services/data.py#L71"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L74"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
 __init__(
-    data: Optional[Iterator, Callable[, Generator[~DataIterValues, NoneType]], List[Iterator]],
+    data: Optional[Iterator, Callable[, Generator[~DataIterValues, NoneType]], List[Iterable], Iterable],
     cache: bool = False,
     workflow: List[Dict[str, Union[Callable, str]]] = None,
     pickle_version: int = 4
@@ -84,7 +84,7 @@ int: How many records in the Data stream.
 
 ---
 
-<a href="../../th2_data_services/data.py#L734"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L752"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `build_cache`
 
@@ -106,7 +106,7 @@ Important:  If the Data object cache status is True, it'll iterate itself. As a 
 
 ---
 
-<a href="../../th2_data_services/data.py#L771"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L789"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `clear_cache`
 
@@ -120,7 +120,7 @@ This function won't remove external cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L440"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L443"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `filter`
 
@@ -144,7 +144,7 @@ Append `filter` to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L650"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L668"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `find_by`
 
@@ -171,7 +171,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L829"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L847"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_any_file`
 
@@ -179,7 +179,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 from_any_file(filename, mode='r') → Data[str]
 ```
 
-Creates Data object from any file with provided name. 
+Creates a Data object from any file with the provided name. 
 
 It will just iterate file and return data line be line. 
 
@@ -203,7 +203,7 @@ It will just iterate file and return data line be line.
 
 ---
 
-<a href="../../th2_data_services/data.py#L782"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L800"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_cache_file`
 
@@ -233,13 +233,13 @@ Creates Data object from cache file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L851"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L869"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_csv`
 
 ```python
 from_csv(
-    filename,
+    filename: Union[str, Path],
     header=None,
     header_first_line=False,
     mode='r',
@@ -247,7 +247,7 @@ from_csv(
 ) → Data
 ```
 
-Creates Data object from any file with provided name. 
+Creates Data object from CSV file with provided name. 
 
 It will iterate the CSV file as if you were doing it with CSV module. 
 
@@ -256,12 +256,17 @@ It will iterate the CSV file as if you were doing it with CSV module.
 **Args:**
  
  - <b>`filename`</b>:  Name or path to the file. 
- - <b>`header`</b>:  If provided header for csv, Data object will yield Dict[str]. 
- - <b>`header_first_line`</b>:  If the first line of the csv file is header, it'll take header from  the first line. Data object will yield Dict[str].  `header` argument is not required in this case. 
+ - <b>`header`</b>:  If provided header for csv, Data object will yield Dict[str].  Note, if your first line is header in csv, it also will be yielded. 
+ - <b>`header_first_line`</b>:  If the first line of the csv file is header,  it'll take header from the first line. Data object will yield  Dict[str]. `header` argument is not required in this case.  First line of the CSV file will be skipped (header line). 
  - <b>`mode`</b>:  Read mode of open function. 
  - <b>`delimiter`</b>:  CSV file delimiter. 
 
 
+
+**Note:**
+
+> If `header` provided and `header_first_line == True`, Data object will yield Dict[str] where key names (columns) as described in the `header`. First line of the CSV file will be skipped. 
+>
 
 **Returns:**
  
@@ -274,7 +279,7 @@ It will iterate the CSV file as if you were doing it with CSV module.
 
 ---
 
-<a href="../../th2_data_services/data.py#L805"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L823"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_json`
 
@@ -282,7 +287,7 @@ It will iterate the CSV file as if you were doing it with CSV module.
 from_json(filename, buffer_limit=250, gzip=False) → Data[dict]
 ```
 
-Creates Data object from json file with provided name. 
+Creates Data object from json-lines file with provided name. 
 
 
 
@@ -305,7 +310,7 @@ Creates Data object from json file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L318"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L321"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_cache_filepath`
 
@@ -317,7 +322,7 @@ Returns filepath for a cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L314"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L317"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_pending_cache_filepath`
 
@@ -329,7 +334,31 @@ Returns filepath for a pending cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L572"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L642"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `is_sorted`
+
+```python
+is_sorted(get_timestamp_func: Callable[[Any], Any]) → IsSortedResult
+```
+
+Checks whether Data is sorted. 
+
+
+
+**Args:**
+ 
+ - <b>`get_timestamp_func`</b>:  This function is responsible for getting the timestamp. 
+
+
+
+**Returns:**
+ 
+ - <b>`IsSortedResult`</b>:  Whether data is sorted and additional info (e.g. index of the first unsorted element). 
+
+---
+
+<a href="../../th2_data_services/data.py#L579"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `limit`
 
@@ -353,7 +382,7 @@ Limits the stream to `num` entries.
 
 ---
 
-<a href="../../th2_data_services/data.py#L474"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L477"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -367,7 +396,7 @@ Append `transform` function to workflow.
 
 **Args:**
  
- - <b>`callback_or_adapter`</b>:  Transform function or an Adapter with IRecordAdapter interface implementation. 
+ - <b>`callback_or_adapter`</b>:  Transform function or an Adapter with IRecordAdapter  interface implementation.  If the function returns None value, this value will be skipped from OUT stream.  If you don't want skip None values -- use `map_stream`. 
 
 
 
@@ -377,7 +406,7 @@ Append `transform` function to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L493"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L499"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_stream`
 
@@ -391,7 +420,7 @@ Append `stream-transform` function to workflow.
 
 If StreamAdapter is passed StreamAdapter.handle method will be used as a map function. 
 
-Difference between map and map_stream: 1. map_stream allows you return None values. 2. map_stream allows you work with the whole stream but not with only 1 element, so you can implement some buffers inside handler. 3. map_stream works slightly efficent (faster on 5-10%). 
+Difference between map and map_stream: 1. map_stream allows you return None values. 2. map_stream allows you work with the whole stream but not with only 1 element,  so you can implement some buffers inside handler. 3. map_stream works slightly efficient (faster on 5-10%). 
 
 
 
@@ -407,7 +436,7 @@ Difference between map and map_stream: 1. map_stream allows you return None valu
 
 ---
 
-<a href="../../th2_data_services/data.py#L530"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L537"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_yield`
 
@@ -433,7 +462,7 @@ Differences between map and map yield: 1. map_yield is a wrapper function using 
 
 ---
 
-<a href="../../th2_data_services/data.py#L612"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L619"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `sift`
 
@@ -457,15 +486,15 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L944"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L974"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
 ```python
-to_json(filename: str, indent: int = None, overwrite: bool = False)
+to_json(filename: Union[str, Path], indent: int = None, overwrite: bool = False)
 ```
 
-Converts data to json format. 
+Converts data to valid json format. 
 
 
 
@@ -477,27 +506,95 @@ Converts data to json format.
 
 
 
+**NOTE:**
+
+> Data object can iterate not only dicts. So not every data can be saved as json. 
+>
+
 **Raises:**
  
  - <b>`FileExistsError`</b>:  If file exists and overwrite=False 
 
 ---
 
-<a href="../../th2_data_services/data.py#L968"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L1031"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `to_json_lines`
+
+```python
+to_json_lines(
+    filename: Union[str, Path],
+    indent: int = None,
+    overwrite: bool = False,
+    gzip: bool = False,
+    compresslevel: int = 5
+)
+```
+
+Converts Data to json lines. 
+
+Every line is a valid json, but the whole file - not. 
+
+
+
+**Args:**
+ 
+ - <b>`filename`</b> (str):  Output JSON filename. 
+ - <b>`indent`</b> (int, optional):  DON'T used now. 
+ - <b>`overwrite`</b> (bool, optional):  Overwrite if filename exists. Defaults to False. 
+ - <b>`gzip`</b>:  Set to True if you want to compress the file using gzip. 
+ - <b>`compresslevel`</b>:  gzip compression level. 
+
+
+
+**NOTE:**
+
+> Data object can iterate not only dicts. So not every data can be saved as json. 
+>
+
+**Raises:**
+ 
+ - <b>`FileExistsError`</b>:  If file exists and overwrite=False 
+
+---
+
+<a href="../../th2_data_services/data.py#L1004"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_jsons`
 
 ```python
-to_jsons(filename: str, indent: int = None, overwrite: bool = False, gzip=False)
+to_jsons(
+    filename: Union[str, Path],
+    indent: int = None,
+    overwrite: bool = False,
+    gzip=False,
+    compresslevel=5
+)
 ```
 
+[DEPRECATED] Converts data to json lines. 
+
+Every line is a valid json, but the whole file - not. 
 
 
 
+**Args:**
+ 
+ - <b>`filename`</b> (str):  Output JSON filename. 
+ - <b>`indent`</b> (int, optional):  DON'T used now. 
+ - <b>`overwrite`</b> (bool, optional):  Overwrite if filename exists. Defaults to False. 
+ - <b>`gzip`</b>:  Set to True if you want to compress the file using gzip. 
+ - <b>`compresslevel`</b>:  gzip compression level. 
+
+
+
+**Raises:**
+ 
+ - <b>`FileExistsError`</b>:  If file exists and overwrite=False 
 
 ---
 
-<a href="../../th2_data_services/data.py#L895"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L925"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `update_metadata`
 
@@ -531,7 +628,7 @@ Metadata is updated with new values, meaning previous values are kept and added 
 
 ---
 
-<a href="../../th2_data_services/data.py#L635"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L653"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `use_cache`
 
@@ -555,7 +652,7 @@ Changes cache flag and returns self.
 
 ---
 
-<a href="../../th2_data_services/data.py#L676"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L694"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `write_to_file`
 
