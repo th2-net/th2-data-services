@@ -55,6 +55,7 @@ import gzip as gzip_
 # LOG     def process(self, msg, kwargs):
 # LOG         return "Data[%s] %s" % (self.extra["id"], msg), kwargs
 from th2_data_services.utils.path_utils import check_if_filename_valid, check_if_file_exists
+from deprecated.classic import deprecated
 
 DataIterValues = TypeVar("DataIterValues")
 DataGenerator = Generator[DataIterValues, None, None]
@@ -272,7 +273,7 @@ class Data(Generic[DataIterValues]):
     def _build_workflow(self, workflow):
         """Updates limit callbacks each time when Data object is iterated.
 
-        It used to have possibility iterate the same Data object several times in the loops.
+        It used to have the possibility to iterate the same Data object several times in the loops.
         """
         new_workflow = copy.deepcopy(workflow)
         for w in new_workflow[::-1]:
@@ -822,7 +823,7 @@ class Data(Generic[DataIterValues]):
 
     @classmethod
     def from_json(cls, filename, buffer_limit=250, gzip=False) -> "Data[dict]":
-        """Creates Data object from json file with provided name.
+        """Creates Data object from json-lines file with provided name.
 
         Args:
             filename: Name or path to cache file.
@@ -846,7 +847,7 @@ class Data(Generic[DataIterValues]):
 
     @classmethod
     def from_any_file(cls, filename, mode="r") -> "Data[str]":
-        """Creates Data object from any file with provided name.
+        """Creates a Data object from any file with the provided name.
 
         It will just iterate file and return data line be line.
 
@@ -868,7 +869,12 @@ class Data(Generic[DataIterValues]):
 
     @classmethod
     def from_csv(
-        cls, filename, header=None, header_first_line=False, mode="r", delimiter=","
+        cls,
+        filename: Union[str, Path],
+        header=None,
+        header_first_line=False,
+        mode="r",
+        delimiter=",",
     ) -> "Data":
         """Creates Data object from CSV file with provided name.
 
@@ -979,13 +985,17 @@ class Data(Generic[DataIterValues]):
 
         return self
 
-    def to_json(self, filename: str, indent: int = None, overwrite: bool = False):
-        """Converts data to json format.
+    def to_json(self, filename: Union[str, Path], indent: int = None, overwrite: bool = False):
+        """Converts data to valid json format.
 
         Args:
             filename (str): Output JSON filename
             indent (int, optional): JSON format indent. Defaults to None.
             overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
+
+        NOTE:
+            Data object can iterate not only dicts. So not every data can be
+            saved as json.
 
         Raises:
             FileExistsError: If file exists and overwrite=False
@@ -998,22 +1008,27 @@ class Data(Generic[DataIterValues]):
         with open(filename, "w", encoding="UTF-8") as file:
             file.write("[")  # Start list
             for record in self:
+                # TODO
+                (json.dumps(record) + b"\n").decode()
                 json.dump(record, file, indent=indent)
                 file.write(",\n")
             file.seek(file.tell() - 3)  # Delete last comma for valid JSON
             file.write("]")  # Close list
 
+    @deprecated(
+        reason="Use `to_json_lines` instead. " "`to_jsons` will be removed on 2.0.0 release."
+    )
     def to_jsons(
         self,
-        filename: str,
+        filename: Union[str, Path],
         indent: int = None,
         overwrite: bool = False,
         gzip=False,
         compresslevel=5,
     ):
-        """Converts data to jsons format.
+        """[DEPRECATED] Converts data to json lines.
 
-        `Jsons format` means every line is a valid json, but the whole file - not.
+        Every line is a valid json, but the whole file - not.
 
         Args:
             filename (str): Output JSON filename.
@@ -1021,6 +1036,34 @@ class Data(Generic[DataIterValues]):
             overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
             gzip: Set to True if you want to compress the file using gzip.
             compresslevel: gzip compression level.
+
+        Raises:
+            FileExistsError: If file exists and overwrite=False
+        """
+        return self.to_json_lines(filename, indent, overwrite, gzip, compresslevel)
+
+    def to_json_lines(
+        self,
+        filename: Union[str, Path],
+        indent: int = None,
+        overwrite: bool = False,
+        gzip: bool = False,
+        compresslevel: int = 5,
+    ):
+        """Converts Data to json lines.
+
+        Every line is a valid json, but the whole file - not.
+
+        Args:
+            filename (str): Output JSON filename.
+            indent (int, optional): DON'T used now.
+            overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
+            gzip: Set to True if you want to compress the file using gzip.
+            compresslevel: gzip compression level.
+
+        NOTE:
+            Data object can iterate not only dicts. So not every data can be
+            saved as json.
 
         Raises:
             FileExistsError: If file exists and overwrite=False
@@ -1040,7 +1083,7 @@ class Data(Generic[DataIterValues]):
                     file.write((json.dumps(record) + b"\n").decode())
 
 
-def _iter_any_file(filename, mode="r"):
+def _iter_any_file(filename: Union[str, Path], mode="r"):
     """Returns the function that returns generators."""
 
     def iter_any_file_logic():
@@ -1063,7 +1106,9 @@ def _iter_any_file(filename, mode="r"):
     return iter_any_file_wrapper
 
 
-def _iter_csv(filename, header=None, header_first_line=False, mode="r", delimiter=","):
+def _iter_csv(
+    filename: Union[str, Path], header=None, header_first_line=False, mode="r", delimiter=","
+):
     """Returns the function that returns generators."""
 
     def iter_logic():
