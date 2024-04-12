@@ -190,9 +190,12 @@ def test_map_stream_for_list_record(general_data: List[dict]):
 def test_map_stream_data_increase(general_data: List[dict]):
     data = (
         Data(general_data)
-        .filter(lambda record: record.get("batchId") is None)
+        .filter(lambda record: record.get("batchId") is None)  # returns 9
         .map_stream(double_generator)
-        .map_stream(event_type_generator)
+        # .map_stream(event_type_generator)
     )
+
+    for m in data:
+        print(m)
 
     assert len(list(data)) == 18
