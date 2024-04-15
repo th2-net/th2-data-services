@@ -62,7 +62,6 @@ from deprecated.classic import deprecated
 DataIterValues = TypeVar("DataIterValues")
 DataGenerator = Generator[DataIterValues, None, None]
 DataSet = Union[Iterator, Callable[..., DataGenerator], List[Iterable], Iterable]
-WorkFlow = List[Dict[str, Union[Callable, str]]]
 
 
 def _build_limit_callback(num) -> Callable:
@@ -89,7 +88,7 @@ class WfLimitRecord(WfRecord):
     limit: int
 
 
-class Workflow:
+class DataWorkflow:
     def __init__(self):
         """Data object workflow."""
         self._data: List[WfRecord] = []
@@ -98,7 +97,7 @@ class Workflow:
         return bool(self._data)
 
     def __str__(self):
-        return f"Workflow({pprint.pformat(self._data)})"
+        return f"DataWorkflow({pprint.pformat(self._data)})"
 
     def __repr__(self):
         return str(self)
@@ -118,15 +117,7 @@ class Workflow:
     # def update(self, upd_func: Callable[[List[WfRecord]], List[WfRecord]]):
     #     self._data = upd_func(self._data)
 
-    # def _apply_record(self, record):
-    #     for wfr in self._data:
-    #         # print(f"apply '{wfr.type}' for '{record}'")
-    #         record = wfr.callback(record)
-    #         # print(f"\t --> '{record}'")
-    #
-    #     return record
-
-    def apply_records(self, records):
+    def apply_records(self, records: Iterator):
         """Execute workflow against some stream.
 
         Args:
@@ -157,22 +148,6 @@ class Workflow:
 
 # TODO
 #   Хочется уметь менять состояние дата объекта во время итерации
-
-
-# def show_message_if_exception_decorator(callback):
-#     def wrapper(stream):
-#         try:
-#             for record in stream:
-#                 yield from callback(stream)
-#         except Exception:
-#             try:
-#                 print("Exception during handling the message: \n" f"{pprint.pformat(record)}")
-#             except UnboundLocalError:
-#                 pass
-#
-#             raise
-#
-#     return wrapper
 
 
 class Data(Generic[DataIterValues]):
@@ -208,9 +183,9 @@ class Data(Generic[DataIterValues]):
             )
 
         if self._is_iterables_list(data):
-            self._data_stream = self._create_data_set_from_iterables(data)
+            self._data_source = self._create_data_set_from_iterables(data)
         else:
-            self._data_stream = data
+            self._data_source = data
 
         self._id = id(self)
         self._cache_filename = f"{self._id}_{time()}.pickle"
@@ -220,7 +195,7 @@ class Data(Generic[DataIterValues]):
         )
         self._cache_file_obj = None
         self._len = None
-        self.workflow = Workflow()
+        self.workflow = DataWorkflow()
 
         self._length_hint = None  # The value is populated when we use limit method.
         self._cache_status = cache
@@ -287,7 +262,19 @@ class Data(Generic[DataIterValues]):
         copy2(self.get_cache_filepath(), new_name)
 
     def __copy__(self):
-        obj = Data(self._data_stream, pickle_version=self._pickle_version)
+        if self._cache_status and self.is_cache_file_exists():
+
+            def read_from_existed_cache():
+                if self.is_cache_file_exists():
+                    yield from self.__load_file(self.get_cache_filepath())
+                else:
+                    yield from self._build_data_source()
+
+            data_source = read_from_existed_cache
+        else:
+            data_source = self._data_source
+
+        obj = Data(data_source, pickle_version=self._pickle_version)
         obj._set_metadata(self.metadata)
         obj.workflow = copy.deepcopy(self.workflow)
 
@@ -295,9 +282,9 @@ class Data(Generic[DataIterValues]):
 
     def __remove(self):
         """Data class destructor."""
-        if self.__is_cache_file_exists() and not self._read_from_external_cache_file:
+        if self.is_cache_file_exists() and not self._read_from_external_cache_file:
             self.__delete_cache()
-        del self._data_stream
+        del self._data_source
 
     def __delete_cache(self) -> None:
         """Removes cache file."""
@@ -348,7 +335,7 @@ class Data(Generic[DataIterValues]):
 
     def _iter_logic(self):
         interruption = True
-        if self._cache_status and self.__is_cache_file_exists():
+        if self._cache_status and self.is_cache_file_exists():
             is_data_writes_cache = False
         else:
             # FIXME -- bug -- мы считаем что мы пишем файл, когда он уже существует а мы его просто читаем
@@ -406,7 +393,7 @@ class Data(Generic[DataIterValues]):
             # Do not calculate self._len if it is not None.
             yield from self._iter_logic()
 
-    def _build_workflow(self, workflow: Workflow):
+    def _build_workflow(self, workflow: DataWorkflow):
         """Updates limit callbacks each time when Data object is iterated.
 
         It used to have the possibility to iterate the same Data object
@@ -417,8 +404,8 @@ class Data(Generic[DataIterValues]):
 
         return new_workflow
 
-    def _build_data_stream(self):
-        return self._data_stream() if callable(self._data_stream) else self._data_stream
+    def _build_data_source(self):
+        return self._data_source() if callable(self._data_source) else self._data_source
 
     def __load_data(self, cache: bool) -> DataGenerator:
         """Loads data from cache or data.
@@ -429,12 +416,12 @@ class Data(Generic[DataIterValues]):
         Returns:
             obj: Generator
         """
-        if cache and self.__is_cache_file_exists():
+        if cache and self.is_cache_file_exists():
             # LOG             self._logger.info("Iterating using own cache file '%s'" % self.get_cache_filepath())
-            data_stream = self.__load_file(self.get_cache_filepath())
-            yield from data_stream
+            data_source = self.__load_file(self.get_cache_filepath())
+            yield from data_source
         else:
-            data_stream = self._build_data_stream()  # we do it for every iterable data object.
+            data_source = self._build_data_source()  # we do it for every iterable data object.
             workflow = self._build_workflow(self.workflow)
 
             if self.__check_file_recording():
@@ -443,9 +430,9 @@ class Data(Generic[DataIterValues]):
                 cache = False
 
             if workflow:
-                iteration_obj = workflow.apply_records(data_stream)
+                iteration_obj = workflow.apply_records(data_source)
             else:
-                iteration_obj = data_stream
+                iteration_obj = data_source
 
             if cache:
                 filepath = self.get_pending_cache_filepath()
@@ -474,8 +461,8 @@ class Data(Generic[DataIterValues]):
         path = self.get_pending_cache_filepath()
         return path.is_file()
 
-    def __is_cache_file_exists(self) -> bool:
-        """Checks whether cache file exist."""
+    def is_cache_file_exists(self) -> bool:
+        """Returns whether cache file exists or not."""
         path = self.get_cache_filepath()
         r = path.is_file()
         # LOG         self._logger.debug("Cache file exists" if r else "Cache file doesn't exist")
@@ -490,54 +477,8 @@ class Data(Generic[DataIterValues]):
         Yields:
             obj: Generator records.
         """
-        if not filepath.exists():
-            raise FileNotFoundError(f"{filepath} doesn't exist")
-
-        if not filepath.is_file():
-            raise FileExistsError(f"{filepath} isn't file")
-
+        check_if_file_exists(filepath)
         yield from _iter_pickle_file_logic(filepath)
-        # with open(filepath, "rb") as file:
-        #     while True:
-        #         try:
-        #             decoded_data = pickle.load(file)
-        #             yield decoded_data
-        #         except EOFError:
-        #             break
-        #         except pickle.UnpicklingError:
-        #             print(f"Cannot read {filepath} cache file")
-        #             raise
-
-    # def _process_step(self, step: dict, record):
-    #     res = step["callback"](record)
-    #     # LOG         self._logger.debug("    - step '%s' -> %s", step["type"], res)
-    #     return res
-
-    # def __apply_workflow(
-    #     self, record: Any, workflow: WorkFlow
-    # ) -> Optional[Union[dict, List[dict]]]:
-    #     """Creates generator records with apply workflow.
-    #
-    #     Returns:
-    #         obj: Generator records.
-    #
-    #     """
-    #     # LOG         self._logger.debug("Apply workflow for %s", record)
-    #     for step in workflow:
-    #         try:
-    #             # TODO -2 -- мы каждый раз делаем step["callback"](record)
-    #             # TODO -3 -- по факту мы сейчас не используем воркфлоу, а ка
-    #             #  каждый раз создаём новый дата объект
-    #             #   у этого есть минусы -- эксепшен с итерациями,
-    #             #   и когда много объектов вложены доуг в друга, это медленно работает
-    #             record = self._process_step(step, record)
-    #             if record is None:
-    #                 break  # Break workflow iteration if step result is None.
-    #         except StopIteration:
-    #             raise
-    #
-    #     # LOG         self._logger.debug("-> %s", record)
-    #     return record
 
     @property
     def metadata(self):
@@ -861,7 +802,7 @@ class Data(Generic[DataIterValues]):
         Important:
             If the Data object cache status is True, it'll iterate itself. As a result the cache file
              will be created and copied.
-            When you will iterate the Data object next time, it'll iterate created cache file.
+            When you iterate the Data object next time, it'll iterate created cache file.
 
             NOTE! If you build cache file, Data.cache_status was False and after that you'll set
              Data.cache_status == TRUE -- the Data object WON'T iterate build file because it doesn't
@@ -881,7 +822,7 @@ class Data(Generic[DataIterValues]):
         if pickle_version is None:
             pickle_version = self._pickle_version
 
-        if self.__is_cache_file_exists():
+        if self.is_cache_file_exists():
             self._copy_cache_file(filename)
         else:
             gc.disable()  # https://exactpro.atlassian.net/browse/TH2-4775
@@ -905,7 +846,7 @@ class Data(Generic[DataIterValues]):
         if self._read_from_external_cache_file:
             raise Exception("It's not possible to remove external cache file via this method")
         else:
-            if self.__is_cache_file_exists():
+            if self.is_cache_file_exists():
                 self.__delete_cache()
 
     @classmethod
@@ -927,7 +868,7 @@ class Data(Generic[DataIterValues]):
         check_if_file_exists(filename)
 
         path = Path(filename).resolve()
-        data_obj = cls(_iter_pickle_cache_file(path, pickle_version))
+        data_obj = cls(_iter_pickle_cache_builder(path))
         data_obj.update_metadata({"source_file": path})
         data_obj._pickle_version = pickle_version
         return data_obj
@@ -1014,7 +955,6 @@ class Data(Generic[DataIterValues]):
             FileNotFoundError if provided file does not exist.
 
         """
-        # TODO - bug here TH2-4930 - new data object doesn't work with limit method
         check_if_file_exists(filename)
         data = cls(_iter_csv(filename, header, header_first_line, mode, delimiter))
         data.update_metadata({"source_file": filename})
@@ -1250,9 +1190,9 @@ def _iter_pickle_file_logic(filepath):
                 raise
 
 
-def _iter_pickle_cache_file(filepath: Path, pickle_version: int):
-    def iter_json_file_wrapper(*args, **kwargs):
+def _iter_pickle_cache_builder(filepath: Path):
+    def iter_pickle_cache(*args, **kwargs):
         """Wrapper function that allows passing arguments to the generator."""
         return _iter_pickle_file_logic(filepath)
 
-    return iter_json_file_wrapper
+    return iter_pickle_cache

@@ -48,7 +48,7 @@ def test_data_iterates_own_cache_file(log_checker, general_data: List[dict]):
 
     # Deactivate cache and set empty data source.
     data.use_cache(False)
-    data._data_stream = []
+    data._data_source = []
     output2 = list(data)
     assert output2 == []
 

@@ -87,15 +87,6 @@ def create_1_file():
 # @profile
 def many_files():
 
-    # TODO -- add this as Unit test
-    # def x(s):
-    #     for m in s:
-    #         yield None
-    # d = Data(['a', 'b']).map_stream(x)
-    # for m in d:
-    #     print(f'ff {m}')
-    # return
-
     # create_files()
     # create_1_file()
     pass
