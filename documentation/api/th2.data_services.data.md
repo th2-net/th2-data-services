@@ -40,7 +40,7 @@ Data constructor.
 
  - <b>`data`</b>:  Data source. Any iterable, Data object or a function that creates generator.
  - <b>`cache`</b>:  Set True if you want to write and read from cache.
- - <b>`workflow`</b>:  Workflow.
+ - <b>`workflow`</b>:  DataWorkflow.
 
 
 ---

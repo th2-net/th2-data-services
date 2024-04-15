@@ -516,6 +516,8 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 2. [TH2-4917] Readme duplicates removed.
 3. [TH2-5083] Fixed comparison line formatting. Every event in block isn't formatted as failed now if parent is failed.
 4. [TH2-5081] Fixed iteration bug for case where Data object was made using lists and tuple.
+5. [TH2-5100] Fixed bug when we get Recursion Exception if we have too much 
+   number of Data objects that iterate each other.
 
 ## Improvements
 1. Added vulnerabilities scanning

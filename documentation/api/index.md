@@ -29,6 +29,8 @@
 
 - [`config.TH2Config`](./config.config.md#class-th2config)
 - [`data.Data`](./data.md#class-data): A wrapper for data/data_stream.
+- [`data.DataWorkflow`](./data.md#class-dataworkflow)
+- [`data.WfLimitRecord`](./data.md#class-wflimitrecord): WfLimitRecord(type: str, callback: Callable, limit: int)
 - [`etc_driver.IETCDriver`](./event_tree.etc_driver.md#class-ietcdriver)
 - [`event_tree.EventTree`](./event_tree.event_tree.md#class-eventtree): EventTree is a tree-based data structure of events.
 - [`event_tree_collection.EventTreeCollection`](./event_tree.event_tree_collection.md#class-eventtreecollection): EventTreeCollection objective is building 'EventsTree's and storing them.
