@@ -146,10 +146,6 @@ class DataWorkflow:
                 wfr.callback = _build_limit_callback(wfr.limit)
 
 
-# TODO
-#   Хочется уметь менять состояние дата объекта во время итерации
-
-
 class Data(Generic[DataIterValues]):
     """A wrapper for data/data_stream.
 
