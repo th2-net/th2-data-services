@@ -80,44 +80,44 @@ def create_1_file():
     )
 
 
-def test_many_files():
-    # create_files()
-    # create_1_file()
-    data_many_files = reads_all_Pickle_files_from_the_folder(TEST_FILES_PATH)
-    print("test")
-    print(locals())
-    # print(timeit.repeat("[x for x in data_many_files]", globals=locals()))
-    all_msgs_in_1_filepath = Path(TEST_FILES_PATH) / f"file_all.jsons"
-    data_all_in_one_file = Data.from_json(all_msgs_in_1_filepath, gzip=True)
-    # print(timeit.repeat("[x for x in data_all_in_one_file]", globals=locals()))
-
-    print("just iter")
-
-    s1 = """
-for x in data_many_files:
-    pass
-    """
-
-    s2 = """
-for x in data_all_in_one_file:
-    pass
-    """
-
-    files = [str(Path(TEST_FILES_PATH) / f"file_{i}.jsons") for i in range(100)]
-    print(files)
-    s3 = f"""
-for f in files:
-    iterator = iter_json_gzip_file(f)
-    for m in iterator():
-        pass
-        """
-    s4 = f"""
-iterator = iter_json_gzip_file(all_msgs_in_1_filepath)
-for m in iterator():
-    pass
-    """
-
-    # print(timeit.repeat(s1, globals=locals(), repeat=2, number=1))
-    # print(timeit.repeat(s2, globals=locals(), repeat=2, number=1))
-    # print(timeit.repeat(s3, globals=locals(), repeat=2, number=1))
-    # print(timeit.repeat(s4, globals=locals(), repeat=2, number=1))
+# def test_many_files():
+#     # create_files()
+#     # create_1_file()
+#     data_many_files = reads_all_Pickle_files_from_the_folder(TEST_FILES_PATH)
+#     print("test")
+#     print(locals())
+#     # print(timeit.repeat("[x for x in data_many_files]", globals=locals()))
+#     all_msgs_in_1_filepath = Path(TEST_FILES_PATH) / f"file_all.jsons"
+#     data_all_in_one_file = Data.from_json(all_msgs_in_1_filepath, gzip=True)
+#     # print(timeit.repeat("[x for x in data_all_in_one_file]", globals=locals()))
+#
+#     print("just iter")
+#
+#     s1 = """
+# for x in data_many_files:
+#     pass
+#     """
+#
+#     s2 = """
+# for x in data_all_in_one_file:
+#     pass
+#     """
+#
+#     files = [str(Path(TEST_FILES_PATH) / f"file_{i}.jsons") for i in range(100)]
+#     print(files)
+#     s3 = f"""
+# for f in files:
+#     iterator = iter_json_gzip_file(f)
+#     for m in iterator():
+#         pass
+#         """
+#     s4 = f"""
+# iterator = iter_json_gzip_file(all_msgs_in_1_filepath)
+# for m in iterator():
+#     pass
+#     """
+#
+#     # print(timeit.repeat(s1, globals=locals(), repeat=2, number=1))
+#     # print(timeit.repeat(s2, globals=locals(), repeat=2, number=1))
+#     # print(timeit.repeat(s3, globals=locals(), repeat=2, number=1))
+#     # print(timeit.repeat(s4, globals=locals(), repeat=2, number=1))
