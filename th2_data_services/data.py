@@ -803,12 +803,57 @@ class Data(Generic[DataIterValues]):
             for record in self:
                 txt_file.write(f"{pprint.pformat(record)}\n" + ("-" * 50) + "\n")
 
-    def show(self, n=5, print_=True):
-        print("------------- Printed first 5 records -------------")
-        for index, record in enumerate(self):
-            if index == n:
+    def _show_print_one_line(self, index, idx_print, extra_prints: dict, record):
+        if idx_print:
+            print(f"[{index}] ------")
+
+        for field_name, func in extra_prints.items():
+            try:
+                val = func(record)
+            except Exception as e:
+                val = f"FUNC_ERROR ({e})"
+            print(f"{field_name}: {val}")
+
+        pprint.pprint(record)
+
+    def show(
+        self, n: int = 5, idx_print: bool = True, extra_prints: Optional[Dict[str, Callable]] = None
+    ):
+        """Prints first N records in human-readable format.
+
+        Args:
+            n: number of elements to print.
+                Use -1, if you want to print the whole stream.
+            idx_print:
+                - True - will print message index before the message (Default)
+                - False - will Not print message index before the message
+            extra_prints:
+                Sometimes you want to highlight some fields in the message.
+                This parameter allows you to do this.
+                It will print extra print before the message.
+                E.g.:
+                    extra_prints = {
+                        'SendingTime': get_sending_time_human_func,
+                        'TransactTime': get_sending_time_human_func,
+                    }
+
+        Returns:
+            None
+        """
+        if extra_prints is None:
+            extra_prints = {}
+
+        if n == -1:
+            print(f"------------- Printed all stream records -------------")
+            for index, record in enumerate(self, start=1):
+                self._show_print_one_line(index, idx_print, extra_prints, record)
+
+        print(f"------------- Printed first {n} records -------------")
+        for index, record in enumerate(self, start=1):
+            if index > n:
                 break
-            pprint.pprint(record)
+
+            self._show_print_one_line(index, idx_print, extra_prints, record)
 
     def build_cache(self, filename, pickle_version: Optional[int] = None):
         """Creates cache file with provided name.

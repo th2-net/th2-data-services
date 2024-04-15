@@ -160,7 +160,35 @@ events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
 # [1.13] Check if Data is sorted.
+# That will return an object `is_sorted` that contains information
+#   1. status -- sorted or not
+#   2. first_unsorted -- the index of the first unsorted element
 is_sorted = events.is_sorted(lambda e: e["startTimestamp"]["epochSecond"])
+
+# You can use this object as usual bool variable.
+if is_sorted:
+    print("events Data obj is sorted!")
+
+# [1.14] Use `Data.show()` to look at the first N messages in the stream.
+data_with_non_data_obj_via_add.show(n=6)
+# Will print
+# ------------- Printed first 6 records -------------
+# [1] ------
+# 1
+# [2] ------
+# 2
+# [3] ------
+# 3
+# [4] ------
+# 'a'
+# [5] ------
+# {'id': 123}
+# [6] ------
+# 'c'
+
+# [1.15] You can remove the cache file of the Data object, if required.
+data_obj_from_cache.clear_cache()
+
 
 # [2] Working with converters.
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
