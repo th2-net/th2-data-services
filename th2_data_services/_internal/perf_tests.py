@@ -25,9 +25,9 @@ def _build_cache_file(data_obj: Data, filename):
     if ftype == "pickle":
         data_obj.build_cache(filename)
     elif ftype == "jsons":
-        data_obj.to_jsons(filename)
+        data_obj.to_json_lines(filename)
     elif ftype == "gz":
-        data_obj.to_jsons(filename, gzip=True)
+        data_obj.to_json_lines(filename, gzip=True)
 
 
 def _read_from_cache_file(filename):
@@ -46,11 +46,17 @@ def _iter_data_obj(do: Data):
         pass
 
 
+@calculate_time(return_as_last_value=True)
+def _iter_data_obj_with_3_filters(do: Data):
+    for o in do.filter(lambda x: True).filter(lambda x: True).filter(lambda x: True):
+        pass
+
+
 def _test_xx(data_obj: Data):
     filenames = ["cache_test.pickle", "cache_test.jsons", "cache_test.jsons.gz"]
 
     try:
-        data_obj.use_cache()
+        # data_obj.use_cache()
         do_len = data_obj.len
 
         print("Store cache files for test:")
@@ -65,7 +71,9 @@ def _test_xx(data_obj: Data):
             print(f"Iterate {'.'.join(filename.split('.')[1:])}:", end="")
             data_obj_file = _read_from_cache_file(filename)
             _, calc_time = _iter_data_obj(data_obj_file)
-            print(f"  --  {calc_time} s")
+            print(f"  --  {calc_time} s", end="")
+            _, calc_time = _iter_data_obj_with_3_filters(data_obj_file)
+            print(f", with 3 filters  --  {calc_time} s")
 
         print()
 
@@ -116,12 +124,12 @@ if __name__ == "__main__":
         # cache_files_reading_speed(
         #     data=Data([1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
         # )
-        cache_files_reading_speed(
-            data=Data.from_cache_file(
-                "C:/Users/admin/exactpro/prj/th2/pickles/cache_2.5kk_events.pickle"
-            ).limit(5)
-        )
-
         # cache_files_reading_speed(
+        #     data=Data.from_cache_file(
         #         "C:/Users/admin/exactpro/prj/th2/pickles/cache_2.5kk_events.pickle"
+        #     ).limit(5)
         # )
+
+        cache_files_reading_speed(
+            "C:/Users/admin/exactpro/prj/th2/pickles/cache_2.5kk_events.pickle"
+        )

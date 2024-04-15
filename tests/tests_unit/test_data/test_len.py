@@ -7,7 +7,6 @@ from tests.tests_unit.utils import (
 )
 
 from th2_data_services.data import Data
-import pytest
 
 
 def test_len_with_stream_cache(general_data: List[dict], cache=True):
@@ -59,7 +58,7 @@ def test_len_has_correct_value_after_multiple_loop_iteration(cache):
 
 
 # FIXME
-#   Temorarily commented -- was broken  after Workflow changes
+#   Temporarily commented -- was broken  after Workflow changes
 # @pytest.mark.parametrize(
 #     ["limit2", "limit3", "exp_data2", "exp_data3", "exp_data"],
 #     # Data.limit(A).limit(B)
@@ -92,13 +91,10 @@ def test_len_has_correct_value_after_multiple_loop_iteration(cache):
 #     assert data._len == exp_data
 
 
-@pytest.mark.xfail(
-    reason="TH2-4930 - known issue. Should be fixed in 2.0.0. "
-    "The new feature Data.from_csv was really needed, so we OK with the issue."
-)
 def test_len_after_reading_file():
+    # Related issue - TH2-4930
     # Any file: cache, json, csv
     path = pathlib.Path("tests/test_files/file_to_read_by_data.csv")
     data = Data.from_csv(path)
 
-    assert list(data.limit(1)) == ["A", "B", "Two Words"]
+    assert list(data.limit(2)) == [["A", "B", "Two Words"], ["1", "2", "2.1"]]
