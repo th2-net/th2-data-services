@@ -710,14 +710,15 @@ class EventTreeCollection:
 
         Args:
             preprocessor: the function that will be executed for each recovered
-            event before store.
+                event before store.
 
         """
         previous_detached_events = list(self._detached_parent_ids())
 
         warning_4085 = False
-        originalRoots = self._roots.copy()
-        originalDetached = self._detached_events().copy()
+        original_roots_ids = set(self.get_roots_ids())
+        # FIXME
+        # original_detached = self._detached_events().copy()
 
         while previous_detached_events:
             events = self._driver.get_events_by_id_from_source(ids=self._detached_parent_ids())
@@ -726,20 +727,23 @@ class EventTreeCollection:
 
             for event in events:
                 if not self._driver.get_event_name(event) == self._driver.stub_event_name():
-                    parentEventId = event["parentEventId"]
-                    for root in originalRoots:
-                        if root.get_root_id() == parentEventId:
-                            warning_4085 = True
-                    for detached in originalDetached:
-                        if originalDetached[detached][0]["eventId"] == parentEventId:
-                            warning_4085 = True
+                    parentEventId = self._driver.get_parent_event_id(event)
+                    # FIXME
+                    # if parentEventId in original_roots_ids:
+                    #     warning_4085 = True
+                    # for detached in original_detached:
+                    #     if original_detached[detached][0]["eventId"] == parentEventId:
+                    #         warning_4085 = True
                     self.append_event(event)
 
             dp_ids = list(self._detached_parent_ids())
             if previous_detached_events == dp_ids:
-                # If previous_detached_events == current, it means that we
-                # cannot recover some data.
-                # So break iteration to escape recursive exception.
+                w = (
+                    "previous_detached_events == dp_ids. "
+                    "It means that we cannot recover some data. "
+                    "So break iteration to escape recursive exception."
+                )
+                warnings.warn(w)
                 break
             else:
                 previous_detached_events = dp_ids
