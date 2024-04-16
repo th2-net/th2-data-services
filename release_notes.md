@@ -565,3 +565,4 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 6. [TH2-5172] Add faster implementations of the following
    ProtobufTimestampConverter functions: to_microseconds, to_milliseconds,
    to_nanoseconds.
+7. [TH2-5081] `Data.__str__` was changed --> use `Data.show()` instead of `print(data)`
