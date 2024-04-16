@@ -421,7 +421,8 @@ class EventTreeCollection:
     def get_children_iter(self, id: str) -> Generator[Th2Event, None, None]:
         """Yields children of the event by its id.
 
-        This method applicable only for trees (regular or parentless), not for detached events.
+        This method is applicable only for trees (regular or parentless),
+        not for detached events.
 
         Args:
             id: Event id.
@@ -446,14 +447,16 @@ class EventTreeCollection:
         if not is_iter:
             raise EventIdNotInTree(id)
 
-    def get_parent(self, id: str) -> Th2Event:
+    def get_parent(self, id: str) -> Optional[Th2Event]:
         """Returns a parent of the event by its id.
+
+        Returns None if the provided ID is a root of any of the trees in ETC.
 
         Args:
             id: Event id.
 
         Raises:
-            NodeIDAbsentError: If event id is not in the trees.
+            EventIdNotInTree: If event id is not in the tree.
         """
         for tree in self._roots:
             try:
@@ -475,6 +478,7 @@ class EventTreeCollection:
                     return tree.get_parent(id)
                 except EventIdNotInTree:
                     continue
+
         raise EventIdNotInTree(id)
 
     def get_full_path(self, id: str, field: str = None) -> List[Union[str, Th2Event]]:  # noqa: D412
@@ -712,7 +716,7 @@ class EventTreeCollection:
         while previous_detached_events:
             events = self._driver.get_events_by_id_from_source(ids=self._detached_parent_ids())
             if preprocessor is not None:
-                events = preprocessor(preprocessor)
+                events = preprocessor(events)
 
             for event in events:
                 if not self._driver.get_event_name(event) == self._driver.stub_event_name():
