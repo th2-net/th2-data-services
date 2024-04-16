@@ -187,6 +187,30 @@ Converts timestamp to nanoseconds.
  
  - <b>`int`</b>:  Timestamp in nanoseconds format. 
 
+---
+
+<a href="../../th2_data_services/interfaces/utils/converter.py#L147"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>classmethod</kbd> `to_th2_timestamp`
+
+```python
+to_th2_timestamp(timestamp: int) → dict
+```
+
+Converts timestamp to th2 timestamp. 
+
+
+
+**Args:**
+ 
+ - <b>`timestamp`</b>:  int object to convert. 
+
+
+
+**Returns:**
+ 
+ - <b>`dict`</b>:  {"epochSecond": seconds, "nano": nanoseconds} 
+
 
 
 

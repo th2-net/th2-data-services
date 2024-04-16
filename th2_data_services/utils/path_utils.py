@@ -11,7 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+from typing import Union
 
 from th2_data_services.config import options
 from pathlib import Path
@@ -67,7 +67,7 @@ def check_if_filename_valid(filename: str):
     return True, ""
 
 
-def check_if_file_exists(filename):
+def check_if_file_exists(filename: Union[str, Path]):
     """Raises error if file doesn't exist.
 
     Args:
@@ -77,15 +77,20 @@ def check_if_file_exists(filename):
         FileNotFoundError: if file doesn't exist.
         ValueError: if filename contains illegal characters.
     """
+    fp = Path(filename).resolve()
     try:
-        if not Path(filename).resolve().exists():
-            raise FileNotFoundError(f"{filename} doesn't exist")
+        if not fp.exists():
+            raise FileNotFoundError(f"{fp} doesn't exist")
+
+        if not fp.is_file():
+            raise FileExistsError(f"{fp} isn't file")
     except OSError as e:
         if os.name == "nt" and e.winerror == 123:
             illegal_characters = set([char for char in filename if char in r'\/:*?"<>|'])
             illegal_characters_str = ", ".join(illegal_characters)
             raise ValueError(
-                f"Invalid file path: {filename}. It contains illegal characters: {illegal_characters_str}"
+                f"Invalid file path: {filename}. "
+                f"It contains illegal characters: {illegal_characters_str}"
             )
         else:
             raise e

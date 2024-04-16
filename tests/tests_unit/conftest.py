@@ -17,6 +17,7 @@ from th2_data_services.event_tree import (
 from th2_data_services.event_tree.etc_driver import Th2EventType
 from th2_data_services.event_tree.exceptions import FieldIsNotExist
 from th2_data_services.interfaces import IEventStruct, IEventStub
+from dataclasses import dataclass
 
 EXTERNAL_CACHE_FILE = (
     Path().cwd() / "tests/tests_unit/test_data/test_cache/dir_for_test/external_cache_file"
@@ -1863,7 +1864,15 @@ def interactive_mod(request):
     return INTERACTIVE_MODE
 
 
-DataCase = namedtuple("DataCase", ["data", "create_type", "expected_data_values"])
+@dataclass
+class DataCase:
+    data: Data
+    create_type: str
+    expected_data_values: list
+
+
+# DataCase = namedtuple("DataCase",
+#                       ["data", "create_type", "expected_data_values"])
 
 case1_values = ["a", "b", "c", "d", "e", "f", "g"]
 

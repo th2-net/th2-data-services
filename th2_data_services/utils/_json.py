@@ -17,6 +17,7 @@ import gzip
 
 import orjson as json
 from orjson import JSONDecodeError
+
 from th2_data_services.utils.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 
@@ -55,22 +56,46 @@ def iter_json_gzip_file(filename, buffer_limit=250):
         """Generator that reads and yields decoded JSON objects from a file."""
         json_processor = BufferedJSONProcessor(buffer_limit)
 
-        with gzip.open(filename, "r") as data:
-            while True:
-                try:
-                    v = data.readline().decode("utf-8", UNICODE_REPLACE_HANDLER)
-                    if not v:
-                        break
+        if buffer_limit != 0:
+            finished = False
+            with gzip.open(filename, "r") as data:
+                while True:
+                    try:
+                        for _ in range(buffer_limit):
+                            v = data.readline().decode("utf-8", UNICODE_REPLACE_HANDLER)
+                            if not v:
+                                finished = True
+                                break
+                            json_processor.buffer.append(v)
 
-                    yield from json_processor.decode(v)
-                except ValueError:
-                    print(len(json_processor.buffer))
-                    print(f"Error string: {v}")
-                    raise
-            yield from json_processor.fin()
+                        yield from json_processor.from_buffer()
+
+                        if finished:
+                            break
+
+                    except ValueError:
+                        print(len(json_processor.buffer))
+                        print(f"Error string: {v}")
+                        raise
+
+                yield from json_processor.fin()
+        else:
+            with gzip.open(filename, "r") as data:
+                while True:
+                    try:
+                        v = data.readline().decode("utf-8", UNICODE_REPLACE_HANDLER)
+                        if not v:
+                            break
+
+                        yield from json_processor.decode(v)
+
+                    except ValueError:
+                        print(len(json_processor.buffer))
+                        print(f"Error string: {v}")
+                        raise
 
     def iter_json_gzip_file_wrapper(*args, **kwargs):
-        """Wrapper function that allows passing arguments to the generator."""
+        """Wrapper function that allows to rerun generator one more time."""
         return iter_json_gzip_file_logic(*args, **kwargs)
 
     return iter_json_gzip_file_wrapper
@@ -107,7 +132,7 @@ class BufferedJSONProcessor:
             # Prevents StopIteration issues
             self.buffer = []
 
-    def _decode_without_buffer(self, x: str) -> dict:
+    def _decode_without_buffer(self, x: str) -> Generator:
         """Decode JSON without buffer.
 
         Args:
@@ -118,7 +143,7 @@ class BufferedJSONProcessor:
         """
         yield json.loads(x)
 
-    def _decode_with_buffer(self, x: str) -> dict:
+    def _decode_with_buffer(self, x: str) -> Generator:
         """Decode JSON with buffer.
 
         Args:
@@ -127,14 +152,20 @@ class BufferedJSONProcessor:
         Returns:
             dict
         """
-        if len(self.buffer) < self.buffer_limit:
-            self.buffer.append(x)
-        else:
-            yield from self.from_buffer()
-            self.buffer = [x]
+        # for i in range(self.buffer_limit):
+
+        # # FIXME -- we check len every message. It can take a lot of time
+        # if len(self.buffer) < self.buffer_limit:
+        #     self.buffer.append(x)
+        # else:
+        #     yield from self.from_buffer()
+        #     self.buffer = [x]
+
+        yield from self.from_buffer()
+        self.buffer = [x]
 
     def fin(self) -> Generator:
-        """If buffer exists returns dicts from buffer.
+        """If buffer exists, returns dicts from buffer.
 
         Returns:
             Generator[dict]

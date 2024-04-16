@@ -220,8 +220,10 @@ class EventTree:
         except NodeIDAbsentError:
             raise EventIdNotInTree(id)
 
-    def get_parent(self, id: str) -> Th2Event:
+    def get_parent(self, id: str) -> Optional[Th2Event]:
         """Returns a parent for the event by its id.
+
+        Returns None if the provided ID is a root of the tree.
 
         Args:
             id: Event id.
@@ -231,6 +233,9 @@ class EventTree:
         """
         try:
             parent = self._tree.parent(id)
+
+            if self.get_root_id() == id:
+                return None
 
             if parent is None:
                 raise EventIdNotInTree(id)

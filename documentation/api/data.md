@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2_data_services/data.py#L65"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Data`
 A wrapper for data/data_stream. 
@@ -20,7 +20,7 @@ The class provides methods for working with data as a stream.
 
 Such approach to data analysis called streaming transformation. 
 
-<a href="../../th2_data_services/data.py#L73"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L74"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -41,7 +41,7 @@ Data constructor.
  
  - <b>`data`</b>:  Data source. Any iterable, Data object or a function that creates generator. 
  - <b>`cache`</b>:  Set True if you want to write and read from cache. 
- - <b>`workflow`</b>:  Workflow. 
+ - <b>`workflow`</b>:  DataWorkflow. 
  - <b>`pickle_version`</b>:  Pickle protocol version. Set if using cache. 
 
 
@@ -120,7 +120,7 @@ This function won't remove external cache file.
 
 ---
 
-<a href="../../th2_data_services/data.py#L469"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L443"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `filter`
 
@@ -179,7 +179,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 from_any_file(filename, mode='r') → Data[str]
 ```
 
-Creates Data object from any file with provided name. 
+Creates a Data object from any file with the provided name. 
 
 It will just iterate file and return data line be line. 
 
@@ -239,7 +239,7 @@ Creates Data object from cache file with provided name.
 
 ```python
 from_csv(
-    filename,
+    filename: Union[str, Path],
     header=None,
     header_first_line=False,
     mode='r',
@@ -287,7 +287,7 @@ It will iterate the CSV file as if you were doing it with CSV module.
 from_json(filename, buffer_limit=250, gzip=False) → Data[dict]
 ```
 
-Creates Data object from json file with provided name. 
+Creates Data object from json-lines file with provided name. 
 
 
 
@@ -382,7 +382,7 @@ Limits the stream to `num` entries.
 
 ---
 
-<a href="../../th2_data_services/data.py#L503"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L477"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -406,7 +406,7 @@ Append `transform` function to workflow.
 
 ---
 
-<a href="../../th2_data_services/data.py#L525"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L499"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_stream`
 
@@ -427,6 +427,32 @@ Difference between map and map_stream: 1. map_stream allows you return None valu
 **Args:**
  
  - <b>`adapter_or_generator`</b>:  StreamAdapter object or generator function. 
+
+
+
+**Returns:**
+ 
+ - <b>`Data`</b>:  Data object. 
+
+---
+
+<a href="../../th2_data_services/data.py#L537"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `map_yield`
+
+```python
+map_yield(callback_or_adapter: Union[Callable, IRecordAdapter])
+```
+
+Maps the stream using callback function or adapter. 
+
+Differences between map and map yield: 1. map_yield is a wrapper function using map_stream. 2. map_yield iterates over each item in record if callback return value is a list or tuple. 
+
+
+
+**Args:**
+ 
+ - <b>`callback_or_adapter`</b>:  Transform function or an Adapter with IRecordAdapter interface implementation. 
 
 
 
@@ -460,15 +486,15 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L982"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L974"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
 ```python
-to_json(filename: str, indent: int = None, overwrite: bool = False)
+to_json(filename: Union[str, Path], indent: int = None, overwrite: bool = False)
 ```
 
-Converts data to json format. 
+Converts data to valid json format. 
 
 
 
@@ -480,19 +506,65 @@ Converts data to json format.
 
 
 
+**NOTE:**
+
+> Data object can iterate not only dicts. So not every data can be saved as json. 
+>
+
 **Raises:**
  
  - <b>`FileExistsError`</b>:  If file exists and overwrite=False 
 
 ---
 
-<a href="../../th2_data_services/data.py#L1006"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L1031"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `to_json_lines`
+
+```python
+to_json_lines(
+    filename: Union[str, Path],
+    indent: int = None,
+    overwrite: bool = False,
+    gzip: bool = False,
+    compresslevel: int = 5
+)
+```
+
+Converts Data to json lines. 
+
+Every line is a valid json, but the whole file - not. 
+
+
+
+**Args:**
+ 
+ - <b>`filename`</b> (str):  Output JSON filename. 
+ - <b>`indent`</b> (int, optional):  DON'T used now. 
+ - <b>`overwrite`</b> (bool, optional):  Overwrite if filename exists. Defaults to False. 
+ - <b>`gzip`</b>:  Set to True if you want to compress the file using gzip. 
+ - <b>`compresslevel`</b>:  gzip compression level. 
+
+
+
+**NOTE:**
+
+> Data object can iterate not only dicts. So not every data can be saved as json. 
+>
+
+**Raises:**
+ 
+ - <b>`FileExistsError`</b>:  If file exists and overwrite=False 
+
+---
+
+<a href="../../th2_data_services/data.py#L1004"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_jsons`
 
 ```python
 to_jsons(
-    filename: str,
+    filename: Union[str, Path],
     indent: int = None,
     overwrite: bool = False,
     gzip=False,
@@ -500,9 +572,9 @@ to_jsons(
 )
 ```
 
-Converts data to jsons format. 
+[DEPRECATED] Converts data to json lines. 
 
-`Jsons format` means every line is a valid json, but the whole file - not. 
+Every line is a valid json, but the whole file - not. 
 
 
 
@@ -522,7 +594,7 @@ Converts data to jsons format.
 
 ---
 
-<a href="../../th2_data_services/data.py#L933"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L925"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `update_metadata`
 
