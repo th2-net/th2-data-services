@@ -422,83 +422,146 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 1. [I] Adapter interface got required handle_stream method.\
    [M] Implement new method for your adapters.
 
-2. [I] It's no longer possible to import Data object directly from th2_data_services package.\
-   [M] All records should be changed from "from th2_data_services import Data" to "from th2_data_services.data import Data".
+2. [I] It's no longer possible to import Data object directly from
+   th2_data_services package.\
+   [M] All records should be changed from "from th2_data_services import Data"
+   to "from th2_data_services.data import Data".
 
 3. [I] Provider module is removed.\
-   [M] We should move to data source implementations, like th2-ds-source-lwdp.
+   [M] You should use data source implementations, like th2-ds-source-lwdp.
 
-4. [I] INTERACTIVE_MODE cannot be accessed like th2_data_services.INTERACTIVE_MODE anymore.\
+4. [I] INTERACTIVE_MODE cannot be accessed like
+   th2_data_services.INTERACTIVE_MODE anymore.\
    [M] It's now changed to th2_data_services.config.options.INTERACTIVE_MODE
 
 5. [I] EventsTree renamed to EventTree\
    [M] All records should be changed to EventTree
 
-6. [I] Message utils method `expand_message` moved into MessageFieldResolver.\
+6. [I] Message utils method `expand_message` moved into `MessageFieldResolver`.\
    [M] Implement new method in your resolver.
 
+7. [I] Data iteration logic is changed.\
+   Why? Current behavior causes problems in some cases. E.g. when we don't want
+   to iterate objects inside the DataSet.
+
+   [I.1]  Lists and tuples used in building Data objects are treated as single
+   item and items inside them aren't iterated anymore.\
+   [M.1] Update Data objects initialized with lists or tuples.
+
+   [I.2] Change in iteration logic also changed how `map` function behaves.
+   If `map` function returns lists or tuples their content won't be iterated
+   anymore.\
+   [M.2] If you are interest previous `map` function behavior, just update `map`
+   to `map_yield`.
+
+   [I.3] Data object will not iterate over contents of its stream if any of the
+   items are iterables (but not Data object).\
+   It means that Data object will not iterate lists and tuples inside the
+   provided DataSet and will return they as is.\
+   Only exception will be if all of the items are Data objects themselves.\
+   [M.3] Update nested lists in Data object initializations to either Data
+   objects or switch to using addition operator.\
+   [Examples]\
+      `d1 = Data(['a', 'b'])`\
+      a. `Data([1, 2, [3, 4], d1])` will yield 1,2,[3,4],d1.  Prev. behavior: 1,2,3,4,'a','b'\
+      b. `Data([d1, d2])` where d1 and d2 are Data objects. It will yield from d1, and after that yield from d2.\
+      c. You can update the example from `a` to `Data([1,2,3,4])` or to `new_data = Data([1,2]) + Data([3,4]) + d1`.\
+      d. You also can return prev behaviour doing the following:  `new_data = Data([1, 2, [3, 4], d1]).map_yield(lambda r: r)`
+ 
 ## Features
 
 1. [TH2-4128] pip no longer installs RDP by default
-2. [TH2-4128] extra dependencies can be installed using square brackets after package name.
-    - Example: `pip install th2-data-services[lwdp]`
+2. [TH2-4128][TH2-4738] extra dependencies can be installed using square brackets after
+   package name.
+   - Example: `pip install th2-data-services[lwdp]`
 
    Available data sources implementations:
 
-   | provider |              version               |
-   |----------|:----------------------------------:|
-   | lwdp     |       latest version of lwdp       |
-   | lwdp1    | latest version of lwdp (version 1) |
-   | lwdp2    | latest version of lwdp (version 2) |
+   |  dependency name  | provider version                      |
+   |:-----------------:|---------------------------------------|
+   |       lwdp        | latest version of lwdp                |
+   |       lwdp2       | latest version of lwdp v2             |
+   |       lwdp3       | latest version of lwdp v3             |
+   | utils-rpt-viewer  | latest version of utils-rpt-viewer    |
+   | utils-rpt-viewer5 | latest version of utils-rpt-viewer v5 |
+   |   utils-advanced  | latest version of ds-utils            |
 
 3. [TH2-4493] Adapter interface got handle_stream method.
 4. [TH2-4490] Added `map_stream` method to Data.
-   - Almost same as `map`, except it's designed to handle a stream of data rather than a single record.
-   - Method accepts a generator function or a class which implements IStreamAdapter with generator function.
+   - Almost same as `map`, except it's designed to handle a stream of data
+     rather than a single record.
+   - Method accepts a generator function or a class which implements
+     IStreamAdapter with generator function.
 5. [TH2-4582] IAdapter interface removed.
    - IStreamAdapter interface added to handle streams.
    - IRecordAdapter interface added to handle single record.
-   - Method accepts Generator function or IStreamAdapter interface class with Generator function.
+   - Method accepts Generator function or IStreamAdapter interface class with
+     Generator function.
 6. [TH2-4609] Data.filter implementation changed to use `yield`.
 7. [TH2-4491] metadata attribute added to Data. It will contain request urls.
-8. [TH2-4577] map method now can take either Callable function or Adapter which implements IRecordAdapter.
+8. [TH2-4577] map method now can take either Callable function or Adapter which
+   implements IRecordAdapter.
 9. [TH2-4611] DatetimeConverter, ProtobufTimestampConverter converters added.
 10. [TH2-4646]
-    - metadata gets carried when using Data methods.
-    - update_metadata method added to update metadata.
-11. [TH2-4684] Tree names changed from plural to singular. (e.g Event**s**Tree -> EventTree)
-12. [TH2-4693] Implemented namespace packages structure, allowing other th2 libraries to be grouped together.
-13. [TH2-4713] Added options module which enables user to tweak library settings.
-14. [TH2-4738] Two new libraries added as extra dependencies. They can be installed as:
-   - pip install th2-data-services[utils-advanced]
-   - pip install th2-data-services[utils-rpt-viewer]
-   - pip install th2-data-services[utils-rpt-viewer5]
+   - metadata gets carried when using Data methods.
+   - update_metadata method added to update metadata.
+11. [TH2-4684] Tree names changed from plural to singular. (e.g Event**s**
+    Tree -> EventTree)
+12. [TH2-4693] Implemented namespace packages structure, allowing other th2
+    libraries to be grouped together.
+13. [TH2-4713] Added options module which enables user to tweak library
+    settings.
+14. `DummyDataSource` added.
 15. [TH2-4881] `Data.from_json` method was added.
 16. [TH2-4919] `Data.from_any_file` method was added.
 17. [TH2-4928] `Data.from_csv` method was added.
-18. [TH2-4932] `Data.to_json` method was added. Puts your data to valid json object.
-19. [TH2-4957] Added gzip option for Data.to_json method.
-20. [TH2-4957] Added decompress_gzip_file method to utils.converters.
-21. Added to_csv method to PerfectTable class.
+18. [TH2-4932] `Data.to_json` method was added. Puts your data to a valid json
+    object.
+19. [TH2-4957] Added `gzip` option for `Data.to_json` method.
+20. [TH2-4957] Added `decompress_gzip_file` function to utils.converters.
+21. Added `to_csv` method to `PerfectTable` class.
 22. `utils.converters.flatten_dict` converter added.
 23. Added `Data.to_jsons` method that put your data object to jsons file
-   (file where every line is separate json-format line. That's not valid json format.)
+    (file where every line is separate json-format line. That's not a valid json
+    format.)
+   Renamed `to_jsons` to `to_json_lines` later.
+   - to_jsons -- is deprecated now.
 24. [TH2-5049] Added ExpandedMessageFieldResolver
-25. [TH2-5053] Added pickle_version to Data.from_cache_file method.
+25. [TH2-5053] Added `pickle_version` to Data.from_cache_file method.
 26. `decode_base64` function added to converter utils.
-27. [TH2-5156] UniversalDatetimeStringConverter and UnixTimestampConverter added.
-28. [TH2-5167] `Data.is_sorted`, `event_utils.is_sorted`, `message_utils.is_sorted` and `stream_utils.is_sorted` methods were added.
+27. [TH2-5156] `UniversalDatetimeStringConverter` and `UnixTimestampConverter`
+    added.
+28. [TH2-5167] `Data.is_sorted`, `event_utils.is_sorted`, `message_utils.is_sorted`
+    and `stream_utils.is_sorted` methods were added.
 29. [TH2-5176] `to_th2_timestamp` method was added for converters.
+30. [TH2-5081] Added `map_yield` function, that should behave similar to
+    old `map` method.
+    That means that `map_yield` will iterate lists and tuples if the user map
+    function returns them.
 
 ## BugFixes
-1. [TH2-4711] EventTreeCollection max_count parameter of findall functions worked wrong.
+
+1. [TH2-4711] EventTreeCollection max_count parameter of findall functions
+   worked wrongly.
 2. [TH2-4917] Readme duplicates removed.
-3. [TH2-5083] Fixed comparison line formatting. Every event in block isn't formatted as failed now if parent is failed.
+3. [TH2-5083] Fixed comparison line formatting. Every event in block isn't
+   formatted as failed now if parent is failed.
+4. [TH2-5081] Fixed iteration bug for case where Data object was made using
+   lists and tuple.
+5. [TH2-5100] Fixed bug when we get Recursion Exception if we have too much
+   number of Data objects that iterate each other.
 
 ## Improvements
+
 1. Added vulnerabilities scanning
-2. [TH2-4828] EventNotFound and MessageNotFound now return error description as argument instead of pre-written one.
-3. [TH2-4775] Speed up `Data.build_cache` by disabling garbage collection at the time of storing pickle file.
-4. [TH2-4901] Added gap_mode and zero_anchor parameters for message and event utils get_category_frequencies methods. [See doc](documentation/frequencies.md)
-5. [TH2-5048] - Added typing hints for resolver methods
-6. [TH2-5172] Add faster implementations of following ProtobufTimestampConverter functions: to_microseconds, to_milliseconds, to_nanoseconds.
+2. [TH2-4828] EventNotFound and MessageNotFound now return error description as
+   argument instead of pre-written one.
+3. [TH2-4775] Speed up `Data.build_cache` by disabling garbage collection at the
+   time of storing pickle file.
+4. [TH2-4901] Added gap_mode and zero_anchor parameters for message and event
+   utils get_category_frequencies methods. 
+   [See doc](documentation/frequencies.md)
+5. [TH2-5048] Added typing hints for resolver methods.
+6. [TH2-5172] Add faster implementations of the following
+   ProtobufTimestampConverter functions: to_microseconds, to_milliseconds,
+   to_nanoseconds.
