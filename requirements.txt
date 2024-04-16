@@ -1,10 +1,11 @@
-sseclient-py==1.7.2
-requests==2.26.0
-setuptools==58.1.0
-urllib3==1.26.7
-simplejson>=3.17.6
-th2-grpc-data-provider==1.1.0
+deprecated
+flatdict~=4.0
+orjson
+prettytable  # Temporary required for summary
+requests~=2.28
+sseclient-py~=1.7
+tabulate
 treelib==1.6.1
-grpcio==1.46.3
-grpcio-tools==1.38.1
-types-protobuf==3.19.22
+# setuptools~=65.5
+urllib3~=1.26
+wheel>=0.38.1  # To get rid of wheel building errors

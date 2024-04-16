@@ -1,4 +1,4 @@
-#   Copyright 2020-2020 Exactpro (Exactpro Systems Limited)
+#   Copyright 2022-2023 Exactpro (Exactpro Systems Limited)
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -13,8 +13,9 @@
 #   limitations under the License.
 
 import json
+from typing import Dict, List
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 with open("package_info.json", "r") as file:
     package_info = json.load(file)
@@ -26,7 +27,45 @@ with open("README.md", "r") as file:
     long_description = file.read()
 
 with open("requirements.txt", "r") as file:
-    requirements = [line.strip() for line in file.readlines() if not line.startswith("#") and line != "\n"]
+    requirements = [
+        line.strip() for line in file.readlines() if not line.startswith("#") and line != "\n"
+    ]
+
+CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
+    "rdp": [
+        "th2-data-services-rdp",
+    ],
+    "rdp5": [
+        "th2-data-services-rdp>=5,<6",
+    ],
+    "rdp6": [
+        "th2-data-services-rdp>=6,<7",
+    ],
+    "lwdp": [
+        "th2-data-services-lwdp",
+    ],
+    "lwdp1": [
+        "th2-data-services-lwdp>=1,<2",
+    ],
+    "lwdp2": [
+        "th2-data-services-lwdp>=2,<3",
+    ],
+    "lwdp3": [
+        "th2-data-services-lwdp>=3,<4",
+    ],
+    "lwdp-dev": [
+        "th2-data-services-lwdp~=2.0.2.0.dev",
+    ],
+    "utils-rpt-viewer": [
+        "th2-data-services-utils-rpt-viewer",
+    ],
+    "utils-rpt-viewer5": [
+        "th2-data-services-utils-rpt-viewer>=5,<6",
+    ],
+    "utils-advanced": [
+        "th2-data-services-utils",
+    ],
+}
 
 setup(
     name=package_name,
@@ -40,6 +79,7 @@ setup(
     license="Apache License 2.0",
     python_requires=">=3.7",
     install_requires=requirements,
-    packages=find_packages(include=["th2_data_services", "th2_data_services.*"]),
+    packages=find_namespace_packages(include=["th2_data_services", "th2_data_services.*"]),
+    extras_require=CORE_EXTRAS_DEPENDENCIES,
     include_package_data=True,
 )

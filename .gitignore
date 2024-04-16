@@ -1,3 +1,6 @@
+th2/data_services/utils/__init__.py
+th2/data_services/utils/json.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

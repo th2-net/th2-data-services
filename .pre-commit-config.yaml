@@ -6,28 +6,31 @@ repos:
     rev: v2.3.0
     hooks:
       - id: check-merge-conflict
+      - id: end-of-file-fixer
+        # confilict with documentation generation
+#      - id: trailing-whitespace
+#        args: [--markdown-linebreak-ext=md]
+      - id: check-case-conflict
+      - id: requirements-txt-fixer
 
   - repo: https://github.com/psf/black
-    rev: 21.8b0
+    rev: 22.10.0
     hooks:
       - id: black
         name: black
         entry: black
         types: [ python ]
-        args: [ --line-length=120 ]
+        args: [ --line-length=100 ]
 
-  - repo: https://github.com/myint/autoflake
-    rev: v1.4
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v1.7.7
     hooks:
       - id: autoflake
         name: autoflake
-        entry: autoflake
-        language: system
-        types: [ python ]
         args: [ --in-place, --remove-all-unused-imports, --ignore-init-module-imports ]
 
   - repo: https://github.com/pycqa/pydocstyle
-    rev: 6.1.1  # pick a git hash / tag to point to
+    rev: 6.3.0  # pick a git hash / tag to point to
     hooks:
       - id: pydocstyle
         files: th2_data_services
@@ -43,6 +46,13 @@ repos:
         entry: doc_gen.sh
         require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
 
+      # Working incorrectly
+      # - id: update_readme_toc
+      #   name: update_readme_toc
+      #   language: script
+      #   entry: update_readme_toc.sh
+      #   require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
+
       - id: update_get_started_example_in_readme
         name: update_get_started_example_in_readme
         language: script
@@ -50,12 +60,24 @@ repos:
         args:
           - get_started_example.py
           - README.md
-        require_serial: true
+        require_serial: true  # https://github.com/pre-commit/pre-commit/issues/1466
 
-#      - id: unit_tests
-#        name: unit_tests
-#        stages: [ push ]
-#        entry: pytest -n auto
-#        language: system
-#        pass_filenames: false
-#        always_run: true
+      - id: unit_tests
+        name: unit_tests
+#        stages: [ push ]  # Don't work in my PyCharm for some reason.
+        stages: [ commit ]
+        entry: python -m pytest tests --ignore tests/tests_unit/test_dependencies/ -vv
+        language: python
+        pass_filenames: false
+        always_run: true
+        # Don't know how to solve the libs problem other way.
+        additional_dependencies: [pytest, treelib, flatdict,
+                                  orjson, th2-data-services-lwdp==2.0.3.0]
+
+      - id: check_copyright
+        name: check_copyright
+        stages: [ commit ]
+        entry: python check_copyright.py copyright.txt ./th2_data_services
+        language: python
+        pass_filenames: false
+        always_run: true
