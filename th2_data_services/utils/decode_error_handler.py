@@ -12,10 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import annotations
 from codecs import register_error
 
 
-def handler(err: UnicodeDecodeError):
+def handler(err: UnicodeDecodeError) -> tuple[str, int]:
     """Decode error handler that tries change utf-8 character to Unicode."""
     return chr(err.object[err.start]), err.end
 

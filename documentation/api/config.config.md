@@ -42,10 +42,10 @@ Global configuration for the DS library.
 
 ```python
 setup_resolvers(
-    for_event,
-    for_message,
-    for_submessage,
-    for_expanded_message
+    for_event: EventFieldResolver,
+    for_message: MessageFieldResolver,
+    for_submessage: SubMessageFieldResolver,
+    for_expanded_message: ExpandedMessageFieldResolver
 ) → TH2Config
 ```
 

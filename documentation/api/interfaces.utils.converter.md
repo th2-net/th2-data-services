@@ -28,7 +28,7 @@
 ### <kbd>classmethod</kbd> `parse_timestamp`
 
 ```python
-parse_timestamp(timestamp: ~TimestampType) → (<class 'str'>, <class 'str'>)
+parse_timestamp(timestamp: ~TimestampType) → Tuple[str, str]
 ```
 
 Returns string representation of Unix time. 
@@ -46,7 +46,7 @@ e.g. 2022-03-05T23:56:44.00123Z -> ('1646524604', '001230000')
 ### <kbd>classmethod</kbd> `parse_timestamp_int`
 
 ```python
-parse_timestamp_int(timestamp: ~TimestampType) → (<class 'int'>, <class 'int'>)
+parse_timestamp_int(timestamp: ~TimestampType) → Tuple[int, int]
 ```
 
 Returns int representation of Unix time. 

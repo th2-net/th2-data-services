@@ -11,7 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+from typing import Optional
 
 from th2_data_services.interfaces.utils.resolver import (
     EventFieldResolver,
@@ -27,10 +27,10 @@ class TH2Config:
         # TODO - try to import here data_source in available.
 
         self.INTERACTIVE_MODE = False
-        self.EVENT_FIELDS_RESOLVER: EventFieldResolver = None
-        self.MESSAGE_FIELDS_RESOLVER: MessageFieldResolver = None
-        self.SUBMESSAGE_FIELDS_RESOLVER: SubMessageFieldResolver = None
-        self.EXPANDED_MESSAGE_FIELDS_RESOLVER: ExpandedMessageFieldResolver = None
+        self.EVENT_FIELDS_RESOLVER: Optional[EventFieldResolver] = None
+        self.MESSAGE_FIELDS_RESOLVER: Optional[MessageFieldResolver] = None
+        self.SUBMESSAGE_FIELDS_RESOLVER: Optional[SubMessageFieldResolver] = None
+        self.EXPANDED_MESSAGE_FIELDS_RESOLVER: Optional[ExpandedMessageFieldResolver] = None
         self.MAX_PATH: int = 255  # OS limitation. Both Windows and Linux
         self.FORBIDDEN_CHARACTERS_IN_FILENAME: str = '<>:"|?*/\\'
         self.FORBIDDEN_CHARACTERS_IN_FILENAME_CHANGE_TO: str = "_"
@@ -56,7 +56,11 @@ class TH2Config:
         return s
 
     def setup_resolvers(
-        self, for_event, for_message, for_submessage, for_expanded_message
+        self,
+        for_event: EventFieldResolver,
+        for_message: MessageFieldResolver,
+        for_submessage: SubMessageFieldResolver,
+        for_expanded_message: ExpandedMessageFieldResolver,
     ) -> "TH2Config":
         """Use this to set up your custom resolvers.
 

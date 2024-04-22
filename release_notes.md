@@ -451,8 +451,10 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    [I.2] Change in iteration logic also changed how `map` function behaves.
    If `map` function returns lists or tuples their content won't be iterated
    anymore.\
-   [M.2] If you are interest previous `map` function behavior, just update `map`
+   [M.2.1] If you are interest previous `map` function behavior, just update `map`
    to `map_yield`.
+   
+   [M.2.2] Update `data.map(mfr.expand_message)` to `data.map_yield(mfr.expand_message)`
 
    [I.3] Data object will not iterate over contents of its stream if any of the
    items are iterables (but not Data object).\
