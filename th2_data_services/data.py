@@ -35,6 +35,7 @@ from typing import (
     Iterator,
     Any,
     Generic,
+    BinaryIO,
 )
 from weakref import finalize
 import types
@@ -189,12 +190,12 @@ class Data(Generic[DataIterValues]):
         self._pending_cache_path = (
             self._cache_path.with_name("[PENDING]" + self._cache_filename).resolve().absolute()
         )
-        self._cache_file_obj = None
-        self._len = None
+        self._cache_file_obj: Optional[BinaryIO] = None
+        self._len: Optional[int] = None
         self.workflow = DataWorkflow()
 
-        self._length_hint = None  # The value is populated when we use limit method.
-        self._cache_status = cache
+        self._length_hint: Optional[int] = None  # The value is populated when we use limit method.
+        self._cache_status: bool = cache
         # We use finalize instead of __del__ because __del__ won't be executed sometimes.
         # Read more about __del__ problems here: https://stackoverflow.com/a/2452895
         self._finalizer = finalize(self, self.__remove)
@@ -202,7 +203,7 @@ class Data(Generic[DataIterValues]):
         # It used to indicate the number of current iteration of the Data object.
         # It's required if the same instance iterates several times in for-in loops.
         self.iter_num = 0  # Indicates what level of the loop the Data object is in.
-        self._stop_iteration = None
+        self._stop_iteration: Optional[bool] = None
         self._read_from_external_cache_file = False
         self.__metadata = {}
         self._pickle_version = pickle_version  # Default pickle protocol version
@@ -610,6 +611,7 @@ class Data(Generic[DataIterValues]):
         # data._set_metadata(self.metadata)
         # return data
 
+    # TODO - probably it's better to rename to map_iter or something else ..
     def map_yield(self, callback_or_adapter: Union[Callable, IRecordAdapter]) -> "Data":
         """Maps the stream using callback function or adapter.
 
@@ -654,7 +656,9 @@ class Data(Generic[DataIterValues]):
         data_obj._length_hint = num
         return data_obj
 
-    def sift(self, limit: int = None, skip: int = None) -> Generator[dict, None, None]:
+    def sift(
+        self, limit: Optional[int] = None, skip: Optional[int] = None
+    ) -> Generator[dict, None, None]:
         """Skips and limits records.
 
         Args:

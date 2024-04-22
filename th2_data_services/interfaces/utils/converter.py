@@ -14,7 +14,7 @@
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Tuple
 
 TimestampType = TypeVar("TimestampType")
 
@@ -41,7 +41,7 @@ Some speed tests:
 class ITimestampConverter(ABC, Generic[TimestampType]):
     @classmethod
     @abstractmethod
-    def parse_timestamp(cls, timestamp: TimestampType) -> (str, str):
+    def parse_timestamp(cls, timestamp: TimestampType) -> Tuple[str, str]:
         """Returns string representation of Unix time.
 
         Separated for seconds and nanoseconds.
@@ -53,7 +53,7 @@ class ITimestampConverter(ABC, Generic[TimestampType]):
 
     @classmethod
     @abstractmethod
-    def parse_timestamp_int(cls, timestamp: TimestampType) -> (int, int):
+    def parse_timestamp_int(cls, timestamp: TimestampType) -> Tuple[int, int]:
         """Returns int representation of Unix time.
 
         Separated for seconds and nanoseconds.
