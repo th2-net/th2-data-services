@@ -14,6 +14,7 @@
 
 import copy
 import csv
+import os
 from dataclasses import dataclass
 import orjson as json
 import gc
@@ -1049,10 +1050,10 @@ class Data(Generic[DataIterValues]):
                 return
             file.write("[\n")  # Start list
             for record in self:
-                d = json.dumps(record)
-                file.write(indent * " " + d.decode())
+                dump = json.dumps(record)
+                file.write(indent * " " + dump.decode())
                 file.write(",\n")
-            file.seek(file.tell() - 3)  # Delete last comma for valid JSON
+            file.seek(file.tell() - len(os.linesep) - 1)  # Delete last comma for valid JSON
             file.write("\n]\n")  # Close list
 
     @deprecated(
