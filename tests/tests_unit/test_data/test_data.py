@@ -298,6 +298,18 @@ def test_break_cycle(general_data: List[dict]):
     assert second_cycle == 21
 
 
+def test_to_json():
+    data = Data([1, 2, {"3": 5, "tt": 4}, 6])
+    path_result = "tests/test_files/file_to_test_to_json.txt"
+    path_expected = "tests/test_files/file_to_test_to_json_expected.txt"
+
+    data.to_json(path_result, indent=4, overwrite=True)
+
+    with open(path_result, encoding="utf-8") as f1, open(path_expected, encoding="utf-8") as f2:
+        for l1, l2 in zip(f1, f2):
+            assert l1 == l2
+
+
 class TestDataObjectJoining:
     @classmethod
     def setup_class(cls):

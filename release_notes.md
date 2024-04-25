@@ -552,6 +552,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    lists and tuple.
 5. [TH2-5100] Fixed bug when we get Recursion Exception if we have too much
    number of Data objects that iterate each other.
+6. [TH2-5190] Fixed Data.to_json
 
 ## Improvements
 
