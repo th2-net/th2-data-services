@@ -789,6 +789,7 @@ class Data(Generic[DataIterValues]):
             print(f"------------- Printed all stream records -------------")
             for index, record in enumerate(self, start=1):
                 self._show_print_one_line(index, idx_print, extra_prints, record)
+            return
 
         print(f"------------- Printed first {n} records -------------")
         for index, record in enumerate(self, start=1):
