@@ -14,6 +14,7 @@
 
 import copy
 import csv
+import os
 from dataclasses import dataclass
 import orjson as json
 import gc
@@ -1023,12 +1024,12 @@ class Data(Generic[DataIterValues]):
 
         return self
 
-    def to_json(self, filename: Union[str, Path], indent: int = None, overwrite: bool = False):
+    def to_json(self, filename: Union[str, Path], indent: int = 0, overwrite: bool = False):
         """Converts data to valid json format.
 
         Args:
             filename (str): Output JSON filename
-            indent (int, optional): JSON format indent. Defaults to None.
+            indent (int, optional): JSON format indent. Defaults to 0.
             overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
 
         NOTE:
@@ -1043,15 +1044,17 @@ class Data(Generic[DataIterValues]):
                 f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
             )
 
-        with open(filename, "w", encoding="UTF-8") as file:
-            file.write("[")  # Start list
+        with open(filename, "w", encoding="utf-8") as file:
+            if self.is_empty:
+                file.write("[\n]\n")
+                return
+            file.write("[\n")  # Start list
             for record in self:
-                # TODO
-                (json.dumps(record) + b"\n").decode()
-                json.dump(record, file, indent=indent)
+                dump = json.dumps(record)
+                file.write(indent * " " + dump.decode())
                 file.write(",\n")
-            file.seek(file.tell() - 3)  # Delete last comma for valid JSON
-            file.write("]")  # Close list
+            file.seek(file.tell() - len(os.linesep) - 1)  # Delete last comma for valid JSON
+            file.write("\n]\n")  # Close list
 
     @deprecated(
         reason="Use `to_json_lines` instead. " "`to_jsons` will be removed on 2.0.0 release."
