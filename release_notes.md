@@ -470,6 +470,9 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
       c. You can update the example from `a` to `Data([1,2,3,4])` or to `new_data = Data([1,2]) + Data([3,4]) + d1`.\
       d. You also can return prev behaviour doing the following:  `new_data = Data([1, 2, [3, 4], d1]).map_yield(lambda r: r)`
  
+8. [I] A new version of `orjson` lib require python 3.8+.
+   [M] Change your python version if you use 3.7 to 3.8+.
+
 ## Features
 
 1. [TH2-4128] pip no longer installs RDP by default
@@ -553,6 +556,8 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 5. [TH2-5100] Fixed bug when we get Recursion Exception if we have too much
    number of Data objects that iterate each other.
 6. [TH2-5190] Fixed Data.to_json
+7. [TH2-5193] orjson versions 3.7.0 through 3.9.14 library has vulnerability
+   https://devhub.checkmarx.com/cve-details/CVE-2024-27454/. 
 
 ## Improvements
 
