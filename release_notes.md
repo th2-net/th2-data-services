@@ -543,6 +543,8 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
     old `map` method.
     That means that `map_yield` will iterate lists and tuples if the user map
     function returns them.
+31. [TH2-5197] Added the function `read_all_pickle_files_from_the_folder` 
+    to get Data object from the folder with pickle files.
 
 ## BugFixes
 
