@@ -14,14 +14,14 @@
 
 import os
 from pathlib import Path
-from typing import Optional, List, Union
+from typing import List, Union
 
 from th2_data_services.data import Data
 
 
 def read_all_pickle_files_from_the_folder(
     path: Union[str, Path], return_list=False
-) -> Optional[Data, List[Data]]:
+) -> Union[Data, List[Data]]:
     """Reads all Pickle files from the folder.
 
     Args:
