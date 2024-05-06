@@ -22,7 +22,7 @@ def test_frequency_table_data_has_the_same_header_every_time(frequency_table_dat
     captured = capsys.readouterr()
     assert (
         captured.out
-        == f"""+--------+-------------------+-----------------+-------------------+------------+---------------+
+        == """+--------+-------------------+-----------------+-------------------+------------+---------------+
 |        | timestamp_start   | timestamp_end   | ExecutionReport   | NewOrder   |   OrderCancel |
 +========+===================+=================+===================+============+===============+
 |        | 2023-08-13        | 2023-08-14      | 1                 | 1          |             2 |
@@ -74,7 +74,7 @@ def test_frequency_table_data_has_the_same_header_every_time_with_total_column(
     captured = capsys.readouterr()
     assert (
         captured.out
-        == f"""+--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        == """+--------+-------------------+-----------------+-------------------+------------+---------------+---------+
 |        | timestamp_start   | timestamp_end   | ExecutionReport   | NewOrder   | OrderCancel   |   Total |
 +========+===================+=================+===================+============+===============+=========+
 |        | 2023-08-13        | 2023-08-14      | 1                 | 1          | 2             |       4 |

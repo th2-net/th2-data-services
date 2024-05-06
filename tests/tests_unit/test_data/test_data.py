@@ -354,8 +354,8 @@ class TestDataObjectJoining:
         d2 = Data(["a", {"id": 123}, "c"], cache=True)
         dx = self.d1 + d2 + self.d3
         iterate_data(dx, to_return=False)  # It should create d2 cache file.
-        assert is_cache_file_exists(d2), f"The cache was not dumped after using len"
+        assert is_cache_file_exists(d2), "The cache was not dumped after using len"
 
         dx.use_cache(True)
         iterate_data(dx, to_return=False)  # It should create dx cache file.
-        assert is_cache_file_exists(dx), f"The cache was not dumped after using len"
+        assert is_cache_file_exists(dx), "The cache was not dumped after using len"
