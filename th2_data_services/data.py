@@ -786,7 +786,7 @@ class Data(Generic[DataIterValues]):
             extra_prints = {}
 
         if n == -1:
-            print(f"------------- Printed all stream records -------------")
+            print("------------- Printed all stream records -------------")
             for index, record in enumerate(self, start=1):
                 self._show_print_one_line(index, idx_print, extra_prints, record)
             return

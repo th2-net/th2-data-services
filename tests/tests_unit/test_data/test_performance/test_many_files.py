@@ -80,7 +80,7 @@ def create_1_file():
     file_lines_num = 5000 * files_num
 
     Data([data_template]).map_stream(Multiply(file_lines_num)).to_json_lines(
-        filename=f"file_all.jsons", gzip=True, overwrite=True
+        filename="file_all.jsons", gzip=True, overwrite=True
     )
 
 
@@ -99,7 +99,7 @@ def many_files():
     files = [str(Path(TEST_FILES_PATH) / f"file_{i}.jsons") for i in range(100)]
     # print(locals())
     # print(timeit.repeat("[x for x in data_many_files]", globals=locals()))
-    all_msgs_in_1_filepath = f"file_all.jsons"
+    all_msgs_in_1_filepath = "file_all.jsons"
     data_all_in_one_file = Data.from_json(all_msgs_in_1_filepath, gzip=True)
     # print(timeit.repeat("[x for x in data_all_in_one_file]", globals=locals()))
 
@@ -185,18 +185,18 @@ for x in data_all_in_one_file.filter(lambda x: True):
     """
 
     print(files)
-    s3 = f"""
+    s3 = """
 for f in files:
     iterator = iter_json_gzip_file(f, buffer_limit=0)
     for m in iterator():
         pass
         """
-    s4 = f"""
+    s4 = """
 iterator = iter_json_gzip_file(all_msgs_in_1_filepath)
 for m in iterator():
     pass
     """
-    s5_iterate_every_data_file_separatelly = f"""
+    s5_iterate_every_data_file_separatelly = """
 for f in data_many_files_datas_list:
     for x in f.filter(lambda x: True):
         pass

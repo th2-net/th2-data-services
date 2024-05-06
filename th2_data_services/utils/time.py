@@ -270,7 +270,7 @@ def _round_timestamp_string_aggregation(timestamp: int, aggregation_level: str =
     if aggregation_level.endswith("day") or aggregation_level.endswith("d"):
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%d")
 
-    raise KeyError(f"Invalid aggregation level")
+    raise KeyError("Invalid aggregation level")
 
 
 def _time_str_to_seconds(time_str: str):
@@ -326,7 +326,7 @@ def _time_str_to_seconds(time_str: str):
         num = time_str.split("d")[0]
         return int(num) * 3600 * 24
 
-    raise KeyError(f"Invalid time string")
+    raise KeyError("Invalid time string")
 
 
 def calculate_time(func=None, return_as_last_value=False):
