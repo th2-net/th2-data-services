@@ -19,7 +19,7 @@ import os
 
 
 def transform_filename_to_valid(filename: str) -> str:
-    """Transforms filename to valid name.
+    """Transforms filename to valid OS name.
 
     Args:
         filename: string filename
@@ -39,6 +39,31 @@ def transform_filename_to_valid(filename: str) -> str:
         res_name += res_sym
 
     return res_name[: options.MAX_PATH]
+
+
+def transform_filepath_to_valid(filepath: Path) -> Path:
+    """Transforms filepath to valid OS name.
+
+    Args:
+        filepath: Path object.
+
+    Returns:
+        Valid path.
+    """
+    path_len = len(str(filepath))
+    parent_path_len = len(str(filepath.parent))
+
+    # -2 because we also have to add '/' symbol and at least 1 symbol for filename
+    if parent_path_len >= options.MAX_PATH - 2:
+        raise ValueError(
+            f"It's impossible to create valid path for provided one: {filepath}. "
+            f"Because its parent part is longer than Max possible OS path. {parent_path_len} >= {options.MAX_PATH-2}."
+        )
+
+    max_filename_len = path_len - parent_path_len
+    valid_filename = transform_filename_to_valid(filepath.name)[:max_filename_len]
+
+    return filepath.parent / valid_filename
 
 
 def check_if_filename_valid(filename: str):
