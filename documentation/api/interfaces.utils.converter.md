@@ -85,7 +85,7 @@ Speed test: AMD Ryzen 7 6800H with Radeon Graphics 3.20 GHz ~ 987 ns per iterati
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L129"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L144"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `to_datetime_str`
 
@@ -113,7 +113,7 @@ Format example:
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L86"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L116"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `to_microseconds`
 
@@ -144,7 +144,7 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
 ### <kbd>classmethod</kbd> `to_milliseconds`
 
 ```python
-to_milliseconds(timestamp: ~TimestampType)
+to_milliseconds(timestamp: ~TimestampType) → int
 ```
 
 Converts timestamp to milliseconds. 
@@ -165,7 +165,7 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L116"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L131"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `to_nanoseconds`
 
@@ -189,7 +189,33 @@ Converts timestamp to nanoseconds.
 
 ---
 
-<a href="../../th2_data_services/interfaces/utils/converter.py#L147"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/utils/converter.py#L86"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>classmethod</kbd> `to_seconds`
+
+```python
+to_seconds(timestamp: ~TimestampType)
+```
+
+Converts timestamp to seconds. 
+
+If your timestamp has nanoseconds, they will be just cut (not rounding). 
+
+
+
+**Args:**
+ 
+ - <b>`timestamp`</b>:  TimestampType object to convert. 
+
+
+
+**Returns:**
+ 
+ - <b>`int`</b>:  Timestamp in seconds format. 
+
+---
+
+<a href="../../th2_data_services/interfaces/utils/converter.py#L162"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `to_th2_timestamp`
 

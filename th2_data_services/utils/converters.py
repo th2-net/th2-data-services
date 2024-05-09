@@ -180,6 +180,21 @@ class ProtobufTimestampConverter(ITimestampConverter[dict]):
         return seconds, nanoseconds
 
     @classmethod
+    def to_seconds(cls, timestamp: TimestampType):
+        """Converts timestamp to seconds.
+
+        If your timestamp has nanoseconds, they will be just cut (not rounding).
+
+        Args:
+            timestamp: TimestampType object to convert.
+
+        Returns:
+            int: Timestamp in seconds format.
+        """
+        seconds, nanoseconds = cls.parse_timestamp_int(timestamp)
+        return seconds
+
+    @classmethod
     def to_microseconds(cls, timestamp: TimestampType) -> int:
         """Converts timestamp to microseconds.
 
