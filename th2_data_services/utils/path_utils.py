@@ -60,7 +60,7 @@ def transform_filepath_to_valid(filepath: Path) -> Path:
             f"Because its parent part is longer than Max possible OS path. {parent_path_len} >= {options.MAX_PATH-2}."
         )
 
-    max_filename_len = path_len - parent_path_len
+    max_filename_len = options.MAX_PATH - parent_path_len
     valid_filename = transform_filename_to_valid(filepath.name)[:max_filename_len]
 
     return filepath.parent / valid_filename
