@@ -84,6 +84,36 @@ class ITimestampConverter(ABC, Generic[TimestampType]):
         return datetime.utcfromtimestamp(ts)
 
     @classmethod
+    def to_seconds(cls, timestamp: TimestampType):
+        """Converts timestamp to seconds.
+
+        If your timestamp has nanoseconds, they will be just cut (not rounding).
+
+        Args:
+            timestamp: TimestampType object to convert.
+
+        Returns:
+            int: Timestamp in seconds format.
+        """
+        seconds, nanoseconds = cls.parse_timestamp(timestamp)
+        return int(seconds)
+
+    @classmethod
+    def to_milliseconds(cls, timestamp: TimestampType) -> int:
+        """Converts timestamp to milliseconds.
+
+        If your timestamp has nanoseconds, they will be just cut (not rounding).
+
+        Args:
+            timestamp: TimestampType object to convert.
+
+        Returns:
+            int: Timestamp in microseconds format.
+        """
+        seconds, nanoseconds = cls.parse_timestamp(timestamp)
+        return int(f"{seconds}{nanoseconds[:-6]}")
+
+    @classmethod
     def to_microseconds(cls, timestamp: TimestampType) -> int:
         """Converts timestamp to microseconds.
 
@@ -97,21 +127,6 @@ class ITimestampConverter(ABC, Generic[TimestampType]):
         """
         seconds, nanoseconds = cls.parse_timestamp(timestamp)
         return int(f"{seconds}{nanoseconds[:-3]}")
-
-    @classmethod
-    def to_milliseconds(cls, timestamp: TimestampType):
-        """Converts timestamp to milliseconds.
-
-        If your timestamp has nanoseconds, they will be just cut (not rounding).
-
-        Args:
-            timestamp: TimestampType object to convert.
-
-        Returns:
-            int: Timestamp in microseconds format.
-        """
-        seconds, nanoseconds = cls.parse_timestamp(timestamp)
-        return int(f"{seconds}{nanoseconds[:-6]}")
 
     @classmethod
     def to_nanoseconds(cls, timestamp: TimestampType) -> int:
