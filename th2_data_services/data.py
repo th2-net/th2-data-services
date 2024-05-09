@@ -214,7 +214,19 @@ class Data(Generic[DataIterValues]):
     # LOG        )
 
     def __str__(self):
-        s = f"Data({id(self)}\n" f"     {self.workflow}\n" f"     metadata={self.metadata})"
+        if self._cache_status:
+            path = self.get_cache_filepath()
+            is_exists = "Exists" if self.is_cache_file_exists() else "Not exists"
+            cache_str = f" ([{is_exists}] {path})"
+        else:
+            cache_str = ""
+
+        s = (
+            f"Data({id(self)}\n"
+            f"     {self.workflow}\n"
+            f"     metadata={self.metadata})\n"
+            f"     cache={self._cache_status}{cache_str}"
+        )
         return s
 
     def __repr__(self):
