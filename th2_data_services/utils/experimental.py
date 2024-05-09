@@ -14,9 +14,6 @@
 
 from typing import List
 
-from th2_data_services.provider.v5.commands import http
-from th2_data_services.provider.v5.data_source import HTTPProvider5DataSource
-
 import th2_data_services.utils
 from th2_data_services.config import options
 from th2_data_services.utils.converters import flatten_dict

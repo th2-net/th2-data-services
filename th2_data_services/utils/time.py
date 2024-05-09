@@ -17,7 +17,7 @@ from functools import wraps, partial
 from typing import Dict, Union, Callable
 from deprecated.classic import deprecated
 import time as time_
-from th2_data_services.utils.converters import Th2TimestampConverter
+from th2_data_services.utils.converters import Th2TimestampConverter, DatetimeConverter
 
 
 def extract_timestamp(timestamp_element: Dict) -> str:
@@ -76,11 +76,12 @@ def timestamp_delta_us(start_timestamp: Dict, end_timestamp: Dict) -> int:
     return seconds_delta + nano_delta
 
 
-# TODO - looks ok, but we need to think about unified timestamps
 def time_slice_object_filter(
     timestamp_field: str, start_timestamp_iso: str, duration_seconds: int
 ) -> Callable:  # noqa
-    """Filter elements that from time moment `A` to `A+duration_seconds`.
+    """Returns filter function for `Data.filter` method.
+
+    Filter elements that from time moment `A` to `A+duration_seconds`.
 
     Args:
         timestamp_field: expects the field name that contains ProtobufTimestamp
@@ -92,8 +93,17 @@ def time_slice_object_filter(
 
     Returns:
         Filter function.
+
+    Examples:
+        1. data.filter(time_slice_object_filter('startTimestamp', '2009-05-28T16:15:00, 300))
     """
-    ts1 = datetime.fromisoformat(start_timestamp_iso).timestamp()
+    # TODO
+    #   1. looks ok, but we need to think about unified timestamps
+    # FixMe
+    #   1. timestamp_field -- the problem here if the field is placed not in the root of the dict.
+    #   2. it expects, that `obj[timestamp_field]` == Th2Timestamp
+
+    ts1 = DatetimeConverter.to_seconds(datetime.fromisoformat(start_timestamp_iso))
     ts2 = ts1 + duration_seconds
 
     # FIXME
