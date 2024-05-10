@@ -54,7 +54,7 @@ class DatetimeStringConverter(ITimestampConverter[str]):
             dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0Z')
 
         mantissa = dt_tuple.mantissa
-        if mantissa[-1] == "Z":
+        if mantissa and mantissa[-1] == "Z":
             mantissa = mantissa[:-1]
         nanoseconds = f"{mantissa:0<9}"  # Add zeros on right.
         seconds = str(int(timestamp.timestamp()))
