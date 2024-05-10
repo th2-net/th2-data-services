@@ -560,6 +560,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 6. [TH2-5190] Fixed Data.to_json
 7. [TH2-5193] orjson versions 3.7.0 through 3.9.14 library has vulnerability
    https://devhub.checkmarx.com/cve-details/CVE-2024-27454/. 
+8. [TH2-5201] Fixed DatetimeStringConverter.to_th2_timestamp() bug which occurred for inputs not ending with 'Z'.
 
 ## Improvements
 
