@@ -8,6 +8,13 @@ def test_to_datetime(datetime_strings):
     )
 
 
+def test_to_seconds(datetime_strings):
+    assert (
+        UnixTimestampConverter.to_seconds(datetime_strings.expected_ns)
+        == datetime_strings.expected_s
+    )
+
+
 def test_to_microseconds(datetime_strings):
     assert (
         UnixTimestampConverter.to_microseconds(datetime_strings.expected_ns)
