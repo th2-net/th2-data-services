@@ -33,8 +33,8 @@ class DatetimeStringConverter(ITimestampConverter[str]):
     If you request microseconds but your timestamp has nanoseconds,
     they will be just cut (not rounding).
 
-    Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z".
-    If you don't provide 'Z' in the end, it can return wrong results.
+    Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS][Z]".
+    'Z' in the end is optional.
     """
 
     @classmethod
