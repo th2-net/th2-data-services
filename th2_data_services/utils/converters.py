@@ -77,19 +77,14 @@ class UniversalDatetimeStringConverter(ITimestampConverter[str]):
         if datetime_string.endswith("Z"):
             datetime_string = datetime_string[:-1]
         datetime_string = datetime_string.replace("T", " ")
-        # Exception handling works faster than using `if`.
-        try:
-            # Handles "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ"
-            dt_tuple = _DatetimeTuple(*datetime_string.rsplit("."))
-            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%d %H:%M:%S").replace(
-                tzinfo=timezone.utc
-            )
-        except TypeError:
-            # Handles "yyyy-MM-ddTHH:mm:ssZ"
-            timestamp = datetime.strptime(datetime_string, "%Y-%m-%d %H:%M:%S").replace(
-                tzinfo=timezone.utc
-            )
-            dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0')
+
+        dt_tuple = (
+            _DatetimeTuple(*datetime_string.rsplit("."))
+            if "." in datetime_string
+            else _DatetimeTuple(datetime_string, "")
+        )
+
+        timestamp = ciso8601.parse_datetime(dt_tuple.datetime).replace(tzinfo=timezone.utc)
 
         nanoseconds = f"{dt_tuple.mantissa:0<9}"  # Add zeros on right.
         seconds = str(int(timestamp.timestamp()))
