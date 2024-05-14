@@ -17,6 +17,7 @@ from collections import namedtuple
 from datetime import datetime, timezone
 import shutil
 import gzip
+import ciso8601
 
 import flatdict as _flatdict
 
@@ -39,19 +40,13 @@ class DatetimeStringConverter(ITimestampConverter[str]):
 
     @classmethod
     def parse_timestamp(cls, datetime_string: str) -> (str, str):
-        # Exception handling works faster than using `if`.
-        try:
-            # Handles "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ"
-            dt_tuple = _DatetimeTuple(*datetime_string.rsplit("."))
-            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%dT%H:%M:%S").replace(
-                tzinfo=timezone.utc
-            )
-        except TypeError:
-            # Handles "yyyy-MM-ddTHH:mm:ssZ"
-            timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%SZ").replace(
-                tzinfo=timezone.utc
-            )
-            dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0Z')
+        dt_tuple = (
+            _DatetimeTuple(*datetime_string.rsplit("."))
+            if "." in datetime_string
+            else _DatetimeTuple(datetime_string, "")
+        )
+
+        timestamp = ciso8601.parse_datetime(dt_tuple.datetime).replace(tzinfo=timezone.utc)
 
         mantissa = dt_tuple.mantissa
         if mantissa and mantissa[-1] == "Z":

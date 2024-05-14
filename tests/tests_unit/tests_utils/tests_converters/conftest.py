@@ -230,24 +230,24 @@ seconds = 1646524604
             expected_th2_timestamp={"epochSecond": 1715060987, "nano": 0},
             expected_th2_timestamp_datetime={"epochSecond": 1715060987, "nano": 0},
         ),
-        # # 7.2
-        # TestCase(
-        #     datetime_string="2024-05-07T05:49:47",
-        #     datetime_obj=datetime(
-        #         year=2024, month=5, day=7, hour=5, minute=49, second=47, microsecond=0
-        #     ),
-        #     th2_timestamp={"epochSecond": 1715060987, "nano": 0},
-        #     expected_datetime=datetime(
-        #         year=2024, month=5, day=7, hour=5, minute=49, second=47, microsecond=0
-        #     ),
-        #     expected_ns=1715060987000000000,
-        #     expected_us=1715060987000000,
-        #     expected_ms=1715060987000,
-        #     expected_s=1715060987,
-        #     expected_datestring="2024-05-07T05:49:47.000000000",
-        #     expected_th2_timestamp={"epochSecond": 1715060987, "nano": 0},
-        #     expected_th2_timestamp_datetime={"epochSecond": 1715060987, "nano": 0},
-        # ),
+        # 7.2
+        TestCase(
+            datetime_string="2024-05-07T05:49:47",
+            datetime_obj=datetime(
+                year=2024, month=5, day=7, hour=5, minute=49, second=47, microsecond=0
+            ),
+            th2_timestamp={"epochSecond": 1715060987, "nano": 0},
+            expected_datetime=datetime(
+                year=2024, month=5, day=7, hour=5, minute=49, second=47, microsecond=0
+            ),
+            expected_ns=1715060987000000000,
+            expected_us=1715060987000000,
+            expected_ms=1715060987000,
+            expected_s=1715060987,
+            expected_datestring="2024-05-07T05:49:47.000000000",
+            expected_th2_timestamp={"epochSecond": 1715060987, "nano": 0},
+            expected_th2_timestamp_datetime={"epochSecond": 1715060987, "nano": 0},
+        ),
     ]
 )
 def datetime_strings(request) -> TestCase:
