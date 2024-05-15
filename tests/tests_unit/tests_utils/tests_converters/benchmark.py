@@ -67,3 +67,14 @@ def compare_times(datetime_strings):
             "8. .to_th2_timestamp:",
             timeit.timeit(f"{converter}.to_th2_timestamp({param})", setup=setup, globals=globals),
         )
+
+
+if __name__ == "__main__":
+    print("#" * 50)
+    print("This benchmark shows how many seconds takes every converter operation in seconds.")
+    print("#" * 50)
+
+    from tests.tests_unit.tests_utils.tests_converters.conftest import converter_test_cases
+
+    for case in converter_test_cases:
+        compare_times(case)

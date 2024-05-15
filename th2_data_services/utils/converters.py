@@ -40,27 +40,48 @@ class DatetimeStringConverter(ITimestampConverter[str]):
 
     @classmethod
     def parse_timestamp(cls, datetime_string: str) -> (str, str):
-        dt_tuple = (
-            _DatetimeTuple(*datetime_string.rsplit("."))
-            if "." in datetime_string
-            else _DatetimeTuple(datetime_string, "")
-        )
+        # Note:
+        #   we have similar code here (not the separate function)
+        #   to improve performance.
+        try:
+            if datetime_string[19] == ".":
+                datetime_part, mantissa = datetime_string.rsplit(".")
+                if mantissa[-1] == "Z":
+                    mantissa = mantissa[:-1]
+            else:
+                datetime_part, mantissa = datetime_string, ""
+        except:
+            datetime_part, mantissa = datetime_string, ""
 
-        timestamp = ciso8601.parse_datetime(dt_tuple.datetime).replace(tzinfo=timezone.utc)
+        dt = ciso8601.parse_datetime(datetime_part).replace(tzinfo=timezone.utc)
 
-        mantissa = dt_tuple.mantissa
-        if mantissa and mantissa[-1] == "Z":
-            mantissa = mantissa[:-1]
         nanoseconds = f"{mantissa:0<9}"  # Add zeros on right.
-        seconds = str(int(timestamp.timestamp()))
+        seconds = str(int(dt.timestamp()))
 
         return seconds, nanoseconds
 
     @classmethod
     def parse_timestamp_int(cls, datetime_string: str) -> (int, int):
-        # TODO - there should be better solution
-        seconds, nanoseconds = cls.parse_timestamp(datetime_string)
-        return int(seconds), int(nanoseconds)
+        # Note:
+        #   we have similar code here (not the separate function)
+        #   to improve performance.
+        try:
+            if datetime_string[19] == ".":
+                datetime_part, mantissa = datetime_string.rsplit(".")
+                if mantissa[-1] == "Z":
+                    mantissa = mantissa[:-1]
+            else:
+                datetime_part, mantissa = datetime_string, ""
+        except:
+            datetime_part, mantissa = datetime_string, ""
+
+        dt = ciso8601.parse_datetime_as_naive(datetime_part).replace(tzinfo=timezone.utc)
+
+        return int(dt.timestamp()), int(f"{mantissa:0<9}")
+
+    @classmethod
+    def to_datetime(cls, datetime_string: str) -> datetime:
+        return ciso8601.parse_datetime_as_naive(datetime_string)
 
 
 class UniversalDatetimeStringConverter(ITimestampConverter[str]):
