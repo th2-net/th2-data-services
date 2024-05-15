@@ -204,8 +204,7 @@ class ProtobufTimestampConverter(ITimestampConverter[dict]):
         Returns:
             int: Timestamp in seconds format.
         """
-        seconds, nanoseconds = cls.parse_timestamp_int(timestamp)
-        return seconds
+        return timestamp["epochSecond"]
 
     @classmethod
     def to_microseconds(cls, timestamp: TimestampType) -> int:
