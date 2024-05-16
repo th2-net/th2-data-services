@@ -72,16 +72,9 @@ class ITimestampConverter(ABC, Generic[TimestampType]):
 
         Returns:
             datetime: Timestamp in python datetime format.
-
-        Speed test:
-            AMD Ryzen 7 6800H with Radeon Graphics 3.20 GHz
-            ~ 987 ns per iteration  ~= 1000000 iterations per second
         """
         seconds, nanoseconds = cls.parse_timestamp_int(timestamp)
-        nanoseconds_str = f"{nanoseconds:0>9}"
-        microseconds = nanoseconds_str[:-3]
-        ts = float(str(seconds) + "." + microseconds)
-        return datetime.utcfromtimestamp(ts)
+        return datetime.utcfromtimestamp(seconds + nanoseconds // 1000 / 1_000_000)
 
     @classmethod
     def to_seconds(cls, timestamp: TimestampType):
@@ -95,8 +88,8 @@ class ITimestampConverter(ABC, Generic[TimestampType]):
         Returns:
             int: Timestamp in seconds format.
         """
-        seconds, nanoseconds = cls.parse_timestamp(timestamp)
-        return int(seconds)
+        seconds, nanoseconds = cls.parse_timestamp_int(timestamp)
+        return seconds
 
     @classmethod
     def to_milliseconds(cls, timestamp: TimestampType) -> int:
