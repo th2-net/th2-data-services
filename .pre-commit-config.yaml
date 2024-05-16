@@ -72,7 +72,7 @@ repos:
         always_run: true
         # Don't know how to solve the libs problem other way.
         additional_dependencies: [pytest, treelib, flatdict,
-                                  orjson, th2-data-services-lwdp==2.0.3.0]
+                                  orjson, th2-data-services-lwdp==2.0.3.0, ciso8601]
 
       - id: check_copyright
         name: check_copyright

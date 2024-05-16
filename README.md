@@ -113,6 +113,7 @@ This example shows basic usage of library's features.
 [The following example as a file](examples/get_started_example.py).
 
 <!-- start get_started_example.py -->
+
 ```python
 from typing import Tuple, List, Optional, Generator
 from datetime import datetime
@@ -215,23 +216,27 @@ events = Data(
 ######################################
 
 # [1.1] Filter.
-filtered_events: Data = events.filter(lambda e: e["body"] != [])  # Filter events with empty body.
+filtered_events: Data = events.filter(
+    lambda e: e["body"] != [])  # Filter events with empty body.
 
 
 # [1.2] Map.
 def transform_function(record):
-    return {"eventName": record["eventName"], "successful": record["successful"]}
+    return {"eventName": record["eventName"],
+            "successful": record["successful"]}
 
 
 filtered_and_mapped_events = filtered_events.map(transform_function)
 
 # [1.3] Data pipeline.
 #       Instead of doing data transformations step by step you can do it in one line.
-filtered_and_mapped_events_by_pipeline = events.filter(lambda e: e["body"] != []).map(
+filtered_and_mapped_events_by_pipeline = events.filter(
+    lambda e: e["body"] != []).map(
     transform_function
 )
 # Content of these two Data objects should be equal.
-assert list(filtered_and_mapped_events) == list(filtered_and_mapped_events_by_pipeline)
+assert list(filtered_and_mapped_events) == list(
+    filtered_and_mapped_events_by_pipeline)
 
 # [1.4] Sift. Skip the first few items or limit them.
 data = Data([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
@@ -269,9 +274,11 @@ events_filtered: Data = events.filter(lambda record: record.get("batchId"))
 # After that, the Data object will create its own cache file.
 events_filtered.use_cache()
 
-list(events_filtered)  # Just to iterate Data object (cache file will be created).
+list(
+    events_filtered)  # Just to iterate Data object (cache file will be created).
 
-filtered_events_types = events_filtered.map(lambda record: {"eventType": record.get("eventType")})
+filtered_events_types = events_filtered.map(
+    lambda record: {"eventType": record.get("eventType")})
 
 events_without_types_with_batch = filtered_events_types.filter(
     lambda record: not record.get("eventType")
@@ -338,7 +345,8 @@ data_obj_from_cache.clear_cache()
 # [2.1] DatetimeConverter.
 # DatetimeConverter takes datetime.datetime object as input.
 
-datetime_obj = datetime(year=2023, month=1, day=5, hour=14, minute=38, second=25, microsecond=1460)
+datetime_obj = datetime(year=2023, month=1, day=5, hour=14, minute=38,
+                        second=25, microsecond=1460)
 
 # It has methods that return the datetime in different formas:
 
@@ -365,10 +373,14 @@ datetime_from_string = DatetimeStringConverter.to_datetime(date_string)
 
 protobuf_timestamp = {"epochSecond": 1672929505, "nano": 1_460_000}
 
-date_ms_from_timestamp = ProtobufTimestampConverter.to_milliseconds(protobuf_timestamp)
-date_us_from_timestamp = ProtobufTimestampConverter.to_microseconds(protobuf_timestamp)
-date_ns_from_timestamp = ProtobufTimestampConverter.to_nanoseconds(protobuf_timestamp)
-datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(protobuf_timestamp)
+date_ms_from_timestamp = ProtobufTimestampConverter.to_milliseconds(
+    protobuf_timestamp)
+date_us_from_timestamp = ProtobufTimestampConverter.to_microseconds(
+    protobuf_timestamp)
+date_ns_from_timestamp = ProtobufTimestampConverter.to_nanoseconds(
+    protobuf_timestamp)
+datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(
+    protobuf_timestamp)
 
 ######################################
 # [3] Working with EventTree and EventTreeCollection.
@@ -378,17 +390,21 @@ datetime_from_timestamp = ProtobufTimestampConverter.to_datetime(protobuf_timest
 
 # [3.1] Build a custom EventTree
 # To create an EventTree object you need to provide name, id and data of the root event.
-tree = EventTree(event_name="root event", event_id="root_id", data={"data": [1, 2, 3, 4, 5]})
+tree = EventTree(event_name="root event", event_id="root_id",
+                 data={"data": [1, 2, 3, 4, 5]})
 
 # To add new node use append_event. parent_id is necessary, data is optional.
-tree.append_event(event_name="A", event_id="A_id", data=None, parent_id="root_id")
+tree.append_event(event_name="A", event_id="A_id", data=None,
+                  parent_id="root_id")
 
 # [3.3] Building the EventTreeCollection.
 data_source: IDataSource  # You should init DataSource object. E.g. from LwDP module.
 data_source = DummyDataSource()  # Note! We use fake DS here.
 # ETCDriver here is a stub, actually the lib doesn't have such a class.
 # You can take it in LwDP module or create yourself class if you have some special events structure.
-from th2_data_services.data_source.lwdp.event_tree import HttpETCDriver as ETCDriver
+from th2_data_services.data_source.lwdp.event_tree import
+
+HttpETCDriver as ETCDriver
 
 # If you don't specify data_source for the driver then it won't recover detached events.
 driver: IETCDriver  # You should init ETCDriver object. E.g. from LwDP module or your custom class.
@@ -429,7 +445,8 @@ roots: List[str] = etc.get_roots_ids()
 # ['demo_book_1:th2-scope:20230105135705560873000:d61e930a-8d00-11ed-aa1a-d34a6155152d_1']
 
 # [3.3.3] Find an event in all trees.
-find_event: Optional[dict] = etc.find(lambda event: "Send message" in event["eventType"])
+find_event: Optional[dict] = etc.find(
+    lambda event: "Send message" in event["eventType"])
 
 # [3.3.4] Find all events in all trees. There is also iterable version 'findall_iter'.
 find_events: List[dict] = etc.findall(lambda event: event["successful"] is True)
@@ -525,7 +542,9 @@ data_source: IDataSource  # You should init DataSource object. E.g. from LwDP mo
 data_source = DummyDataSource()  # Note! We use fake DS here.
 # ETCDriver here is a stub, actually the lib doesn't have such a class.
 # You can take it in LwDP module or create yourself class if you have some special events structure.
-from th2_data_services.data_source.lwdp.event_tree import HttpETCDriver as ETCDriver
+from th2_data_services.data_source.lwdp.event_tree import
+
+HttpETCDriver as ETCDriver
 
 driver = ETCDriver(data_source=data_source)
 petc = ParentEventTreeCollection(driver)
@@ -544,13 +563,16 @@ from th2_data_services.data_source import (
     lwdp,
 )  # lwdp data_source initialize th2_data_services.config during import.
 from th2_data_services.config import options as o_
-from th2_data_services.data_source.lwdp.stub_builder import http_message_stub_builder
+from th2_data_services.data_source.lwdp.stub_builder import
+
+http_message_stub_builder
 
 fake_data = [
     http_message_stub_builder.build({"messageId": "a", "messageType": "Root"}),
     http_message_stub_builder.build({"messageId": "b", "messageType": "New"}),
     http_message_stub_builder.build({"messageId": "c", "messageType": "Amend"}),
-    http_message_stub_builder.build({"messageId": "d", "messageType": "Cancel"}),
+    http_message_stub_builder.build(
+        {"messageId": "d", "messageType": "Cancel"}),
 ]
 fake_data_obj = Data(fake_data)
 
@@ -581,14 +603,17 @@ for m in fake_data_obj.map(o_.mfr.expand_message):
 ######################################
 # [5] Using utility functions.
 ######################################
-from th2_data_services.utils.event_utils.frequencies import get_category_frequencies2
+from th2_data_services.utils.event_utils.frequencies import
+
+get_category_frequencies2
 from th2_data_services.utils.event_utils.totals import get_category_totals2
 from th2_data_services.utils.category import Category
 from th2_data_services.utils.event_utils.event_utils import is_sorted
 
 # [5.1] Get the quantities of events for different categories.
 metrics = [
-    Category("date", lambda m: Th2TimestampConverter.to_datetime(m["startTimestamp"]).date()),
+    Category("date", lambda m: Th2TimestampConverter.to_datetime(
+        m["startTimestamp"]).date()),
     Category("status", lambda m: m["successful"]),
 ]
 category_totals = get_category_totals2(events, metrics)

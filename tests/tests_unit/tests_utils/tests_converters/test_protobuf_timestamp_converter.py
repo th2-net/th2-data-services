@@ -8,6 +8,13 @@ def test_to_datetime(datetime_strings):
     )
 
 
+def test_to_seconds(datetime_strings):
+    assert (
+        ProtobufTimestampConverter.to_seconds(datetime_strings.th2_timestamp)
+        == datetime_strings.expected_s
+    )
+
+
 def test_to_microseconds(datetime_strings):
     assert (
         ProtobufTimestampConverter.to_microseconds(datetime_strings.th2_timestamp)
