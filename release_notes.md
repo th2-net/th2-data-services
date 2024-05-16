@@ -577,3 +577,23 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    ProtobufTimestampConverter functions: to_microseconds, to_milliseconds,
    to_nanoseconds.
 7. [TH2-5081] `Data.__str__` was changed --> use `Data.show()` instead of `print(data)`
+8. [TH2-5201] Performance improvements have been made to converters:
+
+| Converter                        | Method           | Before (seconds) | After (seconds) | Improvement (rate) |
+|----------------------------------|------------------|------------------|-----------------|--------------------|
+| DatetimeStringConverter          | parse_timestamp  | 7.1721964        | 1.4974268       | x4.78              |
+|                                  | to_datetime      | 8.9945099        | 0.1266325       | x71.02             |
+|                                  | to_seconds       | 8.6180093        | 1.5360991       | x5.62              |
+|                                  | to_microseconds  | 7.9066440        | 1.7628856       | x4.48              |
+|                                  | to_nanoseconds   | 7.6787507        | 1.7114960       | x4.48              |
+|                                  | to_milliseconds  | 7.6059985        | 1.7688387       | x4.29              |
+|                                  | to_datetime_str  | 8.3861742        | 2.3781561       | x3.52              |
+|                                  | to_th2_timestamp | 7.7702033        | 1.5942235       | x4.87              |
+| UniversalDatetimeStringConverter | parse_timestamp  | 7.4161371        | 1.5752227       | x4.7               |
+|                                  | to_datetime      | 8.2108218        | 0.1267797       | x64.76             |
+|                                  | to_seconds       | 7.7745484        | 1.6453126       | x4.72              |
+|                                  | to_microseconds  | 7.7569293        | 1.8240784       | x4.25              |
+|                                  | to_nanoseconds   | 7.7879700        | 1.7930200       | x4.34              |
+|                                  | to_milliseconds  | 7.8168710        | 1.8308856       | x4.26              |
+|                                  | to_datetime_str  | 8.7388529        | 2.4592992       | x3.55              |
+|                                  | to_th2_timestamp | 7.8972679        | 1.6856898       | x4.68              |
