@@ -579,6 +579,10 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 7. [TH2-5081] `Data.__str__` was changed --> use `Data.show()` instead of `print(data)`
 8. [TH2-5201] Performance improvements have been made to converters:
 
+Benchmark.
+- 1mln iterations per test
+- input: 2022-03-05T23:56:44.123456789Z
+
 | Converter                        | Method           | Before (seconds) | After (seconds) | Improvement (rate) |
 |----------------------------------|------------------|------------------|-----------------|--------------------|
 | DatetimeStringConverter          | parse_timestamp  | 7.1721964        | 1.4974268       | x4.78              |
@@ -597,3 +601,5 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 |                                  | to_milliseconds  | 7.8168710        | 1.8308856       | x4.26              |
 |                                  | to_datetime_str  | 8.7388529        | 2.4592992       | x3.55              |
 |                                  | to_th2_timestamp | 7.8972679        | 1.6856898       | x4.68              |
+
+Other converters also have some not big speed improvements.
