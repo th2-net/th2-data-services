@@ -1,3 +1,4 @@
+ciso8601
 deprecated
 flatdict~=4.0
 # orjson versions 3.7.0 through 3.9.14 library has
