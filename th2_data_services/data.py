@@ -205,7 +205,6 @@ class Data(Generic[DataIterValues]):
         # It's required if the same instance iterates several times in for-in loops.
         self.iter_num = 0  # Indicates what level of the loop the Data object is in.
         self._stop_iteration: Optional[bool] = None
-        self._read_from_external_cache_file = False
         self.__metadata = {}
         self._pickle_version = pickle_version  # Default pickle protocol version
 
@@ -259,13 +258,6 @@ class Data(Generic[DataIterValues]):
         """
         return self.__add__(other_data).use_cache(self._cache_status)
 
-    def _set_custom_cache_destination(self, filename):
-        path = Path(filename).resolve()
-        self._cache_filename = path.name
-        self._cache_path = path
-        self._cache_status = True
-        self._read_from_external_cache_file = True
-
     def _copy_cache_file(self, new_name):
         from shutil import copy2
 
@@ -292,7 +284,7 @@ class Data(Generic[DataIterValues]):
 
     def __remove(self):
         """Data class destructor."""
-        if self.is_cache_file_exists() and not self._read_from_external_cache_file:
+        if self.is_cache_file_exists():
             self.__delete_cache()
         del self._data_source
 
@@ -378,13 +370,6 @@ class Data(Generic[DataIterValues]):
                 if is_data_writes_cache and self.iter_num == 1:
                     # LOG                     self._logger.info("The cache file is not written to the end. Delete tmp cache file")
                     self.__delete_pending_cache()
-                else:  # Data reads cache.
-
-                    # Do not delete cache file if it reads an external cache file.
-                    if not self._read_from_external_cache_file:
-                        # Do not delete cache file if it's an interactive mode and Data has read cache.
-                        if not o.INTERACTIVE_MODE:
-                            self.__delete_cache()
 
             self.iter_num -= 1
             self._stop_iteration = False
@@ -857,11 +842,8 @@ class Data(Generic[DataIterValues]):
 
         This function won't remove external cache file.
         """
-        if self._read_from_external_cache_file:
-            raise Exception("It's not possible to remove external cache file via this method")
-        else:
-            if self.is_cache_file_exists():
-                self.__delete_cache()
+        if self.is_cache_file_exists():
+            self.__delete_cache()
 
     @classmethod
     def from_cache_file(cls, filename, pickle_version: int = o.DEFAULT_PICKLE_VERSION) -> "Data":
