@@ -102,7 +102,7 @@ def check_if_file_exists(filename: Union[str, Path]):
         FileNotFoundError: if file doesn't exist.
         ValueError: if filename contains illegal characters.
     """
-    fp = Path(filename).resolve()
+    fp = Path(filename).resolve().absolute()
     try:
         if not fp.exists():
             raise FileNotFoundError(f"{fp} doesn't exist")
@@ -114,7 +114,7 @@ def check_if_file_exists(filename: Union[str, Path]):
             illegal_characters = set([char for char in filename if char in r'\/:*?"<>|'])
             illegal_characters_str = ", ".join(illegal_characters)
             raise ValueError(
-                f"Invalid file path: {filename}. "
+                f"Invalid file path: {fp}. "
                 f"It contains illegal characters: {illegal_characters_str}"
             )
         else:
