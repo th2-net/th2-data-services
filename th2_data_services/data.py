@@ -870,13 +870,14 @@ class Data(Generic[DataIterValues]):
         return data_obj
 
     @classmethod
-    def from_json(cls, filename, buffer_limit=250, gzip=False) -> "Data[dict]":
+    def from_json(cls, filename, buffer_limit=250, gzip=False, bytes_buffer_size = 16*1024*1024) -> "Data[dict]":
         """Creates Data object from json-lines file with provided name.
 
         Args:
             filename: Name or path to cache file.
             buffer_limit: If limit is 0 buffer will not be used. Number of messages in buffer before parsing.
             gzip: Set to true if file is json file compressed using gzip.
+            bytes_buffer_size: Size of the buffer that will be used to speed up IO operations using BufferedIO.
 
         Returns:
             Data: Data object.
@@ -889,7 +890,7 @@ class Data(Generic[DataIterValues]):
         if gzip:
             data = cls(iter_json_gzip_file(filename, buffer_limit))
         else:
-            data = cls(iter_json_file(filename, buffer_limit))
+            data = cls(iter_json_file(filename, buffer_limit, bytes_buffer_size))
         data.update_metadata({"source_file": filename})
         return data
 

@@ -11,7 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import io
 from typing import Generator
 import gzip
 
@@ -21,14 +21,15 @@ from orjson import JSONDecodeError
 from th2_data_services.utils.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 
-def iter_json_file(filename, buffer_limit=250):
+def iter_json_file(filename, buffer_limit=250, bytes_buffer_size=16*1024*1024):
     """Returns the function that returns generators."""
 
     def iter_json_file_logic():
         """Generator that reads and yields decoded JSON objects from a file."""
         json_processor = BufferedJSONProcessor(buffer_limit)
 
-        with open(filename, "r") as data:
+        with open(filename, "rb") as data:
+            buffered_reader = io.BufferedReader(data, buffer_size=bytes_buffer_size)
             while True:
                 try:
                     v = data.readline()
@@ -38,7 +39,7 @@ def iter_json_file(filename, buffer_limit=250):
                     yield from json_processor.decode(v)
                 except ValueError:
                     print(len(json_processor.buffer))
-                    print(f"Error string: {v}")
+                    print(f"Error string: {v.decode('utf-8')}")
                     raise
             yield from json_processor.fin()
 
@@ -122,8 +123,8 @@ class BufferedJSONProcessor:
             Generator[dict]
         """
         try:
-            for i in json.loads("[" + ",".join(self.buffer) + "]"):
-                yield i
+            for obj in self.buffer:
+                yield json.loads(obj)
         except JSONDecodeError as e:
             raise ValueError(
                 f"json.decoder.JSONDecodeError: Invalid json received.\n" f"{e}\n" f"{self.buffer}"
