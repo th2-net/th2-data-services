@@ -153,7 +153,7 @@ class ITimestampConverter(ABC, Generic[TimestampType]):
         return f"{dt.isoformat()}.{nanoseconds}"
 
     @classmethod
-    def to_th2_timestamp(cls, timestamp: int) -> dict:
+    def to_th2_timestamp(cls, timestamp: TimestampType) -> dict:
         """Converts timestamp to th2 timestamp.
 
         Args:

@@ -218,7 +218,7 @@ If your timestamp has nanoseconds, they will be just cut (not rounding).
 ### <kbd>classmethod</kbd> `to_th2_timestamp`
 
 ```python
-to_th2_timestamp(timestamp: int) → dict
+to_th2_timestamp(timestamp: ~TimestampType) → dict
 ```
 
 Converts timestamp to th2 timestamp. 
