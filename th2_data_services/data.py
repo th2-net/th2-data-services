@@ -172,13 +172,19 @@ class Data(Generic[DataIterValues]):
         """
         if isinstance(data, types.GeneratorType) and cache is False:
             warn(
-                "Putted data has a generator type. "
+                "Provided data has a generator type. "
                 "Data object will work wrong in non-cache mode because generators "
-                "are iterates only once. "
+                "are iterates only once. That's ok if you want to iterate it "
+                "only once. "
                 "Expected data types: Iterator, Callable[..., DataGenerator], List[Iterator]",
                 RuntimeWarning,
                 stacklevel=2,
             )
+            self._is_data_generate_type = True
+        else:
+            self._is_data_generate_type = False
+
+        self._iterated_cnt = 0  # How many times the obj was iterated.
 
         if self._is_iterables_list(data):
             self._data_source = self._create_data_set_from_iterables(data)
@@ -377,7 +383,17 @@ class Data(Generic[DataIterValues]):
     def __iter__(self) -> DataGenerator:
         self._stop_iteration = False
         self.iter_num += 1
+        self._iterated_cnt += 1
         # LOG         self._logger.info("Starting iteration, iter_num = %s", self.iter_num)
+
+        if self._is_data_generate_type and self._iterated_cnt > 1:
+            warn(
+                "Provided data has a generator type and the generator "
+                "was already iterated. That should mean that you try to "
+                "iterate the empty generator.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
 
         if self._len is None and self.iter_num == 1:
             self._len = 0
