@@ -45,4 +45,6 @@ def read_all_pickle_files_from_the_folder(
     if len(datas) == 1:
         return datas[0]
     else:
-        return Data(datas)
+        d = Data(datas)
+        d.update_metadata({"source_file": [dx.metadata.get("source_file") for dx in datas]})
+        return d
