@@ -242,7 +242,7 @@ class Data(Generic[DataIterValues]):
             return True
         return False
 
-    def __add__(self, other_data: Iterable) -> "Data":
+    def __add__(self, other_data: Iterable) -> "Data[DataIterValues]":
         """Joining feature.
 
         Don't keep cache status.
@@ -255,7 +255,7 @@ class Data(Generic[DataIterValues]):
             data.update_metadata(other_data.metadata)
         return data
 
-    def __iadd__(self, other_data: Iterable) -> "Data":
+    def __iadd__(self, other_data: Iterable) -> "Data[DataIterValues]":
         """Joining feature.
 
         Keeps cache status.
@@ -525,7 +525,7 @@ class Data(Generic[DataIterValues]):
         """Returns filepath for a cache file."""
         return self._cache_path
 
-    def filter(self, callback: Callable) -> "Data":
+    def filter(self, callback: Callable) -> "Data[DataIterValues]":
         """Append `filter` to workflow.
 
         Args:
@@ -556,7 +556,7 @@ class Data(Generic[DataIterValues]):
 
         return new_data
 
-    def map(self, callback_or_adapter: Union[Callable, IRecordAdapter]) -> "Data":
+    def map(self, callback_or_adapter: Union[Callable, IRecordAdapter]) -> "Data[DataIterValues]":
         """Append `transform` function to workflow.
 
         Args:
@@ -584,7 +584,7 @@ class Data(Generic[DataIterValues]):
 
     def map_stream(
         self, adapter_or_generator: Union[IStreamAdapter, Callable[..., Generator]]
-    ) -> "Data":
+    ) -> "Data[DataIterValues]":
         """Append `stream-transform` function to workflow.
 
         If StreamAdapter is passed StreamAdapter.handle method will be used as a map function.
@@ -626,7 +626,9 @@ class Data(Generic[DataIterValues]):
         # return data
 
     # TODO - probably it's better to rename to map_iter or something else ..
-    def map_yield(self, callback_or_adapter: Union[Callable, IRecordAdapter]) -> "Data":
+    def map_yield(
+        self, callback_or_adapter: Union[Callable, IRecordAdapter]
+    ) -> "Data[DataIterValues]":
         """Maps the stream using callback function or adapter.
 
         Differences between map and map yield:
@@ -653,7 +655,7 @@ class Data(Generic[DataIterValues]):
 
         return self.map_stream(generator)
 
-    def limit(self, num: int) -> "Data":
+    def limit(self, num: int) -> "Data[DataIterValues]":
         """Limits the stream to `num` entries.
 
         Args:
@@ -706,7 +708,7 @@ class Data(Generic[DataIterValues]):
         """
         return is_sorted(self, get_timestamp_func)
 
-    def use_cache(self, status: bool = True) -> "Data":
+    def use_cache(self, status: bool = True) -> "Data[DataIterValues]":
         """Changes cache flag and returns self.
 
         Args:
@@ -862,7 +864,9 @@ class Data(Generic[DataIterValues]):
             self.__delete_cache()
 
     @classmethod
-    def from_cache_file(cls, filename, pickle_version: int = o.DEFAULT_PICKLE_VERSION) -> "Data":
+    def from_cache_file(
+        cls, filename, pickle_version: int = o.DEFAULT_PICKLE_VERSION
+    ) -> "Data[DataIterValues]":
         """Creates Data object from cache file with the provided name.
 
         Args:
@@ -939,7 +943,7 @@ class Data(Generic[DataIterValues]):
         header_first_line=False,
         mode="r",
         delimiter=",",
-    ) -> "Data":
+    ) -> "Data[DataIterValues]":
         """Creates Data object from CSV file with the provided name.
 
         It will iterate the CSV file as if you were doing it with CSV module.
@@ -986,7 +990,7 @@ class Data(Generic[DataIterValues]):
 
         self.__metadata = copy.deepcopy(metadata)
 
-    def update_metadata(self, metadata: Dict) -> "Data":
+    def update_metadata(self, metadata: Dict) -> "Data[DataIterValues]":
         """Update metadata of the object with metadata argument.
 
         Metadata is updated with new values, meaning previous values are kept and added with new values.
