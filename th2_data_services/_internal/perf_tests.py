@@ -14,9 +14,23 @@
 
 import sys
 from pathlib import Path
+import csv
+from faker import Faker
 
 from th2_data_services.data import Data
 from th2_data_services.utils.time import calculate_time
+
+
+def _create_csv(filename, rows, cols):
+    faker = Faker()
+    with open(filename, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        header = [f"Column {i + 1}" for i in range(cols)]
+        writer.writerow(header)
+
+        for _ in range(rows):
+            row = [faker.word() for _ in range(cols)]
+            writer.writerow(row)
 
 
 @calculate_time(return_as_last_value=True)
@@ -24,7 +38,7 @@ def _build_cache_file(data_obj: Data, filename):
     ftype = filename.split(".")[-1]
     if ftype == "pickle":
         data_obj.build_cache(filename)
-    elif ftype == "jsons":
+    elif ftype == "jsons" or ftype == "csv":
         data_obj.to_json_lines(filename)
     elif ftype == "gz":
         data_obj.to_json_lines(filename, gzip=True)
@@ -38,6 +52,8 @@ def _read_from_cache_file(filename):
         return Data.from_json(filename)
     elif ftype == "gz":
         return Data.from_json(filename, gzip=True)
+    elif ftype == "csv":
+        return Data.from_csv(filename)
 
 
 @calculate_time(return_as_last_value=True)
@@ -53,7 +69,7 @@ def _iter_data_obj_with_3_filters(do: Data):
 
 
 def _test_xx(data_obj: Data):
-    filenames = ["cache_test.pickle", "cache_test.jsons", "cache_test.jsons.gz"]
+    filenames = ["cache_test.pickle", "cache_test.jsons", "cache_test.jsons.gz", "cache_test.csv"]
 
     try:
         # data_obj.use_cache()
@@ -110,6 +126,10 @@ def cache_files_reading_speed(data):  # noqa
             data_obj = Data.from_json(data, gzip=True)
             _test_xx(data_obj)
 
+        elif data.endswith(".csv"):
+            data_obj = Data.from_csv(data)
+            _test_xx(data_obj)
+
 
 if __name__ == "__main__":
 
@@ -130,6 +150,9 @@ if __name__ == "__main__":
         #     ).limit(5)
         # )
 
-        cache_files_reading_speed(
-            "C:/Users/admin/exactpro/prj/th2/pickles/cache_2.5kk_events.pickle"
-        )
+        _create_csv("dataset.csv", 10_000_000, 15)
+        cache_files_reading_speed("dataset.csv")
+
+        # cache_files_reading_speed(
+        #     "C:/Users/admin/exactpro/prj/th2/pickles/cache_2.5kk_events.pickle"
+        # )

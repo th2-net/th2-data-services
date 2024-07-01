@@ -604,3 +604,5 @@ Benchmark.
 |                                  | to_th2_timestamp | 7.8972679        | 1.6856898       | x4.68              |
 
 Other converters also have some not big speed improvements.
+
+9. [TH2-5213] Extend cache_files_reading_speed with csv support.
