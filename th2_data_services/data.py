@@ -1161,9 +1161,23 @@ class Data(Generic[DataIterValues]):
                 f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
             )
 
-        with open(filename, "w", encoding="UTF-8") as file:
-            for record in self:
-                file.write(",".join(record) + "\n")
+        is_list = False
+        for record in self:
+            if type(record) is list:
+                is_list = True
+            break
+
+        with open(filename, "w", encoding="UTF-8", newline="") as file:
+            if is_list:
+                writer = csv.writer(file)
+                writer.writerows(self)
+            else:
+                writer = csv.DictWriter(
+                    file, fieldnames=list(set().union(*[d.keys() for d in self]))
+                )
+                writer.writeheader()
+                for row_dict in self:
+                    writer.writerow(row_dict)
 
 
 def _iter_any_file(filename: Union[str, Path], mode="r"):
