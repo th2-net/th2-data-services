@@ -38,10 +38,12 @@ def _build_cache_file(data_obj: Data, filename):
     ftype = filename.split(".")[-1]
     if ftype == "pickle":
         data_obj.build_cache(filename)
-    elif ftype == "jsons" or ftype == "csv":
+    elif ftype == "jsons":
         data_obj.to_json_lines(filename)
     elif ftype == "gz":
         data_obj.to_json_lines(filename, gzip=True)
+    elif ftype == "csv":
+        data_obj.to_csv(filename)
 
 
 def _read_from_cache_file(filename):
