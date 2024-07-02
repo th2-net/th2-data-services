@@ -55,6 +55,8 @@ def _read_from_cache_file(filename):
     elif ftype == "gz":
         return Data.from_json(filename, gzip=True)
     elif ftype == "csv":
+        if "header" in filename:
+            return Data.from_csv(filename, header_first_line=True)
         return Data.from_csv(filename)
 
 
@@ -71,7 +73,14 @@ def _iter_data_obj_with_3_filters(do: Data):
 
 
 def _test_xx(data_obj: Data):
-    filenames = ["cache_test.pickle", "cache_test.jsons", "cache_test.jsons.gz", "cache_test.csv"]
+    filenames = [
+        "cache_test.pickle",
+        "cache_test.jsons",
+        "cache_test.jsons.gz",
+        "cache_test.csv",
+        "cache_test_header.csv",
+    ]
+    name_to_option = {"cache_test_header.csv": "header_first_line=True"}
 
     try:
         # data_obj.use_cache()
@@ -86,7 +95,10 @@ def _test_xx(data_obj: Data):
         print()
         print(f"Data length: {do_len}")
         for filename in filenames:
-            print(f"Iterate {'.'.join(filename.split('.')[1:])}:", end="")
+            suffix = name_to_option.get(filename, "")
+            if suffix:
+                suffix = f" ({suffix})"
+            print(f"Iterate {'.'.join(filename.split('.')[1:])}{suffix}:", end="")
             data_obj_file = _read_from_cache_file(filename)
             _, calc_time = _iter_data_obj(data_obj_file)
             print(f"  --  {calc_time} s", end="")
