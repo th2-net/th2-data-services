@@ -1151,7 +1151,7 @@ class Data(Generic[DataIterValues]):
 
         NOTE:
             Data object can iterate not only dicts. So not every data can be
-            saved as csv.
+            saved as csv. Works with dicts and lists.
 
         Raises:
             FileExistsError: If file exists and overwrite=False
