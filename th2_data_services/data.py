@@ -1146,7 +1146,7 @@ class Data(Generic[DataIterValues]):
         """Converts Data to csv.
 
         Args:
-            filename (str): Output JSON filename.
+            filename (str): Output CSV filename.
             overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
 
         NOTE:
@@ -1173,7 +1173,7 @@ class Data(Generic[DataIterValues]):
                 writer.writerows(self)
             else:
                 writer = csv.DictWriter(
-                    file, fieldnames=list(set().union(*[d.keys() for d in self]))
+                    file, fieldnames=sorted(set().union(*[d.keys() for d in self]))
                 )
                 writer.writeheader()
                 for row_dict in self:

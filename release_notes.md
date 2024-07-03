@@ -605,4 +605,5 @@ Benchmark.
 
 Other converters also have some not big speed improvements.
 
-9. [TH2-5213] Extend cache_files_reading_speed with csv support.
+9. [TH2-5213] Extend cache_files_reading_speed with csv support. Added `Data.to_json` method, that converts 
+data to valid csv.
