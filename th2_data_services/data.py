@@ -1138,6 +1138,47 @@ class Data(Generic[DataIterValues]):
                 for record in self:
                     file.write((json.dumps(record) + b"\n").decode())
 
+    def to_csv(
+        self,
+        filename: Union[str, Path],
+        overwrite: bool = False,
+    ):
+        """Converts Data to csv.
+
+        Args:
+            filename (str): Output CSV filename.
+            overwrite (bool, optional): Overwrite if filename exists. Defaults to False.
+
+        NOTE:
+            Data object can iterate not only dicts. So not every data can be
+            saved as csv. Works with dicts and lists.
+
+        Raises:
+            FileExistsError: If file exists and overwrite=False
+        """
+        if Path(filename).absolute().exists() and not overwrite:
+            raise FileExistsError(
+                f"{filename} already exists. If you want to overwrite current file set `overwrite=True`"
+            )
+
+        is_list = False
+        for record in self:
+            if type(record) is list:
+                is_list = True
+            break
+
+        with open(filename, "w", encoding="UTF-8", newline="") as file:
+            if is_list:
+                writer = csv.writer(file)
+                writer.writerows(self)
+            else:
+                writer = csv.DictWriter(
+                    file, fieldnames=sorted(set().union(*[d.keys() for d in self]))
+                )
+                writer.writeheader()
+                for row_dict in self:
+                    writer.writerow(row_dict)
+
 
 def _iter_any_file(filename: Union[str, Path], mode="r"):
     """Returns the function that returns generators."""
