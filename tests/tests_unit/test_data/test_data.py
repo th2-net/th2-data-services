@@ -310,6 +310,18 @@ def test_to_json():
             assert l1 == l2
 
 
+def test_to_csv():
+    data = Data([{"a": 1, "b": 2}, {"c": 3, "d": 4}])
+    path_result = "tests/test_files/file_to_test_to_csv.csv"
+    path_expected = "tests/test_files/file_to_test_to_csv_expected.csv"
+
+    data.to_csv(path_result, overwrite=True)
+
+    with open(path_result, encoding="utf-8") as f1, open(path_expected, encoding="utf-8") as f2:
+        for l1, l2 in zip(f1, f2):
+            assert l1 == l2
+
+
 class TestDataObjectJoining:
     @classmethod
     def setup_class(cls):
