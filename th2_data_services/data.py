@@ -1029,10 +1029,10 @@ class Data(Generic[DataIterValues]):
                     else:
                         self.__metadata[k] = [current, *v]
                 else:  # Single Item
-                    if isinstance(current, Iterable):
+                    if isinstance(current, Iterable) and not isinstance(current, str):
                         self.__metadata[k] = [*current, v]
                     else:
-                        self.__metadata[k] = v
+                        self.__metadata[k] = [current, v]
             else:
                 # Add New Item
                 self.__metadata[k] = v
