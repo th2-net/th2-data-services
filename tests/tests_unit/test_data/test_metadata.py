@@ -56,3 +56,12 @@ def test_metadata_joining_add(general_data: List[dict]):
     exp_metadata = metadata.copy()
     exp_metadata.update(data_m_metadata)
     assert data2.metadata == exp_metadata
+
+
+def test_metadata_update_with_string_as_value_in_dict():
+    data = Data([])
+    data.update_metadata({1: "ab"})
+    data.update_metadata({1: "cd"})
+
+    exp_metadata = {1: ["ab", "cd"]}
+    assert data.metadata == exp_metadata
