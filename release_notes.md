@@ -563,6 +563,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    https://devhub.checkmarx.com/cve-details/CVE-2024-27454/. 
 8. [TH2-5201] Fixed DatetimeStringConverter.to_th2_timestamp() bug which occurred for inputs not ending with 'Z'.
 9. [TH2-5902] Fixed bug when cache file was removed after calling data.show().
+10. [TH2-5220] Fixed bug when Data.metadata() would change a string into a list.
 
 ## Improvements
 
