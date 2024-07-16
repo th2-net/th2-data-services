@@ -1,2 +1,3 @@
 security:
   ignore-unpinned-requirements: False
+  continue-on-vulnerability-error: False
