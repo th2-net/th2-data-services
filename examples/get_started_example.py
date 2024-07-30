@@ -158,6 +158,14 @@ d1 += d3  # d1 will become Data([1,2,3,7,8,9])
 events.build_cache("cache_filename_or_path")
 data_obj_from_cache = Data.from_cache_file("cache_filename_or_path")
 
+# [1.13] Update metadata for Data objects.
+d1.update_metadata({"a": 1})
+d1.update_metadata({"a": [1]})
+# d1.metadata - {'a': [1, 1]}
+# d1.update_metadata({"a": {"b": 1, "c": 2}}) - This will fail
+d1.update_metadata({"a": [{"b": 1, "c": 2}]}, change_type="change")
+# d1.metadata - {'a': [{'b': 1, 'c': 2}]}
+
 # [2] Working with converters.
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.
 # They all implement same methods from base class.

@@ -86,3 +86,21 @@ def test_strings_update_in_metadata():
         "test_list_and_str": ["str1", "str2"],
         "test_list_and_list": ["str1", "str2"],
     }
+
+
+def test_metadata_update_with_string_as_value_in_dict():
+    data = Data([])
+    data.update_metadata({1: "ab"})
+    data.update_metadata({1: "cd"})
+
+    exp_metadata = {1: "cd"}
+    assert data.metadata == exp_metadata
+
+
+def test_metadata_update_with_change_type_change():
+    data = Data([])
+    data.update_metadata({1: ["ab"]})
+    data.update_metadata({1: "cd"}, change_type="change")
+
+    exp_metadata = {1: "cd"}
+    assert data.metadata == exp_metadata
