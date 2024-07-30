@@ -253,6 +253,8 @@ class Data(Generic[DataIterValues]):
         data._set_metadata(self.metadata)
         if isinstance(other_data, Data):
             data.update_metadata(other_data.metadata)
+            if "source_file" in data.metadata:
+                data.metadata.pop("source_file")
         return data
 
     def __iadd__(self, other_data: Iterable) -> "Data[DataIterValues]":
@@ -773,7 +775,6 @@ class Data(Generic[DataIterValues]):
 
         pprint.pprint(record)
 
-
     def show(
         self, n: int = 5, idx_print: bool = True, extra_prints: Optional[Dict[str, Callable]] = None
     ):
@@ -886,8 +887,7 @@ class Data(Generic[DataIterValues]):
 
         path = Path(filename).resolve()
         data_obj = cls(_iter_pickle_cache_builder(path))
-        data_obj.
-        {"source_file": path})
+        data_obj.update_metadata({"source_file": path})
         data_obj._pickle_version = pickle_version
         return data_obj
 
