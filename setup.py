@@ -50,6 +50,9 @@ CORE_EXTRAS_DEPENDENCIES: Dict[str, List[str]] = {
     "lwdp2": [
         "th2-data-services-lwdp>=2,<3",
     ],
+    "lwdp3": [
+        "th2-data-services-lwdp>=3,<4",
+    ],
     "lwdp-dev": [
         "th2-data-services-lwdp~=2.0.2.0.dev",
     ],
@@ -74,7 +77,7 @@ setup(
     author_email="th2-devs@exactprosystems.com",
     url="https://github.com/th2-net/th2-data-services",
     license="Apache License 2.0",
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=requirements,
     packages=find_namespace_packages(include=["th2_data_services", "th2_data_services.*"]),
     extras_require=CORE_EXTRAS_DEPENDENCIES,

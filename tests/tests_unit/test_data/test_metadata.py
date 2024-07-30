@@ -101,6 +101,6 @@ def test_metadata_update_with_change_type_change():
     data = Data([])
     data.update_metadata({1: ["ab"]})
     data.update_metadata({1: "cd"}, change_type="change")
-
+    
     exp_metadata = {1: "cd"}
     assert data.metadata == exp_metadata

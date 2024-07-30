@@ -345,7 +345,7 @@ def get_prior_parent_ids(events: Iterable[Th2Event]) -> Set[str]:
     for event in events:
         parent_id = options.EVENT_FIELDS_RESOLVER.get_parent_id(event)
         event_id = options.EVENT_FIELDS_RESOLVER.get_id(event)
-        if parent_id is not None and not parent_id in all_event_ids:
+        if parent_id is not None and parent_id not in all_event_ids:
             parent_ids.add(parent_id)
         if event_id in parent_ids:
             parent_ids.remove(event_id)

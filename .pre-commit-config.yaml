@@ -30,7 +30,7 @@ repos:
         args: [ --in-place, --remove-all-unused-imports, --ignore-init-module-imports ]
 
   - repo: https://github.com/pycqa/pydocstyle
-    rev: 6.1.1  # pick a git hash / tag to point to
+    rev: 6.3.0  # pick a git hash / tag to point to
     hooks:
       - id: pydocstyle
         files: th2_data_services
@@ -66,13 +66,13 @@ repos:
         name: unit_tests
 #        stages: [ push ]  # Don't work in my PyCharm for some reason.
         stages: [ commit ]
-        entry: python -m pytest tests --ignore tests/tests_unit/test_dependencies/
+        entry: python -m pytest tests --ignore tests/tests_unit/test_dependencies/ -vv
         language: python
         pass_filenames: false
         always_run: true
         # Don't know how to solve the libs problem other way.
         additional_dependencies: [pytest, treelib, flatdict,
-                                  orjson, th2-data-services-lwdp==2.0.3.0]
+                                  orjson, th2-data-services-lwdp==2.0.3.0, ciso8601]
 
       - id: check_copyright
         name: check_copyright

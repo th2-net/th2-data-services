@@ -1,4 +1,4 @@
-#  Copyright 2022-2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2022-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from typing import List, Tuple, Generator, Callable, Optional, Union
 
 from treelib import Tree, Node
@@ -219,8 +220,10 @@ class EventTree:
         except NodeIDAbsentError:
             raise EventIdNotInTree(id)
 
-    def get_parent(self, id: str) -> Th2Event:
+    def get_parent(self, id: str) -> Optional[Th2Event]:
         """Returns a parent for the event by its id.
+
+        Returns None if the provided ID is a root of the tree.
 
         Args:
             id: Event id.
@@ -230,6 +233,9 @@ class EventTree:
         """
         try:
             parent = self._tree.parent(id)
+
+            if self.get_root_id() == id:
+                return None
 
             if parent is None:
                 raise EventIdNotInTree(id)

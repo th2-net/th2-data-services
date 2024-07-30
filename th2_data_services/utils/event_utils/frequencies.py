@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,10 +11,11 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from deprecated.classic import deprecated
 
 from th2_data_services.utils import misc_utils
-from typing import Callable, Iterable, List
+from typing import Callable, Iterable, List, Literal, Optional
 
 from th2_data_services.utils._types import Th2Event
 from th2_data_services.utils.aggregation_classes import FrequencyCategoryTable
@@ -77,10 +78,10 @@ def get_category_frequencies2(
     events: Iterable[Th2Event],
     category: Category,
     aggregation_level: str = "seconds",
-    filter_: Callable = None,
-    gap_mode: int = 1,
+    filter_: Optional[Callable] = None,
+    gap_mode: Literal[1, 2, 3] = 1,
     zero_anchor: bool = False,
-    include_total: bool = False,
+    include_total: bool = True,
 ) -> FrequencyCategoryTable:
     """Returns event frequencies based on event category.
 
@@ -91,8 +92,11 @@ def get_category_frequencies2(
         category: The name of the category doesn't make sence.
             Used just for unification to use general Category class.
         aggregation_level (Optional, str): Aggregation Level
-        filter: Event filter function
-        gap_mode: 1 - Every range starts with actual event timestamp, 2 - Ranges are split equally, 3 - Same as 2, but filled with empty ranges in between
+        filter_: Event filter function
+        gap_mode:
+            1 - Every range starts with actual event timestamp,
+            2 - Ranges are split equally,
+            3 - Same as 2, but filled with empty ranges in between
         zero_anchor: If False anchor used is first timestamp from event, if True anchor is 0
         include_total: Will add Total column if True.
 
@@ -112,6 +116,36 @@ def get_category_frequencies2(
             ['2022-03-16T02:00:32', 4, 0],
             ...
         ]
+
+    Examples:
+        It'll return the table like this.
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | timestamp_start   | timestamp_end   | ExecutionReport   | NewOrder   | OrderCancel   |   Total |
+        +========+===================+=================+===================+============+===============+=========+
+        |        | 2023-08-13        | 2023-08-14      | 1                 | 1          | 2             |       4 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-14        | 2023-08-15      | 1                 | 1          | 2             |       4 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-16        | 2023-08-17      | 0                 | 2          | 3             |       5 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-17        | 2023-08-18      | 1                 | 0          | 1             |       2 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-19        | 2023-08-20      | 1                 | 1          | 0             |       2 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-20        | 2023-08-21      | 0                 | 0          | 2             |       2 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-21        | 2023-08-22      | 1                 | 3          | 0             |       4 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-22        | 2023-08-23      | 1                 | 0          | 0             |       1 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-23        | 2023-08-24      | 0                 | 3          | 0             |       3 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-24        | 2023-08-25      | 0                 | 2          | 1             |       3 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        | count  |                   |                 |                   |            |               |      10 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        | totals |                   |                 | 6                 | 13         | 11            |      30 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
 
     """
     return misc_utils.get_objects_frequencies2(

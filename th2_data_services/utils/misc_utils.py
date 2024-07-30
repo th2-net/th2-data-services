@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,8 +11,9 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from collections import defaultdict
-from typing import Any, Callable, Dict, Iterable, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Tuple, Literal
 from datetime import datetime, timezone
 
 from deprecated.classic import deprecated
@@ -125,9 +126,9 @@ def get_objects_frequencies2(
     aggregation_level: str = "seconds",
     object_expander: Callable = None,
     objects_filter: Callable = None,
-    gap_mode: int = 1,
+    gap_mode: Literal[1, 2, 3] = 1,
     zero_anchor: bool = False,
-    include_total: bool = False,
+    include_total: bool = True,
 ) -> FrequencyCategoryTable:
     # TODO - used by both messages and events get_category_frequencies
     """Returns objects frequencies based on categorizer.
@@ -138,13 +139,17 @@ def get_objects_frequencies2(
 
     Args:
         objects_stream: Objects stream
-        categories: Categories list
+        categories: Categories list.
+            Provide [] or None to collect all possible values.
         categorizer: Categorizer function
         timestamp_function: Timestamp function
         aggregation_level: Aggregation level
         object_expander: Object expander function
         objects_filter: Object filter function
-        gap_mode: 1 - Every range starts with actual message timestamp, 2 - Ranges are split equally, 3 - Same as 2, but filled with empty ranges in between
+        gap_mode:
+            1 - Every range starts with actual message timestamp,
+            2 - Ranges are split equally,
+            3 - Same as 2, but filled with empty ranges in between
         zero_anchor: If False anchor used is first timestamp from message, if True anchor is 0
         include_total: Will add Total column if True.
 
@@ -153,37 +158,33 @@ def get_objects_frequencies2(
 
     Examples:
         It'll return the table like this.
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | timestamp           | ExecutionReport   | NewOrder   | OrderCancel   |   Total |
-        +========+=====================+===================+============+===============+=========+
-        |        | 2023-08-13T08:53:05 | 1                 | 1          | 2             |       4 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-14T08:53:05 | 1                 | 1          | 2             |       4 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-15T08:53:05 | 0                 | 1          | 2             |       3 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-16T08:53:05 | 0                 | 1          | 1             |       2 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-17T08:53:05 | 1                 | 0          | 1             |       2 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-18T08:53:05 | 0                 | 1          | 0             |       1 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-19T08:53:05 | 1                 | 0          | 1             |       2 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-20T08:53:05 | 0                 | 1          | 1             |       2 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-21T08:53:05 | 1                 | 2          | 0             |       3 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-22T08:53:05 | 1                 | 0          | 0             |       1 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-23T08:53:05 | 0                 | 4          | 1             |       5 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        |        | 2023-08-24T08:53:05 | 0                 | 1          | 0             |       1 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        | count  |                     |                   |            |               |      12 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
-        | totals |                     | 6                 | 13         | 11            |      30 |
-        +--------+---------------------+-------------------+------------+---------------+---------+
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | timestamp_start   | timestamp_end   | ExecutionReport   | NewOrder   | OrderCancel   |   Total |
+        +========+===================+=================+===================+============+===============+=========+
+        |        | 2023-08-13        | 2023-08-14      | 1                 | 1          | 2             |       4 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-14        | 2023-08-15      | 1                 | 1          | 2             |       4 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-16        | 2023-08-17      | 0                 | 2          | 3             |       5 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-17        | 2023-08-18      | 1                 | 0          | 1             |       2 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-19        | 2023-08-20      | 1                 | 1          | 0             |       2 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-20        | 2023-08-21      | 0                 | 0          | 2             |       2 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-21        | 2023-08-22      | 1                 | 3          | 0             |       4 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-22        | 2023-08-23      | 1                 | 0          | 0             |       1 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-23        | 2023-08-24      | 0                 | 3          | 0             |       3 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        |        | 2023-08-24        | 2023-08-25      | 0                 | 2          | 1             |       3 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        | count  |                   |                 |                   |            |               |      10 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
+        | totals |                   |                 | 6                 | 13         | 11            |      30 |
+        +--------+-------------------+-----------------+-------------------+------------+---------------+---------+
     """
     if gap_mode == 1 and zero_anchor:
         raise Exception("gap_mode=1 and zero_anchor=True are not supported together")
@@ -244,11 +245,13 @@ def get_objects_frequencies2(
                             frequencies[epoch][TOTAL_FIELD] = 0
                         frequencies[epoch][TOTAL_FIELD] += 1
 
+    sorted_categories = sorted(categories_set)
+
     header = ["timestamp_start", "timestamp_end"]
     if categories:
         header.extend(categories)
     else:
-        header.extend(categories_set)
+        header.extend(sorted_categories)
 
     if include_total:
         header.append(TOTAL_FIELD)
@@ -280,7 +283,7 @@ def get_objects_frequencies2(
         if categories:
             line.extend(frequencies[timestamp].values())
         else:
-            for category in categories_set:
+            for category in sorted_categories:
                 line.append(frequencies[timestamp][category]) if category in frequencies[
                     timestamp
                 ] else line.append(0)
@@ -290,12 +293,6 @@ def get_objects_frequencies2(
         results.append(line)
 
     r = FrequencyCategoryTable(header=header, rows=results[1:])
-    if not categories and include_total:
-        # Put TOTAL_FIELD in the end of the header.
-        categories_names = categories_set.copy()
-        sorted_categories_names = ["timestamp_start", "timestamp_end"] + sorted(categories_names)
-        sorted_categories_names.append(TOTAL_FIELD)
-        r = r.change_columns_order(sorted_categories_names)
 
     return r
 

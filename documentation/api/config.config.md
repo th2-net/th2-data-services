@@ -14,14 +14,14 @@
 
 ---
 
-<a href="../../th2_data_services/config/config.py#L23"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/config/config.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `TH2Config`
 
 
 
 
-<a href="../../th2_data_services/config/config.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/config/config.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -36,16 +36,16 @@ Global configuration for the DS library.
 
 ---
 
-<a href="../../th2_data_services/config/config.py#L57"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/config/config.py#L58"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `setup_resolvers`
 
 ```python
 setup_resolvers(
-    for_event,
-    for_message,
-    for_submessage,
-    for_expanded_message
+    for_event: EventFieldResolver,
+    for_message: MessageFieldResolver,
+    for_submessage: SubMessageFieldResolver,
+    for_expanded_message: ExpandedMessageFieldResolver
 ) → TH2Config
 ```
 

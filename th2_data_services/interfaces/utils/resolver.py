@@ -1,4 +1,4 @@
-#  Copyright 2023 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,8 +11,9 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from abc import ABC, abstractmethod
-from typing import Dict, List, Any, Union
+from typing import Any, Dict, List, Union
 
 """
 The idea of using resolvers:
@@ -160,13 +161,15 @@ class MessageFieldResolver(ABC):
     @staticmethod
     @abstractmethod
     def expand_message(message) -> List[Dict[str, Any]]:
-        """Extract compounded message into list of individual messages.
+        """Extract a compounded message into a list of individual messages.
+
+        Use it with `data.map_yield` instead of `data.map`.
 
         Warnings:
             expand_message function is not backward-compatible.
-            If you use it in your scripts, there is no guarantee that everything will
-            work if you change data-source because different data-sources has different
-            messages structure.
+            If you use it in your scripts, there is no guarantee that everything
+            will work if you change data-source because different data-sources
+            have different messages structure.
 
         Args:
             message: Th2Message

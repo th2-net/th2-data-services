@@ -19,7 +19,7 @@ def check_copyright(file_path, text_path):
 
     # Read the contents of the target file
     # Checks if target file starts with text_file ignoring leading new lines
-    with open(file_path, "r") as target_file:
+    with open(file_path, "r", encoding="utf-8") as target_file:
         target = target_file.readlines()
         c = 0
         year = str(date.today().year)

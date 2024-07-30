@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2_data_services/interfaces/struct.py#L17"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/struct.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IEventStruct`
 Just to mark Event Struct class. 
@@ -26,7 +26,7 @@ It should look like a class with constants.
 
 ---
 
-<a href="../../th2_data_services/interfaces/struct.py#L26"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/interfaces/struct.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `IMessageStruct`
 Just to mark Message Struct class. 

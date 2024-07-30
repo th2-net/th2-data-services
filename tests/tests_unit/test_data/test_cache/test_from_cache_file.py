@@ -1,6 +1,8 @@
 from pathlib import Path
 from pickle import UnpicklingError
 from typing import List
+
+from tests.tests_unit.utils import iterate_data
 from th2_data_services.data import Data
 import pytest
 
@@ -16,6 +18,11 @@ def test_from_cache_file(general_data: List[dict], cache_file):
     data = Data.from_cache_file(cache_file)
     print()
     assert list(data) == general_data
+
+
+# def test_from_cache_file_windows_path():
+#     # https://exactpro.atlassian.net/browse/TH2-5085
+#     data = Data.from_cache_file("abc:20:20.pickle")
 
 
 def test_from_cache_file_non_exist_file(general_data: List[dict]):
@@ -35,4 +42,4 @@ def test_from_cache_file_non_pickle_file(general_data: List[dict]):
     )
     with pytest.raises(UnpicklingError) as ex:
         d = Data.from_cache_file(cache_file)
-        print(d)
+        iterate_data(d)  # to iterate
