@@ -992,7 +992,7 @@ class Data(Generic[DataIterValues]):
 
         self.__metadata = copy.deepcopy(metadata)
 
-    def update_metadata(self, metadata: Dict, change_type="update") -> "Data":
+    def update_metadata(self, metadata: Dict, change_type="update") -> "Data[DataIterValues]":
         """Update metadata of object with metadata argument.
 
         If value of change_type is 'update' then metadata is updated with new values,
