@@ -251,10 +251,10 @@ class Data(Generic[DataIterValues]):
         """
         data = Data(self._create_data_set_from_iterables([self, other_data]))
         data._set_metadata(self.metadata)
+        if "source_file" in data.metadata:
+            data.update_metadata({"source_file": []})
         if isinstance(other_data, Data):
             data.update_metadata(other_data.metadata)
-            if "source_file" in data.metadata:
-                data.metadata.pop("source_file")
         return data
 
     def __iadd__(self, other_data: Iterable) -> "Data[DataIterValues]":
