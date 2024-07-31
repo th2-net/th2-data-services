@@ -212,12 +212,17 @@ data_with_non_data_obj_via_add.show(n=6)
 data_obj_from_cache.clear_cache()
 
 # [1.16] Update metadata for Data objects.
-d1.update_metadata({"a": 1})
-d1.update_metadata({"a": [1]})
-# d1.metadata - {'a': [1, 1]}
-# d1.update_metadata({"a": {"b": 1, "c": 2}}) - This will fail
-d1.update_metadata({"a": [{"b": 1, "c": 2}]}, change_type="change")
-# d1.metadata - {'a': [{'b': 1, 'c': 2}]}
+# d1.metadata - {}
+d1.update_metadata({"a": 1, "b": [10], "c": {"a": 100}})
+# d1.metadata - {'a': 1, 'b': [10], 'c': {'a': 100}}
+d1.update_metadata({"a": 2, "b": 20, "c": {"a": 200, "b": 300}})
+# d1.metadata - {'a': 2, 'b': [10, 20], 'c': {'a': 200, 'b': 300}}
+# d1.update_metadata({"a": {}}) - This throws AttributeError: 'int' object has no attribute 'update'.
+# To set key whose value is of non-dict type to dict we can use change_type="change" argument.
+d1.update_metadata({"a": {}}, change_type="change")
+# d1.metadata - {'a': {}, 'b': [10, 20], 'c': {'a': 200, 'b': 300}}
+# change_type can be either 'update' (default) or 'change' - overwrite existing value or create a new one if it
+# doesn't exist.
 
 ######################################
 
