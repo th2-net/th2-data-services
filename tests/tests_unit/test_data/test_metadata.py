@@ -65,7 +65,7 @@ def test_source_file_in_metadata_removed_when_adding():
     data2.update_metadata({"source_file": "file2"})
     data3 = data1 + data2
 
-    assert data3.metadata["source_file"] == ["file1", "file2"]
+    assert data3.metadata["source_files"] == ["file1", "file2"]
 
 
 def test_strings_update_in_metadata():
