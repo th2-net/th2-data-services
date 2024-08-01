@@ -563,7 +563,8 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    https://devhub.checkmarx.com/cve-details/CVE-2024-27454/. 
 8. [TH2-5201] Fixed DatetimeStringConverter.to_th2_timestamp() bug which occurred for inputs not ending with 'Z'.
 9. [TH2-5902] Fixed bug when cache file was removed after calling data.show().
-10. [TH2-5220] Fixed bug when Data.metadata() would change a string into a list.
+10. [TH2-5220] Fixed bug when Data.update_metadata() would change a string into a list.
+11. [TH2-5101] Fixed bug when merging date objects via + or +=  overwrites the source file. 
 
 ## Improvements
 
@@ -581,6 +582,8 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
    to_nanoseconds.
 7. [TH2-5081] `Data.__str__` was changed --> use `Data.show()` instead of `print(data)`
 8. [TH2-5201] Performance improvements have been made to converters:
+9. [TH2-5101] Data.update_metadata() now takes `change_type` argument (values: `update` default, `change` which denotes 
+whether to update or overwrite with new values.
 
 Benchmark.
 - 1mln iterations per test
