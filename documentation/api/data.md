@@ -84,7 +84,7 @@ int: How many records in the Data stream.
 
 ---
 
-<a href="../../th2_data_services/data.py#L752"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L817"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `build_cache`
 
@@ -106,7 +106,7 @@ Important:  If the Data object cache status is True, it'll iterate itself. As a 
 
 ---
 
-<a href="../../th2_data_services/data.py#L789"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L859"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `clear_cache`
 
@@ -171,7 +171,7 @@ When to use:  You have IDs of some messages and you want get them in the stream 
 
 ---
 
-<a href="../../th2_data_services/data.py#L847"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L817"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_any_file`
 
@@ -203,7 +203,7 @@ It will just iterate file and return data line be line.
 
 ---
 
-<a href="../../th2_data_services/data.py#L800"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L868"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_cache_file`
 
@@ -233,7 +233,8 @@ Creates Data object from cache file with provided name.
 
 ---
 
-<a href="../../th2_data_services/data.py#L869"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L940"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
 
 ### <kbd>classmethod</kbd> `from_csv`
 
@@ -279,7 +280,7 @@ It will iterate the CSV file as if you were doing it with CSV module.
 
 ---
 
-<a href="../../th2_data_services/data.py#L823"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L894"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_json`
 
@@ -486,7 +487,7 @@ Skips and limits records.
 
 ---
 
-<a href="../../th2_data_services/data.py#L974"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L1066"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json`
 
@@ -517,7 +518,7 @@ Converts data to valid json format.
 
 ---
 
-<a href="../../th2_data_services/data.py#L1031"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L1125"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `to_json_lines`
 
@@ -594,7 +595,7 @@ Every line is a valid json, but the whole file - not.
 
 ---
 
-<a href="../../th2_data_services/data.py#L925"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/data.py#L995"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `update_metadata`
 
@@ -607,6 +608,10 @@ Update metadata of object with metadata argument.
 Metadata is updated with new values, meaning previous values are kept and added with new values. 
 
 | Example: | data = Data(...) | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}} | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'} | data.update_metadata(new_metadata) | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'} 
+
+If at least one value with is a list in one Data object, update_metadata adds both values in a list. 
+
+| Example: | data = Data(...) | # data.metadata => {'str_example_one': ['str1'], 'str_example_two': 'str1'} | new_metadata = {'str_example_one': 'str2', 'str_example_two': ['str2']} | data.update_metadata(new_metadata) | # data.metadata => {'str_example_one': ['str1', 'str2'], 'str_example_two': ['str1', 'str2']} 
 
 
 
