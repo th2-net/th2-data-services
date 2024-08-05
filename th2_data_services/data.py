@@ -197,6 +197,7 @@ class Data(Generic[DataIterValues]):
         self._pending_cache_path = (
             self._cache_path.with_name("[PENDING]" + self._cache_filename).resolve().absolute()
         )
+        self._data_list = [self]
         self._cache_file_obj: Optional[BinaryIO] = None
         self._len: Optional[int] = None
         self.workflow = DataWorkflow()
@@ -251,7 +252,9 @@ class Data(Generic[DataIterValues]):
         """
         if not isinstance(other_data, Data):
             raise TypeError("Addition only works between Data objects")
-        data = Data(self._create_data_set_from_iterables([self, other_data]))
+        new_data_list = self._data_list + other_data._data_list
+        data = Data(new_data_list)
+        data._data_list = new_data_list
         data._set_metadata(self.metadata)
         if "source_file" in data.metadata:
             data.update_metadata({"source_files": [data.metadata["source_file"]]})
