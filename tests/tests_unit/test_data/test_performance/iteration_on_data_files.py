@@ -5,7 +5,7 @@ import random
 from th2_data_services.data import Data
 
 
-def test_iteration_speed():
+def get_iteration_speed():
     n = 10_000
     data = Data([random.randint(1, 100_000) for _ in range(n)])
     directory = "tests/tests_unit/test_data/test_performance/benchmark"
@@ -25,4 +25,8 @@ def test_iteration_speed():
         j += 1
 
     print(f"Number of records: {j}")
-    print(f"Time took: {time.time() - start_time}")
+    print(f"Time took: {time.time() - start_time} seconds")
+
+
+if __name__ == "__main__":
+    get_iteration_speed()
