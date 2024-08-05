@@ -242,13 +242,15 @@ class Data(Generic[DataIterValues]):
             return True
         return False
 
-    def __add__(self, other_data: Iterable) -> "Data[DataIterValues]":
+    def __add__(self, other_data: "Data") -> "Data[DataIterValues]":
         """Joining feature.
 
         Don't keep cache status.
 
         e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
         """
+        if not isinstance(other_data, Data):
+            raise TypeError("Addition only works between Data objects")
         data = Data(self._create_data_set_from_iterables([self, other_data]))
         data._set_metadata(self.metadata)
         if "source_file" in data.metadata:
@@ -261,7 +263,7 @@ class Data(Generic[DataIterValues]):
                 data.metadata.pop("source_file")
         return data
 
-    def __iadd__(self, other_data: Iterable) -> "Data[DataIterValues]":
+    def __iadd__(self, other_data: "Data") -> "Data[DataIterValues]":
         """Joining feature.
 
         Keeps cache status.
