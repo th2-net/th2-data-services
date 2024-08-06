@@ -122,9 +122,7 @@ class BufferedJSONProcessor:
             Generator[dict]
         """
         try:
-            cleaned_buffer = [item.strip().strip("b'") for item in self.buffer]
-
-            for i in json.loads("[" + ",".join(cleaned_buffer) + "]"):
+            for i in json.loads("[" + ",".join(self.buffer) + "]"):
                 yield i
         except JSONDecodeError as e:
             raise ValueError(

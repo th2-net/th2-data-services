@@ -16,6 +16,7 @@ import copy
 import csv
 import heapq
 import os
+import re
 import shutil
 from dataclasses import dataclass
 import orjson as json
@@ -753,6 +754,7 @@ class Data(Generic[DataIterValues]):
                 if line:
                     k = line[: line.find("|")]
                     v = line[line.find("|") + 1 :]
+                    v = re.sub(r"(^b'|'$)", "", v)
                     heapq.heappush(heap, (k, v, f))
             with open(sorted_path, "w") as output_file:
                 while heap:
@@ -762,6 +764,7 @@ class Data(Generic[DataIterValues]):
                     if line:
                         k = line[: line.find("|")]
                         v = line[line.find("|") + 1 :]
+                        v = re.sub(r"(^b'|'$)", "", v)
                         heapq.heappush(heap, (k, v, file))
                     else:
                         file.close()
