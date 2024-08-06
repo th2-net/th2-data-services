@@ -732,7 +732,6 @@ class Data(Generic[DataIterValues]):
                     with open(chunk_name, "w") as chunk:
                         for o in buffer:
                             chunk.write(f"{key(o)}|{json.dumps(o)}\n")
-                            chunk.write(f"{key(o)}|{json.dumps(o)}\n")
                     chunk_names.append(chunk_name)
                     chunk_counter += 1
                     buffer.clear()
