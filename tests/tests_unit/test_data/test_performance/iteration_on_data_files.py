@@ -8,7 +8,7 @@ from th2_data_services.data import Data
 def get_iteration_speed():
     n = 10_000
     data = Data([random.randint(1, 100_000) for _ in range(n)])
-    directory = "tests/tests_unit/test_data/test_performance/benchmark"
+    directory = "benchmark"
     os.makedirs(directory, exist_ok=True)
     data.to_json_lines(f"{directory}/json0.gz", gzip=True, overwrite=True)
     for i in range(1, 122):
