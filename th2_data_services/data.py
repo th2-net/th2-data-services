@@ -709,6 +709,19 @@ class Data(Generic[DataIterValues]):
             pushed += 1
 
     def sort(self, key: Callable, replace=False, sorted_path=None, buffer_size=300 * 1024 * 1024):
+        """Sorts the Data. Uses External sort, thus it can also work with huge amounts of Data.
+
+        Args:
+            key: Function to sort data by.
+            replace: If True, the file that stores the data will be overwritten by sorted data, if False a new file
+                will be created. Default - False.
+            sorted_path: Path to the sorted file.
+            buffer_size: Size of the buffer. Buffer stores a chunk of the data that needs to be sorted.
+
+        Returns:
+            Data: Data object.
+
+        """
         if not sorted_path:
             sorted_path = f"{self.metadata['source_file']}.sorted"
         if replace:
