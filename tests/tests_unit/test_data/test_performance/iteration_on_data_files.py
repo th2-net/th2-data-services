@@ -10,8 +10,7 @@ def get_iteration_speed_plus():
     for i in range(1, 122):
         data = data + Data.from_json(f"benchmark/json{i}.gz", gzip=True)
 
-    start_time = time.time()
-    _iterate_and_print_stats(start_time, data)
+    _iterate_and_print_stats(data)
 
 
 def get_iteration_speed_plus_equals():
@@ -19,15 +18,13 @@ def get_iteration_speed_plus_equals():
     for i in range(1, 122):
         data += Data.from_json(f"benchmark/json{i}.gz", gzip=True)
 
-    start_time = time.time()
-    _iterate_and_print_stats(start_time, data)
+    _iterate_and_print_stats(data)
 
 
 def get_iteration_speed_list_comprehension():
     data = Data([Data.from_json(f"benchmark/json{i}.gz", gzip=True) for i in range(122)])
 
-    start_time = time.time()
-    _iterate_and_print_stats(start_time, data)
+    _iterate_and_print_stats(data)
 
 
 def _generate_data():
@@ -40,7 +37,8 @@ def _generate_data():
         data.to_json_lines(f"benchmark/json{i}.gz", gzip=True, overwrite=True)
 
 
-def _iterate_and_print_stats(start_time, data):
+def _iterate_and_print_stats(data):
+    start_time = time.time()
     j = 0
     for _ in data:
         j += 1
