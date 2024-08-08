@@ -1,3 +1,10 @@
-security:
-  ignore-unpinned-requirements: False
-  continue-on-vulnerability-error: False
+report:
+  dependency-vulnerabilities:
+    enabled: true
+    auto-ignore-in-report:
+      python:
+        unpinned-requirements: false
+
+fail-scan-with-exit-code:
+  dependency-vulnerabilities:
+    enabled: true
