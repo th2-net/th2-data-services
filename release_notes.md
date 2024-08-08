@@ -584,6 +584,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 8. [TH2-5201] Performance improvements have been made to converters:
 9. [TH2-5101] Data.update_metadata() now takes `change_type` argument (values: `update` default, `change` which denotes 
 whether to update or overwrite with new values.
+10. [TH2-5099] Fixed slow iteration for Data objects created with many addition operators.
 
 Benchmark.
 - 1mln iterations per test
