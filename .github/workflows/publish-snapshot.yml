@@ -16,5 +16,6 @@ jobs:
       release-type: development
       test-dir: tests/tests_unit
       test-ignore-dir: tests/tests_unit/test_dependencies/
+      test-requirements-file: requirements_dev.txt
     secrets:
       pypi-password: ${{ secrets.PYPI_PASSWORD }}
