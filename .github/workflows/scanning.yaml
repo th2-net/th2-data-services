@@ -22,4 +22,4 @@ jobs:
       - name: pyupio/safety-action
         uses: pyupio/safety-action@v1.0.1
         with:
-          api-key: ${{ secrets.SAFETY_API_KEY }}
+          api-key: 4bb70b14-28ba-403c-8712-fd8009bb0a93
