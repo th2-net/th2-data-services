@@ -10,6 +10,6 @@ on:
 
 jobs:
   build-job:
-    uses: th2-net/.github/.github/workflows/compound-python-dev.yml@python-check # FIXME: change to main
+    uses: th2-net/.github/.github/workflows/compound-python-dev.yml@python-workflow # FIXME: change to main
     secrets:
       pypi-password: ${{ secrets.PYPI_PASSWORD }}
