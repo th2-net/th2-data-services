@@ -11,6 +11,8 @@ on:
 jobs:
   build-job:
     name: Check and publish snapshot tarball to PyPi
-    uses: th2-net/.github/.github/workflows/compound-python-dev.yml@python-workflow # FIXME: change to main
+    uses: th2-net/.github/.github/workflows/compound-python.yml@python-workflow # FIXME: change to main
+    with:
+      release-type: development
     secrets:
       pypi-password: ${{ secrets.PYPI_PASSWORD }}
