@@ -15,6 +15,7 @@ jobs:
     with:
       release-type: development
       style-check-enabled: false
+      strict-style-check: false
       python-check-versions: "['3.8', '3.9', '3.10', '3.11', '3.12']"
       test-dir: tests/tests_unit
       test-ignore-dir: tests/tests_unit/test_dependencies/
