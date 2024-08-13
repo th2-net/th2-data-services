@@ -8,3 +8,4 @@ jobs:
     uses: th2-net/.github/.github/workflows/python-scan.yml@python-workflow
     with:
       safety-args: '-i 70612'
+
