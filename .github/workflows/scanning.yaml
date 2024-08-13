@@ -1,20 +1,8 @@
 name: 'Vulnerabilities scanning'
-
 on:
   push:
 
-env:
-  DEP_PATH: requirements.txt
-
 jobs:
   scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out master
-        uses: actions/checkout@master
-      - name: Security vulnerabilities scan
-        continue-on-error: false
-        uses: aufdenpunkt/python-safety-check@master
-        with:
-          scan_requirements_file_only: 'true'
-          safety_args: '--policy-file .safety-policy.yaml'
+    name: Vulnerabilities scan
+    uses: th2-net/.github/.github/workflows/python-scan.yml@main
