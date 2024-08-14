@@ -21,5 +21,6 @@ jobs:
       test-ignore-dir: tests/tests_unit/test_dependencies/
       test-requirements-file: requirements_dev.txt
       scan-safety-args: '-i 70612'
+      
     secrets:
       pypi-password: ${{ secrets.PYPI_PASSWORD }}
