@@ -1,6 +1,5 @@
 autoflake
 black
-c==2.0.3.0  # To test utils. Utils imports resolvers
 importlib_metadata
 lazydocs
 pre-commit
@@ -8,3 +7,4 @@ pydocstyle
 pytest
 pytest-mock
 pytest-xdist
+th2-data-services-lwdp==2.0.3.0 # To test utils. Utils imports resolvers
