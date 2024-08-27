@@ -20,7 +20,7 @@ jobs:
       test-dir: tests/tests_unit
       test-ignore-dir: tests/tests_unit/test_dependencies/
       test-requirements-file: requirements_dev.txt
-      scan-safety-args: '-i 70612'
+      scan-safety-args: '-i 70612' # ignore https://data.safetycli.com/v/70612/97c/. this is in a transitive dependency.
       
     secrets:
       pypi-password: ${{ secrets.PYPI_PASSWORD }}
