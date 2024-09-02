@@ -6,9 +6,9 @@ flatdict~=4.0
 orjson>=3.10,<4
 prettytable  # Temporary required for summary
 requests>=2.32.2
+setuptools>70.0
 sseclient-py~=1.7
 tabulate
 treelib==1.6.1
-# setuptools~=65.5
 urllib3>1.26.18, <2
 wheel>=0.38.1  # To get rid of wheel building errors
