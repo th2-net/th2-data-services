@@ -20,7 +20,6 @@ jobs:
       test-dir: tests/tests_unit
       test-ignore-dir: tests/tests_unit/test_dependencies/
       test-requirements-file: requirements_dev.txt
-      scan-safety-args: '-i 70612' # ignore https://data.safetycli.com/v/70612/97c/. Jinja2 library is not used in our code directly.
-      
+
     secrets:
       pypi-password: ${{ secrets.PYPI_PASSWORD }}
