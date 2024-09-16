@@ -11,7 +11,7 @@ on:
 jobs:
   build-job:
     name: Check and publish snapshot tarball to PyPi
-    uses: th2-net/.github/.github/workflows/compound-python.yml@python-workflow # FIXME: change to main
+    uses: th2-net/.github/.github/workflows/compound-python.yml@main
     with:
       release-type: development
       style-check-enabled: false
@@ -19,7 +19,7 @@ jobs:
       python-check-versions: "['3.8', '3.9', '3.10', '3.11', '3.12']"
       test-dir: tests/tests_unit
       test-ignore-dir: tests/tests_unit/test_dependencies/
-      test-requirements-file: requirements_dev.txt
+      test-requirements-files: requirements_dev.txt
 
     secrets:
       pypi-password: ${{ secrets.PYPI_PASSWORD }}
