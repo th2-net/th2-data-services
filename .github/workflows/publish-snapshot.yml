@@ -2,9 +2,9 @@ name: check and publish snapshot Python tarball to PyPi
 
 on:
     push:
-      branches-ignore:
-        - master
-        - version-*
+      branches:
+        - dev_*
+        - pypi_*
       paths-ignore:
         - README.md
 
