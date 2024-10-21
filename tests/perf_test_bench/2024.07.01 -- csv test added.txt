@@ -1,0 +1,16 @@
+\th2-data-services\th2_data_services\_internal\perf_tests.py
+Store cache files for test:
+  -> cache_test.pickle  --  46.54133415222168 s
+  -> cache_test.jsons  --  40.48812770843506 s
+  -> cache_test.jsons.gz  --  105.24668741226196 s
+  -> cache_test.csv  --  51.27796673774719 s
+  -> cache_test_header.csv  --  49.28666377067566 s
+
+Data length: 10000001
+Iterate pickle:  --  25.856621742248535 s, with 3 filters  --  31.304664850234985 s
+Iterate jsons:  --  27.18027377128601 s, with 3 filters  --  32.267205476760864 s
+Iterate jsons.gz:  --  25.534587621688843 s, with 3 filters  --  29.695445775985718 s
+Iterate csv:  --  24.453383922576904 s, with 3 filters  --  28.477383613586426 s
+Iterate csv (header_first_line=True):  --  35.39145493507385 s, with 3 filters  --  36.51749086380005 s
+
+Total time taken in :  cache_files_reading_speed 614.4873778820038
