@@ -723,31 +723,39 @@ class Data(Generic[DataIterValues]):
         self._cache_status = status
         return self
 
-    def find_by(self, record_field, field_values) -> Generator:
+    def find_by(self, record_field: str, field_values: list) -> Generator:
         """Get the records whose field value is written in the field_values list.
 
         When to use:
-            You have IDs of some messages and you want get them in the stream and stop searching
-            when you find all elements.
+            You have IDs of some messages, and you want to get them in the
+            stream and stop searching when you find all elements.
 
         Args:
             record_field: The record field to be searched for in the field_values list.
             field_values: List of elements among which will be searched record[record_field].
 
+        Current limitation:
+            Searches on for fields on the top level of the record.
+
         Yields:
             dict: Generator records.
 
         """
-        values_for_find = list(field_values)
+        values_to_find = set(field_values)
         for record in self:
-            if values_for_find:
-                if record[record_field] in values_for_find:
-                    values_for_find.remove(record[record_field])
+            if values_to_find:
+                if record[record_field] in values_to_find:
+                    values_to_find.remove(record[record_field])
                     yield record
                 else:
                     continue
             else:
                 break
+
+    # @overload
+    # def find_by_substring(self, substrings: ):
+    #     pass
+    # # https://adamj.eu/tech/2021/05/29/python-type-hints-how-to-use-overload/
 
     def write_to_file(self, file: str) -> None:
         """Writes the stream data to txt file.
@@ -864,10 +872,8 @@ class Data(Generic[DataIterValues]):
             self.__delete_cache()
 
     @classmethod
-    def from_cache_file(
-        cls, filename, pickle_version: int = o.DEFAULT_PICKLE_VERSION
-    ) -> "Data[DataIterValues]":
-        """Creates Data object from cache file with the provided name.
+    def from_cache_file(cls, filename, pickle_version: int = o.DEFAULT_PICKLE_VERSION) -> "Data":
+        """Creates a Data object from cache file with the provided name.
 
         Args:
             filename: Name or path to cache file.
@@ -943,8 +949,8 @@ class Data(Generic[DataIterValues]):
         header_first_line=False,
         mode="r",
         delimiter=",",
-    ) -> "Data[DataIterValues]":
-        """Creates Data object from CSV file with the provided name.
+    ) -> "Data":
+        """Creates a Data object from CSV file with the provided name.
 
         It will iterate the CSV file as if you were doing it with CSV module.
 
