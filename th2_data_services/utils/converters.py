@@ -13,14 +13,16 @@
 #  limitations under the License.
 
 import base64
+from collections import namedtuple
 from datetime import datetime, timezone
 import shutil
 import gzip
-import ciso8601
 
 import flatdict as _flatdict
 
 from th2_data_services.interfaces.utils.converter import ITimestampConverter, TimestampType
+
+_DatetimeTuple = namedtuple("DatetimeTuple", ["datetime", "mantissa"])
 
 
 class DatetimeStringConverter(ITimestampConverter[str]):
@@ -31,54 +33,47 @@ class DatetimeStringConverter(ITimestampConverter[str]):
     If you request microseconds but your timestamp has nanoseconds,
     they will be just cut (not rounding).
 
-    Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS][Z]".
-    'Z' in the end is optional.
+    Expected timestamp format "yyyy-MM-ddTHH:mm:ss[.SSSSSSSSS]Z".
+    If you don't provide 'Z' in the end, it can return wrong results.
     """
 
     @classmethod
     def parse_timestamp(cls, datetime_string: str) -> (str, str):
-        # Note:
-        #   we have similar code here (not the separate function)
-        #   to improve performance.
+        # Exception handling works faster than using `if`.
         try:
-            if datetime_string[19] == ".":
-                datetime_part, mantissa = datetime_string.rsplit(".")
-                if mantissa[-1] == "Z":
-                    mantissa = mantissa[:-1]
-            else:
-                datetime_part, mantissa = datetime_string, ""
-        except:
-            datetime_part, mantissa = datetime_string, ""
+            # Handles "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ"
+            dt_tuple = _DatetimeTuple(*datetime_string.rsplit("."))
+            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%dT%H:%M:%S").replace(
+                tzinfo=timezone.utc
+            )
+        except TypeError:
+            # Handles "yyyy-MM-ddTHH:mm:ssZ"
+            try:
+                timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%SZ").replace(
+                    tzinfo=timezone.utc
+                )
+                dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0Z')
+            except ValueError:
+                # Handles "yyyy-MM-ddTHH:mm:ss"
+                timestamp = datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S").replace(
+                    tzinfo=timezone.utc
+                )
+                dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0')
 
-        dt = ciso8601.parse_datetime(datetime_part).replace(tzinfo=timezone.utc)
-
-        nanoseconds = f"{mantissa:0<9}"  # Add zeros on right.
-        seconds = str(int(dt.timestamp()))
+        if dt_tuple.mantissa.endswith("Z"):
+            mantissa_wo_z = dt_tuple.mantissa[:-1]
+        else:
+            mantissa_wo_z = dt_tuple.mantissa
+        nanoseconds = f"{mantissa_wo_z:0<9}"  # Add zeros on right.
+        seconds = str(int(timestamp.timestamp()))
 
         return seconds, nanoseconds
 
     @classmethod
     def parse_timestamp_int(cls, datetime_string: str) -> (int, int):
-        # Note:
-        #   we have similar code here (not the separate function)
-        #   to improve performance.
-        try:
-            if datetime_string[19] == ".":
-                datetime_part, mantissa = datetime_string.rsplit(".")
-                if mantissa[-1] == "Z":
-                    mantissa = mantissa[:-1]
-            else:
-                datetime_part, mantissa = datetime_string, ""
-        except:
-            datetime_part, mantissa = datetime_string, ""
-
-        dt = ciso8601.parse_datetime_as_naive(datetime_part).replace(tzinfo=timezone.utc)
-
-        return int(dt.timestamp()), int(f"{mantissa:0<9}")
-
-    @classmethod
-    def to_datetime(cls, datetime_string: str) -> datetime:
-        return ciso8601.parse_datetime_as_naive(datetime_string)
+        # TODO - there should be better solution
+        seconds, nanoseconds = cls.parse_timestamp(datetime_string)
+        return int(seconds), int(nanoseconds)
 
 
 class UniversalDatetimeStringConverter(ITimestampConverter[str]):
@@ -92,47 +87,33 @@ class UniversalDatetimeStringConverter(ITimestampConverter[str]):
 
     @classmethod
     def parse_timestamp(cls, datetime_string: str) -> (str, str):
+        if datetime_string.endswith("Z"):
+            datetime_string = datetime_string[:-1]
+        datetime_string = datetime_string.replace("T", " ")
+        # Exception handling works faster than using `if`.
         try:
-            datetime_string = datetime_string.replace("T", " ")
-            if datetime_string[19] == ".":
-                datetime_part, mantissa = datetime_string.rsplit(".")
-                if mantissa[-1] == "Z":
-                    mantissa = mantissa[:-1]
-            else:
-                datetime_part, mantissa = datetime_string, ""
-        except:
-            datetime_part, mantissa = datetime_string, ""
+            # Handles "yyyy-MM-ddTHH:mm:ss.SSSSSSSSSZ"
+            dt_tuple = _DatetimeTuple(*datetime_string.rsplit("."))
+            timestamp = datetime.strptime(dt_tuple.datetime, "%Y-%m-%d %H:%M:%S").replace(
+                tzinfo=timezone.utc
+            )
+        except TypeError:
+            # Handles "yyyy-MM-ddTHH:mm:ssZ"
+            timestamp = datetime.strptime(datetime_string, "%Y-%m-%d %H:%M:%S").replace(
+                tzinfo=timezone.utc
+            )
+            dt_tuple = _DatetimeTuple("", "")  # ('2022-03-05T23:56:44', '0')
 
-        dt = ciso8601.parse_datetime(datetime_part).replace(tzinfo=timezone.utc)
-
-        nanoseconds = f"{mantissa:0<9}"  # Add zeros on right.
-        seconds = str(int(dt.timestamp()))
+        nanoseconds = f"{dt_tuple.mantissa:0<9}"  # Add zeros on right.
+        seconds = str(int(timestamp.timestamp()))
 
         return seconds, nanoseconds
 
     @classmethod
     def parse_timestamp_int(cls, datetime_string: str) -> (int, int):
-        # Note:
-        #   we have similar code here (not the separate function)
-        #   to improve performance.
-        try:
-            datetime_string = datetime_string.replace("T", " ")
-            if datetime_string[19] == ".":
-                datetime_part, mantissa = datetime_string.rsplit(".")
-                if mantissa[-1] == "Z":
-                    mantissa = mantissa[:-1]
-            else:
-                datetime_part, mantissa = datetime_string, ""
-        except:
-            datetime_part, mantissa = datetime_string, ""
-
-        dt = ciso8601.parse_datetime(datetime_part).replace(tzinfo=timezone.utc)
-
-        return int(dt.timestamp()), int(f"{mantissa:0<9}")
-
-    @classmethod
-    def to_datetime(cls, datetime_string: str) -> datetime:
-        return ciso8601.parse_datetime_as_naive(datetime_string)
+        # TODO - there should be better solution
+        seconds, nanoseconds = cls.parse_timestamp(datetime_string)
+        return int(seconds), int(nanoseconds)
 
 
 class DatetimeConverter(ITimestampConverter[datetime]):
@@ -220,7 +201,8 @@ class ProtobufTimestampConverter(ITimestampConverter[dict]):
         Returns:
             int: Timestamp in seconds format.
         """
-        return timestamp["epochSecond"]
+        seconds, nanoseconds = cls.parse_timestamp_int(timestamp)
+        return seconds
 
     @classmethod
     def to_microseconds(cls, timestamp: TimestampType) -> int:
