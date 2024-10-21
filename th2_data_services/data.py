@@ -242,20 +242,28 @@ class Data(Generic[DataIterValues]):
             return True
         return False
 
-    def __add__(self, other_data: Iterable) -> "Data[DataIterValues]":
+    def __add__(self, other_data: "Data") -> "Data[DataIterValues]":
         """Joining feature.
 
         Don't keep cache status.
 
         e.g. data3 = data1 + data2  -- data3 will have cache_status = False.
         """
+        if not isinstance(other_data, Data):
+            raise TypeError("Addition only works between Data objects")
         data = Data(self._create_data_set_from_iterables([self, other_data]))
         data._set_metadata(self.metadata)
+        if "source_file" in data.metadata:
+            data.update_metadata({"source_files": [data.metadata["source_file"]]})
         if isinstance(other_data, Data):
+            if "source_file" in other_data.metadata:
+                data.update_metadata({"source_files": [other_data.metadata["source_file"]]})
             data.update_metadata(other_data.metadata)
+            if "source_file" in data.metadata:
+                data.metadata.pop("source_file")
         return data
 
-    def __iadd__(self, other_data: Iterable) -> "Data[DataIterValues]":
+    def __iadd__(self, other_data: "Data") -> "Data[DataIterValues]":
         """Joining feature.
 
         Keeps cache status.
@@ -996,10 +1004,11 @@ class Data(Generic[DataIterValues]):
 
         self.__metadata = copy.deepcopy(metadata)
 
-    def update_metadata(self, metadata: Dict) -> "Data[DataIterValues]":
-        """Update metadata of the object with metadata argument.
+    def update_metadata(self, metadata: Dict, change_type="update") -> "Data[DataIterValues]":
+        """Update metadata of object with metadata argument.
 
-        Metadata is updated with new values, meaning previous values are kept and added with new values.
+        If value of change_type is 'update' then metadata is updated with new values,
+        meaning previous values are kept and added with new values.
 
         | Example:
         | data = Data(...)
@@ -1008,8 +1017,27 @@ class Data(Generic[DataIterValues]):
         | data.update_metadata(new_metadata)
         | # data.metadata => {'num': 9, 'nums': [1,7], 'letters': {'a': 97, 'z': 122}, 'new': 'key'}
 
+        If at least one value with is a list in one Data object, update_metadata adds both values in a list.
+
+        | Example:
+        | data = Data(...)
+        | # data.metadata => {'str_example_one': ['str1'], 'str_example_two': 'str1'}
+        | new_metadata = {'str_example_one': 'str2', 'str_example_two': ['str2']}
+        | data.update_metadata(new_metadata)
+        | # data.metadata => {'str_example_one': ['str1', 'str2'], 'str_example_two': ['str1', 'str2']}
+
+        However, if change_type is 'change' then metadata is overwritten with new values.
+
+        | Example:
+        | data = Data(...)
+        | # data.metadata => {'num': 1, 'nums': [1], 'letters': {'a': 97}}
+        | new_metadata = {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'}
+        | data.update_metadata(new_metadata)
+        | # data.metadata => {'num': 9, 'nums': [7], 'letters': {'z': 122}, 'new': 'key'}
+
         Args:
             metadata (dict): New Metadata
+            change_type (str): Denotes whether to update values or overwrite it. Possible values: 'update', 'change'.
 
         Returns:
             Data objects (itself)
@@ -1024,21 +1052,24 @@ class Data(Generic[DataIterValues]):
         for k, v in metadata.items():
             if k in self.metadata:
                 current = self.metadata[k]
-                # Check For Iterable Types
-                if isinstance(v, dict):
-                    self.__metadata[k].update({**current, **v})
-                elif isinstance(v, Iterable) and not (
-                    isinstance(v, str) or isinstance(current, str)
-                ):
-                    if isinstance(current, Iterable):
-                        self.__metadata[k] = [*current, *v]
-                    else:
-                        self.__metadata[k] = [current, *v]
-                else:  # Single Item
-                    if isinstance(current, Iterable) and not isinstance(current, str):
-                        self.__metadata[k] = [*current, v]
-                    else:
-                        self.__metadata[k] = [current, v]
+                if change_type == "update":
+                    # Check For Iterable Types
+                    if isinstance(v, dict):
+                        self.__metadata[k].update({**current, **v})
+                    elif isinstance(v, Iterable) and not (isinstance(v, str)):
+                        if isinstance(current, Iterable) and not isinstance(current, str):
+                            self.__metadata[k] = [*current, *v]
+                        else:
+                            self.__metadata[k] = [current, *v]
+                    else:  # Single Item
+                        if isinstance(current, Iterable) and not isinstance(current, str):
+                            self.__metadata[k] = [*current, v]
+                        else:
+                            self.__metadata[k] = v
+                elif change_type == "change":
+                    self.__metadata[k] = v
+                else:
+                    raise Exception("change_type must be either 'update' or 'change'")
             else:
                 # Add New Item
                 self.__metadata[k] = v

@@ -331,6 +331,19 @@ data_obj_from_cache.clear_cache()
 # [1.16] Get the message by its ID from the Data object in one line.
 msg = next(data_obj_from_cache.find_by(record_field="MessageId", field_values=["msg-id"]))
 
+# [1.17] Update metadata for Data objects.
+# d1.metadata - {}
+d1.update_metadata({"a": 1, "b": [10], "c": {"a": 100}})
+# d1.metadata - {'a': 1, 'b': [10], 'c': {'a': 100}}
+d1.update_metadata({"a": 2, "b": 20, "c": {"a": 200, "b": 300}})
+# d1.metadata - {'a': 2, 'b': [10, 20], 'c': {'a': 200, 'b': 300}}
+# d1.update_metadata({"a": {}}) - This throws AttributeError: 'int' object has no attribute 'update'.
+# To set key whose value is of non-dict type to dict we can use change_type="change" argument.
+d1.update_metadata({"a": {}}, change_type="change")
+# d1.metadata - {'a': {}, 'b': [10, 20], 'c': {'a': 200, 'b': 300}}
+# change_type can be either 'update' (default) or 'change' - overwrite existing value or create a new one if it
+# doesn't exist.
+
 ######################################
 # [2] Working with converters.
 ######################################
