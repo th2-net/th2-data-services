@@ -708,7 +708,9 @@ class Data(Generic[DataIterValues]):
             yield record
             pushed += 1
 
-    def sort(self, key: Callable, replace=False, sorted_path=None, buffer_size=300 * 1024 * 1024):
+    def sort(
+        self, key: Callable, replace=False, sorted_path=None, buffer_size=300 * 1024 * 1024
+    ) -> "Data[DataIterValues]":
         """Sorts the Data. Uses External sort, thus it can also work with huge amounts of Data.
 
         Args:
