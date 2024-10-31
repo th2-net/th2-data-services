@@ -211,7 +211,11 @@ data_with_non_data_obj_via_add.show(n=6)
 # [1.15] You can remove the cache file of the Data object, if required.
 data_obj_from_cache.clear_cache()
 
-# [1.16] Update metadata for Data objects.
+
+# [1.16] Get the message by its ID from the Data object in one line.
+msg = next(data_obj_from_cache.find_by(record_field="MessageId", field_values=["msg-id"]))
+
+# [1.17] Update metadata for Data objects.
 # d1.metadata - {}
 d1.update_metadata({"a": 1, "b": [10], "c": {"a": 100}})
 # d1.metadata - {'a': 1, 'b': [10], 'c': {'a': 100}}
@@ -225,7 +229,6 @@ d1.update_metadata({"a": {}}, change_type="change")
 # doesn't exist.
 
 ######################################
-
 # [2] Working with converters.
 ######################################
 # There are currently three implementations of ITimestampConverter class: DatetimeConverte, DatetimeStringConverter and ProtobufTimestampConverter.

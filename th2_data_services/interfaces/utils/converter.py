@@ -38,6 +38,11 @@ Some speed tests:
 """
 
 
+# TODO -- add timezone. UTC by default.
+#   so we expect that user provide ts in UTC or its own timezone.
+#   we always return UTC, but also can configure it.
+
+
 class ITimestampConverter(ABC, Generic[TimestampType]):
     @classmethod
     @abstractmethod

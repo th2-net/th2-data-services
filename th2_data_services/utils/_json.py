@@ -20,7 +20,8 @@ from orjson import JSONDecodeError
 
 from th2_data_services.utils.decode_error_handler import UNICODE_REPLACE_HANDLER
 
-
+# FIXME
+#   why do we have separate the same funcitons?
 def iter_json_file(filename, buffer_limit=250):
     """Returns the function that returns generators."""
 
@@ -31,13 +32,16 @@ def iter_json_file(filename, buffer_limit=250):
         with open(filename, "r") as data:
             while True:
                 try:
+                    # We don't need to decode here because readline for
+                    #   non-binary returns strings, not bytes.
                     v = data.readline()
                     if not v:
                         break
 
                     yield from json_processor.decode(v)
                 except ValueError:
-                    print(len(json_processor.buffer))
+                    print("Json Decode error")
+                    print(f"Current buffer len: {len(json_processor.buffer)}")
                     print(f"Error string: {v}")
                     raise
             yield from json_processor.fin()
@@ -62,6 +66,9 @@ def iter_json_gzip_file(filename, buffer_limit=250):
                 while True:
                     try:
                         for _ in range(buffer_limit):
+                            # TODO
+                            #   probably we don't need to decode here
+                            #   and we can just take bytes as is.
                             v = data.readline().decode("utf-8", UNICODE_REPLACE_HANDLER)
                             if not v:
                                 finished = True
@@ -74,8 +81,10 @@ def iter_json_gzip_file(filename, buffer_limit=250):
                             break
 
                     except ValueError:
-                        print(len(json_processor.buffer))
+                        print("Json Decode error")
+                        print(f"Current buffer len: {len(json_processor.buffer)}")
                         print(f"Error string: {v}")
+                        print(f"data.readline(): {data.readline()}")
                         raise
 
                 yield from json_processor.fin()
@@ -83,15 +92,19 @@ def iter_json_gzip_file(filename, buffer_limit=250):
             with gzip.open(filename, "r") as data:
                 while True:
                     try:
+                        # We have to decode bytes first.
                         v = data.readline().decode("utf-8", UNICODE_REPLACE_HANDLER)
                         if not v:
                             break
 
+                        # v = v.decode("utf-8", UNICODE_REPLACE_HANDLER)
                         yield from json_processor.decode(v)
 
                     except ValueError:
-                        print(len(json_processor.buffer))
+                        print("Json Decode error")
+                        print(f"Current buffer len: {len(json_processor.buffer)}")
                         print(f"Error string: {v}")
+                        print(f"data.readline(): {data.readline()}")
                         raise
 
     def iter_json_gzip_file_wrapper(*args, **kwargs):
