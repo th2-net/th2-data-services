@@ -13,8 +13,8 @@
 
 <a href="../../th2_data_services/interfaces/adapter.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `IAdapter`
-High level interface for Adapter. 
+## <kbd>class</kbd> `IStreamAdapter`
+Interface of Adapter for streams. 
 
 
 
@@ -26,20 +26,18 @@ High level interface for Adapter.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(record: Any) → Any
+handle(stream: Iterable) → Any
 ```
 
-
-
-
+Stream handle function that should yield data (not return). 
 
 
 ---
 
 <a href="../../th2_data_services/interfaces/adapter.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-## <kbd>class</kbd> `IMessageAdapter`
-Interface of Adapter for messages. 
+## <kbd>class</kbd> `IRecordAdapter`
+Interface of Adapter for record. 
 
 
 
@@ -51,37 +49,10 @@ Interface of Adapter for messages.
 ### <kbd>method</kbd> `handle`
 
 ```python
-handle(message: dict) → Any
+handle(record: dict) → Any
 ```
 
-
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/adapter.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>class</kbd> `IEventAdapter`
-Interface of Adapter for events. 
-
-
-
-
----
-
-<a href="../../th2_data_services/interfaces/adapter.py#L38"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `handle`
-
-```python
-handle(event: dict) → Any
-```
-
-
-
-
+One record handle function that should return data. 
 
 
 

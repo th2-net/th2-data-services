@@ -1,10 +1,14 @@
-wheel~=0.38  # To get rid of wheel building errors
+ciso8601
+deprecated
+flatdict~=4.0
+# orjson versions 3.7.0 through 3.9.14 library has
+# vulnerability https://devhub.checkmarx.com/cve-details/CVE-2024-27454/.
+orjson>=3.10,<4
+prettytable  # Temporary required for summary
+requests>=2.32.2
 sseclient-py~=1.7
-grpcio-tools==1.38.1  # Do not change
-requests~=2.28
-setuptools~=65.5
-urllib3~=1.26
+tabulate
 treelib==1.6.1
-types-protobuf==3.19.22
-importlib_metadata
-orjson~=3.8
+# setuptools~=65.5
+urllib3>1.26.18, <2
+wheel>=0.38.1  # To get rid of wheel building errors

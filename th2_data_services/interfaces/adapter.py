@@ -1,4 +1,4 @@
-#  Copyright 2022 Exactpro (Exactpro Systems Limited)
+#  Copyright 2022-2024 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,28 +13,20 @@
 #  limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Iterable
 
 
-class IAdapter(ABC):
-    """High level interface for Adapter."""
-
-    @abstractmethod
-    def handle(self, record: Any) -> Any:
-        pass
-
-
-class IMessageAdapter(IAdapter):
-    """Interface of Adapter for messages."""
+class IStreamAdapter(ABC):
+    """Interface of Adapter for streams."""
 
     @abstractmethod
-    def handle(self, message: dict) -> Any:
-        pass
+    def handle(self, stream: Iterable) -> Any:
+        """Stream handle function that should yield data (not return)."""
 
 
-class IEventAdapter(IAdapter):
-    """Interface of Adapter for events."""
+class IRecordAdapter(ABC):
+    """Interface of Adapter for record."""
 
     @abstractmethod
-    def handle(self, event: dict) -> Any:
-        pass
+    def handle(self, record: dict) -> Any:
+        """One record handle function that should return data."""

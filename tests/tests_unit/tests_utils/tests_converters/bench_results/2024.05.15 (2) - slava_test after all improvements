@@ -1,0 +1,461 @@
+Speed test:
+    AMD Ryzen 7 6800H with Radeon Graphics 3.20 GHz
+
+> python.exe th2-data-services\tests\tests_unit\tests_utils\tests_converters\benchmark.py
+
+C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\ds_lib_venv_py39\Scripts\python.exe C:\Users\admin\exactpro\prj\th2\internal\DS\github\th2-data-services\tests\tests_unit\tests_utils\tests_converters\benchmark.py
+##################################################
+This benchmark shows how many seconds takes every converter operation in seconds.
+##################################################
+[1] DatetimeStringConverter
+input: 2022-03-05T23:56:44.123456789Z
+1. .parse_timestamp: 1.4974268
+2. .to_datetime: 0.12663259999999998
+3. .to_seconds: 1.5360991
+4. .to_microseconds: 1.7628856000000002
+5. .to_nanoseconds: 1.7114960000000004
+6. .to_milliseconds: 1.7688387000000008
+7. .to_datetime_str: 2.3781561
+8. .to_th2_timestamp: 1.5942235
+[2] DatetimeConverter
+input: 2022-03-05 23:56:44.123456
+1. .parse_timestamp: 1.6007411000000005
+2. .to_datetime: 2.2600745000000018
+3. .to_seconds: 1.9851986000000004
+4. .to_microseconds: 1.9436871999999994
+5. .to_nanoseconds: 1.8517295000000011
+6. .to_milliseconds: 1.891514500000003
+7. .to_datetime_str: 2.6196756999999984
+8. .to_th2_timestamp: 2.0755786
+[3] ProtobufTimestampConverter
+input: {'epochSecond': 1646524604, 'nano': 123456789}
+1. .parse_timestamp: 0.33072310000000016
+2. .to_datetime: 0.4287202999999984
+3. .to_seconds: 0.08139189999999985
+4. .to_microseconds: 0.17610819999999805
+5. .to_nanoseconds: 0.1485732000000013
+6. .to_milliseconds: 0.1678935999999993
+7. .to_datetime_str: 1.1622389999999996
+8. .to_th2_timestamp: 0.21927750000000046
+[4] UniversalDatetimeStringConverter
+input: 2022-03-05T23:56:44.123456789Z
+1. .parse_timestamp: 1.5752227000000012
+2. .to_datetime: 0.12677979999999422
+3. .to_seconds: 1.645312699999998
+4. .to_microseconds: 1.8240784000000048
+5. .to_nanoseconds: 1.7930200999999997
+6. .to_milliseconds: 1.830885600000002
+7. .to_datetime_str: 2.459299200000004
+8. .to_th2_timestamp: 1.6856898999999999
+[5] UnixTimestampConverter
+input: 1646524604123456789
+1. .parse_timestamp: 0.3967766000000026
+2. .to_datetime: 0.9629303000000036
+3. .to_seconds: 0.670658699999997
+4. .to_microseconds: 0.6415308999999993
+5. .to_nanoseconds: 0.5902038000000047
+6. .to_milliseconds: 0.6300464999999988
+7. .to_datetime_str: 1.2379169000000019
+8. .to_th2_timestamp: 0.7428973999999968
+[1] DatetimeStringConverter
+input: 2022-03-05T23:56:44.123456789
+1. .parse_timestamp: 1.4492793000000006
+2. .to_datetime: 0.12661069999999341
+3. .to_seconds: 1.4978413000000046
+4. .to_microseconds: 1.7135958999999943
+5. .to_nanoseconds: 1.6754941000000017
+6. .to_milliseconds: 1.7021992999999966
+7. .to_datetime_str: 2.373305700000003
+8. .to_th2_timestamp: 1.5469332000000051
+[2] DatetimeConverter
+input: 2022-03-05 23:56:44.123456
+1. .parse_timestamp: 1.6150836999999996
+2. .to_datetime: 2.2435761999999926
+3. .to_seconds: 1.9685240000000022
+4. .to_microseconds: 1.8871374999999944
+5. .to_nanoseconds: 1.8044499999999886
+6. .to_milliseconds: 1.832304999999991
+7. .to_datetime_str: 2.4458415999999943
+8. .to_th2_timestamp: 2.018431899999996
+[3] ProtobufTimestampConverter
+input: {'epochSecond': 1646524604, 'nano': 123456789}
+1. .parse_timestamp: 0.3252099000000044
+2. .to_datetime: 0.4199072999999913
+3. .to_seconds: 0.07616130000000965
+4. .to_microseconds: 0.16975320000000238
+5. .to_nanoseconds: 0.144433499999991
+6. .to_milliseconds: 0.1695650999999998
+7. .to_datetime_str: 1.1327502000000038
+8. .to_th2_timestamp: 0.21441249999999457
+[4] UniversalDatetimeStringConverter
+input: 2022-03-05T23:56:44.123456789
+1. .parse_timestamp: 1.502366600000002
+2. .to_datetime: 0.12464769999999703
+3. .to_seconds: 1.5698945999999978
+4. .to_microseconds: 1.7625878999999998
+5. .to_nanoseconds: 2.3211549999999903
+6. .to_milliseconds: 1.9622326000000072
+7. .to_datetime_str: 2.5693859000000003
+8. .to_th2_timestamp: 2.765291099999999
+[5] UnixTimestampConverter
+input: 1646524604123456789
+1. .parse_timestamp: 0.46615350000000433
+2. .to_datetime: 1.0124820999999997
+3. .to_seconds: 1.3525829000000016
+4. .to_microseconds: 1.2265198000000055
+5. .to_nanoseconds: 0.9917458000000039
+6. .to_milliseconds: 0.9178511000000071
+7. .to_datetime_str: 2.0432559000000055
+8. .to_th2_timestamp: 0.9360353000000003
+[1] DatetimeStringConverter
+input: 2022-03-05T23:56:44.123Z
+1. .parse_timestamp: 2.2059069000000022
+2. .to_datetime: 0.24907489999999655
+3. .to_seconds: 2.402906999999999
+4. .to_microseconds: 2.513467300000002
+5. .to_nanoseconds: 1.761641499999996
+6. .to_milliseconds: 1.7942473000000092
+7. .to_datetime_str: 2.4215030000000013
+8. .to_th2_timestamp: 1.6309887999999972
+[2] DatetimeConverter
+input: 2022-03-05 23:56:44.123000
+1. .parse_timestamp: 1.5668742000000009
+2. .to_datetime: 2.2390840999999995
+3. .to_seconds: 1.941752600000001
+4. .to_microseconds: 1.8873220999999916
+5. .to_nanoseconds: 1.7717899000000017
+6. .to_milliseconds: 1.8046078999999793
+7. .to_datetime_str: 2.4334617000000094
+8. .to_th2_timestamp: 1.9880792999999812
+[3] ProtobufTimestampConverter
+input: {'epochSecond': 1646524604, 'nano': 123000000}
+1. .parse_timestamp: 0.33349949999998785
+2. .to_datetime: 0.437383600000004
+3. .to_seconds: 0.07738620000000651
+4. .to_microseconds: 0.17947540000000117
+5. .to_nanoseconds: 0.14794729999999845
+6. .to_milliseconds: 0.16377359999998475
+7. .to_datetime_str: 1.154179499999998
+8. .to_th2_timestamp: 0.21915039999998953
+[4] UniversalDatetimeStringConverter
+input: 2022-03-05T23:56:44.123Z
+1. .parse_timestamp: 1.5990983000000085
+2. .to_datetime: 0.12491930000001616
+3. .to_seconds: 1.6566985999999986
+4. .to_microseconds: 1.8883035000000064
+5. .to_nanoseconds: 1.8457087999999828
+6. .to_milliseconds: 1.8479039999999998
+7. .to_datetime_str: 2.5292346000000236
+8. .to_th2_timestamp: 1.7339832000000115
+[5] UnixTimestampConverter
+input: 1646524604123000000
+1. .parse_timestamp: 0.39382530000000315
+2. .to_datetime: 0.9663509999999746
+3. .to_seconds: 0.6740771000000052
+4. .to_microseconds: 0.6368252999999982
+5. .to_nanoseconds: 0.5960875000000101
+6. .to_milliseconds: 0.6230550999999878
+7. .to_datetime_str: 1.2212251999999921
+8. .to_th2_timestamp: 0.7406153000000018
+[1] DatetimeStringConverter
+input: 2022-03-05T23:56:44.123
+1. .parse_timestamp: 1.4667527999999947
+2. .to_datetime: 0.12365850000000478
+3. .to_seconds: 1.5211263000000201
+4. .to_microseconds: 1.7549597999999946
+5. .to_nanoseconds: 1.7028257000000053
+6. .to_milliseconds: 1.7436409000000026
+7. .to_datetime_str: 2.3526966999999956
+8. .to_th2_timestamp: 1.5749490000000037
+[2] DatetimeConverter
+input: 2022-03-05 23:56:44.123000
+1. .parse_timestamp: 1.5693777000000182
+2. .to_datetime: 2.181586100000004
+3. .to_seconds: 1.9088816000000008
+4. .to_microseconds: 1.8467825999999832
+5. .to_nanoseconds: 1.7813547000000085
+6. .to_milliseconds: 1.814983500000011
+7. .to_datetime_str: 2.440810099999993
+8. .to_th2_timestamp: 1.9874836999999843
+[3] ProtobufTimestampConverter
+input: {'epochSecond': 1646524604, 'nano': 123000000}
+1. .parse_timestamp: 0.3318582999999933
+2. .to_datetime: 0.4293978999999979
+3. .to_seconds: 0.07678099999998267
+4. .to_microseconds: 0.17459289999999328
+5. .to_nanoseconds: 0.14835100000001944
+6. .to_milliseconds: 0.1640060999999946
+7. .to_datetime_str: 1.1508268000000044
+8. .to_th2_timestamp: 0.2206453999999951
+[4] UniversalDatetimeStringConverter
+input: 2022-03-05T23:56:44.123
+1. .parse_timestamp: 1.5456639000000223
+2. .to_datetime: 0.12399429999999256
+3. .to_seconds: 1.6086243999999965
+4. .to_microseconds: 1.7994822
+5. .to_nanoseconds: 1.765654100000006
+6. .to_milliseconds: 1.806836000000004
+7. .to_datetime_str: 2.4866505000000245
+8. .to_th2_timestamp: 1.6724970999999869
+[5] UnixTimestampConverter
+input: 1646524604123000000
+1. .parse_timestamp: 0.3947655999999995
+2. .to_datetime: 0.9668101999999976
+3. .to_seconds: 0.6764975000000106
+4. .to_microseconds: 0.6397958999999958
+5. .to_nanoseconds: 0.5915199000000086
+6. .to_milliseconds: 0.6304887000000008
+7. .to_datetime_str: 1.924970299999984
+8. .to_th2_timestamp: 1.0398509000000047
+[1] DatetimeStringConverter
+input: 2022-03-05T23:56:44.00123Z
+1. .parse_timestamp: 2.505150299999997
+2. .to_datetime: 0.2635961000000009
+3. .to_seconds: 2.766974800000014
+4. .to_microseconds: 1.9969352000000242
+5. .to_nanoseconds: 1.8177603999999974
+6. .to_milliseconds: 1.793355599999984
+7. .to_datetime_str: 2.4162497000000087
+8. .to_th2_timestamp: 1.624307200000004
+[2] DatetimeConverter
+input: 2022-03-05 23:56:44.001230
+1. .parse_timestamp: 1.5744656999999904
+2. .to_datetime: 2.420125899999988
+3. .to_seconds: 2.2712012000000072
+4. .to_microseconds: 1.8500145000000146
+5. .to_nanoseconds: 1.8220627000000036
+6. .to_milliseconds: 1.8425663999999813
+7. .to_datetime_str: 2.4573297000000025
+8. .to_th2_timestamp: 2.010794500000003
+[3] ProtobufTimestampConverter
+input: {'epochSecond': 1646524604, 'nano': 1230000}
+1. .parse_timestamp: 0.34568459999999845
+2. .to_datetime: 0.4299407999999971
+3. .to_seconds: 0.07707040000002507
+4. .to_microseconds: 0.1819327000000044
+5. .to_nanoseconds: 0.1452865999999915
+6. .to_milliseconds: 0.16155889999998863
+7. .to_datetime_str: 1.1742128999999863
+8. .to_th2_timestamp: 0.2232879999999966
+[4] UniversalDatetimeStringConverter
+input: 2022-03-05T23:56:44.00123Z
+1. .parse_timestamp: 1.5956581999999742
+2. .to_datetime: 0.1269749999999874
+3. .to_seconds: 1.6612366999999892
+4. .to_microseconds: 1.8565273000000104
+5. .to_nanoseconds: 1.8220018000000096
+6. .to_milliseconds: 1.8386508000000106
+7. .to_datetime_str: 2.510077300000006
+8. .to_th2_timestamp: 1.7401048000000117
+[5] UnixTimestampConverter
+input: 1646524604001230000
+1. .parse_timestamp: 0.403297699999996
+2. .to_datetime: 0.9951126999999929
+3. .to_seconds: 0.6799212000000239
+4. .to_microseconds: 0.6327714999999898
+5. .to_nanoseconds: 0.5945480000000316
+6. .to_milliseconds: 0.6294548999999847
+7. .to_datetime_str: 1.2172846999999933
+8. .to_th2_timestamp: 0.7391488000000095
+[1] DatetimeStringConverter
+input: 2022-03-05T23:56:44.00123
+1. .parse_timestamp: 1.461738099999991
+2. .to_datetime: 0.1280451999999741
+3. .to_seconds: 1.5174448000000211
+4. .to_microseconds: 1.7385057000000188
+5. .to_nanoseconds: 1.6838496000000305
+6. .to_milliseconds: 1.7246347999999898
+7. .to_datetime_str: 2.338951199999997
+8. .to_th2_timestamp: 1.5887523999999758
+[2] DatetimeConverter
+input: 2022-03-05 23:56:44.001230
+1. .parse_timestamp: 1.5780955999999833
+2. .to_datetime: 2.2243831000000114
+3. .to_seconds: 1.9468481999999767
+4. .to_microseconds: 1.8618515000000002
+5. .to_nanoseconds: 1.8044909000000189
+6. .to_milliseconds: 2.0308842000000027
+7. .to_datetime_str: 2.706094699999994
+8. .to_th2_timestamp: 2.0595372000000225
+[3] ProtobufTimestampConverter
+input: {'epochSecond': 1646524604, 'nano': 1230000}
+1. .parse_timestamp: 0.3542325999999889
+2. .to_datetime: 0.44528969999998935
+3. .to_seconds: 0.07967100000001892
+4. .to_microseconds: 0.17370549999998275
+5. .to_nanoseconds: 0.14407939999995278
+6. .to_milliseconds: 0.1647527000000082
+7. .to_datetime_str: 1.1753770000000259
+8. .to_th2_timestamp: 0.23263500000001613
+[4] UniversalDatetimeStringConverter
+input: 2022-03-05T23:56:44.00123
+1. .parse_timestamp: 1.564405899999997
+2. .to_datetime: 0.12373969999998735
+3. .to_seconds: 1.6300871000000257
+4. .to_microseconds: 1.86991519999998
+5. .to_nanoseconds: 1.7757335000000012
+6. .to_milliseconds: 1.8656308000000195
+7. .to_datetime_str: 2.432435699999985
+8. .to_th2_timestamp: 1.6578042999999525
+[5] UnixTimestampConverter
+input: 1646524604001230000
+1. .parse_timestamp: 0.392732599999988
+2. .to_datetime: 0.9590297000000305
+3. .to_seconds: 0.6716984999999909
+4. .to_microseconds: 0.6371480999999903
+5. .to_nanoseconds: 0.5852380000000039
+6. .to_milliseconds: 0.6327994000000103
+7. .to_datetime_str: 1.215516100000002
+8. .to_th2_timestamp: 0.7312158999999951
+[1] DatetimeStringConverter
+input: 2024-05-07T05:49:47.742201
+1. .parse_timestamp: 1.4681181000000265
+2. .to_datetime: 0.1230963000000429
+3. .to_seconds: 1.5329492999999843
+4. .to_microseconds: 1.7468476000000237
+5. .to_nanoseconds: 1.9251242999999931
+6. .to_milliseconds: 2.442695200000003
+7. .to_datetime_str: 3.0155179000000203
+8. .to_th2_timestamp: 1.5955402000000163
+[2] DatetimeConverter
+input: 2024-05-07 05:49:47.742201
+1. .parse_timestamp: 1.5930829999999787
+2. .to_datetime: 2.228495099999975
+3. .to_seconds: 1.9691497999999683
+4. .to_microseconds: 1.8661538000000064
+5. .to_nanoseconds: 1.827512000000013
+6. .to_milliseconds: 1.890102499999955
+7. .to_datetime_str: 2.48807290000002
+8. .to_th2_timestamp: 2.0262270999999714
+[3] ProtobufTimestampConverter
+input: {'epochSecond': 1715060987, 'nano': 742201000}
+1. .parse_timestamp: 0.3335800000000404
+2. .to_datetime: 0.4343524999999886
+3. .to_seconds: 0.07739579999997659
+4. .to_microseconds: 0.17489929999999276
+5. .to_nanoseconds: 0.14885149999997793
+6. .to_milliseconds: 0.17431420000002618
+7. .to_datetime_str: 1.157919100000015
+8. .to_th2_timestamp: 0.2201837999999725
+[4] UniversalDatetimeStringConverter
+input: 2024-05-07T05:49:47.742201
+1. .parse_timestamp: 1.5616084000000114
+2. .to_datetime: 0.1257492999999954
+3. .to_seconds: 1.6232976000000008
+4. .to_microseconds: 1.8207759999999666
+5. .to_nanoseconds: 1.770919900000024
+6. .to_milliseconds: 1.8478595000000269
+7. .to_datetime_str: 2.4604448000000048
+8. .to_th2_timestamp: 1.6610038000000031
+[5] UnixTimestampConverter
+input: 1715060987742201000
+1. .parse_timestamp: 0.3937804999999912
+2. .to_datetime: 0.9652260000000297
+3. .to_seconds: 0.6768874000000551
+4. .to_microseconds: 0.634618899999964
+5. .to_nanoseconds: 0.59322659999998
+6. .to_milliseconds: 0.6311441000000286
+7. .to_datetime_str: 1.2326779999999644
+8. .to_th2_timestamp: 0.7841406000000006
+[1] DatetimeStringConverter
+input: 2024-05-07T05:49:47Z
+1. .parse_timestamp: 1.371942400000023
+2. .to_datetime: 0.12559959999998682
+3. .to_seconds: 1.4023935000000165
+4. .to_microseconds: 1.6093956999999932
+5. .to_nanoseconds: 1.5708133999999632
+6. .to_milliseconds: 1.601497199999983
+7. .to_datetime_str: 2.2226543000000447
+8. .to_th2_timestamp: 1.4562257000000045
+[2] DatetimeConverter
+input: 2024-05-07 05:49:47
+1. .parse_timestamp: 1.3784417999999619
+2. .to_datetime: 2.0089932000000204
+3. .to_seconds: 1.7454172000000199
+4. .to_microseconds: 1.6879695000000083
+5. .to_nanoseconds: 1.6927737999999977
+6. .to_milliseconds: 1.849189200000012
+7. .to_datetime_str: 2.2845987999999693
+8. .to_th2_timestamp: 1.8285743999999795
+[3] ProtobufTimestampConverter
+input: {'epochSecond': 1715060987, 'nano': 0}
+1. .parse_timestamp: 0.34537039999997887
+2. .to_datetime: 0.42714979999999514
+3. .to_seconds: 0.07851030000000492
+4. .to_microseconds: 0.16641659999999092
+5. .to_nanoseconds: 0.14868639999997413
+6. .to_milliseconds: 0.17001230000005307
+7. .to_datetime_str: 1.19519200000002
+8. .to_th2_timestamp: 0.22556980000001658
+[4] UniversalDatetimeStringConverter
+input: 2024-05-07T05:49:47Z
+1. .parse_timestamp: 1.4408897000000138
+2. .to_datetime: 0.12645050000003266
+3. .to_seconds: 1.5116335000000163
+4. .to_microseconds: 1.7302679000000012
+5. .to_nanoseconds: 1.6698284000000285
+6. .to_milliseconds: 2.030475700000011
+7. .to_datetime_str: 2.4472033000000124
+8. .to_th2_timestamp: 1.5494975000000295
+[5] UnixTimestampConverter
+input: 1715060987000000000
+1. .parse_timestamp: 0.40707290000000285
+2. .to_datetime: 0.9780664000000456
+3. .to_seconds: 0.6866956000000073
+4. .to_microseconds: 0.6511007999999947
+5. .to_nanoseconds: 0.6053023000000053
+6. .to_milliseconds: 0.6668900000000235
+7. .to_datetime_str: 1.2631437000000005
+8. .to_th2_timestamp: 0.7595876000000317
+[1] DatetimeStringConverter
+input: 2024-05-07T05:49:47
+1. .parse_timestamp: 1.470228700000007
+2. .to_datetime: 0.12934250000000702
+3. .to_seconds: 1.5087466999999606
+4. .to_microseconds: 1.730894199999966
+5. .to_nanoseconds: 1.6989463000000455
+6. .to_milliseconds: 1.722833000000037
+7. .to_datetime_str: 2.353792300000009
+8. .to_th2_timestamp: 1.5718886000000225
+[2] DatetimeConverter
+input: 2024-05-07 05:49:47
+1. .parse_timestamp: 1.4036939999999731
+2. .to_datetime: 2.0506606000000147
+3. .to_seconds: 1.759401299999979
+4. .to_microseconds: 1.6807122000000163
+5. .to_nanoseconds: 1.6269599999999969
+6. .to_milliseconds: 1.6690078000000312
+7. .to_datetime_str: 2.283247700000004
+8. .to_th2_timestamp: 1.8282054999999673
+[3] ProtobufTimestampConverter
+input: {'epochSecond': 1715060987, 'nano': 0}
+1. .parse_timestamp: 0.3323836000000142
+2. .to_datetime: 0.42104489999996986
+3. .to_seconds: 0.0781605999999897
+4. .to_microseconds: 0.16788400000001502
+5. .to_nanoseconds: 0.1464674000000059
+6. .to_milliseconds: 0.1692888000000039
+7. .to_datetime_str: 1.1905018999999584
+8. .to_th2_timestamp: 0.2219099000000142
+[4] UniversalDatetimeStringConverter
+input: 2024-05-07T05:49:47
+1. .parse_timestamp: 1.5585773999999901
+2. .to_datetime: 0.12158449999998311
+3. .to_seconds: 1.6130526000000032
+4. .to_microseconds: 1.8449909999999932
+5. .to_nanoseconds: 1.7457770000000323
+6. .to_milliseconds: 1.7650401999999872
+7. .to_datetime_str: 2.403167499999995
+8. .to_th2_timestamp: 1.673896500000012
+[5] UnixTimestampConverter
+input: 1715060987000000000
+1. .parse_timestamp: 0.6431311000000051
+2. .to_datetime: 1.4845300999999722
+3. .to_seconds: 0.9396767999999724
+4. .to_microseconds: 0.9754753999999934
+5. .to_nanoseconds: 0.8631558999999811
+6. .to_milliseconds: 0.8880545000000097
+7. .to_datetime_str: 1.7504626999999573
+8. .to_th2_timestamp: 1.0363998999999922
+
+Process finished with exit code 0

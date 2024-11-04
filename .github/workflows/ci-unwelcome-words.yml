@@ -1,17 +1,15 @@
-name: CI Unwelcome words
-
+name: CI
 on:
-  push:
-
+  pull_request:
 jobs:
   test:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         ref: ${{ github.sha }}
     - name: Checkout tool
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: exactpro-th2/ci-github-action
         ref: master

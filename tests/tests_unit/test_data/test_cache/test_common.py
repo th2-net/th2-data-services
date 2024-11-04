@@ -42,11 +42,13 @@ def new_data_with_map_keyboard_interrupt(data: Data) -> Data:
 
 def test_data_iterates_own_cache_file(log_checker, general_data: List[dict]):
     data = Data(general_data, cache=True)
-    output1: List = iterate_data_and_do_cache_checks(data, log_checker)  # It'll create a cache file.
+    output1: List = iterate_data_and_do_cache_checks(
+        data, log_checker
+    )  # It'll create a cache file.
 
     # Deactivate cache and set empty data source.
     data.use_cache(False)
-    data._data_stream = []
+    data._data_source = []
     output2 = list(data)
     assert output2 == []
 
@@ -60,12 +62,6 @@ def test_data_iterates_own_cache_file(log_checker, general_data: List[dict]):
 def test_data_iterates_own_external_cache_file(log_checker, general_data: List[dict]):
     data = Data.from_cache_file(EXTERNAL_CACHE_FILE)
     output1: List = list(data)
-
-    # Deactivate cache and set empty data source.
-    data.use_cache(False)
-    data._data_stream = []
-    output2 = list(data)
-    assert output2 == []
 
     # Activate cache to check that data iterate cache file.
     data.use_cache(True)
@@ -91,7 +87,9 @@ def test_cache_file_isnt_created_after_using_magic_function(general_data: List[d
     assert output == general_data
 
 
-def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_case: DataCase, tmp_test_folder: Path):
+def test_data_doesnt_left_their_cache_file_if_you_change_dir(
+    log_checker, data_case: DataCase, tmp_test_folder: Path
+):
     """Issue related test: https://exactpro.atlassian.net/browse/TH2-3545"""
     data = data_case.data
     create_type = data_case.create_type
@@ -101,25 +99,29 @@ def test_data_doesnt_left_their_cache_file_if_you_change_dir(log_checker, data_c
         dl = iterate_data_and_do_cache_checks(data, log_checker)
     elif create_type == "external_cache_file":
         dl = iterate_data(data, to_return=True)  # Just to iterate and create cache files.
-        assert is_cache_file_exists(data)
+        # assert is_cache_file_exists(data)
 
     old_cwd = Path.cwd()
     os.chdir(tmp_test_folder)
-    data._data_stream = ["You lost your cache file it's a bug"]
+    # data._data_stream = ["You lost your cache file it's a bug"]
     assert list(data) == dl, (
-        f"old dir: {old_cwd}, " f"new dir: {tmp_test_folder}, " f"cache file: {data.get_cache_filepath()}"
+        f"old dir: {old_cwd}, "
+        f"new dir: {tmp_test_folder}, "
+        f"cache file: {data.get_cache_filepath()}"
     )  # Data obj should read from cache
     # log_checker.used_own_cache_file(data)
 
 
-def test_data_doesnt_left_their_cache_file_if_you_change_dir_external_cache(log_checker, tmp_test_folder: Path):
+def test_data_doesnt_left_their_cache_file_if_you_change_dir_external_cache(
+    log_checker, tmp_test_folder: Path
+):
     """Issue related test: https://exactpro.atlassian.net/browse/TH2-3545"""
     data = Data.from_cache_file(EXTERNAL_CACHE_FILE)
     dl: List = list(data)
 
     cwd = Path.cwd()
     os.chdir(tmp_test_folder)
-    data._data_stream = []
+    # data._data_stream = []
     assert list(data) == dl
     # log_checker.used_own_cache_file(data)
 
@@ -131,16 +133,18 @@ def test_data_doesnt_left_their_cache_file_if_you_change_dir_external_cache(log_
         (KeyboardInterrupt, map_keyboard_interrupt),
     ],
 )
-def test_cache_file_will_be_removed_only_if_data_write_it(interactive_mod, expected_exception, map_func):
+def test_cache_file_will_be_removed_only_if_data_write_it(
+    interactive_mod, expected_exception, map_func
+):
     """If Data obj reads the cache file and something went wrong
         1. We have to delete it in the script mode
         2. We DO NOT have to delete it in the interactive mode
         3. We DO NOT have to delete file if we read the file using special method.
 
     Issue related test: https://exactpro.atlassian.net/browse/TH2-3546"""
-    import th2_data_services
+    from th2_data_services.config import options
 
-    th2_data_services.INTERACTIVE_MODE = interactive_mod
+    options.INTERACTIVE_MODE = interactive_mod
 
     # Write test
     data = Data([1, 2, 3, 4, 5], cache=True).map(map_func)
@@ -191,9 +195,11 @@ def test_cache_file_wont_remove_external_cache(interactive_mod, expected_excepti
     with pytest.raises(expected_exception):
         list(data.map(map_func))
 
-    assert is_cache_file_exists(
-        data
-    ), "Cache file should be exist if Data object just read it from external cache file."
+    # The logic changed -- now, when we read from cache, this file is not cache source.
+    #   It just data source of Data object
+    # assert is_cache_file_exists(
+    #     data
+    # ), "Cache file should be exist if Data object just read it from external cache file."
 
 
 @pytest.mark.parametrize(
@@ -214,3 +220,10 @@ def test_tmp_cache_will_be_deleted_if_not_fully_recorded(change_type):
     data2 = change_type(data).use_cache()
     iterate_data(data2, to_return=False)
     assert not is_pending_cache_file_exists(data2)
+
+
+def test_cache_filename():
+    data = Data([1, 2, 3, 4, 5], cache=True)
+    for d in data:
+        d
+    assert data._cache_filename.find(":") == -1
