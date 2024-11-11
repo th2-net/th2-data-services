@@ -14,7 +14,10 @@
 
 import copy
 import csv
+import heapq
 import os
+import re
+import shutil
 from dataclasses import dataclass
 import orjson as json
 import gc
@@ -704,6 +707,90 @@ class Data(Generic[DataIterValues]):
                 break
             yield record
             pushed += 1
+
+    def sort(
+        self, key: Callable, replace=False, sorted_path=None, buffer_size=300 * 1024 * 1024
+    ) -> "Data[DataIterValues]":
+        """Sorts the Data. Uses External sort, thus it can also work with huge amounts of Data.
+
+        Args:
+            key: Function to sort data by.
+            replace: If True, the file that stores the data will be overwritten by sorted data, if False a new file
+                will be created. Default - False.
+            sorted_path: Path to the sorted file.
+            buffer_size: Size of the buffer. Buffer stores a chunk of the data that needs to be sorted.
+
+        Returns:
+            Data: Data object.
+
+        """
+        if not sorted_path:
+            sorted_path = f"{self.metadata['source_file']}.sorted"
+        if replace:
+            sorted_path = f"{self.metadata['source_file']}"
+        folder = str(time())
+        temp = Path(folder)
+        chunk_names = []
+
+        buffer = []
+        temp.mkdir(parents=True, exist_ok=True)
+
+        def sort_chunks():
+            chunk_counter = 0
+            current_size = 0
+            for obj in self:
+                if current_size < buffer_size:
+                    buffer.append(obj)
+                    current_size += len(str(obj))
+                else:
+                    buffer.sort(key=key)
+                    chunk_name = f"{folder}/chunk{chunk_counter}.chunk"
+                    with open(chunk_name, "w") as chunk:
+                        for o in buffer:
+                            chunk.write(f"{key(o)}|{json.dumps(o)}\n")
+                    chunk_names.append(chunk_name)
+                    chunk_counter += 1
+                    buffer.clear()
+                    buffer.append(obj)
+                    current_size = len(str(obj))
+            buffer.sort(key=key)
+            chunk_name = f"{folder}/chunk{chunk_counter}.chunk"
+            with open(chunk_name, "w") as chunk:
+                for o in buffer:
+                    chunk.write(f"{key(o)}|{json.dumps(o)}\n")
+            chunk_names.append(chunk_name)
+            buffer.clear()
+
+        def merge_back():
+            heap = []
+            for i, file in enumerate(chunk_names):
+                f = open(file, "r")
+                line = f.readline()
+                if line:
+                    k = line[: line.find("|")]
+                    v = line[line.find("|") + 1 :]
+                    v = re.sub(r"(^b'|'$)", "", v)
+                    heapq.heappush(heap, (k, v, f))
+            with open(sorted_path, "w") as output_file:
+                while heap:
+                    k, v, file = heapq.heappop(heap)
+                    output_file.write(v)
+                    line = file.readline()
+                    if line:
+                        k = line[: line.find("|")]
+                        v = line[line.find("|") + 1 :]
+                        v = re.sub(r"(^b'|'$)", "", v)
+                        heapq.heappush(heap, (k, v, file))
+                    else:
+                        file.close()
+
+        try:
+            sort_chunks()
+            self = None
+            merge_back()
+        finally:
+            shutil.rmtree(temp)
+        return Data.from_json(sorted_path)
 
     def is_sorted(self, get_timestamp_func: Callable[[Any], Any]) -> IsSortedResult:
         """Checks whether Data is sorted.
