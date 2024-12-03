@@ -709,10 +709,17 @@ class EventTreeCollection:
         """Loads missed events and finish tree building.
 
         Args:
-            preprocessor: the function that will be executed for each recovered event before store.
+            preprocessor: the function that will be executed for each recovered
+                event before store.
 
         """
         previous_detached_events = list(self._detached_parent_ids())
+
+        warning_4085 = False
+        original_roots_ids = set(self.get_roots_ids())
+        # FIXME
+        # original_detached = self._detached_events().copy()
+
         while previous_detached_events:
             events = self._driver.get_events_by_id_from_source(ids=self._detached_parent_ids())
             if preprocessor is not None:
@@ -720,18 +727,41 @@ class EventTreeCollection:
 
             for event in events:
                 if not self._driver.get_event_name(event) == self._driver.stub_event_name():
+                    parentEventId = self._driver.get_parent_event_id(event)
+                    # FIXME
+                    # if parentEventId in original_roots_ids:
+                    #     warning_4085 = True
+                    # for detached in original_detached:
+                    #     if original_detached[detached][0]["eventId"] == parentEventId:
+                    #         warning_4085 = True
                     self.append_event(event)
 
             dp_ids = list(self._detached_parent_ids())
             if previous_detached_events == dp_ids:
-                # If previous_detached_events == current, it means that we cannot recover some data.
-                # So break iteration to escape recursive exception.
+                w = (
+                    "previous_detached_events == dp_ids. "
+                    "It means that we cannot recover some data. "
+                    "So break iteration to escape recursive exception."
+                )
+                warnings.warn(w)
                 break
             else:
                 previous_detached_events = dp_ids
 
         if self._detached_nodes:
-            w = "The collection were built with detached events because there are no some events in the source"
+            w = (
+                "The collection were built with detached events because there "
+                "are no some events in the source"
+            )
+            warnings.warn(w)
+
+        if warning_4085:
+            w = (
+                "Data stream has L0 and L2 events but not L1.\n"
+                "If the data stream has L0 and L2 it also should has L1.1 "
+                "because it exists between L0 and L2.\n"
+                "Possible reason: L1.1 is excluded by filter."
+            )
             warnings.warn(w)
 
     def get_parentless_tree_collection(self) -> "EventTreeCollection":

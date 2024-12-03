@@ -483,7 +483,7 @@ Returns None if the provided ID is a root of any of the trees in ETC.
 
 ---
 
-<a href="../../th2_data_services/event_tree/event_tree_collection.py#L737"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/event_tree/event_tree_collection.py#L767"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_parentless_tree_collection`
 
@@ -656,7 +656,7 @@ Loads missed events and finish tree building.
 
 **Args:**
  
- - <b>`preprocessor`</b>:  the function that will be executed for each recovered event before store. 
+ - <b>`preprocessor`</b>:  the function that will be executed for each recovered  event before store. 
 
 ---
 
