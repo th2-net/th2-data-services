@@ -9,7 +9,7 @@
 
 **Global Variables**
 ---------------
-- **event_tree**: #  Copyright 2022-2024 Exactpro (Exactpro Systems Limited)
+- **event_tree**: #  Copyright 2022-2025 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-- **event_tree_collection**: #  Copyright 2022-2024 Exactpro (Exactpro Systems Limited)
+- **event_tree_collection**: #  Copyright 2022-2025 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-- **parent_event_tree_collection**: #  Copyright 2022-2024 Exactpro (Exactpro Systems Limited)
+- **parent_event_tree_collection**: #  Copyright 2022-2025 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-- **etc_driver**: #  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
+- **etc_driver**: #  Copyright 2023-2025 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.

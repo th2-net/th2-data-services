@@ -11,7 +11,7 @@
 
 ---
 
-<a href="../../th2_data_services/dummy/data_source.py#L18"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/dummy/data_source.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `DummyDataSource`
 Dummy DataSource. 
@@ -31,7 +31,7 @@ Can be useful to create ETCDriver without concrete DataSource or to in unit test
 
 ---
 
-<a href="../../th2_data_services/dummy/data_source.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../../th2_data_services/dummy/data_source.py#L26"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `command`
 

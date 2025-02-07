@@ -1,4 +1,4 @@
-#  Copyright 2022-2024 Exactpro (Exactpro Systems Limited)
+#  Copyright 2022-2025 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 
 import copy
 import csv
@@ -357,7 +358,8 @@ class Data(Generic[DataIterValues]):
         if self._cache_status and self.is_cache_file_exists():
             is_data_writes_cache = False
         else:
-            # FIXME -- bug -- мы считаем что мы пишем файл, когда он уже существует а мы его просто читаем
+            # FIXME -- bug -- we think that we are writing a file when it
+            #  already exists and we are just reading it
             is_data_writes_cache = True
 
         try:
@@ -416,10 +418,27 @@ class Data(Generic[DataIterValues]):
             yield from self._iter_logic()
 
     def _build_workflow(self, workflow: DataWorkflow):
-        """Updates limit callbacks each time when Data object is iterated.
+        """Updates limit callbacks each time when the Data object is iterated.
 
         It used to have the possibility to iterate the same Data object
-        several times in the loops.
+        in the different loops at the same time.
+
+        We copy workflow to don't affect iteration in different loops.
+
+        Note:
+            As a side effect, object variables of the Adapter don't work.
+            We also cannot put the external variable to adapter. This
+            variable won't be updated during iteration, because we will
+            iterate its copy.
+
+            The workaround is to add the following to adapter class
+            ```
+                def __copy__(self):
+                    return self
+
+                Def __deepcopy__(self, memo):
+                    return self
+            ```
         """
         new_workflow = copy.deepcopy(workflow)
         new_workflow.refresh_limit_callbacks()
@@ -448,7 +467,7 @@ class Data(Generic[DataIterValues]):
 
             if self.__check_file_recording():
                 # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
-                # It used to handle case when Data object iterates in the loop several times.
+                # It used to handle a case when the Data object iterates in the loop several times.
                 cache = False
 
             if workflow:
