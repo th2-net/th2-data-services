@@ -1,4 +1,4 @@
-#  Copyright 2022-2024 Exactpro (Exactpro Systems Limited)
+#  Copyright 2022-2025 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,9 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
 import copy
 import csv
+import heapq
 import os
+import re
+import shutil
 from dataclasses import dataclass
 import orjson as json
 import gc
@@ -357,7 +361,8 @@ class Data(Generic[DataIterValues]):
         if self._cache_status and self.is_cache_file_exists():
             is_data_writes_cache = False
         else:
-            # FIXME -- bug -- мы считаем что мы пишем файл, когда он уже существует а мы его просто читаем
+            # FIXME -- bug -- we think that we are writing a file when it
+            #  already exists and we are just reading it
             is_data_writes_cache = True
 
         try:
@@ -416,10 +421,27 @@ class Data(Generic[DataIterValues]):
             yield from self._iter_logic()
 
     def _build_workflow(self, workflow: DataWorkflow):
-        """Updates limit callbacks each time when Data object is iterated.
+        """Updates limit callbacks each time when the Data object is iterated.
 
         It used to have the possibility to iterate the same Data object
-        several times in the loops.
+        in the different loops at the same time.
+
+        We copy workflow to don't affect iteration in different loops.
+
+        Note:
+            As a side effect, object variables of the Adapter don't work.
+            We also cannot put the external variable to adapter. This
+            variable won't be updated during iteration, because we will
+            iterate its copy.
+
+            The workaround is to add the following to adapter class
+            ```
+                def __copy__(self):
+                    return self
+
+                Def __deepcopy__(self, memo):
+                    return self
+            ```
         """
         new_workflow = copy.deepcopy(workflow)
         new_workflow.refresh_limit_callbacks()
@@ -448,7 +470,7 @@ class Data(Generic[DataIterValues]):
 
             if self.__check_file_recording():
                 # Do not read from the cache file if it has PENDING status (if the file is not filled yet).
-                # It used to handle case when Data object iterates in the loop several times.
+                # It used to handle a case when the Data object iterates in the loop several times.
                 cache = False
 
             if workflow:
@@ -708,6 +730,90 @@ class Data(Generic[DataIterValues]):
             yield record
             pushed += 1
 
+    def sort(
+        self, key: Callable, replace=False, sorted_path=None, buffer_size=300 * 1024 * 1024
+    ) -> "Data[DataIterValues]":
+        """Sorts the Data. Uses External sort, thus it can also work with huge amounts of Data.
+
+        Args:
+            key: Function to sort data by.
+            replace: If True, the file that stores the data will be overwritten by sorted data, if False a new file
+                will be created. Default - False.
+            sorted_path: Path to the sorted file.
+            buffer_size: Size of the buffer. Buffer stores a chunk of the data that needs to be sorted.
+
+        Returns:
+            Data: Data object.
+
+        """
+        if not sorted_path:
+            sorted_path = f"{self.metadata['source_file']}.sorted"
+        if replace:
+            sorted_path = f"{self.metadata['source_file']}"
+        folder = str(time())
+        temp = Path(folder)
+        chunk_names = []
+
+        buffer = []
+        temp.mkdir(parents=True, exist_ok=True)
+
+        def sort_chunks():
+            chunk_counter = 0
+            current_size = 0
+            for obj in self:
+                if current_size < buffer_size:
+                    buffer.append(obj)
+                    current_size += len(str(obj))
+                else:
+                    buffer.sort(key=key)
+                    chunk_name = f"{folder}/chunk{chunk_counter}.chunk"
+                    with open(chunk_name, "w") as chunk:
+                        for o in buffer:
+                            chunk.write(f"{key(o)}|{json.dumps(o)}\n")
+                    chunk_names.append(chunk_name)
+                    chunk_counter += 1
+                    buffer.clear()
+                    buffer.append(obj)
+                    current_size = len(str(obj))
+            buffer.sort(key=key)
+            chunk_name = f"{folder}/chunk{chunk_counter}.chunk"
+            with open(chunk_name, "w") as chunk:
+                for o in buffer:
+                    chunk.write(f"{key(o)}|{json.dumps(o)}\n")
+            chunk_names.append(chunk_name)
+            buffer.clear()
+
+        def merge_back():
+            heap = []
+            for i, file in enumerate(chunk_names):
+                f = open(file, "r")
+                line = f.readline()
+                if line:
+                    k = line[: line.find("|")]
+                    v = line[line.find("|") + 1 :]
+                    v = re.sub(r"(^b'|'$)", "", v)
+                    heapq.heappush(heap, (k, v, f))
+            with open(sorted_path, "w") as output_file:
+                while heap:
+                    k, v, file = heapq.heappop(heap)
+                    output_file.write(v)
+                    line = file.readline()
+                    if line:
+                        k = line[: line.find("|")]
+                        v = line[line.find("|") + 1 :]
+                        v = re.sub(r"(^b'|'$)", "", v)
+                        heapq.heappush(heap, (k, v, file))
+                    else:
+                        file.close()
+
+        try:
+            sort_chunks()
+            self = None
+            merge_back()
+        finally:
+            shutil.rmtree(temp)
+        return Data.from_json(sorted_path)
+
     def is_sorted(self, get_timestamp_func: Callable[[Any], Any]) -> IsSortedResult:
         """Checks whether Data is sorted.
 
@@ -734,31 +840,39 @@ class Data(Generic[DataIterValues]):
         self._cache_status = status
         return self
 
-    def find_by(self, record_field, field_values) -> Generator:
+    def find_by(self, record_field: str, field_values: list) -> Generator:
         """Get the records whose field value is written in the field_values list.
 
         When to use:
-            You have IDs of some messages and you want get them in the stream and stop searching
-            when you find all elements.
+            You have IDs of some messages, and you want to get them in the
+            stream and stop searching when you find all elements.
 
         Args:
             record_field: The record field to be searched for in the field_values list.
             field_values: List of elements among which will be searched record[record_field].
 
+        Current limitation:
+            Searches on for fields on the top level of the record.
+
         Yields:
             dict: Generator records.
 
         """
-        values_for_find = list(field_values)
+        values_to_find = set(field_values)
         for record in self:
-            if values_for_find:
-                if record[record_field] in values_for_find:
-                    values_for_find.remove(record[record_field])
+            if values_to_find:
+                if record[record_field] in values_to_find:
+                    values_to_find.remove(record[record_field])
                     yield record
                 else:
                     continue
             else:
                 break
+
+    # @overload
+    # def find_by_substring(self, substrings: ):
+    #     pass
+    # # https://adamj.eu/tech/2021/05/29/python-type-hints-how-to-use-overload/
 
     def write_to_file(self, file: str) -> None:
         """Writes the stream data to txt file.
@@ -875,10 +989,8 @@ class Data(Generic[DataIterValues]):
             self.__delete_cache()
 
     @classmethod
-    def from_cache_file(
-        cls, filename, pickle_version: int = o.DEFAULT_PICKLE_VERSION
-    ) -> "Data[DataIterValues]":
-        """Creates Data object from cache file with the provided name.
+    def from_cache_file(cls, filename, pickle_version: int = o.DEFAULT_PICKLE_VERSION) -> "Data":
+        """Creates a Data object from cache file with the provided name.
 
         Args:
             filename: Name or path to cache file.
@@ -954,8 +1066,8 @@ class Data(Generic[DataIterValues]):
         header_first_line=False,
         mode="r",
         delimiter=",",
-    ) -> "Data[DataIterValues]":
-        """Creates Data object from CSV file with the provided name.
+    ) -> "Data":
+        """Creates a Data object from CSV file with the provided name.
 
         It will iterate the CSV file as if you were doing it with CSV module.
 

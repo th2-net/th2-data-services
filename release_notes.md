@@ -546,6 +546,7 @@ If you want to use RDP you have to specify dependency in square brackets `[ ]`
 31. [TH2-5197] Added the function `read_all_pickle_files_from_the_folder` 
     to get Data object from the folder with pickle files.
 32. [TH2-5213] Added `Data.to_csv` method, that converts data to valid csv.
+33. [TH2-4900] Added `Data.sort` method, that also works with large amount of Data.
 
 ## BugFixes
 

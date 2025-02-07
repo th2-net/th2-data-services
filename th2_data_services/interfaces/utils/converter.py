@@ -1,4 +1,4 @@
-#  Copyright 2023-2024 Exactpro (Exactpro Systems Limited)
+#  Copyright 2023-2025 Exactpro (Exactpro Systems Limited)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -36,6 +37,11 @@ Some speed tests:
         %timeit datetime.utcfromtimestamp(seconds)
         116 ns � 8.47 ns per loop (mean � std. dev. of 7 runs, 10,000,000 loops each)
 """
+
+
+# TODO -- add timezone. UTC by default.
+#   so we expect that user provide ts in UTC or its own timezone.
+#   we always return UTC, but also can configure it.
 
 
 class ITimestampConverter(ABC, Generic[TimestampType]):

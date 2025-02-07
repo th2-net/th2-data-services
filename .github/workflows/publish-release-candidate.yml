@@ -1,0 +1,20 @@
+name: check and publish release candidate Python tarball to PyPi
+
+on: workflow_dispatch
+
+jobs:
+  build-job:
+    name: Check and publish snapshot tarball to PyPi
+    uses: th2-net/.github/.github/workflows/compound-python.yml@main
+    with:
+      release-type: release-candidate
+      style-check-enabled: false
+      strict-style-check: false
+      python-check-versions: "['3.8', '3.9', '3.10', '3.11', '3.12']"
+      test-dir: tests/tests_unit
+      test-ignore-dir: tests/tests_unit/test_dependencies/
+      test-requirements-files: requirements_dev.txt, requirements.txt
+      create-tag: true
+
+    secrets:
+      pypi-password: ${{ secrets.PYPI_PASSWORD }}

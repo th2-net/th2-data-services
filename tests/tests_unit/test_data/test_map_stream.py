@@ -8,6 +8,7 @@ from tests.tests_unit.utils import (
     double_generator,
     triple_generator,
     event_type_generator,
+    iterate_data,
 )
 
 
@@ -16,6 +17,32 @@ class SimpleAdapter(IStreamAdapter):
         for record in stream:
             if record["eventType"] == "Checkpoint":
                 yield {"id": record["eventId"], "name": record["eventName"]}
+
+
+class AdapterWithInit(IStreamAdapter):
+    def __init__(self):
+        self.len_iter = 0
+
+    def handle(self, stream: Iterable):
+        for record in stream:
+            self.len_iter += 1
+            yield {"id": record["eventId"], "name": record["eventName"]}
+
+    def __copy__(self):
+        return self
+
+    def __deepcopy__(self, memo):
+        # NOTE, the reason why we need this workaround -- look at Data._build_workflow
+        return self
+
+
+def test_map_stream_with_adapter_with_variables_inside_adapter(general_data: List[dict]):
+    a = AdapterWithInit()
+    data = Data(general_data).map_stream(a)
+    iterate_data(data)
+    assert a.len_iter == 21
+    iterate_data(data)
+    assert a.len_iter == 42
 
 
 def test_map_stream_with_adapter(general_data: List[dict]):
@@ -115,6 +142,9 @@ def test_big_modification_chain(log_checker):
 
     assert list(d4) == [1, 1, 2]
     assert list(d3) == [1, 1, 2, 2]  # It also should iterate cache file.
+    assert list(d2) == [1, 2]
+    assert list(d1) == [1, 2, 3, 4, 5]
+    assert list(d5) == [1, 1, 1, 1, 2, 2]
 
 
 def test_filter_for_list_record(general_data: List[dict]):
