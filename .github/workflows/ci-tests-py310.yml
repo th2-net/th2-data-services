@@ -2,8 +2,8 @@ name: CI tests Py 3.10 (for master only)
 
 on:
   push:
-    branches:
-      - master
+    # branches:
+    #   - master
 
 jobs:
   test:
