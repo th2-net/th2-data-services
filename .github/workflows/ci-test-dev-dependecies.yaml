@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
 #        providers: [ rdp, rdp5, rdp6, lwdp, lwdp1 ]
-        providers: [ lwdp, lwdp1 ]
+        providers: [ lwdp ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
