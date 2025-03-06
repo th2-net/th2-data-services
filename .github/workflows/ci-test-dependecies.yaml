@@ -23,6 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install th2-data-services[${{ matrix.providers }}]
+          pip install importlib-metadata
       - name: Test dependencies
         run: |
           pip install pytest -q

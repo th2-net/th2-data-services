@@ -26,6 +26,7 @@ jobs:
         run: |
           # Install Package From Local Directory
           pip install --pre -e .[${{ matrix.providers }}]
+          pip install importlib-metadata
       - name: Test dependencies
         run: |
           pip install pytest -q
