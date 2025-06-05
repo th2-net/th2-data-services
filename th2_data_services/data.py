@@ -1013,7 +1013,7 @@ class Data(Generic[DataIterValues]):
         return data_obj
 
     @classmethod
-    def from_json(cls, filename, buffer_limit=250, gzip=False) -> "Data[dict]":
+    def from_json(cls, filename, buffer_limit=250, gzip=False, encoding="utf-8") -> "Data[dict]":
         """Creates Data object from json-lines file with provided name.
 
         Args:
@@ -1030,9 +1030,9 @@ class Data(Generic[DataIterValues]):
         """
         check_if_file_exists(filename)
         if gzip:
-            data = cls(iter_json_gzip_file(filename, buffer_limit))
+            data = cls(iter_json_gzip_file(filename, buffer_limit, encoding=encoding))
         else:
-            data = cls(iter_json_file(filename, buffer_limit))
+            data = cls(iter_json_file(filename, buffer_limit, encoding=encoding))
         data.update_metadata({"source_file": filename})
         return data
 
