@@ -1066,6 +1066,7 @@ class Data(Generic[DataIterValues]):
         header_first_line=False,
         mode="r",
         delimiter=",",
+        encoding="utf-8",
     ) -> "Data":
         """Creates a Data object from CSV file with the provided name.
 
@@ -1095,7 +1096,7 @@ class Data(Generic[DataIterValues]):
 
         """
         check_if_file_exists(filename)
-        data = cls(_iter_csv(filename, header, header_first_line, mode, delimiter))
+        data = cls(_iter_csv(filename, header, header_first_line, mode, delimiter, encoding))
         data.update_metadata({"source_file": filename})
         return data
 
@@ -1350,12 +1351,12 @@ def _iter_any_file(filename: Union[str, Path], mode="r"):
 
 
 def _iter_csv(
-    filename: Union[str, Path], header=None, header_first_line=False, mode="r", delimiter=","
+    filename: Union[str, Path], header=None, header_first_line=False, mode="r", delimiter=",", encoding="utf-8"
 ):
     """Returns the function that returns generators."""
 
     def iter_logic():
-        with open(filename, mode) as data:
+        with open(filename, mode, encoding=encoding) as data:
             if header is not None and header_first_line:
                 reader = csv.DictReader(data, fieldnames=header, delimiter=delimiter)
                 next(reader)  # Skip first line with header.
