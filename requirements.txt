@@ -10,5 +10,5 @@ sseclient-py~=1.7
 tabulate
 treelib==1.6.1
 # setuptools~=65.5
-urllib3>1.26.18, <2
+urllib3
 wheel>=0.38.1  # To get rid of wheel building errors
