@@ -23,14 +23,14 @@ from th2_data_services.utils.decode_error_handler import UNICODE_REPLACE_HANDLER
 
 # FIXME
 #   why do we have separate the same funcitons?
-def iter_json_file(filename, buffer_limit=250):
+def iter_json_file(filename, buffer_limit=250, encoding="uft-8"):
     """Returns the function that returns generators."""
 
     def iter_json_file_logic():
         """Generator that reads and yields decoded JSON objects from a file."""
         json_processor = BufferedJSONProcessor(buffer_limit)
 
-        with open(filename, "r") as data:
+        with open(filename, "r", encoding=encoding) as data:
             while True:
                 try:
                     # We don't need to decode here because readline for
@@ -54,7 +54,7 @@ def iter_json_file(filename, buffer_limit=250):
     return iter_json_file_wrapper
 
 
-def iter_json_gzip_file(filename, buffer_limit=250):
+def iter_json_gzip_file(filename, buffer_limit=250, encoding="utf-8"):
     """Returns the function that returns generators."""
 
     def iter_json_gzip_file_logic():
@@ -70,7 +70,7 @@ def iter_json_gzip_file(filename, buffer_limit=250):
                             # TODO
                             #   probably we don't need to decode here
                             #   and we can just take bytes as is.
-                            v = data.readline().decode("utf-8", UNICODE_REPLACE_HANDLER)
+                            v = data.readline().decode(encoding, UNICODE_REPLACE_HANDLER)
                             if not v:
                                 finished = True
                                 break
