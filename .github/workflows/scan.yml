@@ -1,0 +1,24 @@
+name: Scan licenses and vulnerabilities in python project
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 1'
+
+jobs:
+  get-version:
+    name: Get version
+    uses: th2-net/.github/.github/workflows/python-get-version.yml@main
+  vulnerability-scan:
+    name: 'Vulnerability scan (Python)'
+    uses: th2-net/.github/.github/workflows/python-scan.yml@main
+    with:
+      python-version: '3.11'
+  license-check:
+    name: 'License check (Python)'
+    needs:
+      - get-version
+    uses: th2-net/.github/.github/workflows/compound-python-matrix-licenses-check.yml@main
+    with:
+      version: ${{ needs.get-version.outputs.version }}
+      matrix-python-versions: "['3.9', '3.10', '3.11', '3.12']"
