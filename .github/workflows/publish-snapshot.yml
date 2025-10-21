@@ -1,12 +1,12 @@
 name: check and publish snapshot Python tarball to PyPi
 
 on:
-    push:
-      branches:
-        - dev_*
-        - pypi_*
-      paths-ignore:
-        - README.md
+  push:
+    branches-ignore:
+      - master
+      - version-*
+    paths-ignore:
+      - README.md
 
 jobs:
   build-job:
@@ -16,7 +16,7 @@ jobs:
       release-type: development
       style-check-enabled: false
       strict-style-check: false
-      python-check-versions: "['3.8', '3.9', '3.10', '3.11', '3.12']"
+      python-check-versions: "['3.9', '3.10', '3.11', '3.12']"
       test-dir: tests/tests_unit
       test-ignore-dir: tests/tests_unit/test_dependencies/
       test-requirements-files: requirements_dev.txt, requirements.txt

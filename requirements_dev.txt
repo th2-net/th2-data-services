@@ -7,4 +7,4 @@ pydocstyle
 pytest
 pytest-mock
 pytest-xdist
-th2-data-services-lwdp==2.0.3.0 # To test utils. Utils imports resolvers
+th2-data-services-lwdp>=2.0.3.0,<3 # To test utils. Utils imports resolvers
