@@ -1,14 +1,14 @@
 ciso8601
 deprecated
-flatdict~=4.0
+flatdict>=4.0,<5
 # orjson versions 3.7.0 through 3.9.14 library has
 # vulnerability https://devhub.checkmarx.com/cve-details/CVE-2024-27454/.
 orjson>=3.10,<4
 prettytable  # Temporary required for summary
 requests>=2.32.2
-sseclient-py~=1.7
+sseclient-py>=1.7,<2
 tabulate
-treelib==1.6.1
+treelib>=1.6.1,<2
 # setuptools~=65.5
-urllib3>1.26.18, <2
-wheel>=0.38.1  # To get rid of wheel building errors
+urllib3>=1.26.18,<2
+wheel>=0.38.1,<1  # To get rid of wheel building errors
